@@ -1,0 +1,69 @@
+name: Publish clean MagicOffice v1.5.6 production source
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/publish-clean-v156-source.yml'
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download verified v1.5.6 production HTML artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: MagicOffice_v1.5.6_MiBao_LOCKED_Production_HTML
+          path: downloaded
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: sasta02001-hash/magicoffice-deploy
+          run-id: 32952578840
+
+      - name: Verify clean source and publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          find downloaded -maxdepth 2 -type f -printf '%p %s bytes\n'
+          SOURCE="$(find downloaded -type f -name '*.html' | head -n 1)"
+          test -n "$SOURCE"
+          SIZE="$(wc -c < "$SOURCE" | tr -d ' ')"
+          SHA="$(sha256sum "$SOURCE" | awk '{print $1}')"
+          test "$SIZE" -gt 3000000
+          test "$SIZE" -lt 4000000
+          grep -q 'data-site-version="1.5.6-html"' "$SOURCE"
+          grep -q 'data-profile="mibao"' "$SOURCE"
+          grep -q 'mibao.locked.v1.0.webp' "$SOURCE"
+          grep -q '103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA' "$SOURCE"
+          grep -q 'https://lin.ee/NcCGG1P' "$SOURCE"
+          grep -q '退款／訂位取消與異動' "$SOURCE"
+          grep -q '中秋月宴' "$SOURCE"
+          grep -q '柚子 9/19 生誕' "$SOURCE"
+          if grep -q '/_next/static/immutable/' "$SOURCE"; then
+            echo 'Vercel challenge shell detected in supposed clean source.' >&2
+            exit 1
+          fi
+
+          mkdir -p production-source-v1.5.6
+          cp "$SOURCE" production-source-v1.5.6/index.html
+          printf '%s  index.html\n' "$SHA" > production-source-v1.5.6/index.html.sha256
+          cat > production-source-v1.5.6/README.md <<EOF
+          # MagicOffice clean production source v1.5.6
+
+          Exported from the verified production deployment before mobile
+          compatibility changes. Size: ${SIZE} bytes. SHA-256: ${SHA}.
+          EOF
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add production-source-v1.5.6
+          git commit -m 'Publish clean MagicOffice v1.5.6 production source'
+          git push origin HEAD:main
+          echo "CLEAN_V156_SOURCE_OK size=$SIZE sha256=$SHA"
