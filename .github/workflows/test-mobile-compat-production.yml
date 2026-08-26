@@ -1,0 +1,164 @@
+name: Test MagicOffice mobile compatibility production
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/test-mobile-compat-production.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-noble
+    env:
+      SITE_URL: https://magicoffice-preview-v2.vercel.app/
+    steps:
+      - name: Install matching Playwright package
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+
+      - name: Test Threads and Android Chrome rendering
+        run: |
+          cat > test.js <<'JS'
+          const fs = require('node:fs');
+          const { chromium } = require('playwright');
+          const site = process.env.SITE_URL;
+          const profiles = [
+            ['threads-android', 'Mozilla/5.0 (Linux; Android 15; SM-S9280 Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/139.0.0.0 Mobile Safari/537.36 [FB_IAB/Orca-Android;FBAV/475.0.0.0.0.0;]'],
+            ['chrome-android', 'Mozilla/5.0 (Linux; Android 15; Pixel 9 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'],
+          ];
+
+          async function inspect(browser, name, userAgent) {
+            const context = await browser.newContext({
+              viewport: { width: 390, height: 844 },
+              screen: { width: 390, height: 844 },
+              deviceScaleFactor: 2,
+              isMobile: true,
+              hasTouch: true,
+              userAgent,
+              locale: 'zh-TW',
+              timezoneId: 'Asia/Taipei',
+            });
+            const page = await context.newPage();
+            const consoleErrors = [];
+            const pageErrors = [];
+            const failedRequests = [];
+            page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
+            page.on('pageerror', error => pageErrors.push(String(error)));
+            page.on('requestfailed', request => failedRequests.push({ url: request.url(), error: request.failure()?.errorText || '' }));
+
+            const response = await page.goto(`${site}?compat-test=${name}-${Date.now()}`, { waitUntil: 'domcontentloaded', timeout: 90000 });
+            if (!response || response.status() !== 200) throw new Error(`${name}: HTTP ${response && response.status()}`);
+            await page.waitForTimeout(2500);
+
+            // Sweep through the page so every lazy-loaded roster/event image is requested.
+            const totalHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+            for (let y = 0; y < totalHeight; y += 650) {
+              await page.evaluate(value => window.scrollTo(0, value), y);
+              await page.waitForTimeout(90);
+            }
+            await page.evaluate(() => window.scrollTo(0, 0));
+            await page.waitForTimeout(1500);
+
+            const metrics = await page.evaluate(() => {
+              const images = [...document.images];
+              const header = document.querySelector('.site-header');
+              const hero = document.querySelector('.hero');
+              const bodyStyle = getComputedStyle(document.body);
+              return {
+                title: document.title,
+                version: document.documentElement.getAttribute('data-site-version'),
+                baseHref: document.querySelector('base')?.href || '',
+                inlineCssCount: document.querySelectorAll('style[data-mobile-compat-source]').length,
+                inlineJsCount: document.querySelectorAll('script[data-mobile-compat-source]').length,
+                localStylesheetCount: [...document.querySelectorAll('link[rel="stylesheet"]')].filter(n => n.getAttribute('href')?.startsWith('/assets/')).length,
+                localScriptCount: [...document.querySelectorAll('script[src]')].filter(n => n.getAttribute('src')?.startsWith('/assets/')).length,
+                background: bodyStyle.backgroundColor,
+                color: bodyStyle.color,
+                headerDisplay: header ? getComputedStyle(header).display : null,
+                heroDisplay: hero ? getComputedStyle(hero).display : null,
+                viewportWidth: innerWidth,
+                documentWidth: document.documentElement.scrollWidth,
+                imageCount: images.length,
+                loadedImages: images.filter(img => img.naturalWidth > 0).length,
+                brokenImages: images.filter(img => img.complete && img.naturalWidth === 0).map(img => ({ alt: img.alt, src: img.src.slice(0, 180) })),
+                schedule: document.body.innerText.includes('本週出勤'),
+                line: document.body.innerText.includes('退款／訂位取消與異動'),
+                events: document.body.innerText.includes('中秋月宴') && document.body.innerText.includes('柚子 9/19 生誕'),
+                shortcuts: ['姶仕名錄','本週出勤','線上購拍','活動快報','服務價目','立即預約'].every(v => document.body.innerText.includes(v)),
+              };
+            });
+
+            const card = page.locator('.cast-card[data-profile="mibao"]');
+            await card.scrollIntoViewIfNeeded({ timeout: 15000 });
+            await card.click({ timeout: 15000 });
+            await page.waitForTimeout(700);
+            const dialog = await page.evaluate(() => {
+              const d = document.querySelector('#profile-dialog');
+              const img = document.querySelector('#profile-content img');
+              return {
+                open: Boolean(d && (d.hasAttribute('open') || d.getAttribute('aria-hidden') === 'false')),
+                heading: document.querySelector('#profile-content h2')?.textContent?.trim() || '',
+                imageSrc: img?.src || '',
+                imageWidth: img?.naturalWidth || 0,
+                imageHeight: img?.naturalHeight || 0,
+              };
+            });
+
+            await page.screenshot({ path: `${name}.png`, fullPage: false });
+            const checks = {
+              version: metrics.version === '1.5.7-html',
+              base: metrics.baseHref === 'https://magicoffice-preview-v2.vercel.app/',
+              inlineCss: metrics.inlineCssCount >= 1,
+              inlineJs: metrics.inlineJsCount >= 3,
+              independentCss: metrics.localStylesheetCount === 0,
+              independentJs: metrics.localScriptCount === 0,
+              styled: !['rgba(0, 0, 0, 0)', 'rgb(255, 255, 255)'].includes(metrics.background),
+              headerLayout: Boolean(metrics.headerDisplay && metrics.headerDisplay !== 'block'),
+              responsive: metrics.documentWidth <= metrics.viewportWidth + 2,
+              images: metrics.imageCount >= 20 && metrics.loadedImages >= 20 && metrics.brokenImages.length === 0,
+              content: metrics.schedule && metrics.line && metrics.events && metrics.shortcuts,
+              mibaoDialog: dialog.open && dialog.heading.includes('咪寶') && dialog.imageWidth === 600 && dialog.imageHeight === 800,
+              noPageErrors: pageErrors.length === 0,
+              noFailedOfficialAssets: failedRequests.filter(item => item.url.startsWith('https://magicoffice-preview-v2.vercel.app/assets/')).length === 0,
+            };
+            const failures = Object.entries(checks).filter(([, value]) => !value).map(([key]) => key);
+            const result = { name, site, checks, failures, metrics, dialog, consoleErrors, pageErrors, failedRequests };
+            fs.writeFileSync(`${name}.json`, JSON.stringify(result, null, 2));
+            await context.close();
+            if (failures.length) throw new Error(`${name} failed: ${failures.join(', ')}\n${JSON.stringify(result, null, 2)}`);
+            return result;
+          }
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true, args: ['--disable-dev-shm-usage'] });
+            const results = [];
+            try {
+              for (const [name, ua] of profiles) results.push(await inspect(browser, name, ua));
+            } finally {
+              await browser.close();
+            }
+            fs.writeFileSync('production-mobile-report.json', JSON.stringify(results, null, 2));
+            console.log('MOBILE_COMPAT_PRODUCTION_OK', JSON.stringify(results.map(r => ({ name: r.name, checks: r.checks, metrics: r.metrics, dialog: r.dialog }))));
+          })().catch(error => { console.error(error.stack || String(error)); process.exit(1); });
+          JS
+          node test.js
+
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v1.5.7_mobile_compat_production_test
+          path: |
+            threads-android.png
+            chrome-android.png
+            threads-android.json
+            chrome-android.json
+            production-mobile-report.json
+          if-no-files-found: warn
+          retention-days: 14
