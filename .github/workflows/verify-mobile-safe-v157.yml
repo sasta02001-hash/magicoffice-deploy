@@ -1,0 +1,190 @@
+name: Verify MagicOffice mobile-safe v1.5.7
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/verify-mobile-safe-v157.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for production and verify HTTP assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          SITE='https://magicoffice-preview-v2.vercel.app'
+          UA='Mozilla/5.0 (Linux; Android 15; SM-S9280 Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/139.0.0.0 Mobile Safari/537.36 [FB_IAB/Orca-Android;FBAV/475.0.0.0.0;]'
+
+          for i in $(seq 1 24); do
+            curl -sSL --compressed -A "$UA" -D /tmp/home.headers "$SITE/?v157verify=$(date +%s)" -o /tmp/home.html
+            if grep -q 'data-mobile-safe-build="1.5.7-mobile-safe"' /tmp/home.html; then
+              echo "Production v1.5.7 detected on attempt $i"
+              break
+            fi
+            if [ "$i" -eq 24 ]; then
+              echo 'Timed out waiting for v1.5.7 production marker'
+              head -80 /tmp/home.headers || true
+              grep -o 'data-mobile-safe-build="[^"]*"' /tmp/home.html || true
+              exit 1
+            fi
+            sleep 5
+          done
+
+          python - <<'PY'
+          from __future__ import annotations
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from urllib.parse import urljoin
+          import hashlib, json, re, subprocess
+
+          site='https://magicoffice-preview-v2.vercel.app/'
+          html=Path('/tmp/home.html').read_text(encoding='utf-8')
+          soup=BeautifulSoup(html,'html.parser')
+          checks={
+            'marker':'data-mobile-safe-build="1.5.7-mobile-safe"' in html,
+            'inline_css':bool(soup.find('style',id=re.compile(r'^magic-inline-css-v157-'))),
+            'inline_js':len(soup.find_all('script',id=re.compile(r'^magic-inline-js-v157-'))) >= 3,
+            'no_old_css_request':'/assets/css/styles.v1.3.11.css' not in str(soup.find_all('link')),
+            'no_old_js_request':not any('/assets/js/' in str(tag.get('src') or '') for tag in soup.find_all('script')),
+            'schedule':'103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA' in html,
+            'line':'退款／訂位取消與異動' in html and 'https://lin.ee/NcCGG1P' in html,
+            'events':all(x in html for x in ('中秋月宴','柚子 9/19 生誕','香檳累積贈禮')),
+            'shortcuts':all(x in html for x in ('姶仕名錄','本週出勤','線上購拍','活動快報','服務價目','立即預約')),
+          }
+          refs=sorted(set(re.findall(r'["\'](/assets-v157/[^"\'?#)\s]+)',html)))
+          checks['versioned_asset_refs']=len(refs)>=30
+          failures=[]
+          details=[]
+          for ref in refs:
+            url=urljoin(site,ref)
+            result=subprocess.run(['curl','-sSL','--compressed','-A','Mozilla/5.0 (Linux; Android 15; wv) AppleWebKit/537.36 Chrome/139 Mobile Safari/537.36','-D','/tmp/a.h','-o','/tmp/a.bin',url+'?verify=1'])
+            headers=Path('/tmp/a.h').read_text(errors='replace').replace('\r','')
+            status=''; ctype=''
+            for line in headers.splitlines():
+              if line.startswith('HTTP/'): status=line
+              if line.lower().startswith('content-type:'): ctype=line.split(':',1)[1].strip()
+            size=Path('/tmp/a.bin').stat().st_size
+            ok=' 200 ' in status and size>0
+            details.append({'ref':ref,'status':status,'content_type':ctype,'size':size,'ok':ok})
+            if not ok: failures.append(ref)
+          checks['all_versioned_assets_200']=not failures
+          bad=[k for k,v in checks.items() if not v]
+          report={'checks':checks,'home_size':len(html.encode()),'home_sha256':hashlib.sha256(html.encode()).hexdigest(),'asset_count':len(refs),'asset_failures':failures,'assets':details}
+          Path('/tmp/http-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('HTTP_VERIFY',json.dumps({'checks':checks,'home_size':report['home_size'],'home_sha256':report['home_sha256'],'asset_count':len(refs),'asset_failures':failures},ensure_ascii=False))
+          if bad:
+            raise SystemExit('HTTP verification failed: '+','.join(bad))
+          PY
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Render in Android Threads-like browser
+        shell: bash
+        run: |
+          cat > /tmp/render.js <<'JS'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+          const crypto = require('crypto');
+          const SITE='https://magicoffice-preview-v2.vercel.app/?threadsVerify='+Date.now();
+          const UA='Mozilla/5.0 (Linux; Android 15; SM-S9280 Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/139.0.0.0 Mobile Safari/537.36 [FB_IAB/Orca-Android;FBAV/475.0.0.0.0;]';
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const context=await browser.newContext({
+              viewport:{width:412,height:915},
+              screen:{width:412,height:915},
+              userAgent:UA,
+              deviceScaleFactor:2,
+              isMobile:true,
+              hasTouch:true,
+              locale:'zh-TW',
+              timezoneId:'Asia/Taipei',
+              colorScheme:'dark'
+            });
+            const page=await context.newPage();
+            const failedRequests=[];
+            const consoleErrors=[];
+            page.on('requestfailed',r=>failedRequests.push({url:r.url(),error:r.failure()?.errorText||''}));
+            page.on('response',r=>{if(r.status()>=400)failedRequests.push({url:r.url(),status:r.status()})});
+            page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
+            page.on('pageerror',e=>consoleErrors.push(String(e)));
+            const response=await page.goto(SITE,{waitUntil:'domcontentloaded',timeout:90000});
+            await page.waitForTimeout(7000);
+            const state=await page.evaluate(()=>{
+              const bodyStyle=getComputedStyle(document.body);
+              const header=document.querySelector('.site-header');
+              const hero=document.querySelector('.hero');
+              const shortcuts=document.querySelector('.mobile-quick-nav, .mobile-shortcuts, [data-mobile-shortcuts]');
+              const imgs=[...document.images];
+              const broken=imgs.filter(i=>i.complete&&i.naturalWidth===0).map(i=>({src:i.currentSrc||i.src,alt:i.alt}));
+              const visible=imgs.filter(i=>{const r=i.getBoundingClientRect();return r.width>0&&r.height>0&&r.bottom>0&&r.top<innerHeight*3});
+              const logo=imgs.find(i=>(i.alt||'').includes('MagicOffice 正式金色商標'))||imgs.find(i=>(i.alt||'').includes('MagicOffice'));
+              let cssRules=0;
+              for(const sheet of [...document.styleSheets]){try{cssRules+=sheet.cssRules?.length||0}catch{}}
+              return {
+                marker:document.documentElement.getAttribute('data-mobile-safe-build'),
+                bodyBackground:bodyStyle.backgroundColor,
+                bodyFont:bodyStyle.fontFamily,
+                bodyMargin:bodyStyle.margin,
+                headerDisplay:header?getComputedStyle(header).display:null,
+                headerPosition:header?getComputedStyle(header).position:null,
+                heroDisplay:hero?getComputedStyle(hero).display:null,
+                shortcutFound:!!shortcuts,
+                cssRules,
+                styleSheets:document.styleSheets.length,
+                imageCount:imgs.length,
+                visibleImageCount:visible.length,
+                brokenImages:broken,
+                logoNaturalWidth:logo?.naturalWidth||0,
+                logoNaturalHeight:logo?.naturalHeight||0,
+                scrollWidth:document.documentElement.scrollWidth,
+                viewportWidth:innerWidth,
+                title:document.title,
+                textSample:document.body.innerText.slice(0,500)
+              };
+            });
+            await page.screenshot({path:'/tmp/magicoffice-threads-mobile.png',fullPage:true});
+            const checks={
+              status200:response?.status()===200,
+              marker:state.marker==='1.5.7-mobile-safe',
+              styledBackground:!['rgba(0, 0, 0, 0)','rgb(255, 255, 255)'].includes(state.bodyBackground),
+              cssApplied:state.styleSheets>=1&&state.cssRules>=50,
+              headerStyled:state.headerDisplay!==null&&state.headerDisplay!=='block',
+              heroPresent:state.heroDisplay!==null,
+              logoLoaded:state.logoNaturalWidth>0&&state.logoNaturalHeight>0,
+              imagesLoaded:state.visibleImageCount>0&&state.brokenImages.length===0,
+              mobileWidth:state.scrollWidth<=state.viewportWidth+4,
+              noLocalFailedRequests:failedRequests.filter(x=>x.url.includes('magicoffice-preview-v2.vercel.app')).length===0,
+              noPageErrors:consoleErrors.length===0
+            };
+            const report={checks,state,failedRequests,consoleErrors,url:page.url()};
+            fs.writeFileSync('/tmp/browser-report.json',JSON.stringify(report,null,2));
+            console.log('BROWSER_VERIFY',JSON.stringify(report));
+            const bad=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);
+            await browser.close();
+            if(bad.length)throw new Error('Browser verification failed: '+bad.join(','));
+          })().catch(e=>{console.error(e.stack||e);process.exit(1)});
+          JS
+          node /tmp/render.js
+
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice-v157-mobile-verification
+          path: |
+            /tmp/home.html
+            /tmp/home.headers
+            /tmp/http-report.json
+            /tmp/browser-report.json
+            /tmp/magicoffice-threads-mobile.png
+          if-no-files-found: warn
+          retention-days: 14
