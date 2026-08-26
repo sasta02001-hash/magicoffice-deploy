@@ -1,0 +1,153 @@
+name: Test MagicOffice mobile compatibility preview
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/test-mobile-compat-preview.yml'
+
+permissions:
+  contents: read
+
+env:
+  PREVIEW_URL: https://magicoffice-ewk4tdzbr-magicoffice.vercel.app/
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run embedded-browser rendering tests
+        run: |
+          cat > test.js <<'JS'
+          const fs = require('node:fs');
+          const { chromium } = require('playwright');
+
+          const url = process.env.PREVIEW_URL;
+          const threadsUA = 'Mozilla/5.0 (Linux; Android 15; SM-S9280 Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/139.0.0.0 Mobile Safari/537.36 [FB_IAB/Orca-Android;FBAV/475.0.0.0.0.0;]';
+          const chromeUA = 'Mozilla/5.0 (Linux; Android 15; Pixel 9 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36';
+
+          async function testProfile(browser, name, userAgent) {
+            const context = await browser.newContext({
+              viewport: { width: 390, height: 844 },
+              deviceScaleFactor: 2,
+              isMobile: true,
+              hasTouch: true,
+              userAgent,
+              locale: 'zh-TW',
+              timezoneId: 'Asia/Taipei',
+            });
+            const page = await context.newPage();
+            const consoleErrors = [];
+            const pageErrors = [];
+            page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
+            page.on('pageerror', error => pageErrors.push(String(error)));
+
+            const response = await page.goto(`${url}?browser=${name}&t=${Date.now()}`, { waitUntil: 'domcontentloaded', timeout: 90000 });
+            if (!response || response.status() !== 200) throw new Error(`${name}: homepage status ${response && response.status()}`);
+            await page.waitForTimeout(6000);
+
+            const metrics = await page.evaluate(() => {
+              const bodyStyle = getComputedStyle(document.body);
+              const header = document.querySelector('.site-header');
+              const hero = document.querySelector('.hero');
+              const images = [...document.images];
+              const broken = images.filter(img => img.complete && img.naturalWidth === 0).map(img => img.alt || img.src.slice(0, 120));
+              const loaded = images.filter(img => img.naturalWidth > 0).length;
+              return {
+                title: document.title,
+                standaloneVersion: document.documentElement.getAttribute('data-site-version'),
+                baseHref: document.querySelector('base')?.href || '',
+                inlineCssCount: document.querySelectorAll('style[data-mobile-compat-source]').length,
+                inlineJsCount: document.querySelectorAll('script[data-mobile-compat-source]').length,
+                externalLocalStylesheets: [...document.querySelectorAll('link[rel="stylesheet"]')].filter(node => node.href.includes('/assets/')).length,
+                externalLocalScripts: [...document.querySelectorAll('script[src]')].filter(node => node.src.includes('/assets/')).length,
+                bodyBackground: bodyStyle.backgroundColor,
+                bodyColor: bodyStyle.color,
+                headerDisplay: header ? getComputedStyle(header).display : null,
+                heroDisplay: hero ? getComputedStyle(hero).display : null,
+                imageCount: images.length,
+                loadedImageCount: loaded,
+                brokenImages: broken,
+                pageWidth: document.documentElement.scrollWidth,
+                viewportWidth: innerWidth,
+                schedulePresent: document.body.innerText.includes('本週出勤'),
+                linePresent: document.body.innerText.includes('退款／訂位取消與異動'),
+                eventPresent: document.body.innerText.includes('中秋月宴') && document.body.innerText.includes('柚子 9/19 生誕'),
+              };
+            });
+
+            const mibao = page.locator('.cast-card[data-profile="mibao"]');
+            await mibao.scrollIntoViewIfNeeded();
+            await mibao.click();
+            await page.waitForTimeout(800);
+            const dialog = await page.evaluate(() => {
+              const d = document.querySelector('#profile-dialog');
+              const img = document.querySelector('#profile-content img');
+              return {
+                open: Boolean(d && d.hasAttribute('open')),
+                heading: document.querySelector('#profile-content h2')?.textContent || '',
+                imageSrc: img?.src || '',
+                imageWidth: img?.naturalWidth || 0,
+                imageHeight: img?.naturalHeight || 0,
+              };
+            });
+
+            await page.screenshot({ path: `${name}.png`, fullPage: true });
+            await context.close();
+
+            const checks = {
+              version: metrics.standaloneVersion === '1.5.7-html',
+              base: metrics.baseHref === 'https://magicoffice-preview-v2.vercel.app/',
+              inlineCss: metrics.inlineCssCount >= 1,
+              inlineJs: metrics.inlineJsCount >= 3,
+              noLocalStylesheetDependency: metrics.externalLocalStylesheets === 0,
+              noLocalScriptDependency: metrics.externalLocalScripts === 0,
+              styledBody: !['rgba(0, 0, 0, 0)', 'rgb(255, 255, 255)'].includes(metrics.bodyBackground),
+              header: metrics.headerDisplay && metrics.headerDisplay !== 'block',
+              images: metrics.imageCount >= 20 && metrics.loadedImageCount >= 20 && metrics.brokenImages.length === 0,
+              responsiveWidth: metrics.pageWidth <= metrics.viewportWidth + 2,
+              content: metrics.schedulePresent && metrics.linePresent && metrics.eventPresent,
+              dialog: dialog.open && dialog.heading.includes('咪寶') && dialog.imageWidth === 600 && dialog.imageHeight === 800,
+              noPageErrors: pageErrors.length === 0,
+            };
+            const failures = Object.entries(checks).filter(([,value]) => !value).map(([key]) => key);
+            const result = { name, url, checks, metrics, dialog, consoleErrors, pageErrors, failures };
+            fs.writeFileSync(`${name}.json`, JSON.stringify(result, null, 2));
+            if (failures.length) throw new Error(`${name} failed: ${failures.join(', ')}\n${JSON.stringify(result, null, 2)}`);
+            return result;
+          }
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            try {
+              const results = [];
+              results.push(await testProfile(browser, 'threads-android', threadsUA));
+              results.push(await testProfile(browser, 'chrome-android', chromeUA));
+              fs.writeFileSync('mobile-compat-report.json', JSON.stringify(results, null, 2));
+              console.log('MOBILE_COMPAT_PREVIEW_OK', JSON.stringify(results.map(r => ({ name: r.name, checks: r.checks, metrics: r.metrics, dialog: r.dialog }))));
+            } finally {
+              await browser.close();
+            }
+          })().catch(error => { console.error(error.stack || String(error)); process.exit(1); });
+          JS
+          node test.js
+
+      - name: Upload screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v1.5.7_mobile_compat_preview_test
+          path: |
+            threads-android.png
+            chrome-android.png
+            threads-android.json
+            chrome-android.json
+            mobile-compat-report.json
+          if-no-files-found: warn
+          retention-days: 14
