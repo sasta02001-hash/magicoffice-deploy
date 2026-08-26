@@ -1,0 +1,79 @@
+name: Diagnose MagicOffice live mobile rendering
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/diagnose-live-mobile.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect homepage and critical assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          SITE='https://magicoffice-preview-v2.vercel.app'
+          UA='Mozilla/5.0 (Linux; Android 15; SM-S9280 Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/139.0.0.0 Mobile Safari/537.36 [FB_IAB/Orca-Android;FBAV/475.0.0.0.0;]'
+
+          echo '=== HOMEPAGE HEADERS ==='
+          curl -sSIL --compressed -A "$UA" "$SITE/?diag=$(date +%s)"
+
+          echo '=== HOMEPAGE DOWNLOAD ==='
+          curl -sSL --compressed -A "$UA" -D /tmp/home.headers "$SITE/?diag=$(date +%s)" -o /tmp/home.html
+          cat /tmp/home.headers
+          wc -c /tmp/home.html
+          sha256sum /tmp/home.html
+          grep -oE '<link[^>]+>|<script[^>]+src=[^>]+>|<img[^>]+src=[^>]+>' /tmp/home.html | head -80 || true
+
+          echo '=== EXTRACTED CRITICAL REFS ==='
+          python - <<'PY'
+          from bs4 import BeautifulSoup
+          from pathlib import Path
+          from urllib.parse import urljoin
+          import json
+          html=Path('/tmp/home.html').read_text(encoding='utf-8')
+          soup=BeautifulSoup(html,'html.parser')
+          refs=[]
+          for tag,attr in [('link','href'),('script','src'),('img','src')]:
+              for node in soup.find_all(tag):
+                  v=node.get(attr)
+                  if v:
+                      refs.append((tag,attr,v,urljoin('https://magicoffice-preview-v2.vercel.app/',v)))
+          for row in refs[:100]:
+              print('\t'.join(row))
+          Path('/tmp/refs.json').write_text(json.dumps(refs,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+
+          echo '=== FETCH EACH LOCAL ASSET ==='
+          python - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          refs=json.loads(Path('/tmp/refs.json').read_text())
+          seen=set()
+          for tag,attr,raw,url in refs:
+              if not url.startswith('https://magicoffice-preview-v2.vercel.app/'):
+                  continue
+              if url in seen: continue
+              seen.add(url)
+              cmd=['curl','-sSLo','/tmp/asset.bin','-D','/tmp/asset.headers','--compressed','-A','Mozilla/5.0 (Linux; Android 15; wv) AppleWebKit/537.36 Chrome/139 Mobile Safari/537.36',url+'?assetdiag=1' if '?' not in url else url+'&assetdiag=1']
+              r=subprocess.run(cmd)
+              headers=Path('/tmp/asset.headers').read_text(errors='replace').replace('\r','')
+              status='?'; ct='?'; length=Path('/tmp/asset.bin').stat().st_size if Path('/tmp/asset.bin').exists() else -1
+              for line in headers.splitlines():
+                  if line.startswith('HTTP/'): status=line
+                  if line.lower().startswith('content-type:'): ct=line.split(':',1)[1].strip()
+              print(f'{status}\t{ct}\t{length}\t{raw}\t{url}')
+          PY
+
+          echo '=== CSS FIRST BYTES ==='
+          curl -sSL --compressed -A "$UA" "$SITE/assets/css/styles.v1.3.11.css?diag=$(date +%s)" | head -c 500 | xxd
+
+          echo '=== JS FIRST BYTES ==='
+          curl -sSL --compressed -A "$UA" "$SITE/assets/js/app.v1.3.11.js?diag=$(date +%s)" | head -c 500 | xxd
+
+          echo '=== DONE ==='
