@@ -1,0 +1,275 @@
+name: Verify MagicOffice emergency v1.5.6.4 preview
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/verify-emergency-v1564-preview.yml'
+
+permissions:
+  contents: read
+
+env:
+  TARGET_URL: https://magicoffice-emergency-v1564-test.vercel.app/
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright Chromium
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Verify Android Chrome and Threads WebView rendering
+        shell: bash
+        run: |
+          cat > verify.mjs <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import { chromium } from 'playwright';
+
+          const TARGET_URL = process.env.TARGET_URL;
+          const cases = [
+            {
+              name: 'android-chrome',
+              ua: 'Mozilla/5.0 (Linux; Android 15; Pixel 9 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'
+            },
+            {
+              name: 'threads-android-webview',
+              ua: 'Mozilla/5.0 (Linux; Android 15; SM-S9280 Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/139.0.0.0 Mobile Safari/537.36 [FB_IAB/Orca-Android;FBAV/475.0.0.0.0;]'
+            }
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          const report = {
+            target: TARGET_URL,
+            generatedAt: new Date().toISOString(),
+            cases: [],
+            allPassed: false
+          };
+
+          try {
+            for (const testCase of cases) {
+              const context = await browser.newContext({
+                userAgent: testCase.ua,
+                viewport: { width: 390, height: 844 },
+                screen: { width: 390, height: 844 },
+                deviceScaleFactor: 2,
+                isMobile: true,
+                hasTouch: true,
+                locale: 'zh-TW',
+                timezoneId: 'Asia/Taipei',
+                serviceWorkers: 'block'
+              });
+              const page = await context.newPage();
+              page.setDefaultTimeout(30000);
+              page.setDefaultNavigationTimeout(120000);
+
+              const consoleErrors = [];
+              const pageErrors = [];
+              const failedLocalRequests = [];
+              page.on('console', msg => {
+                if (msg.type() === 'error') consoleErrors.push(msg.text());
+              });
+              page.on('pageerror', error => pageErrors.push(String(error?.stack || error)));
+              page.on('requestfailed', request => {
+                if (request.url().startsWith(TARGET_URL)) {
+                  failedLocalRequests.push({ url: request.url(), error: request.failure()?.errorText || 'unknown' });
+                }
+              });
+
+              let response = null;
+              let executionError = '';
+              let state = {};
+              let mibao = {};
+
+              try {
+                response = await page.goto(`${TARGET_URL}?mobileVerify=${Date.now()}-${testCase.name}`, {
+                  waitUntil: 'domcontentloaded',
+                  timeout: 120000
+                });
+
+                await page.evaluate(() => {
+                  for (const image of document.images) {
+                    image.loading = 'eager';
+                    image.decoding = 'sync';
+                  }
+                });
+
+                const documentHeight = await page.evaluate(() => Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
+                for (let y = 0; y <= documentHeight; y += 700) {
+                  await page.evaluate(position => window.scrollTo(0, position), y);
+                  await page.waitForTimeout(60);
+                }
+                await page.evaluate(() => window.scrollTo(0, 0));
+                await page.waitForTimeout(2500);
+
+                state = await page.evaluate(() => {
+                  const bodyStyle = getComputedStyle(document.body);
+                  const header = document.querySelector('.site-header');
+                  const hero = document.querySelector('.hero');
+                  const firstLink = document.querySelector('a');
+                  const firstLinkStyle = firstLink ? getComputedStyle(firstLink) : null;
+                  const images = [...document.images].map(image => ({
+                    alt: image.alt,
+                    srcPrefix: image.currentSrc.slice(0, 48),
+                    complete: image.complete,
+                    naturalWidth: image.naturalWidth,
+                    naturalHeight: image.naturalHeight,
+                    clientWidth: image.clientWidth,
+                    clientHeight: image.clientHeight
+                  }));
+                  const brokenImages = images.filter(image => !image.complete || image.naturalWidth <= 0 || image.naturalHeight <= 0);
+                  const text = document.body.innerText;
+                  return {
+                    title: document.title,
+                    readyState: document.readyState,
+                    version: document.body.getAttribute('data-site-version') || document.documentElement.getAttribute('data-site-version'),
+                    bodyBackground: bodyStyle.backgroundColor,
+                    bodyColor: bodyStyle.color,
+                    bodyFontFamily: bodyStyle.fontFamily,
+                    headerDisplay: header ? getComputedStyle(header).display : '',
+                    headerPosition: header ? getComputedStyle(header).position : '',
+                    heroDisplay: hero ? getComputedStyle(hero).display : '',
+                    imageCount: images.length,
+                    loadedImageCount: images.length - brokenImages.length,
+                    brokenImages,
+                    externalStylesheets: [...document.querySelectorAll('link[rel~="stylesheet"][href]')].map(node => node.href),
+                    externalScripts: [...document.querySelectorAll('script[src]')].map(node => node.src),
+                    inlineStyleCount: document.querySelectorAll('style').length,
+                    inlineScriptCount: [...document.scripts].filter(script => !script.src && script.textContent.trim()).length,
+                    viewportWidth: window.innerWidth,
+                    viewportHeight: window.innerHeight,
+                    scrollWidth: document.documentElement.scrollWidth,
+                    rawBlueLinkAppearance: Boolean(firstLinkStyle && firstLinkStyle.color === 'rgb(0, 0, 238)' && firstLinkStyle.textDecorationLine.includes('underline')),
+                    hasBrand: text.includes('魔幻姶仕社'),
+                    hasRoster: text.includes('姶仕名錄'),
+                    hasSchedule: text.includes('本週出勤'),
+                    hasEvents: text.includes('中秋月宴') && text.includes('柚子 9/19 生誕') && text.includes('香檳累積贈禮'),
+                    hasLineFlow: text.includes('退款／訂位取消與異動'),
+                    hasMobileShortcuts: ['姶仕名錄','本週出勤','線上購拍','活動快報','服務價目','立即預約'].every(value => text.includes(value))
+                  };
+                });
+
+                const card = page.locator('.cast-card[data-profile="mibao"]').first();
+                if (await card.count()) {
+                  await card.evaluate(element => element.click());
+                  await page.waitForTimeout(1000);
+                  mibao = await page.evaluate(() => {
+                    const dialog = document.querySelector('#profile-dialog');
+                    const content = document.querySelector('#profile-content');
+                    const image = content?.querySelector('img');
+                    return {
+                      cardFound: true,
+                      dialogOpen: Boolean(dialog?.open || dialog?.hasAttribute('open')),
+                      heading: content?.querySelector('h2')?.textContent?.trim() || '',
+                      imageLoaded: Boolean(image && image.complete && image.naturalWidth > 0 && image.naturalHeight > 0),
+                      imageWidth: image?.naturalWidth || 0,
+                      imageHeight: image?.naturalHeight || 0,
+                      imageSrcPrefix: image?.currentSrc?.slice(0, 48) || ''
+                    };
+                  });
+                  await page.evaluate(() => document.querySelector('#profile-dialog')?.close?.()).catch(() => {});
+                } else {
+                  mibao = { cardFound: false, dialogOpen: false, imageLoaded: false, imageWidth: 0, imageHeight: 0 };
+                }
+
+                await page.evaluate(() => window.scrollTo(0, 0));
+                await page.screenshot({ path: `${testCase.name}-top.png`, fullPage: false });
+                await page.screenshot({ path: `${testCase.name}-full.png`, fullPage: true });
+              } catch (error) {
+                executionError = String(error?.stack || error);
+              }
+
+              const checks = {
+                noExecutionError: !executionError,
+                http200: response?.status() === 200,
+                correctVersion: state.version === '1.5.6.4-emergency-micro',
+                styledBody: Boolean(state.bodyBackground && !['rgba(0, 0, 0, 0)', 'rgb(255, 255, 255)'].includes(state.bodyBackground) && state.bodyFontFamily),
+                styledHeader: Boolean(state.headerDisplay && state.headerDisplay !== 'inline'),
+                heroVisible: Boolean(state.heroDisplay && state.heroDisplay !== 'none'),
+                notRawHtml: state.rawBlueLinkAppearance === false,
+                inlineCss: Number(state.inlineStyleCount) >= 3,
+                inlineJs: Number(state.inlineScriptCount) >= 3,
+                noExternalCss: Array.isArray(state.externalStylesheets) && state.externalStylesheets.length === 0,
+                noExternalJs: Array.isArray(state.externalScripts) && state.externalScripts.length === 0,
+                imagesPresent: Number(state.imageCount) >= 40,
+                allImagesLoaded: Array.isArray(state.brokenImages) && state.brokenImages.length === 0,
+                responsiveWidth: Number(state.scrollWidth) <= Number(state.viewportWidth) + 2,
+                contentPreserved: state.hasBrand && state.hasRoster && state.hasSchedule && state.hasEvents && state.hasLineFlow && state.hasMobileShortcuts,
+                mibaoCard: mibao.cardFound === true,
+                mibaoDialog: mibao.dialogOpen === true,
+                mibaoImage: mibao.imageLoaded === true && mibao.imageWidth === 600 && mibao.imageHeight === 800,
+                noFailedLocalRequests: failedLocalRequests.length === 0,
+                noPageErrors: pageErrors.length === 0
+              };
+              const failedChecks = Object.entries(checks).filter(([, pass]) => !pass).map(([key]) => key);
+
+              report.cases.push({
+                name: testCase.name,
+                userAgent: testCase.ua,
+                response: { status: response?.status() || 0, url: response?.url() || '' },
+                state,
+                mibao,
+                executionError,
+                consoleErrors,
+                pageErrors,
+                failedLocalRequests,
+                checks,
+                failedChecks,
+                passed: failedChecks.length === 0
+              });
+
+              await context.close();
+            }
+          } finally {
+            await browser.close();
+          }
+
+          report.allPassed = report.cases.length === cases.length && report.cases.every(item => item.passed);
+          const provisional = Buffer.from(JSON.stringify(report, null, 2));
+          report.sha256 = crypto.createHash('sha256').update(provisional).digest('hex');
+          fs.writeFileSync('emergency-preview-report.json', JSON.stringify(report, null, 2));
+          console.log('MAGICOFFICE_EMERGENCY_PREVIEW_REPORT', JSON.stringify({
+            allPassed: report.allPassed,
+            cases: report.cases.map(item => ({
+              name: item.name,
+              passed: item.passed,
+              failedChecks: item.failedChecks,
+              status: item.response.status,
+              version: item.state.version,
+              bodyBackground: item.state.bodyBackground,
+              imageCount: item.state.imageCount,
+              loadedImageCount: item.state.loadedImageCount,
+              brokenImageCount: item.state.brokenImages?.length,
+              viewportWidth: item.state.viewportWidth,
+              scrollWidth: item.state.scrollWidth,
+              mibao: item.mibao,
+              pageErrors: item.pageErrors,
+              failedLocalRequests: item.failedLocalRequests
+            }))
+          }));
+          if (!report.allPassed) process.exit(1);
+          JS
+
+          node verify.mjs
+
+      - name: Upload verification report and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_emergency_v1564_preview_verification
+          path: |
+            emergency-preview-report.json
+            android-chrome-top.png
+            android-chrome-full.png
+            threads-android-webview-top.png
+            threads-android-webview-full.png
+          if-no-files-found: warn
+          retention-days: 14
