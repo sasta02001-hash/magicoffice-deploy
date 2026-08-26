@@ -1,0 +1,285 @@
+name: Verify MagicOffice official mobile final
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/verify-official-mobile-final.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Verify official website in mobile and Threads WebView modes
+        shell: bash
+        run: |
+          cat > verify-official-mobile.mjs <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import { chromium } from 'playwright';
+
+          const SITE = 'https://magicoffice-preview-v2.vercel.app/';
+          const cases = [
+            {
+              name: 'android_chrome',
+              ua: 'Mozilla/5.0 (Linux; Android 15; SM-S9280 Build/AP3A.240905.015.A2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'
+            },
+            {
+              name: 'threads_android_webview',
+              ua: 'Mozilla/5.0 (Linux; Android 15; SM-S9280 Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/139.0.0.0 Mobile Safari/537.36 [FB_IAB/Orca-Android;FBAV/475.0.0.0.0;]'
+            }
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          const report = {
+            site: SITE,
+            generatedAt: new Date().toISOString(),
+            cases: [],
+            allPassed: false
+          };
+
+          for (const testCase of cases) {
+            const context = await browser.newContext({
+              userAgent: testCase.ua,
+              viewport: { width: 390, height: 844 },
+              deviceScaleFactor: 1,
+              isMobile: true,
+              hasTouch: true,
+              locale: 'zh-TW',
+              timezoneId: 'Asia/Taipei',
+              serviceWorkers: 'block'
+            });
+            const page = await context.newPage();
+            page.setDefaultTimeout(30000);
+            page.setDefaultNavigationTimeout(120000);
+
+            const consoleErrors = [];
+            const pageErrors = [];
+            const failedRequests = [];
+            page.on('console', message => {
+              if (message.type() === 'error') consoleErrors.push(message.text());
+            });
+            page.on('pageerror', error => pageErrors.push(String(error?.stack || error)));
+            page.on('requestfailed', request => {
+              const url = request.url();
+              if (url.startsWith('https://magicoffice-preview-v2.vercel.app/')) {
+                failedRequests.push({ url, error: request.failure()?.errorText || 'unknown' });
+              }
+            });
+
+            const response = await page.goto(`${SITE}?final-mobile-verify=${Date.now()}-${testCase.name}`, {
+              waitUntil: 'domcontentloaded',
+              timeout: 120000
+            });
+            await page.waitForTimeout(7000);
+
+            const state = await page.evaluate(() => {
+              const bodyStyle = getComputedStyle(document.body);
+              const header = document.querySelector('.site-header');
+              const headerStyle = header ? getComputedStyle(header) : null;
+              const hero = document.querySelector('.hero');
+              const heroStyle = hero ? getComputedStyle(hero) : null;
+              const images = [...document.images].map(image => ({
+                alt: image.alt,
+                srcPrefix: image.currentSrc.slice(0, 80),
+                complete: image.complete,
+                naturalWidth: image.naturalWidth,
+                naturalHeight: image.naturalHeight,
+                clientWidth: image.clientWidth,
+                clientHeight: image.clientHeight
+              }));
+              const brokenImages = images.filter(image => !image.complete || image.naturalWidth <= 0 || image.naturalHeight <= 0);
+              const localStylesheets = [...document.querySelectorAll('link[rel~="stylesheet"][href]')]
+                .map(node => node.getAttribute('href'))
+                .filter(Boolean);
+              const externalScripts = [...document.querySelectorAll('script[src]')]
+                .map(node => node.getAttribute('src'))
+                .filter(Boolean);
+              const inlineStyleCount = document.querySelectorAll('style').length;
+              const inlineScriptCount = [...document.scripts].filter(script => !script.src && script.textContent.trim()).length;
+              const rawBlueLinkAppearance = (() => {
+                const link = document.querySelector('a');
+                if (!link) return false;
+                const style = getComputedStyle(link);
+                return style.color === 'rgb(0, 0, 238)' && style.textDecorationLine.includes('underline');
+              })();
+              const text = document.body.innerText;
+              return {
+                title: document.title,
+                readyState: document.readyState,
+                version: document.documentElement.getAttribute('data-site-version'),
+                standaloneBuild: document.documentElement.getAttribute('data-standalone-build'),
+                bodyBackground: bodyStyle.backgroundColor,
+                bodyFontFamily: bodyStyle.fontFamily,
+                bodyColor: bodyStyle.color,
+                headerExists: Boolean(header),
+                headerDisplay: headerStyle?.display || '',
+                headerPosition: headerStyle?.position || '',
+                heroExists: Boolean(hero),
+                heroDisplay: heroStyle?.display || '',
+                imageCount: images.length,
+                loadedImageCount: images.length - brokenImages.length,
+                brokenImages,
+                localStylesheets,
+                externalScripts,
+                inlineStyleCount,
+                inlineScriptCount,
+                scrollWidth: document.documentElement.scrollWidth,
+                viewportWidth: window.innerWidth,
+                rawBlueLinkAppearance,
+                hasBrand: text.includes('魔幻姶仕社'),
+                hasRoster: text.includes('姶仕名錄'),
+                hasSchedule: text.includes('本週出勤'),
+                hasMidAutumn: text.includes('中秋月宴'),
+                hasYuzu: text.includes('柚子 9/19 生誕'),
+                hasChampagne: text.includes('香檳累積贈禮'),
+                hasLinePolicy: text.includes('退款／訂位取消與異動'),
+                hasMobileShortcuts: ['姶仕名錄','本週出勤','線上購拍','活動快報','服務價目','立即預約'].every(value => text.includes(value))
+              };
+            });
+
+            let mibao = {
+              cardFound: false,
+              dialogVisible: false,
+              imageLoaded: false,
+              naturalWidth: 0,
+              naturalHeight: 0
+            };
+            const card = page.locator('.cast-card[data-profile="mibao"]').first();
+            if (await card.count()) {
+              mibao.cardFound = true;
+              await card.scrollIntoViewIfNeeded();
+              await card.click();
+              await page.waitForTimeout(1000);
+              mibao = await page.evaluate(() => {
+                const content = document.querySelector('#profile-content');
+                const dialog = document.querySelector('#profile-dialog');
+                const image = content?.querySelector('img');
+                return {
+                  cardFound: true,
+                  dialogVisible: Boolean(dialog && (dialog.open || getComputedStyle(dialog).display !== 'none')),
+                  imageLoaded: Boolean(image && image.complete && image.naturalWidth > 0),
+                  naturalWidth: image?.naturalWidth || 0,
+                  naturalHeight: image?.naturalHeight || 0,
+                  title: content?.querySelector('h2')?.textContent?.trim() || ''
+                };
+              });
+              await page.keyboard.press('Escape').catch(() => {});
+            }
+
+            await page.screenshot({
+              path: `${testCase.name}-top.png`,
+              fullPage: false
+            });
+            await page.screenshot({
+              path: `${testCase.name}-full.png`,
+              fullPage: true
+            });
+
+            const checks = {
+              http200: response?.status() === 200,
+              expectedVersion: state.version === '1.5.7-html',
+              completeStandalone: state.standaloneBuild === 'complete-v1.0',
+              styledBody: state.bodyBackground !== 'rgba(0, 0, 0, 0)' && state.bodyFontFamily.length > 0,
+              styledHeader: state.headerExists && state.headerDisplay !== 'inline',
+              heroRendered: state.heroExists && state.heroDisplay !== 'none',
+              notRawHtmlAppearance: !state.rawBlueLinkAppearance,
+              inlineCssPresent: state.inlineStyleCount >= 1,
+              inlineJsPresent: state.inlineScriptCount >= 3,
+              noExternalLocalCss: state.localStylesheets.length === 0,
+              noExternalLocalScripts: state.externalScripts.length === 0,
+              imagesPresent: state.imageCount >= 20,
+              allImagesLoaded: state.brokenImages.length === 0,
+              responsiveWidth: state.scrollWidth <= state.viewportWidth + 2,
+              brandContent: state.hasBrand,
+              rosterContent: state.hasRoster,
+              scheduleContent: state.hasSchedule,
+              eventsContent: state.hasMidAutumn && state.hasYuzu && state.hasChampagne,
+              lineFlowContent: state.hasLinePolicy,
+              mobileShortcuts: state.hasMobileShortcuts,
+              mibaoCard: mibao.cardFound,
+              mibaoDialog: mibao.dialogVisible,
+              mibaoImage: mibao.imageLoaded && mibao.naturalWidth === 600 && mibao.naturalHeight === 800,
+              noLocalRequestFailures: failedRequests.length === 0,
+              noPageErrors: pageErrors.length === 0
+            };
+            const failedChecks = Object.entries(checks).filter(([, pass]) => !pass).map(([name]) => name);
+
+            report.cases.push({
+              name: testCase.name,
+              userAgent: testCase.ua,
+              response: {
+                status: response?.status() || 0,
+                url: response?.url() || '',
+                headers: response ? await response.allHeaders() : {}
+              },
+              state,
+              mibao,
+              consoleErrors,
+              pageErrors,
+              failedRequests,
+              checks,
+              failedChecks,
+              passed: failedChecks.length === 0
+            });
+            await context.close();
+          }
+
+          await browser.close();
+          report.allPassed = report.cases.every(item => item.passed);
+          const reportBytes = Buffer.from(JSON.stringify(report, null, 2));
+          report.sha256 = crypto.createHash('sha256').update(reportBytes).digest('hex');
+          fs.writeFileSync('official-mobile-final-report.json', JSON.stringify(report, null, 2));
+          console.log('OFFICIAL_MOBILE_FINAL_REPORT', JSON.stringify({
+            allPassed: report.allPassed,
+            cases: report.cases.map(item => ({
+              name: item.name,
+              passed: item.passed,
+              failedChecks: item.failedChecks,
+              status: item.response.status,
+              imageCount: item.state.imageCount,
+              brokenImageCount: item.state.brokenImages.length,
+              inlineStyleCount: item.state.inlineStyleCount,
+              inlineScriptCount: item.state.inlineScriptCount,
+              scrollWidth: item.state.scrollWidth,
+              viewportWidth: item.state.viewportWidth,
+              bodyBackground: item.state.bodyBackground,
+              mibao: item.mibao,
+              pageErrors: item.pageErrors,
+              failedRequests: item.failedRequests
+            }))
+          }));
+          if (!report.allPassed) process.exit(1);
+          JS
+
+          node verify-official-mobile.mjs
+
+      - name: Upload final mobile verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_official_mobile_final_verification
+          path: |
+            official-mobile-final-report.json
+            android_chrome-top.png
+            android_chrome-full.png
+            threads_android_webview-top.png
+            threads_android_webview-full.png
+          if-no-files-found: warn
+          retention-days: 14
