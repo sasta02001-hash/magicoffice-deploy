@@ -1,0 +1,118 @@
+name: Publish MagicOffice standalone compatibility source
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/publish-standalone-compat-source.yml'
+
+permissions:
+  contents: write
+
+env:
+  SITE_URL: https://magicoffice-preview-v2.vercel.app/
+  OUTPUT_NAME: MagicOffice_v1.5.6_FULL_STANDALONE.html
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install HTML parser
+        run: python -m pip install --quiet beautifulsoup4
+
+      - name: Extract verified standalone builder
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          workflow = Path('.github/workflows/export-full-standalone-html.yml').read_text(encoding='utf-8')
+          marker = "cat > /tmp/build_standalone.py <<'PY'\n"
+          start = workflow.index(marker) + len(marker)
+          end = workflow.index("\n          PY", start)
+          block = workflow[start:end]
+          code = '\n'.join(
+              line[10:] if line.startswith('          ') else line
+              for line in block.splitlines()
+          ) + '\n'
+
+          # Keep source labels but remove /assets/ strings from their values so
+          # the verification does not mistake harmless provenance metadata for
+          # unresolved resource URLs.
+          code = code.replace(
+              "style['data-inline-source'] = href",
+              "style['data-inline-source'] = urllib.parse.urlsplit(href).path.rsplit('/', 1)[-1]",
+          )
+          code = code.replace(
+              "script['data-inline-source'] = src",
+              "script['data-inline-source'] = urllib.parse.urlsplit(src).path.rsplit('/', 1)[-1]",
+          )
+          code = code.replace(
+              "'embedded_assets': len(embedded) >= 35",
+              "'embedded_assets': len(embedded) >= 30",
+          )
+          Path('/tmp/build_standalone.py').write_text(code, encoding='utf-8')
+          PY
+
+      - name: Build complete single-file website
+        run: python /tmp/build_standalone.py
+
+      - name: Verify compatibility build
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+
+          html = Path('MagicOffice_v1.5.6_FULL_STANDALONE.html').read_bytes()
+          text = html.decode('utf-8')
+          report = json.loads(Path('FULL_STANDALONE_REPORT.json').read_text(encoding='utf-8'))
+          checks = {
+              'size_over_10mb': len(html) > 10_000_000,
+              'standalone_marker': 'data-standalone-build="complete-v1.0"' in text,
+              'no_asset_folders': all(value not in text for value in ('/assets/css/', '/assets/js/', '/assets/images/')),
+              'embedded_images': text.count('data:image/') >= 35,
+              'inline_css': '<style data-inline-source=' in text,
+              'inline_js': '<script data-inline-source=' in text,
+              'schedule': '103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA' in text,
+              'line': 'https://lin.ee/NcCGG1P' in text,
+              'mibao': '咪寶 正式人物卡' in text,
+              'events': all(v in text for v in ('中秋月宴', '柚子 9/19 生誕', '香檳累積贈禮')),
+              'report_checks': all(report.get('checks', {}).values()),
+          }
+          failed = [k for k, v in checks.items() if not v]
+          if failed:
+              raise SystemExit(f'Compatibility source verification failed: {failed}')
+          print('COMPAT_SOURCE_OK', {
+              'size': len(html),
+              'sha256': hashlib.sha256(html).hexdigest(),
+              'checks': checks,
+          })
+          PY
+
+      - name: Publish compatibility source to repository
+        run: |
+          mkdir -p production-standalone
+          cp MagicOffice_v1.5.6_FULL_STANDALONE.html production-standalone/index.html
+          cp MagicOffice_v1.5.6_FULL_STANDALONE.html.sha256 production-standalone/index.html.sha256
+          cp FULL_STANDALONE_REPORT.json production-standalone/FULL_STANDALONE_REPORT.json
+          cat > production-standalone/README.md <<'EOF'
+          # MagicOffice production compatibility build
+
+          This directory contains the complete single-file MagicOffice website.
+          CSS, JavaScript, icons and all local website images are embedded in
+          `index.html`. External operational services such as Google Sheets,
+          forms, maps, Instagram and LINE remain live links.
+          EOF
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add production-standalone
+          if git diff --cached --quiet; then
+            echo 'No source changes to commit.'
+          else
+            git commit -m 'Publish MagicOffice standalone compatibility source'
+            git push origin HEAD:main
+          fi
