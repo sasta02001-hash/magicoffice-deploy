@@ -1,0 +1,77 @@
+name: Publish known-good MagicOffice full recovery source
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/publish-known-good-full-recovery.yml'
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the previously verified complete standalone artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: MagicOffice_v1.5.6_FULL_STANDALONE_HTML
+          path: recovered-artifact
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: sasta02001-hash/magicoffice-deploy
+          run-id: 32955866954
+
+      - name: Verify and publish immutable recovery source
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE='recovered-artifact/MagicOffice_v1.5.6_FULL_STANDALONE.html'
+          EXPECTED_SIZE='14609242'
+          EXPECTED_SHA='ea08c6f4b74293f8bb29e2f8eae42ede564ed197de054b4d4bbf5d97961e08e4'
+
+          test -f "$SOURCE"
+          ACTUAL_SIZE="$(wc -c < "$SOURCE" | tr -d ' ')"
+          ACTUAL_SHA="$(sha256sum "$SOURCE" | awk '{print $1}')"
+          test "$ACTUAL_SIZE" = "$EXPECTED_SIZE"
+          test "$ACTUAL_SHA" = "$EXPECTED_SHA"
+
+          grep -q 'data-standalone-build="complete-v1.0"' "$SOURCE"
+          grep -q '魔幻姶仕社' "$SOURCE"
+          grep -q '本週出勤' "$SOURCE"
+          grep -q '103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA' "$SOURCE"
+          grep -q '退款／訂位取消與異動' "$SOURCE"
+          grep -q 'https://lin.ee/NcCGG1P' "$SOURCE"
+          grep -q '中秋月宴' "$SOURCE"
+          grep -q '柚子 9/19 生誕' "$SOURCE"
+          grep -q '香檳累積贈禮' "$SOURCE"
+          grep -q '咪寶 正式人物卡' "$SOURCE"
+
+          mkdir -p recovery-known-good-v156
+          cp "$SOURCE" recovery-known-good-v156/index.html
+          cat > recovery-known-good-v156/RECOVERY_SOURCE.json <<JSON
+          {
+            "sourceWorkflowRun": 32955866954,
+            "sourceArtifact": "MagicOffice_v1.5.6_FULL_STANDALONE_HTML",
+            "size": $ACTUAL_SIZE,
+            "sha256": "$ACTUAL_SHA",
+            "standalone": true,
+            "purpose": "Recover official website from corrupted CSS/JS/image deployment"
+          }
+          JSON
+
+          git config user.name 'MagicOffice Recovery Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add recovery-known-good-v156/index.html recovery-known-good-v156/RECOVERY_SOURCE.json
+          if git diff --cached --quiet; then
+            echo 'Known-good recovery source already published.'
+          else
+            git commit -m 'Publish verified known-good MagicOffice recovery source'
+            git push origin HEAD:main
+          fi
+
+          echo "KNOWN_GOOD_RECOVERY_SOURCE_OK size=$ACTUAL_SIZE sha=$ACTUAL_SHA"
