@@ -1,0 +1,70 @@
+name: Publish optimized MagicOffice standalone source
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/publish-optimized-standalone.yml'
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download verified standalone artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: MagicOffice_v1.5.6_FULL_STANDALONE_HTML
+          path: downloaded
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: sasta02001-hash/magicoffice-deploy
+          run-id: 32955866954
+
+      - name: Verify and publish optimized source
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE='downloaded/MagicOffice_v1.5.6_FULL_STANDALONE.html'
+          EXPECTED_SHA='ea08c6f4b74293f8bb29e2f8eae42ede564ed197de054b4d4bbf5d97961e08e4'
+          ACTUAL_SHA="$(sha256sum "$SOURCE" | awk '{print $1}')"
+          SIZE="$(wc -c < "$SOURCE")"
+          test "$ACTUAL_SHA" = "$EXPECTED_SHA"
+          test "$SIZE" -eq 14609242
+          grep -q 'data-standalone-build="complete-v1.0"' "$SOURCE"
+          grep -q '103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA' "$SOURCE"
+          grep -q 'https://lin.ee/NcCGG1P' "$SOURCE"
+          if grep -Eq '/assets/(css|js|images)/' "$SOURCE"; then
+            echo 'Unresolved local asset path detected.' >&2
+            exit 1
+          fi
+
+          mkdir -p production-standalone-optimized
+          cp "$SOURCE" production-standalone-optimized/index.html
+          printf '%s  index.html\n' "$ACTUAL_SHA" > production-standalone-optimized/index.html.sha256
+          cp downloaded/FULL_STANDALONE_REPORT.json production-standalone-optimized/FULL_STANDALONE_REPORT.json
+          cat > production-standalone-optimized/README.md <<'EOF'
+          # MagicOffice optimized standalone compatibility source
+
+          Verified single-file build intended for embedded mobile browsers.
+          Local CSS, JavaScript, icons and website images are embedded in one
+          HTML file. External operational services remain live links.
+          EOF
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add production-standalone-optimized
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Publish optimized standalone MagicOffice source'
+            git push origin HEAD:main
+          fi
+
+          echo "OPTIMIZED_SOURCE_OK size=$SIZE sha256=$ACTUAL_SHA"
