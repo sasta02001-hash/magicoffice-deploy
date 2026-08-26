@@ -1,0 +1,116 @@
+name: Test raw standalone restore preview
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/test-raw-standalone-restore-preview.yml'
+
+permissions:
+  contents: read
+
+env:
+  PREVIEW_URL: https://magicoffice-x66e81ylt-magicoffice.vercel.app/
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Test Android Chrome and Threads WebView
+        shell: bash
+        run: |
+          cat > test.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const url = process.env.PREVIEW_URL;
+          const profiles = [
+            ['android_chrome','Mozilla/5.0 (Linux; Android 15; Pixel 9 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'],
+            ['threads_webview','Mozilla/5.0 (Linux; Android 15; SM-S9280; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/139.0.0.0 Mobile Safari/537.36 [FB_IAB/Orca-Android;FBAV/475.0.0.0.0;]']
+          ];
+          const browser = await chromium.launch({ headless: true });
+          const results = [];
+          try {
+            for (const [name, userAgent] of profiles) {
+              const context = await browser.newContext({
+                viewport:{width:390,height:844}, deviceScaleFactor:1, isMobile:true, hasTouch:true,
+                userAgent, locale:'zh-TW', timezoneId:'Asia/Taipei', serviceWorkers:'block'
+              });
+              const page = await context.newPage();
+              page.setDefaultNavigationTimeout(120000);
+              const pageErrors=[]; const consoleErrors=[]; const failed=[];
+              page.on('pageerror',e=>pageErrors.push(String(e)));
+              page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
+              page.on('requestfailed',r=>{if(r.url().startsWith('https://magicoffice-x66e81ylt-magicoffice.vercel.app/'))failed.push({url:r.url(),error:r.failure()?.errorText})});
+              const response=await page.goto(`${url}?test=${name}-${Date.now()}`,{waitUntil:'domcontentloaded',timeout:120000});
+              await page.waitForTimeout(7000);
+              const height=await page.evaluate(()=>document.documentElement.scrollHeight);
+              for(let y=0;y<height;y+=700){await page.evaluate(y=>scrollTo(0,y),y);await page.waitForTimeout(40)}
+              await page.evaluate(()=>scrollTo(0,0)); await page.waitForTimeout(1000);
+              const state=await page.evaluate(()=>{
+                const body=getComputedStyle(document.body); const imgs=[...document.images];
+                const broken=imgs.filter(i=>i.complete&&i.naturalWidth===0).map(i=>({alt:i.alt,src:i.currentSrc.slice(0,100)}));
+                const text=document.body.innerText;
+                return {
+                  version:document.documentElement.getAttribute('data-site-version'),
+                  standalone:document.documentElement.getAttribute('data-standalone-build'),
+                  background:body.backgroundColor,font:body.fontFamily,color:body.color,
+                  scrollWidth:document.documentElement.scrollWidth,viewportWidth:innerWidth,
+                  styleCount:document.querySelectorAll('style').length,
+                  externalCss:[...document.querySelectorAll('link[rel~="stylesheet"]')].map(x=>x.href),
+                  externalJs:[...document.querySelectorAll('script[src]')].map(x=>x.src),
+                  imageCount:imgs.length,loadedImages:imgs.filter(i=>i.naturalWidth>0).length,broken,
+                  rawBlue:(()=>{const a=document.querySelector('a');if(!a)return false;const s=getComputedStyle(a);return s.color==='rgb(0, 0, 238)'&&s.textDecorationLine.includes('underline')})(),
+                  brand:text.includes('魔幻姶仕社'),schedule:text.includes('本週出勤'),line:text.includes('退款／訂位取消與異動'),
+                  events:text.includes('中秋月宴')&&text.includes('柚子 9/19 生誕')&&text.includes('香檳累積贈禮'),
+                  menu:['姶仕名錄','本週出勤','線上購拍','活動快報','服務價目','立即預約'].every(v=>text.includes(v))
+                }
+              });
+              let mibao={found:false,open:false,width:0,height:0,title:''};
+              const card=page.locator('.cast-card[data-profile="mibao"]').first();
+              if(await card.count()){
+                mibao.found=true; await card.evaluate(el=>el.click()); await page.waitForTimeout(800);
+                mibao=await page.evaluate(()=>{const d=document.querySelector('#profile-dialog'),i=document.querySelector('#profile-content img');return{found:true,open:Boolean(d?.open),width:i?.naturalWidth||0,height:i?.naturalHeight||0,title:document.querySelector('#profile-content h2')?.textContent||''}})
+              }
+              await page.screenshot({path:`${name}.png`,fullPage:false});
+              const checks={
+                http:response?.status()===200,version:state.version==='1.5.6-html',standalone:state.standalone==='complete-v1.0',
+                styled:state.background!=='rgba(0, 0, 0, 0)'&&!state.rawBlue,responsive:state.scrollWidth<=state.viewportWidth+2,
+                noPageErrors:pageErrors.length===0,noLocalFailures:failed.length===0,
+                images:state.imageCount>=20&&state.loadedImages>=20&&state.broken.length===0,
+                content:state.brand&&state.schedule&&state.line&&state.events&&state.menu,
+                mibao:mibao.found&&mibao.open&&mibao.width===600&&mibao.height===800&&mibao.title.includes('咪寶')
+              };
+              const failures=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);
+              results.push({name,responseStatus:response?.status(),state,mibao,pageErrors,consoleErrors,failed,checks,failures,passed:failures.length===0});
+              await context.close();
+            }
+          } finally { await browser.close(); }
+          fs.writeFileSync('report.json',JSON.stringify(results,null,2));
+          console.log('RAW_STANDALONE_PREVIEW_TEST',JSON.stringify(results.map(r=>({name:r.name,passed:r.passed,failures:r.failures,state:r.state,mibao:r.mibao,pageErrors:r.pageErrors,failed:r.failed}))));
+          if(!results.every(r=>r.passed))process.exit(1);
+          JS
+          node test.mjs
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw-standalone-restore-preview-test
+          path: |
+            report.json
+            android_chrome.png
+            threads_webview.png
+          if-no-files-found: warn
+          retention-days: 7
