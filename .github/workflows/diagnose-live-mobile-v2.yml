@@ -1,0 +1,244 @@
+name: Diagnose MagicOffice live mobile rendering v2
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/diagnose-live-mobile-v2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install parser
+        run: python -m pip install --quiet beautifulsoup4
+
+      - name: Inspect live homepage and assets without aborting
+        shell: bash
+        run: |
+          cat > /tmp/diagnose.py <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import mimetypes
+          import re
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          from bs4 import BeautifulSoup
+
+          SITE = 'https://magicoffice-preview-v2.vercel.app/'
+          ORIGIN = 'https://magicoffice-preview-v2.vercel.app'
+          UA = ('Mozilla/5.0 (Linux; Android 15; SM-S9280 Build/AP3A.240905.015.A2; wv) '
+                'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/139.0.0.0 '
+                'Mobile Safari/537.36 [FB_IAB/Orca-Android;FBAV/475.0.0.0.0;]')
+
+          explicit = [
+              '/assets/css/styles.v1.3.11.css',
+              '/assets/js/app.v1.3.11.js',
+              '/assets/js/schedule.v1.5.5.js',
+              '/assets/js/mibao-photo-override.v1.js',
+              '/assets/images/brand/logo-header.png',
+              '/assets/images/brand/logo-hero.png',
+              '/assets/images/brand/og-cover.jpg',
+              '/assets/images/roster/mibao.locked.v1.0.webp',
+              '/favicon.png',
+              '/apple-touch-icon.png',
+              '/site.webmanifest',
+          ]
+
+          def fetch(url: str) -> dict:
+              request = urllib.request.Request(
+                  url,
+                  headers={
+                      'User-Agent': UA,
+                      'Accept': '*/*',
+                      'Accept-Encoding': 'identity',
+                      'Cache-Control': 'no-cache, no-store',
+                      'Pragma': 'no-cache',
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(request, timeout=45) as response:
+                      data = response.read()
+                      status = getattr(response, 'status', response.getcode())
+                      headers = {k.lower(): v for k, v in response.headers.items()}
+                      final_url = response.geturl()
+                      error = None
+              except urllib.error.HTTPError as exc:
+                  data = exc.read()
+                  status = exc.code
+                  headers = {k.lower(): v for k, v in exc.headers.items()}
+                  final_url = exc.geturl()
+                  error = f'HTTPError: {exc}'
+              except Exception as exc:
+                  data = b''
+                  status = 0
+                  headers = {}
+                  final_url = url
+                  error = f'{type(exc).__name__}: {exc}'
+
+              content_type = headers.get('content-type', '').split(';', 1)[0].strip().lower()
+              first = data[:64]
+              lower = first.lstrip().lower()
+              starts_html = lower.startswith((b'<!doctype html', b'<html', b'<head', b'<body'))
+              return {
+                  'requested_url': url,
+                  'final_url': final_url,
+                  'status': status,
+                  'content_type': content_type,
+                  'content_length_header': headers.get('content-length'),
+                  'cache_control': headers.get('cache-control'),
+                  'x_content_type_options': headers.get('x-content-type-options'),
+                  'content_encoding': headers.get('content-encoding'),
+                  'size': len(data),
+                  'sha256': hashlib.sha256(data).hexdigest(),
+                  'first_64_hex': first.hex(),
+                  'first_160_text': first.decode('utf-8', errors='replace'),
+                  'starts_as_html': starts_html,
+                  'error': error,
+                  '_data': data,
+              }
+
+          home_url = SITE + f'?mobile_diag={int(time.time())}'
+          home = fetch(home_url)
+          Path('home.html').write_bytes(home.pop('_data'))
+
+          refs = set(explicit)
+          home_text = Path('home.html').read_text(encoding='utf-8', errors='replace')
+          if home['status'] == 200:
+              soup = BeautifulSoup(home_text, 'html.parser')
+              for tag, attr in (
+                  ('link', 'href'), ('script', 'src'), ('img', 'src'),
+                  ('source', 'src'), ('video', 'poster'), ('meta', 'content')
+              ):
+                  for node in soup.find_all(tag):
+                      value = node.get(attr)
+                      if not isinstance(value, str) or not value:
+                          continue
+                      absolute = urllib.parse.urljoin(SITE, value)
+                      parsed = urllib.parse.urlsplit(absolute)
+                      if f'{parsed.scheme}://{parsed.netloc}' == ORIGIN and (
+                          parsed.path.startswith('/assets/') or parsed.path in {
+                              '/favicon.png', '/apple-touch-icon.png', '/site.webmanifest'
+                          }
+                      ):
+                          refs.add(parsed.path)
+              for node in soup.find_all(srcset=True):
+                  for item in str(node.get('srcset')).split(','):
+                      value = item.strip().split()[0] if item.strip() else ''
+                      absolute = urllib.parse.urljoin(SITE, value)
+                      parsed = urllib.parse.urlsplit(absolute)
+                      if f'{parsed.scheme}://{parsed.netloc}' == ORIGIN and parsed.path.startswith('/assets/'):
+                          refs.add(parsed.path)
+
+          def expected_kind(path: str) -> str:
+              suffix = Path(path).suffix.lower()
+              if suffix == '.css': return 'css'
+              if suffix == '.js': return 'javascript'
+              if suffix in {'.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif', '.svg', '.ico'}: return 'image'
+              if suffix in {'.json', '.webmanifest'}: return 'json'
+              return 'other'
+
+          def magic_kind(data: bytes) -> str:
+              if data.startswith(b'\x89PNG\r\n\x1a\n'): return 'png'
+              if data.startswith(b'\xff\xd8\xff'): return 'jpeg'
+              if data.startswith(b'RIFF') and data[8:12] == b'WEBP': return 'webp'
+              if data.startswith(b'GIF8'): return 'gif'
+              stripped = data.lstrip().lower()
+              if stripped.startswith(b'<!doctype html') or stripped.startswith(b'<html'): return 'html'
+              if stripped.startswith(b'{') or stripped.startswith(b'['): return 'json/text'
+              return 'text/binary'
+
+          records = []
+          for asset_path in sorted(refs):
+              url = ORIGIN + asset_path + ('&' if '?' in asset_path else '?') + f'mobile_diag={int(time.time()*1000)}'
+              item = fetch(url)
+              data = item.pop('_data')
+              item['path'] = asset_path
+              item['expected_kind'] = expected_kind(asset_path)
+              item['magic_kind'] = magic_kind(data)
+
+              problems = []
+              if item['status'] != 200:
+                  problems.append(f'HTTP_{item["status"]}')
+              if item['starts_as_html'] and item['expected_kind'] != 'other':
+                  problems.append('HTML_RETURNED_FOR_ASSET')
+              ct = item['content_type']
+              kind = item['expected_kind']
+              if kind == 'css' and ct != 'text/css':
+                  problems.append(f'WRONG_MIME_{ct or "missing"}')
+              elif kind == 'javascript' and ct not in {'application/javascript', 'text/javascript', 'application/x-javascript'}:
+                  problems.append(f'WRONG_MIME_{ct or "missing"}')
+              elif kind == 'image' and not ct.startswith('image/'):
+                  problems.append(f'WRONG_MIME_{ct or "missing"}')
+              elif kind == 'json' and ct not in {'application/json', 'application/manifest+json'}:
+                  problems.append(f'WRONG_MIME_{ct or "missing"}')
+              if item['size'] == 0:
+                  problems.append('EMPTY')
+              item['problems'] = problems
+              records.append(item)
+
+          critical = {record['path']: record for record in records if record['path'] in explicit}
+          summary = {
+              'generated_at_epoch': int(time.time()),
+              'user_agent': UA,
+              'home': home,
+              'home_has_css_link': '/assets/css/styles.v1.3.11.css' in home_text,
+              'home_has_app_js': '/assets/js/app.v1.3.11.js' in home_text,
+              'home_has_logo': '/assets/images/brand/logo-header.png' in home_text,
+              'asset_count': len(records),
+              'problem_count': sum(bool(record['problems']) for record in records),
+              'problem_assets': [record for record in records if record['problems']],
+              'critical': critical,
+              'assets': records,
+          }
+          Path('diagnostic.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding='utf-8')
+
+          lines = [
+              f'HOME status={home["status"]} type={home["content_type"]} size={home["size"]} starts_html={home["starts_as_html"]}',
+              f'ASSETS total={len(records)} problems={summary["problem_count"]}',
+              '',
+              'CRITICAL ASSETS:',
+          ]
+          for path in explicit:
+              record = critical.get(path)
+              if not record:
+                  lines.append(f'MISSING FROM CHECK: {path}')
+                  continue
+              lines.append(
+                  f'{path} | status={record["status"]} | type={record["content_type"]} | '
+                  f'size={record["size"]} | magic={record["magic_kind"]} | '
+                  f'problems={record["problems"]}'
+              )
+          lines += ['', 'ALL PROBLEM ASSETS:']
+          for record in summary['problem_assets']:
+              lines.append(
+                  f'{record["path"]} | status={record["status"]} | type={record["content_type"]} | '
+                  f'size={record["size"]} | magic={record["magic_kind"]} | '
+                  f'final={record["final_url"]} | problems={record["problems"]}'
+              )
+          Path('summary.txt').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+          print('\n'.join(lines))
+          PY
+
+          python /tmp/diagnose.py || true
+
+      - name: Upload diagnostics even when resources are broken
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_mobile_diagnostic_v2
+          path: |
+            diagnostic.json
+            summary.txt
+            home.html
+          if-no-files-found: warn
+          retention-days: 7
