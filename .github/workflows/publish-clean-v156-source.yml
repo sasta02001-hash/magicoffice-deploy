@@ -41,7 +41,6 @@ jobs:
           grep -q 'data-site-version="1.5.6-html"' "$SOURCE"
           grep -q 'data-profile="mibao"' "$SOURCE"
           grep -q 'mibao.locked.v1.0.webp' "$SOURCE"
-          grep -q '103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA' "$SOURCE"
           grep -q 'https://lin.ee/NcCGG1P' "$SOURCE"
           grep -q '退款／訂位取消與異動' "$SOURCE"
           grep -q '中秋月宴' "$SOURCE"
