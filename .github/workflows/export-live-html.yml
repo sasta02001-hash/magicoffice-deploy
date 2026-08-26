@@ -1,0 +1,46 @@
+name: Export live MagicOffice HTML
+
+on:
+  push:
+    paths:
+      - .github/workflows/export-live-html.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download current production HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 5 --retry-delay 2 \
+            -A 'MagicOffice-GitHub-HTML-exporter' \
+            'https://magicoffice-preview-v2.vercel.app/?github-export=1' \
+            --output 'MagicOffice_v1.5.6_MiBao_LOCKED_Production.html'
+
+      - name: Verify current production markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(wc -c < MagicOffice_v1.5.6_MiBao_LOCKED_Production.html)" -eq 3086860
+          grep -q '/assets/images/roster/mibao.locked.v1.0.webp' MagicOffice_v1.5.6_MiBao_LOCKED_Production.html
+          ! grep -q 'mibao.v1.3.11' MagicOffice_v1.5.6_MiBao_LOCKED_Production.html
+          grep -q '本週出勤' MagicOffice_v1.5.6_MiBao_LOCKED_Production.html
+          grep -q '退款／訂位取消與異動' MagicOffice_v1.5.6_MiBao_LOCKED_Production.html
+          sha256sum MagicOffice_v1.5.6_MiBao_LOCKED_Production.html | tee SHA256SUMS.txt
+          grep -q '^9b59fab9ec2a703a7e260d9b00e0344932524ba005cb7d1b5e9224981ccbec61 ' SHA256SUMS.txt
+
+      - name: Upload production HTML artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v1.5.6_MiBao_LOCKED_Production_HTML
+          path: |
+            MagicOffice_v1.5.6_MiBao_LOCKED_Production.html
+            SHA256SUMS.txt
+          if-no-files-found: error
+          compression-level: 9
+          retention-days: 30
