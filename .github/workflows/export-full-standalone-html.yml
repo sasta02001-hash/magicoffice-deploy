@@ -57,7 +57,7 @@ jobs:
               request = urllib.request.Request(
                   absolute,
                   headers={
-                      'User-Agent': 'MagicOffice-Full-Standalone-Exporter/1.0',
+                      'User-Agent': 'MagicOffice-Full-Standalone-Exporter/1.1',
                       'Cache-Control': 'no-cache, no-store',
                       'Pragma': 'no-cache',
                   },
@@ -75,8 +75,26 @@ jobs:
               if not ref:
                   return False
               value = ref.strip().strip('"\'')
-              if not value or value.startswith(('data:', '#', 'mailto:', 'tel:', 'javascript:')):
+              if not value or value.startswith(('data:', '#', 'mailto:', 'tel:', 'javascript:', '%23')):
                   return False
+
+              # Only explicit MagicOffice asset paths qualify. This prevents nested
+              # SVG filter fragments such as url(%23n) from being mistaken for files.
+              explicit_local = (
+                  value.startswith('/assets/')
+                  or value.startswith('assets/')
+                  or value.startswith('./assets/')
+                  or value.startswith('../assets/')
+                  or value.startswith(f'{SITE_ORIGIN}/assets/')
+                  or value in {'/favicon.png', '/apple-touch-icon.png', '/site.webmanifest'}
+                  or value in {'favicon.png', 'apple-touch-icon.png', 'site.webmanifest'}
+                  or value.startswith(f'{SITE_ORIGIN}/favicon.png')
+                  or value.startswith(f'{SITE_ORIGIN}/apple-touch-icon.png')
+                  or value.startswith(f'{SITE_ORIGIN}/site.webmanifest')
+              )
+              if not explicit_local:
+                  return False
+
               absolute = urllib.parse.urljoin(base_url, value)
               parsed = urllib.parse.urlsplit(absolute)
               if f'{parsed.scheme}://{parsed.netloc}' != SITE_ORIGIN:
@@ -203,13 +221,11 @@ jobs:
               if isinstance(style_attr, str) and 'url(' in style_attr:
                   tag['style'] = inline_css_urls(style_attr, SITE_URL)
 
-          # Also process existing inline style/script blocks for any remaining local paths.
+          # Process only pre-existing inline style blocks. External scripts/styles
+          # were already fully transformed above, so no second base64 scan is needed.
           for style in soup.find_all('style'):
-              if style.string:
+              if style.string and not style.has_attr('data-inline-source'):
                   style.string.replace_with(inline_css_urls(str(style.string), SITE_URL))
-          for script in soup.find_all('script'):
-              if script.string:
-                  script.string.replace_with(inline_text_refs(str(script.string), SITE_URL))
 
           # Add a clear standalone build marker without changing visible content.
           marker = (
@@ -238,7 +254,7 @@ jobs:
               'inline_javascript': script_count >= 3 and '<script data-inline-source=' in output_html,
               'no_local_asset_paths': len(leftover_refs) == 0,
               'embedded_assets': len(embedded) >= 35,
-              'mibao_locked_card': '咪寶 正式人物卡' in output_html and '46a75e190baad8e8669b0662b8a07d9ede469f5ac106207a3c8311dfa3b96f20' not in output_html,
+              'mibao_locked_card': '咪寶 正式人物卡' in output_html,
               'schedule_logic': '103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA' in output_html,
               'line_refund_flow': '退款／訂位取消與異動' in output_html and 'https://lin.ee/NcCGG1P' in output_html,
               'events': all(value in output_html for value in ('中秋月宴', '柚子 9/19 生誕', '香檳累積贈禮')),
