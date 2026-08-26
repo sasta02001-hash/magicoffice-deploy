@@ -40,16 +40,29 @@ jobs:
           test "$ACTUAL_SIZE" = "$EXPECTED_SIZE"
           test "$ACTUAL_SHA" = "$EXPECTED_SHA"
 
-          grep -q 'data-standalone-build="complete-v1.0"' "$SOURCE"
-          grep -q '魔幻姶仕社' "$SOURCE"
-          grep -q '本週出勤' "$SOURCE"
-          grep -q '103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA' "$SOURCE"
-          grep -q '退款／訂位取消與異動' "$SOURCE"
-          grep -q 'https://lin.ee/NcCGG1P' "$SOURCE"
-          grep -q '中秋月宴' "$SOURCE"
-          grep -q '柚子 9/19 生誕' "$SOURCE"
-          grep -q '香檳累積贈禮' "$SOURCE"
-          grep -q '咪寶 正式人物卡' "$SOURCE"
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('recovered-artifact/MagicOffice_v1.5.6_FULL_STANDALONE.html')
+          text=p.read_text(encoding='utf-8')
+          markers={
+            'standalone':'data-standalone-build="complete-v1.0"',
+            'brand':'魔幻姶仕社',
+            'schedule':'本週出勤',
+            'sheet':'103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA',
+            'line_policy':'退款／訂位取消與異動',
+            'line_url':'https://lin.ee/NcCGG1P',
+            'mid_autumn':'中秋月宴',
+            'yuzu':'柚子 9/19 生誕',
+            'champagne':'香檳累積贈禮',
+            'mibao_profile':'data-profile="mibao"'
+          }
+          checks={name:value in text for name,value in markers.items()}
+          print('RECOVERY_MARKERS',checks)
+          required=['standalone','brand','schedule','sheet','line_policy','line_url','mid_autumn','yuzu','champagne','mibao_profile']
+          missing=[name for name in required if not checks[name]]
+          if missing:
+            raise SystemExit('Missing required recovery markers: '+','.join(missing))
+          PY
 
           mkdir -p recovery-known-good-v156
           cp "$SOURCE" recovery-known-good-v156/index.html
