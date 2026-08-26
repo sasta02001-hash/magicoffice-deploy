@@ -1,0 +1,195 @@
+{
+  "name": "MagicOffice_v1.5.6_FULL_STANDALONE.html",
+  "source_url": "https://magicoffice-preview-v2.vercel.app/",
+  "source_content_type": "text/html",
+  "source_size": 3086860,
+  "source_sha256": "9b59fab9ec2a703a7e260d9b00e0344932524ba005cb7d1b5e9224981ccbec61",
+  "output_size": 30311743,
+  "output_sha256": "5741555fb4fad4eb149715a78453ff6c84eea23e612e21616414e787e9b5f39d",
+  "stylesheet_count": 1,
+  "script_count": 3,
+  "attribute_replacement_count": 41,
+  "embedded_asset_count": 33,
+  "embedded_asset_bytes": 15677630,
+  "checks": {
+    "doctype": true,
+    "standalone_marker": true,
+    "inline_css": true,
+    "inline_javascript": true,
+    "no_local_asset_paths": true,
+    "embedded_assets": true,
+    "mibao_locked_card": true,
+    "schedule_logic": true,
+    "line_refund_flow": true,
+    "events": true,
+    "mobile_shortcuts": true
+  },
+  "leftover_local_references": [],
+  "embedded_assets": {
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/mibao.locked.v1.0.webp": {
+      "content_type": "image/webp",
+      "size": 105470,
+      "sha256": "46a75e190baad8e8669b0662b8a07d9ede469f5ac106207a3c8311dfa3b96f20"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/brand/og-cover.jpg": {
+      "content_type": "image/jpeg",
+      "size": 486628,
+      "sha256": "60687c203af030f7bf7ea97bfb3c05cf4fc2316b494637d472039962a8e98400"
+    },
+    "https://magicoffice-preview-v2.vercel.app/favicon.png": {
+      "content_type": "image/png",
+      "size": 486454,
+      "sha256": "347c1daffab3c9421408a7145deab54ae68d1463b13bd0c6a01e508535c7582f"
+    },
+    "https://magicoffice-preview-v2.vercel.app/apple-touch-icon.png": {
+      "content_type": "image/png",
+      "size": 486499,
+      "sha256": "07c0ba9259b1fb44e823d1a58b5eae69c839b8ff470ecad6acdae24c20cb02e6"
+    },
+    "https://magicoffice-preview-v2.vercel.app/site.webmanifest": {
+      "content_type": "application/manifest+json",
+      "size": 486479,
+      "sha256": "9af46605268a8ffd89b783a75d4620a47d3240d887a5d4d10bd864ef65edb97b"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/venue/sakura-throne.webp": {
+      "content_type": "image/webp",
+      "size": 486658,
+      "sha256": "35fc121e2e41073a843288f2355bd807f89f3e8208191fd161ea623fdcd49050"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/brand/logo-hero.png": {
+      "content_type": "image/png",
+      "size": 486637,
+      "sha256": "b0ed87071fb2602887afb99b6f323534c1a327e56074e061709661966554e020"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/brand/logo-header.png": {
+      "content_type": "image/png",
+      "size": 486643,
+      "sha256": "55e786e5547b862949521d4decac61eac2910fc6bf10b271a031eb4bc1ee8830"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/yuzu.webp": {
+      "content_type": "image/webp",
+      "size": 486618,
+      "sha256": "69df4c16605171fe11379d3f4a204fd41756734998c40a9ef60ce595007ad3f2"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/jubi.webp": {
+      "content_type": "image/webp",
+      "size": 486622,
+      "sha256": "087a84ce4079889444659323b4aa7ed7adf66db69ffc593f5be0da12733f651d"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/cc.webp": {
+      "content_type": "image/webp",
+      "size": 486612,
+      "sha256": "38af205cb7edb12fbcdd67b8d08d6cfa7747e70847874e12da3e4b21524d4fda"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/lele.webp": {
+      "content_type": "image/webp",
+      "size": 486622,
+      "sha256": "a3f25ade62a32961662f5936caa29fe4e977c4329f707a8294662f78171e30ab"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/cara.webp": {
+      "content_type": "image/webp",
+      "size": 486620,
+      "sha256": "4f0e53270eceeda3f06f0f5b36213d1d0785516942b991f8e5283e0bc10026e0"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/medamayaki.webp": {
+      "content_type": "image/webp",
+      "size": 486652,
+      "sha256": "e35629d25c02a7903f96ca41a5b12cbe6e393e5e45749977bb484c63ca34be44"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/sakuri.webp": {
+      "content_type": "image/webp",
+      "size": 486628,
+      "sha256": "38cd0664b51768d1b23b46b3ccdedfa70564a3ca1e9d0d3fd31aeb2783bc5694"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/hekiru.webp": {
+      "content_type": "image/webp",
+      "size": 486628,
+      "sha256": "234f74d2968e4fedb4426e15a799f62a4c5ebd54f65082d0fef934af31ac2eaa"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/rumei.webp": {
+      "content_type": "image/webp",
+      "size": 486625,
+      "sha256": "604bbebd2a5676010797209dccf35fb356a21763ddd4f7cc641282f78fae8c8a"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/naya.webp": {
+      "content_type": "image/webp",
+      "size": 486618,
+      "sha256": "a53d0f13b226c5dac005eb6e2732e9f0d0e23a4f5c4ff0186942b1cdd3ee7f58"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/sakuma.webp": {
+      "content_type": "image/webp",
+      "size": 486628,
+      "sha256": "3f2662b03428ab3c41a9745216eb8bcafa7d54ab7b6e1cb72c667c09f9dce2f5"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/nana.webp": {
+      "content_type": "image/webp",
+      "size": 486618,
+      "sha256": "d91c22b1bb48beba94de992fedbd8283f64c2c85871803d565b496f6e5f93f2c"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/mona.webp": {
+      "content_type": "image/webp",
+      "size": 486618,
+      "sha256": "3f5d13e9be770709cace7821130348a4e873591e241cff6d1428adcc27e9e567"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/kokoro.webp": {
+      "content_type": "image/webp",
+      "size": 486628,
+      "sha256": "8716e59b337ca997a91ca20d0f5f9b39fe9d0dcfe6b47521cea66b938be46e2a"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/roster/mika.webp": {
+      "content_type": "image/webp",
+      "size": 486618,
+      "sha256": "d7932d64ed981dda955e956d70bbcda1828a6617c3483e7336d74844aa68501d"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/events/summer-navy-2026.webp": {
+      "content_type": "image/webp",
+      "size": 486678,
+      "sha256": "49a376dda006a56af39450481985e906619971c753ca28efa329863d175922dc"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/events/jubi-main.webp": {
+      "content_type": "image/webp",
+      "size": 486643,
+      "sha256": "e71d5e23b8638311ac01ae78544703c8b891965af66f0cbdaf63b5200be6ae58"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/events/jubi-schedule.webp": {
+      "content_type": "image/webp",
+      "size": 486663,
+      "sha256": "5eb6f89dac388afd761dcfab615199b8759052d85d9948d5b21e0300c32d3eb0"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/events/jubi-merch.webp": {
+      "content_type": "image/webp",
+      "size": 486648,
+      "sha256": "4a2ec6b6eb782b49875ad62e5f42a9a1a682792c0d523ceba074ecb8b6f58f18"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/events/jubi-auction.webp": {
+      "content_type": "image/webp",
+      "size": 486658,
+      "sha256": "70f03326fc5f4eceb09b3f68a7ffb4e1f85ea929bc2aaa5ac7cd129824879883"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/auto/511afe41f54a9469.webp": {
+      "content_type": "image/webp",
+      "size": 486668,
+      "sha256": "2f92fe4cbad0c1dbafdf0e81e6c270b051853102078ce99b84b42204069a9bbd"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/auto/fcebb91e285f31c2.webp": {
+      "content_type": "image/webp",
+      "size": 486672,
+      "sha256": "15b538295d554894dd585d0db5a5d09036cc2dc65fe4f69ed4a4709c8af2bdca"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/auto/37d88ffaa38183ff.webp": {
+      "content_type": "image/webp",
+      "size": 486891,
+      "sha256": "d2278752d6bf22bab91bf3ea3df058605a63edec5339e61362d34278d929ca26"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/venue/cafe-lounge.webp": {
+      "content_type": "image/webp",
+      "size": 486648,
+      "sha256": "95dab2ed239e74e682402b83bad7be8c5e82acc241f4aa4ac5da208674e39209"
+    },
+    "https://magicoffice-preview-v2.vercel.app/assets/images/venue/night-bar.webp": {
+      "content_type": "image/webp",
+      "size": 486638,
+      "sha256": "718a7a77bec21ff97b6f4c07580774067e36a4b01f8954c4a92dca4bb8a3090f"
+    }
+  }
+}
