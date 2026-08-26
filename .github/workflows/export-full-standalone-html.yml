@@ -1,0 +1,293 @@
+name: Export complete standalone MagicOffice HTML
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/export-full-standalone-html.yml'
+
+permissions:
+  contents: read
+
+env:
+  SITE_URL: https://magicoffice-preview-v2.vercel.app/
+  OUTPUT_NAME: MagicOffice_v1.5.6_FULL_STANDALONE.html
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install HTML parser
+        run: python -m pip install --quiet beautifulsoup4
+
+      - name: Build self-contained single HTML
+        shell: bash
+        run: |
+          cat > /tmp/build_standalone.py <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import hashlib
+          import json
+          import mimetypes
+          import os
+          import re
+          import time
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          from bs4 import BeautifulSoup, Comment
+
+          SITE_URL = os.environ['SITE_URL']
+          OUTPUT_NAME = os.environ['OUTPUT_NAME']
+          OUTPUT = Path(OUTPUT_NAME)
+          REPORT = Path('FULL_STANDALONE_REPORT.json')
+          SHA_FILE = Path(f'{OUTPUT_NAME}.sha256')
+          SITE = urllib.parse.urlsplit(SITE_URL)
+          SITE_ORIGIN = f'{SITE.scheme}://{SITE.netloc}'
+
+          cache: dict[str, tuple[bytes, str]] = {}
+          embedded: dict[str, dict[str, object]] = {}
+
+          def fetch(url: str) -> tuple[bytes, str]:
+              absolute = urllib.parse.urljoin(SITE_URL, url)
+              if absolute in cache:
+                  return cache[absolute]
+              request = urllib.request.Request(
+                  absolute,
+                  headers={
+                      'User-Agent': 'MagicOffice-Full-Standalone-Exporter/1.0',
+                      'Cache-Control': 'no-cache, no-store',
+                      'Pragma': 'no-cache',
+                  },
+              )
+              with urllib.request.urlopen(request, timeout=60) as response:
+                  data = response.read()
+                  content_type = (response.headers.get_content_type() or '').lower()
+              if not content_type or content_type == 'application/octet-stream':
+                  guessed = mimetypes.guess_type(urllib.parse.urlsplit(absolute).path)[0]
+                  content_type = guessed or 'application/octet-stream'
+              cache[absolute] = (data, content_type)
+              return data, content_type
+
+          def is_local_asset(ref: str, base_url: str = SITE_URL) -> bool:
+              if not ref:
+                  return False
+              value = ref.strip().strip('"\'')
+              if not value or value.startswith(('data:', '#', 'mailto:', 'tel:', 'javascript:')):
+                  return False
+              absolute = urllib.parse.urljoin(base_url, value)
+              parsed = urllib.parse.urlsplit(absolute)
+              if f'{parsed.scheme}://{parsed.netloc}' != SITE_ORIGIN:
+                  return False
+              path = parsed.path
+              return path.startswith('/assets/') or path in {
+                  '/favicon.png', '/apple-touch-icon.png', '/site.webmanifest'
+              }
+
+          def data_uri(ref: str, base_url: str = SITE_URL) -> str:
+              absolute = urllib.parse.urljoin(base_url, ref)
+              data, content_type = fetch(absolute)
+              digest = hashlib.sha256(data).hexdigest()
+              embedded[absolute] = {
+                  'content_type': content_type,
+                  'size': len(data),
+                  'sha256': digest,
+              }
+              encoded = base64.b64encode(data).decode('ascii')
+              return f'data:{content_type};base64,{encoded}'
+
+          LOCAL_REF_PATTERN = re.compile(
+              r'''(?P<ref>
+                  https://magicoffice-preview-v2\.vercel\.app/(?:assets/[A-Za-z0-9_./-]+|favicon\.png|apple-touch-icon\.png|site\.webmanifest)
+                  |
+                  (?:\.{0,2}/)?assets/[A-Za-z0-9_./-]+
+                  |
+                  /(?:favicon\.png|apple-touch-icon\.png|site\.webmanifest)
+              )''',
+              re.IGNORECASE | re.VERBOSE,
+          )
+
+          CSS_URL_PATTERN = re.compile(r'url\(\s*(["\']?)([^"\')]+)\1\s*\)', re.IGNORECASE)
+
+          def inline_css_urls(css: str, css_url: str) -> str:
+              def replace(match: re.Match[str]) -> str:
+                  ref = match.group(2).strip()
+                  if not is_local_asset(ref, css_url):
+                      return match.group(0)
+                  return f'url("{data_uri(ref, css_url)}")'
+              return CSS_URL_PATTERN.sub(replace, css)
+
+          def inline_text_refs(text: str, base_url: str) -> str:
+              def replace(match: re.Match[str]) -> str:
+                  ref = match.group('ref')
+                  if not is_local_asset(ref, base_url):
+                      return ref
+                  return data_uri(ref, base_url)
+              return LOCAL_REF_PATTERN.sub(replace, text)
+
+          homepage_bytes, homepage_type = fetch(SITE_URL + f'?standalone={int(time.time())}')
+          source_sha = hashlib.sha256(homepage_bytes).hexdigest()
+          source_html = homepage_bytes.decode('utf-8')
+          soup = BeautifulSoup(source_html, 'html.parser')
+
+          # Inline all local stylesheets, including their background images.
+          stylesheet_count = 0
+          for link in list(soup.find_all('link', href=True)):
+              rel = [str(value).lower() for value in (link.get('rel') or [])]
+              href = str(link.get('href') or '')
+              if 'stylesheet' in rel and is_local_asset(href, SITE_URL):
+                  css_url = urllib.parse.urljoin(SITE_URL, href)
+                  css_bytes, _ = fetch(css_url)
+                  css = css_bytes.decode('utf-8')
+                  css = inline_css_urls(css, css_url)
+                  css = inline_text_refs(css, css_url)
+                  style = soup.new_tag('style')
+                  style['data-inline-source'] = href
+                  style.string = css
+                  link.replace_with(style)
+                  stylesheet_count += 1
+
+          # Inline all local JavaScript. Image paths inside JS are converted too.
+          script_count = 0
+          for script in list(soup.find_all('script', src=True)):
+              src = str(script.get('src') or '')
+              if is_local_asset(src, SITE_URL):
+                  script_url = urllib.parse.urljoin(SITE_URL, src)
+                  js_bytes, _ = fetch(script_url)
+                  js = js_bytes.decode('utf-8')
+                  js = inline_text_refs(js, script_url)
+                  js = re.sub(r'</script', r'<\\/script', js, flags=re.IGNORECASE)
+                  for attr in ('src', 'integrity', 'crossorigin'):
+                      script.attrs.pop(attr, None)
+                  script['data-inline-source'] = src
+                  script.string = js
+                  script_count += 1
+
+          # Inline image/icon/manifest attributes and inline-style backgrounds.
+          attribute_count = 0
+          for tag in soup.find_all(True):
+              for attr in ('src', 'poster'):
+                  value = tag.get(attr)
+                  if isinstance(value, str) and is_local_asset(value, SITE_URL):
+                      tag[attr] = data_uri(value, SITE_URL)
+                      attribute_count += 1
+
+              href = tag.get('href')
+              if isinstance(href, str) and is_local_asset(href, SITE_URL):
+                  tag['href'] = data_uri(href, SITE_URL)
+                  attribute_count += 1
+
+              # og:image, twitter:image and similar local meta assets.
+              content = tag.get('content')
+              if isinstance(content, str) and is_local_asset(content, SITE_URL):
+                  tag['content'] = data_uri(content, SITE_URL)
+                  attribute_count += 1
+
+              srcset = tag.get('srcset')
+              if isinstance(srcset, str):
+                  parts = []
+                  changed = False
+                  for item in srcset.split(','):
+                      fields = item.strip().split()
+                      if fields and is_local_asset(fields[0], SITE_URL):
+                          fields[0] = data_uri(fields[0], SITE_URL)
+                          changed = True
+                      parts.append(' '.join(fields))
+                  if changed:
+                      tag['srcset'] = ', '.join(parts)
+                      attribute_count += 1
+
+              style_attr = tag.get('style')
+              if isinstance(style_attr, str) and 'url(' in style_attr:
+                  tag['style'] = inline_css_urls(style_attr, SITE_URL)
+
+          # Also process existing inline style/script blocks for any remaining local paths.
+          for style in soup.find_all('style'):
+              if style.string:
+                  style.string.replace_with(inline_css_urls(str(style.string), SITE_URL))
+          for script in soup.find_all('script'):
+              if script.string:
+                  script.string.replace_with(inline_text_refs(str(script.string), SITE_URL))
+
+          # Add a clear standalone build marker without changing visible content.
+          marker = (
+              ' MagicOffice COMPLETE STANDALONE BUILD: CSS, JavaScript, icons and site images are embedded. '
+              'External operational services (Google Sheets, forms, maps, Instagram and LINE) remain live links. '
+          )
+          if soup.html:
+              soup.html.insert(0, Comment(marker))
+              soup.html['data-standalone-build'] = 'complete-v1.0'
+
+          output_html = '<!DOCTYPE html>\n' + str(soup)
+          OUTPUT.write_text(output_html, encoding='utf-8')
+          output_bytes = OUTPUT.read_bytes()
+          output_sha = hashlib.sha256(output_bytes).hexdigest()
+
+          local_reference_regex = re.compile(
+              r'''(?:src|href|poster|content)=["\'](?:https://magicoffice-preview-v2\.vercel\.app)?/?(?:assets/|favicon\.png|apple-touch-icon\.png|site\.webmanifest)|url\(["\']?/(?:assets/|favicon\.png|apple-touch-icon\.png|site\.webmanifest)|["\']/(?:assets/)[A-Za-z0-9_.\-/]+["\']''',
+              re.IGNORECASE,
+          )
+          leftover_refs = sorted(set(match.group(0) for match in local_reference_regex.finditer(output_html)))
+
+          checks = {
+              'doctype': output_html.startswith('<!DOCTYPE html>'),
+              'standalone_marker': 'data-standalone-build="complete-v1.0"' in output_html,
+              'inline_css': stylesheet_count >= 1 and '<style data-inline-source=' in output_html,
+              'inline_javascript': script_count >= 3 and '<script data-inline-source=' in output_html,
+              'no_local_asset_paths': len(leftover_refs) == 0,
+              'embedded_assets': len(embedded) >= 35,
+              'mibao_locked_card': '咪寶 正式人物卡' in output_html and '46a75e190baad8e8669b0662b8a07d9ede469f5ac106207a3c8311dfa3b96f20' not in output_html,
+              'schedule_logic': '103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA' in output_html,
+              'line_refund_flow': '退款／訂位取消與異動' in output_html and 'https://lin.ee/NcCGG1P' in output_html,
+              'events': all(value in output_html for value in ('中秋月宴', '柚子 9/19 生誕', '香檳累積贈禮')),
+              'mobile_shortcuts': all(value in output_html for value in ('姶仕名錄', '本週出勤', '線上購拍', '活動快報', '服務價目', '立即預約')),
+          }
+          failed = [name for name, passed in checks.items() if not passed]
+          if failed:
+              raise SystemExit(f'Standalone verification failed: {failed}; leftover={leftover_refs[:10]}')
+
+          report = {
+              'name': OUTPUT_NAME,
+              'source_url': SITE_URL,
+              'source_content_type': homepage_type,
+              'source_size': len(homepage_bytes),
+              'source_sha256': source_sha,
+              'output_size': len(output_bytes),
+              'output_sha256': output_sha,
+              'stylesheet_count': stylesheet_count,
+              'script_count': script_count,
+              'attribute_replacement_count': attribute_count,
+              'embedded_asset_count': len(embedded),
+              'embedded_asset_bytes': sum(int(item['size']) for item in embedded.values()),
+              'checks': checks,
+              'leftover_local_references': leftover_refs,
+              'embedded_assets': embedded,
+          }
+          REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+          SHA_FILE.write_text(f'{output_sha}  {OUTPUT_NAME}\n', encoding='utf-8')
+          print('FULL_STANDALONE_OK', json.dumps({
+              'name': OUTPUT_NAME,
+              'size': len(output_bytes),
+              'sha256': output_sha,
+              'embedded_asset_count': len(embedded),
+              'embedded_asset_bytes': report['embedded_asset_bytes'],
+              'stylesheet_count': stylesheet_count,
+              'script_count': script_count,
+              'checks': checks,
+          }, ensure_ascii=False))
+          PY
+
+          python /tmp/build_standalone.py
+
+      - name: Upload complete standalone website
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v1.5.6_FULL_STANDALONE_HTML
+          path: |
+            MagicOffice_v1.5.6_FULL_STANDALONE.html
+            MagicOffice_v1.5.6_FULL_STANDALONE.html.sha256
+            FULL_STANDALONE_REPORT.json
+          if-no-files-found: error
+          retention-days: 30
