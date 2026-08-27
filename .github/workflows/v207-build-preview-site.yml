@@ -1,0 +1,287 @@
+name: Build MagicOffice v2.0.7 preview site
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-build-preview-site.yml'
+      - 'v207-transfer/code/**'
+      - 'v207-input/**'
+      - 'v207-analysis/asset-coverage-summary.json'
+      - 'v207-analysis/live-asset-map.json'
+      - 'v207-live-assets/**'
+      - 'v207-reused-assets/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+
+      - name: Install build dependencies
+        run: python -m pip install --quiet pillow
+
+      - name: Reconstruct code and media assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageOps, ImageDraw, ImageFont
+          from urllib.request import Request, urlopen
+          import base64, csv, hashlib, io, json, os, re, shutil, tarfile, tempfile, time
+
+          ROOT = Path('.')
+          SITE = ROOT / 'v207-site'
+          WORK = ROOT / '.v207-build'
+          CODE_DIR = ROOT / 'v207-transfer/code'
+          EXPECTED_CODE_SHA = '1f700aaf5900bc1186371a03ac808035a0926a6af3109f60042f5f24bcceaa8f'
+
+          if WORK.exists(): shutil.rmtree(WORK)
+          if SITE.exists(): shutil.rmtree(SITE)
+          WORK.mkdir(parents=True)
+          SITE.mkdir(parents=True)
+
+          chunks = sorted(CODE_DIR.glob('chunk-*.b64'))
+          if len(chunks) != 9:
+              raise SystemExit(f'Expected 9 code chunks, found {len(chunks)}')
+          encoded = ''.join(p.read_text('utf-8').strip() for p in chunks)
+          archive = base64.b64decode(encoded)
+          actual_sha = hashlib.sha256(archive).hexdigest()
+          if actual_sha != EXPECTED_CODE_SHA:
+              raise SystemExit(f'Code archive SHA mismatch: {actual_sha}')
+          archive_path = WORK / 'code.tar.gz'
+          archive_path.write_bytes(archive)
+          with tarfile.open(archive_path, 'r:gz') as tf:
+              tf.extractall(SITE, filter='data')
+
+          targets = []
+          with (ROOT / 'v207-input/v206-original-fingerprints.tsv').open(newline='', encoding='utf-8') as f:
+              for row in csv.DictReader(f, delimiter='\t'):
+                  row['width'] = int(row['width'])
+                  row['height'] = int(row['height'])
+                  targets.append(row)
+
+          coverage_path = ROOT / 'v207-analysis/asset-coverage-summary.json'
+          coverage = json.loads(coverage_path.read_text('utf-8')) if coverage_path.exists() else {'covered': {}}
+          live_map_path = ROOT / 'v207-analysis/live-asset-map.json'
+          live_map = json.loads(live_map_path.read_text('utf-8')) if live_map_path.exists() else {'results': []}
+          live_rows = {r.get('target'): r for r in live_map.get('results', [])}
+
+          media_dir = SITE / 'assets/media'
+          media_dir.mkdir(parents=True, exist_ok=True)
+          asset_records = []
+
+          def fetch(url):
+              req = Request(url, headers={'User-Agent': 'MagicOffice-v2.0.7-preview-builder/1.0', 'Accept': 'image/*,*/*;q=0.8'})
+              last = None
+              for attempt in range(4):
+                  try:
+                      with urlopen(req, timeout=45) as response:
+                          return response.read()
+                  except Exception as exc:
+                      last = exc
+                      time.sleep(attempt + 1)
+              raise last
+
+          def save_image(image, dest, width=None, height=None):
+              image = ImageOps.exif_transpose(image)
+              if width and height:
+                  image = ImageOps.fit(image, (width, height), method=Image.Resampling.LANCZOS)
+              suffix = dest.suffix.lower()
+              dest.parent.mkdir(parents=True, exist_ok=True)
+              if suffix == '.webp':
+                  image.convert('RGB').save(dest, 'WEBP', quality=94, method=6)
+              elif suffix == '.png':
+                  image.save(dest, 'PNG', optimize=True)
+              elif suffix in ('.jpg', '.jpeg'):
+                  image.convert('RGB').save(dest, 'JPEG', quality=94, optimize=True, progressive=True)
+              else:
+                  image.save(dest)
+
+          def placeholder(target, dest, note):
+              w, h = target['width'], target['height']
+              image = Image.new('RGB', (w, h), '#120b0d')
+              draw = ImageDraw.Draw(image)
+              margin = max(24, min(w, h) // 16)
+              draw.rectangle((margin, margin, w-margin, h-margin), outline='#c99a54', width=max(2, min(w,h)//220))
+              title = 'MagicOffice'
+              subtitle = note
+              draw.text((w/2, h/2-24), title, anchor='mm', fill='#f0d6a3')
+              draw.text((w/2, h/2+24), subtitle, anchor='mm', fill='#ffffff')
+              save_image(image, dest)
+
+          for target in targets:
+              name = target['name']
+              dest = media_dir / name
+              meta = coverage.get('covered', {}).get(name)
+              method = None
+              source = None
+              if meta:
+                  report = meta.get('source_report', '')
+                  source_dir = ROOT / ('v207-live-assets' if 'live-asset-map' in report else 'v207-reused-assets')
+                  candidate = source_dir / name
+                  if candidate.exists():
+                      shutil.copy2(candidate, dest)
+                      method = meta.get('method', 'matched')
+                      source = str(candidate)
+              if not dest.exists():
+                  row = live_rows.get(name, {})
+                  best = row.get('best') or {}
+                  url = best.get('source')
+                  if url and isinstance(url, str) and url.startswith('http'):
+                      try:
+                          raw = fetch(url)
+                          image = Image.open(io.BytesIO(raw))
+                          image.load()
+                          save_image(image, dest, target['width'], target['height'])
+                          method = 'live-nearest-preview-fallback'
+                          source = url
+                      except Exception as exc:
+                          method = f'placeholder-after-fetch-error:{type(exc).__name__}'
+                  if not dest.exists():
+                      placeholder(target, dest, 'Preview visual fallback')
+                      source = 'generated-placeholder'
+                      if not method: method = 'generated-placeholder'
+              with Image.open(dest) as im:
+                  out_w, out_h = im.size
+              asset_records.append({'name': name, 'method': method, 'source': source,
+                                    'target_width': target['width'], 'target_height': target['height'],
+                                    'output_width': out_w, 'output_height': out_h,
+                                    'sha256': hashlib.sha256(dest.read_bytes()).hexdigest()})
+
+          # Generate all responsive variants explicitly referenced by HTML/CSS/JS.
+          text_files = [p for p in SITE.rglob('*') if p.is_file() and p.suffix.lower() in {'.html','.css','.js','.json','.xml'}]
+          references = set()
+          for path in text_files:
+              text = path.read_text('utf-8', errors='ignore')
+              references.update(re.findall(r'assets/media/([A-Za-z0-9_.-]+)', text))
+          variant_pattern = re.compile(r'^(?P<stem>[0-9a-f]{16})-(?P<width>640|960)\.webp$')
+          generated_variants = []
+          for ref in sorted(references):
+              match = variant_pattern.match(ref)
+              if not match:
+                  continue
+              stem = match.group('stem')
+              width = int(match.group('width'))
+              source_candidates = list(media_dir.glob(f'{stem}.*'))
+              source_candidates = [p for p in source_candidates if not variant_pattern.match(p.name)]
+              if not source_candidates:
+                  raise SystemExit(f'Missing source for responsive variant {ref}')
+              source_path = source_candidates[0]
+              dest = media_dir / ref
+              with Image.open(source_path) as image:
+                  image = ImageOps.exif_transpose(image).convert('RGB')
+                  if image.width > width:
+                      height = max(1, round(image.height * width / image.width))
+                      image = image.resize((width, height), Image.Resampling.LANCZOS)
+                  image.save(dest, 'WEBP', quality=88, method=6)
+              generated_variants.append(ref)
+
+          # Open Graph image is a separately addressed copy of the supplied social-share visual.
+          og_source = media_dir / 'eabca6a873f77362.jpg'
+          if not og_source.exists():
+              raise SystemExit('Missing Open Graph source visual')
+          og_dest = SITE / 'assets/og-card.jpg'
+          og_dest.parent.mkdir(parents=True, exist_ok=True)
+          shutil.copy2(og_source, og_dest)
+
+          index_path = SITE / 'index.html'
+          html = index_path.read_text('utf-8')
+          html = re.sub(r'data-site-version="[^"]*"', 'data-site-version="2.0.7-preview"', html)
+          if 'data-site-version="2.0.7-preview"' not in html:
+              html = re.sub(r'<html\b', '<html data-site-version="2.0.7-preview"', html, count=1)
+          html = re.sub(r'data-site-build="[^"]*"', 'data-site-build="2026-08-27-preview-verification"', html)
+          if 'data-site-build="2026-08-27-preview-verification"' not in html:
+              html = re.sub(r'<html\b', '<html data-site-build="2026-08-27-preview-verification"', html, count=1)
+          robots_meta = '<meta name="robots" content="noindex,nofollow,noarchive">'
+          if re.search(r'<meta[^>]+name=["\']robots["\'][^>]*>', html, flags=re.I):
+              html = re.sub(r'<meta[^>]+name=["\']robots["\'][^>]*>', robots_meta, html, count=1, flags=re.I)
+          else:
+              html = html.replace('</head>', f'  {robots_meta}\n  <meta name="x-magicoffice-preview" content="v2.0.7-preview">\n</head>', 1)
+          if 'x-magicoffice-preview' not in html:
+              html = html.replace('</head>', '  <meta name="x-magicoffice-preview" content="v2.0.7-preview">\n</head>', 1)
+          index_path.write_text(html, 'utf-8')
+
+          (SITE / 'robots.txt').write_text('User-agent: *\nDisallow: /\n', 'utf-8')
+
+          # Verify every local reference exists.
+          missing = []
+          local_ref_pattern = re.compile(r'(?:src|href)=["\'](?:/)?([^"\']+)["\']')
+          for path in [p for p in SITE.rglob('*') if p.is_file() and p.suffix.lower() in {'.html','.css','.js'}]:
+              text = path.read_text('utf-8', errors='ignore')
+              for ref in local_ref_pattern.findall(text):
+                  if ref.startswith(('http://','https://','mailto:','tel:','#','data:','javascript:')):
+                      continue
+                  clean = ref.split('?',1)[0].split('#',1)[0]
+                  if not clean: continue
+                  candidate = SITE / clean.lstrip('/')
+                  if not candidate.exists(): missing.append({'file': str(path), 'reference': ref})
+          if missing:
+              raise SystemExit('Missing local references: ' + json.dumps(missing[:20], ensure_ascii=False))
+
+          ids = re.findall(r'\bid=["\']([^"\']+)', html)
+          duplicates = sorted({x for x in ids if ids.count(x) > 1})
+          if duplicates:
+              raise SystemExit(f'Duplicate HTML IDs: {duplicates}')
+
+          report = {
+              'version': '2.0.7-preview',
+              'code_archive_sha256': actual_sha,
+              'target_original_count': len(targets),
+              'asset_records': asset_records,
+              'fallback_assets': [x for x in asset_records if x['method'] in {'live-nearest-preview-fallback','generated-placeholder'} or str(x['method']).startswith('placeholder-after')],
+              'generated_variant_count': len(generated_variants),
+              'generated_variants': generated_variants,
+              'local_reference_missing_count': len(missing),
+              'duplicate_id_count': len(duplicates),
+              'site_file_count': sum(1 for p in SITE.rglob('*') if p.is_file()),
+              'site_bytes': sum(p.stat().st_size for p in SITE.rglob('*') if p.is_file()),
+              'production_modified': False,
+              'attendance_spreadsheet_modified': False,
+          }
+          analysis_dir = ROOT / 'v207-analysis'
+          analysis_dir.mkdir(parents=True, exist_ok=True)
+          (analysis_dir / 'v207-build-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), 'utf-8')
+          (SITE / 'preview-build.json').write_text(json.dumps({k: report[k] for k in ['version','code_archive_sha256','target_original_count','generated_variant_count','site_file_count','site_bytes','production_modified','attendance_spreadsheet_modified']}, ensure_ascii=False, indent=2), 'utf-8')
+          print('MAGICOFFICE_V207_BUILD', json.dumps({k: report[k] for k in ['version','target_original_count','generated_variant_count','site_file_count','site_bytes','production_modified','attendance_spreadsheet_modified']}))
+          print('MAGICOFFICE_V207_FALLBACKS', json.dumps(report['fallback_assets'], ensure_ascii=False))
+          PY
+
+      - name: Validate JavaScript syntax and package structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in v207-site/assets/js/*.js; do node --check "$f"; done
+          test -f v207-site/index.html
+          test -f v207-site/vercel.json
+          test -f v207-site/assets/css/site-v2.0.6.css
+          grep -q 'data-site-version="2.0.7-preview"' v207-site/index.html
+          grep -q 'noindex,nofollow,noarchive' v207-site/index.html
+          grep -q 'Disallow: /' v207-site/robots.txt
+          if grep -Rqi '出勤.*Instagram\|Instagram.*出勤\|以.*IG.*為準' v207-site/index.html v207-site/assets/js; then
+            echo 'Attendance wording incorrectly references Instagram.' >&2
+            exit 1
+          fi
+
+      - name: Commit preview site
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-site v207-analysis/v207-build-report.json
+          if git diff --cached --quiet; then
+            echo 'No preview-site changes.'
+          else
+            git commit -m 'Build MagicOffice v2.0.7 preview site'
+            git push origin HEAD:v2.0.7-preview-source
+          fi
