@@ -1,0 +1,61 @@
+name: Analyze MagicOffice v2.0.7 reusable standalone assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-analyze-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Extract embedded image asset manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re, base64, hashlib, json, io
+          try:
+              from PIL import Image
+          except Exception:
+              Image = None
+          source = Path('production-standalone/index.html')
+          text = source.read_text('utf-8', errors='ignore')
+          pattern = re.compile(r'data:(image/[a-zA-Z0-9.+-]+);base64,([A-Za-z0-9+/=]+)')
+          items = {}
+          for mime, payload in pattern.findall(text):
+              try: data = base64.b64decode(payload)
+              except Exception: continue
+              sha = hashlib.sha256(data).hexdigest()
+              width = height = None
+              if Image is not None:
+                  try:
+                      with Image.open(io.BytesIO(data)) as im: width, height = im.size
+                  except Exception: pass
+              items.setdefault(sha, {'sha256':sha,'prefix16':sha[:16],'mime':mime,'bytes':len(data),'width':width,'height':height,'occurrences':0})
+              items[sha]['occurrences'] += 1
+          report = {'source':str(source),'source_bytes':source.stat().st_size,'data_uri_occurrences':sum(x['occurrences'] for x in items.values()),'unique_assets':len(items),'assets':sorted(items.values(), key=lambda x:(x['prefix16'],x['bytes']))}
+          out = Path('v207-analysis'); out.mkdir(exist_ok=True)
+          (out/'standalone-asset-manifest.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),'utf-8')
+          (out/'standalone-asset-prefixes.txt').write_text('\n'.join(x['prefix16'] for x in report['assets'])+'\n','utf-8')
+          print('MAGICOFFICE_V207_ASSET_ANALYSIS',json.dumps({k:report[k] for k in ['source_bytes','data_uri_occurrences','unique_assets']}))
+          PY
+      - name: Commit report to preview branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis
+          if git diff --cached --quiet; then echo 'No analysis changes.'; else git commit -m 'Analyze reusable assets for MagicOffice v2.0.7 preview'; git push origin HEAD:v2.0.7-preview-source; fi
