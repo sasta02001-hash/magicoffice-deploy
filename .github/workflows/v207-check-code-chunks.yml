@@ -1,0 +1,46 @@
+name: Check MagicOffice v2.0.7 code chunks
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-check-code-chunks.yml'
+      - 'v207-transfer/code/**'
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Calculate chunk fingerprints
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+          rows=[]
+          for path in sorted(Path('v207-transfer/code').glob('chunk-*.b64')):
+              raw=path.read_bytes()
+              rows.append({'name':path.name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()})
+          out=Path('v207-analysis/code-chunk-sha.json')
+          out.parent.mkdir(parents=True,exist_ok=True)
+          out.write_text(json.dumps({'count':len(rows),'chunks':rows},indent=2),'utf-8')
+          print('MAGICOFFICE_V207_CODE_CHUNKS',json.dumps(rows))
+          PY
+      - name: Commit chunk fingerprints
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/code-chunk-sha.json
+          if git diff --cached --quiet; then echo 'No chunk fingerprint changes.'; else git commit -m 'Record MagicOffice v2.0.7 code chunk fingerprints'; git push origin HEAD:v2.0.7-preview-source; fi
