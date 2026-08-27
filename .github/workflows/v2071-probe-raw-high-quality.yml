@@ -1,0 +1,69 @@
+name: Probe MagicOffice high-quality raw preview propagation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v2071-probe-raw-high-quality.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Fetch exact loader source URL
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          import hashlib, json, time
+          url='https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/v2.0.7-preview-source/v207-remote-preview/index.html?rc=20260827-rc5'
+          last=None
+          for attempt in range(1,13):
+              req=Request(url,headers={'User-Agent':'MagicOffice-v2071-propagation-probe','Cache-Control':'no-cache'})
+              try:
+                  with urlopen(req,timeout=120) as response:
+                      raw=response.read()
+                      text=raw.decode('utf-8')
+                      result={
+                          'attempt':attempt,'status':response.status,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+                          'highQualityMarker':'high-quality-v2071-20260827' in text,
+                          'hotfixVersion':'2.0.7.1-broken-asset-hotfix' in text,
+                          'dataImageOccurrences':text.count('data:image/'),
+                          'strayEngineeringLabel':'MagicOffice v2.0.6 PRODUCTION READINESS CANDIDATE' in text,
+                          'localAssetReferences':text.count('/assets/'),
+                      }
+                      if result['highQualityMarker']:
+                          last=result
+                          break
+                      last=result
+              except Exception as exc:
+                  last={'attempt':attempt,'error':type(exc).__name__+': '+str(exc)}
+              time.sleep(15)
+          report={'url':url,'result':last,'productionModified':False,'attendanceSpreadsheetModified':False}
+          Path('v207-analysis').mkdir(exist_ok=True)
+          Path('v207-analysis/v2071-raw-propagation-probe.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),'utf-8')
+          print('MAGICOFFICE_RAW_PROPAGATION',json.dumps(report,ensure_ascii=False))
+          if not last or not last.get('highQualityMarker'):
+              raise SystemExit('High-quality raw source has not propagated')
+          PY
+      - name: Commit propagation report
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f v207-analysis/v2071-raw-propagation-probe.json || exit 0
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/v2071-raw-propagation-probe.json
+          if git diff --cached --quiet; then echo 'No propagation report changes.'; else git commit -m 'Probe MagicOffice high-quality raw preview propagation'; git pull --rebase origin v2.0.7-preview-source; git push origin HEAD:v2.0.7-preview-source; fi
