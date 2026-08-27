@@ -52,5 +52,6 @@ jobs:
             echo 'Builder already corrected.'
           else
             git commit -m 'Correct MagicOffice v2.0.7 Preview RC1 builder'
+            git pull --rebase origin v2.0.7-preview-source
             git push origin HEAD:v2.0.7-preview-source
           fi
