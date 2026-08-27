@@ -1,0 +1,48 @@
+name: Publish MagicOffice v2.0.7.1 self-contained hotfix preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v2071-pages-hotfix-preview.yml'
+      - 'v2071-self-contained/**'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: magic-office-v2071-pages-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+      - name: Validate self-contained source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f v2071-self-contained/index.html
+          grep -q '2.0.7.1-broken-asset-hotfix' v2071-self-contained/index.html
+          grep -q '魔幻姶仕社' v2071-self-contained/index.html
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: v2071-self-contained
+      - name: Deploy Pages preview
+        id: deployment
+        uses: actions/deploy-pages@v4
