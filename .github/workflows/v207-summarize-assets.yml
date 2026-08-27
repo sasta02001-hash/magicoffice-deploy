@@ -1,0 +1,59 @@
+name: Summarize MagicOffice v2.0.7 asset coverage
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-summarize-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Build compact coverage summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import csv, json
+          targets=[]
+          with Path('v207-input/v206-original-fingerprints.tsv').open(newline='',encoding='utf-8') as f:
+              targets=[r['name'] for r in csv.DictReader(f,delimiter='\t')]
+          reports=[]
+          for path in ['v207-analysis/perceptual-map.json','v207-analysis/live-asset-map.json']:
+              p=Path(path)
+              if p.exists(): reports.append((path,json.loads(p.read_text('utf-8'))))
+          covered={}
+          for path,report in reports:
+              for row in report.get('results',[]):
+                  if row.get('accepted'):
+                      name=row.get('target')
+                      current=covered.get(name)
+                      priority=(2 if row.get('method')=='exact-sha256' else 1)
+                      if not current or priority>current['priority']:
+                          covered[name]={'source_report':path,'method':row.get('method'),'priority':priority,'best':row.get('best')}
+          unmatched=[x for x in targets if x not in covered]
+          summary={'target_count':len(targets),'covered_count':len(covered),'unmatched_count':len(unmatched),'unmatched':unmatched,'covered':{k:{kk:vv for kk,vv in v.items() if kk!='priority'} for k,v in sorted(covered.items())}}
+          out=Path('v207-analysis/asset-coverage-summary.json')
+          out.write_text(json.dumps(summary,ensure_ascii=False,indent=2),'utf-8')
+          Path('v207-analysis/unmatched-assets.txt').write_text('\n'.join(unmatched)+('\n' if unmatched else ''),'utf-8')
+          print('MAGICOFFICE_V207_COVERAGE',json.dumps({k:summary[k] for k in ['target_count','covered_count','unmatched_count','unmatched']}))
+          PY
+      - name: Commit summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/asset-coverage-summary.json v207-analysis/unmatched-assets.txt
+          if git diff --cached --quiet; then echo 'No summary changes.'; else git commit -m 'Summarize asset coverage for MagicOffice v2.0.7 preview'; git push origin HEAD:v2.0.7-preview-source; fi
