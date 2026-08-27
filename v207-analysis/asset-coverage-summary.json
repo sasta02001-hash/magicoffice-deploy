@@ -1,0 +1,794 @@
+{
+  "target_count": 51,
+  "covered_count": 48,
+  "unmatched_count": 3,
+  "unmatched": [
+    "0f2282fd5b53948f.webp",
+    "183eaf19e84ad365.webp",
+    "5b07190f56f5759b.webp"
+  ],
+  "covered": {
+    "05f19666ed49f368.png": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:20",
+        "sha256": "48809a9744a506b8eaa7eea2b5c07a3300f64fd27711347efbb3268cedfb7fbc",
+        "width": 320,
+        "height": 181,
+        "exact_sha256": false,
+        "aspect_delta": 0.000868,
+        "dhash_distance": 6,
+        "ahash_distance": 0,
+        "combined_distance": 6,
+        "score": 6
+      }
+    },
+    "065cb975e20e85a9.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "065cb975e20e85a9d8327a9b3574240e3051593fd19f5ff9b5cc00eb397e1f67",
+        "old_prefix16": "065cb975e20e85a9",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 2,
+        "ahash_distance": 2,
+        "combined_distance": 4,
+        "score": -100000
+      }
+    },
+    "1d6e303714642bf6.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:27",
+        "sha256": "7375cd9da1279ae44fad593e418de4c7eb6077620c64c97702547bd49ed7c9de",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 8,
+        "ahash_distance": 1,
+        "combined_distance": 9,
+        "score": 9
+      }
+    },
+    "1e9e2e722f5c6e9e.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:8",
+        "sha256": "abadc82c50e829cd43de005a94c24de33a091e9bb5f12017d31913b7f7addef9",
+        "width": 320,
+        "height": 180,
+        "exact_sha256": false,
+        "aspect_delta": 0.000888,
+        "dhash_distance": 16,
+        "ahash_distance": 8,
+        "combined_distance": 24,
+        "score": 24
+      }
+    },
+    "29b2257a9fedd26b.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:9",
+        "sha256": "7a627673bcc3feeb11943b2c38be9840857e24a95b66f1fc0c35b70273537872",
+        "width": 320,
+        "height": 180,
+        "exact_sha256": false,
+        "aspect_delta": 0.000888,
+        "dhash_distance": 21,
+        "ahash_distance": 1,
+        "combined_distance": 22,
+        "score": 22
+      }
+    },
+    "2d5ed350d26c050b.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:32",
+        "sha256": "b98da07e4626a2826cd3d3c807ba2e3ebf23b0c60e71a72546f324fe53ffdf01",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 11,
+        "ahash_distance": 0,
+        "combined_distance": 11,
+        "score": 11
+      }
+    },
+    "3241306c93000ad3.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:29",
+        "sha256": "ba67bc35b5ee4ddcda79c522577c902c4a6fa61f07c05fae323ae163ddb4cfdb",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 4,
+        "ahash_distance": 0,
+        "combined_distance": 4,
+        "score": 4
+      }
+    },
+    "3760e1f1d1df1182.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:56",
+        "sha256": "68119348a77d804d4e899f6bd275e3492167c86351fbb854fc704d83e8b42fb2",
+        "width": 220,
+        "height": 236,
+        "exact_sha256": false,
+        "aspect_delta": 0.000197,
+        "dhash_distance": 11,
+        "ahash_distance": 1,
+        "combined_distance": 12,
+        "score": 12
+      }
+    },
+    "38f7487b4a48705b.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:52",
+        "sha256": "b6c7603e96268523813eba20baba00965bd5e160fe17c14feab2a56b79e1ce36",
+        "width": 320,
+        "height": 180,
+        "exact_sha256": false,
+        "aspect_delta": 0.000531,
+        "dhash_distance": 2,
+        "ahash_distance": 1,
+        "combined_distance": 3,
+        "score": 3
+      }
+    },
+    "40b77f0c5b9cab43.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "40b77f0c5b9cab430839197c9e647da1e4e9beeb9dad155fe1f72b46840b4902",
+        "old_prefix16": "40b77f0c5b9cab43",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 5,
+        "ahash_distance": 1,
+        "combined_distance": 6,
+        "score": -100000
+      }
+    },
+    "4213a5bd8175d801.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "4213a5bd8175d8010379f6f8dcfb6f407f77cfe21625548ee9692615223482e9",
+        "old_prefix16": "4213a5bd8175d801",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 1,
+        "ahash_distance": 0,
+        "combined_distance": 1,
+        "score": -100000
+      }
+    },
+    "44049d5f46ae6a12.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:2",
+        "sha256": "b16be74d17af7a746223de4a54b89849753eb0da1e7cf2bc398fcd5686e9399f",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.00025,
+        "dhash_distance": 7,
+        "ahash_distance": 0,
+        "combined_distance": 7,
+        "score": 7
+      }
+    },
+    "441b778dda048206.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:57",
+        "sha256": "382eab8af8a343b9014bdd91f50e6d30d1c0c818a9771b0c5ec1949d573758e6",
+        "width": 320,
+        "height": 180,
+        "exact_sha256": false,
+        "aspect_delta": 0.000888,
+        "dhash_distance": 6,
+        "ahash_distance": 1,
+        "combined_distance": 7,
+        "score": 7
+      }
+    },
+    "4538292ff5eca3cf.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "4538292ff5eca3cf07614165630cde6bd81b91eee147b05294241e5eea78b503",
+        "old_prefix16": "4538292ff5eca3cf",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 0,
+        "ahash_distance": 0,
+        "combined_distance": 0,
+        "score": -100000
+      }
+    },
+    "46a75e190baad8e8.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "46a75e190baad8e8669b0662b8a07d9ede469f5ac106207a3c8311dfa3b96f20",
+        "old_prefix16": "46a75e190baad8e8",
+        "old_mime": "image/webp",
+        "old_width": 600,
+        "old_height": 800,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 4,
+        "ahash_distance": 0,
+        "combined_distance": 4,
+        "score": -100000
+      }
+    },
+    "4739c5c2017c4c0e.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:58",
+        "sha256": "f2371b4760cfccf7964ab3423d05ac6f6af4ab3be2be359844ef4b0a14252967",
+        "width": 320,
+        "height": 180,
+        "exact_sha256": false,
+        "aspect_delta": 0.000531,
+        "dhash_distance": 8,
+        "ahash_distance": 3,
+        "combined_distance": 11,
+        "score": 11
+      }
+    },
+    "49acafbeb1e4b6bb.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:57",
+        "sha256": "382eab8af8a343b9014bdd91f50e6d30d1c0c818a9771b0c5ec1949d573758e6",
+        "width": 320,
+        "height": 180,
+        "exact_sha256": false,
+        "aspect_delta": 0.000531,
+        "dhash_distance": 6,
+        "ahash_distance": 1,
+        "combined_distance": 7,
+        "score": 7
+      }
+    },
+    "4bf65583e3739d3f.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:37",
+        "sha256": "81a6fe64e5e5ea2f682c442f26c44b589d1691a621457c3163cd0f96e4be566a",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 5,
+        "ahash_distance": 1,
+        "combined_distance": 6,
+        "score": 6
+      }
+    },
+    "4fd4c223e064c15d.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:33",
+        "sha256": "0c7914fb2a38ff591ef12dc3859e61c8ff6129130a2df527106a761b3af6d934",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 4,
+        "ahash_distance": 2,
+        "combined_distance": 6,
+        "score": 6
+      }
+    },
+    "59f9acb8861a6595.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:36",
+        "sha256": "ef012ccb4cc15b4975ce61e857b8840288084b949099da1d2f54e66543fd5f45",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 5,
+        "ahash_distance": 1,
+        "combined_distance": 6,
+        "score": 6
+      }
+    },
+    "617f58b1207050e6.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:31",
+        "sha256": "6fbe0e3ab51c2274390ad425fbf142a638e623829413130e66eefd8cfb039606",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.006689,
+        "dhash_distance": 5,
+        "ahash_distance": 1,
+        "combined_distance": 6,
+        "score": 8
+      }
+    },
+    "6577d53b1cb3b2d1.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:55",
+        "sha256": "7865a17c1603b99acc3d1bae9a68039f0dd22953af87c35aeb4fa290de158d73",
+        "width": 220,
+        "height": 235,
+        "exact_sha256": false,
+        "aspect_delta": 0.000495,
+        "dhash_distance": 7,
+        "ahash_distance": 2,
+        "combined_distance": 9,
+        "score": 9
+      }
+    },
+    "6abf49f3aab3c507.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:28",
+        "sha256": "870b03b2abce97c8f6dab01d2048f9fab129538e1ce4d40c427ad55c6cc5b278",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 12,
+        "ahash_distance": 6,
+        "combined_distance": 18,
+        "score": 18
+      }
+    },
+    "735af9e4bef7878c.png": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:17",
+        "sha256": "072dd97942e3a3870950daf452254f28c1bb8b1364ef79b0cab8460b26661c31",
+        "width": 220,
+        "height": 220,
+        "exact_sha256": false,
+        "aspect_delta": 0.0,
+        "dhash_distance": 10,
+        "ahash_distance": 0,
+        "combined_distance": 10,
+        "score": 10
+      }
+    },
+    "815c2fdfd2a254ce.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:26",
+        "sha256": "05cfac9ab46b184be5b8cca5091a696f96c2a266873b70ede85695b90502965f",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 8,
+        "ahash_distance": 1,
+        "combined_distance": 9,
+        "score": 9
+      }
+    },
+    "82d07bafb9d31903.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "82d07bafb9d31903f214f6f772c6496c8ea664f7d3b5b0c7ae51e45e50b91644",
+        "old_prefix16": "82d07bafb9d31903",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 9,
+        "ahash_distance": 1,
+        "combined_distance": 10,
+        "score": -100000
+      }
+    },
+    "8f1e2635714effb9.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:30",
+        "sha256": "6c14f7f1180419bb4ac8fa89e5614b5442f7cd618d09794ada526d93dec4c745",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 2,
+        "ahash_distance": 0,
+        "combined_distance": 2,
+        "score": 2
+      }
+    },
+    "9cf5f3c7c8e43450.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:3",
+        "sha256": "b367466a32140694a7a3423e767b92426cb1c00ba7f1a13cf9a28e6e80012ad9",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 10,
+        "ahash_distance": 1,
+        "combined_distance": 11,
+        "score": 11
+      }
+    },
+    "a1b97912e03ddf75.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "a1b97912e03ddf75915ab97cc2680ad5d8582638d1e0a17f0f47b957254d48e7",
+        "old_prefix16": "a1b97912e03ddf75",
+        "old_mime": "image/webp",
+        "old_width": 900,
+        "old_height": 1125,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 1,
+        "ahash_distance": 0,
+        "combined_distance": 1,
+        "score": -100000
+      }
+    },
+    "aa59a517161edaeb.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "aa59a517161edaeb719fab4d36a6201983ac64594c3345ef07ee1f3d6582c912",
+        "old_prefix16": "aa59a517161edaeb",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 12,
+        "ahash_distance": 0,
+        "combined_distance": 12,
+        "score": -100000
+      }
+    },
+    "aa7f2899b9a883f5.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "perceptual",
+      "best": {
+        "old_sha256": "b9a778372386687bbf608b5b90bd77c8691cdc57e078c3bd4489e896c3931acd",
+        "old_prefix16": "b9a778372386687b",
+        "old_mime": "image/png",
+        "old_width": 1080,
+        "old_height": 1350,
+        "exact_sha256": false,
+        "aspect_delta": 0.0,
+        "dhash_distance": 0,
+        "ahash_distance": 0,
+        "combined_distance": 0,
+        "score": 0
+      }
+    },
+    "ac868759ec08626e.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "ac868759ec08626ee74cb38cd10be77f6f81b00c256f43cf5da2d08cea86e80b",
+        "old_prefix16": "ac868759ec08626e",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 5,
+        "ahash_distance": 1,
+        "combined_distance": 6,
+        "score": -100000
+      }
+    },
+    "b1e7d92e49e334d4.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "b1e7d92e49e334d4e0e4e85e83340593d2151f1019d15c2623f54347211359c3",
+        "old_prefix16": "b1e7d92e49e334d4",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 11,
+        "ahash_distance": 1,
+        "combined_distance": 12,
+        "score": -100000
+      }
+    },
+    "b27ac3e14ebc9fa7.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "b27ac3e14ebc9fa7fbda3142d810a9801dbe2470bbf893e2b6425dbff996cf69",
+        "old_prefix16": "b27ac3e14ebc9fa7",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 4,
+        "ahash_distance": 0,
+        "combined_distance": 4,
+        "score": -100000
+      }
+    },
+    "be1b96881d52ce48.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "be1b96881d52ce48c20db9d2d6a02c57fcfbd44946921a0cb2ab8de2edd1ab03",
+        "old_prefix16": "be1b96881d52ce48",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 5,
+        "ahash_distance": 0,
+        "combined_distance": 5,
+        "score": -100000
+      }
+    },
+    "d0aed7c77fe2c752.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:4",
+        "sha256": "08b975fc508e144de7541ebc1a159ebfa500c5dcdf6c47461563c5a002d79f1e",
+        "width": 220,
+        "height": 165,
+        "exact_sha256": false,
+        "aspect_delta": 0.0,
+        "dhash_distance": 5,
+        "ahash_distance": 0,
+        "combined_distance": 5,
+        "score": 5
+      }
+    },
+    "d878f9472706fdbe.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:10",
+        "sha256": "1d28b6810f1407506a83dead7532389cd137742b10190c71c3f83424817fa7af",
+        "width": 320,
+        "height": 180,
+        "exact_sha256": false,
+        "aspect_delta": 0.000531,
+        "dhash_distance": 12,
+        "ahash_distance": 2,
+        "combined_distance": 14,
+        "score": 14
+      }
+    },
+    "d9800fa21c1b6e2e.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:38",
+        "sha256": "3733c1d1a140d6411ffee1a5db01161e60956814881178f431622e6a15e20f7a",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 3,
+        "ahash_distance": 0,
+        "combined_distance": 3,
+        "score": 3
+      }
+    },
+    "d9961b8b48fdb587.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:59",
+        "sha256": "e5b59da84bddd269616f1dd9e4d38348eec11921b424c770378975d718cc988f",
+        "width": 320,
+        "height": 180,
+        "exact_sha256": false,
+        "aspect_delta": 0.000888,
+        "dhash_distance": 14,
+        "ahash_distance": 1,
+        "combined_distance": 15,
+        "score": 15
+      }
+    },
+    "da930bd7fba6ff56.png": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:21",
+        "sha256": "cc17696b65e7df1ed8ee7418c4c6a02adab79445af91b67703f45c6ac2523a79",
+        "width": 320,
+        "height": 181,
+        "exact_sha256": false,
+        "aspect_delta": 0.000868,
+        "dhash_distance": 11,
+        "ahash_distance": 1,
+        "combined_distance": 12,
+        "score": 12
+      }
+    },
+    "e22350b8ec2d748a.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:24",
+        "sha256": "412cce632e59e1ac3ab23e4d253dd89970867dd8d35a916d7ab42cef107bfc9f",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 4,
+        "ahash_distance": 0,
+        "combined_distance": 4,
+        "score": 4
+      }
+    },
+    "e284222013366784.webp": {
+      "source_report": "v207-analysis/perceptual-map.json",
+      "method": "exact-sha256",
+      "best": {
+        "old_sha256": "e2842220133667845b1129b2c07bf1c7d90be1384b36dd023255375b9793fa27",
+        "old_prefix16": "e284222013366784",
+        "old_mime": "image/webp",
+        "old_width": 520,
+        "old_height": 520,
+        "exact_sha256": true,
+        "aspect_delta": 0.0,
+        "dhash_distance": 7,
+        "ahash_distance": 0,
+        "combined_distance": 7,
+        "score": -100000
+      }
+    },
+    "e404ebb20f7273f8.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:35",
+        "sha256": "9808063a05e559dc092a1dc884075c7c690c0d05f7611d51797fca6e12920e0a",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 9,
+        "ahash_distance": 0,
+        "combined_distance": 9,
+        "score": 9
+      }
+    },
+    "ea48add4d1a2b11d.png": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:18",
+        "sha256": "9a0132d35023c097fec80791d9cfc7e70c27503cd2cde67d0e0778e5fd165495",
+        "width": 220,
+        "height": 220,
+        "exact_sha256": false,
+        "aspect_delta": 0.0,
+        "dhash_distance": 12,
+        "ahash_distance": 0,
+        "combined_distance": 12,
+        "score": 12
+      }
+    },
+    "eabca6a873f77362.jpg": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:0",
+        "sha256": "03a8e88cad3f13cc1f342f247831b59fc489b03608fb48cc2d15feefbc35d673",
+        "width": 320,
+        "height": 168,
+        "exact_sha256": false,
+        "aspect_delta": 0.0,
+        "dhash_distance": 12,
+        "ahash_distance": 2,
+        "combined_distance": 14,
+        "score": 14
+      }
+    },
+    "f12cf40a97634cc9.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:58",
+        "sha256": "f2371b4760cfccf7964ab3423d05ac6f6af4ab3be2be359844ef4b0a14252967",
+        "width": 320,
+        "height": 180,
+        "exact_sha256": false,
+        "aspect_delta": 0.000888,
+        "dhash_distance": 8,
+        "ahash_distance": 3,
+        "combined_distance": 11,
+        "score": 11
+      }
+    },
+    "f2097a926bdf48b3.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:34",
+        "sha256": "dd96fff4f9f8968ff4d05f15b69c4faffc4412cc57b20dd208ce9a14df42c2d8",
+        "width": 120,
+        "height": 160,
+        "exact_sha256": false,
+        "aspect_delta": 0.000329,
+        "dhash_distance": 3,
+        "ahash_distance": 2,
+        "combined_distance": 5,
+        "score": 5
+      }
+    },
+    "f260809328cde7d1.webp": {
+      "source_report": "v207-analysis/live-asset-map.json",
+      "method": "perceptual",
+      "best": {
+        "source": "data:image/webp:7",
+        "sha256": "af31b8f600b0661669aeae7e42b56a33d3327ddde27773d2b6b893350cb28099",
+        "width": 320,
+        "height": 180,
+        "exact_sha256": false,
+        "aspect_delta": 0.000888,
+        "dhash_distance": 28,
+        "ahash_distance": 2,
+        "combined_distance": 30,
+        "score": 30
+      }
+    }
+  }
+}
