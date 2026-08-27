@@ -1,0 +1,257 @@
+name: Verify MagicOffice v2.0.7.1 production deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v2071-production-smoke-qa.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TARGET_URL: https://magicoffice-magicoffice.vercel.app/
+      EXPECTED_VERSION: 2.0.7.1-broken-asset-hotfix
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+
+      - name: Run production smoke and cross-device QA
+        shell: bash
+        run: |
+          cat > v2071-production-qa.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium, webkit } from 'playwright';
+
+          const target = process.env.TARGET_URL;
+          const expected = process.env.EXPECTED_VERSION;
+          const cases = [
+            {name:'desktop-chromium', engine:'chromium', width:1366, height:900, mobile:false, touch:false},
+            {name:'tablet-chromium', engine:'chromium', width:1024, height:768, mobile:false, touch:true},
+            {name:'android-chromium', engine:'chromium', width:360, height:800, mobile:true, touch:true, ua:'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'},
+            {name:'small-android-chromium', engine:'chromium', width:320, height:568, mobile:true, touch:true, ua:'Mozilla/5.0 (Linux; Android 14; SM-A5460) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36'},
+            {name:'iphone-webkit', engine:'webkit', width:390, height:844, mobile:true, touch:true, ua:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1'},
+            {name:'iphone-large-webkit', engine:'webkit', width:430, height:932, mobile:true, touch:true, ua:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1'}
+          ];
+
+          async function getJson(url) {
+            const response = await fetch(url, {cache:'no-store'});
+            if (!response.ok) throw new Error(`${url} HTTP ${response.status}`);
+            return {status:response.status, headers:Object.fromEntries(response.headers), json:await response.json()};
+          }
+
+          const buildReportResponse = await getJson(new URL('build-report.json', target));
+          const buildReport = buildReportResponse.json;
+          const buildChecks = {
+            version: buildReport.version === expected,
+            assetCount: Number(buildReport.assetCount) >= 70,
+            missingAssets: Number(buildReport.missingLocalReferenceCount) === 0,
+            noRemoteRuntimeAssets: Number(buildReport.forbiddenRemoteRuntimeReferenceCount) === 0,
+          };
+
+          const browsers = {
+            chromium: await chromium.launch({headless:true}),
+            webkit: await webkit.launch({headless:true}),
+          };
+          const results = [];
+          try {
+            for (const item of cases) {
+              const browser = browsers[item.engine];
+              const context = await browser.newContext({
+                viewport:{width:item.width,height:item.height},
+                screen:{width:item.width,height:item.height},
+                userAgent:item.ua,
+                isMobile:item.mobile,
+                hasTouch:item.touch,
+                locale:'zh-TW',
+                timezoneId:'Asia/Taipei',
+                serviceWorkers:'block',
+              });
+              const page = await context.newPage();
+              const pageErrors = [];
+              const requestFailures = [];
+              page.on('pageerror', error => pageErrors.push(String(error?.stack || error)));
+              page.on('requestfailed', request => requestFailures.push({url:request.url(), error:request.failure()?.errorText || 'unknown'}));
+
+              const response = await page.goto(`${target}?production-qa=${Date.now()}-${item.name}`, {waitUntil:'domcontentloaded', timeout:120000});
+              await page.waitForFunction(version => {
+                const current = document.body?.dataset?.siteVersion || document.documentElement?.dataset?.siteVersion || document.querySelector('meta[name="site-version"]')?.content || '';
+                return current === version && document.body?.innerText?.includes('魔幻姶仕社');
+              }, expected, {timeout:120000});
+
+              await page.evaluate(() => {
+                for (const image of document.images) {
+                  image.loading = 'eager';
+                  image.decoding = 'sync';
+                }
+              });
+              const fullHeight = await page.evaluate(() => Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
+              for (let y = 0; y <= fullHeight; y += 700) {
+                await page.evaluate(value => scrollTo(0, value), y);
+                await page.waitForTimeout(45);
+              }
+              await page.evaluate(() => scrollTo(0, 0));
+              await page.waitForTimeout(1800);
+
+              const state = await page.evaluate(({expected, width}) => {
+                const bodyStyle = getComputedStyle(document.body);
+                const firstLink = document.querySelector('a');
+                const firstLinkStyle = firstLink ? getComputedStyle(firstLink) : null;
+                const images = [...document.images];
+                const version = document.body?.dataset?.siteVersion || document.documentElement?.dataset?.siteVersion || document.querySelector('meta[name="site-version"]')?.content || '';
+                const requiredSections = ['#worlds','#roster','#schedule','#event-hub','#menu','#first-visit','#location'];
+                const quickLabels = ['姶仕名錄','本週出勤','線上購拍','活動快報','服務價目','立即訂位'];
+                const quickVisible = [...document.querySelectorAll('body *')].some(element => {
+                  const style = getComputedStyle(element);
+                  if (style.position !== 'fixed' || style.display === 'none' || style.visibility === 'hidden') return false;
+                  const text = element.innerText || '';
+                  return quickLabels.every(label => text.includes(label));
+                });
+                const lineFixed = [...document.querySelectorAll('a[href*="lin.ee"]')].some(element => {
+                  const style = getComputedStyle(element);
+                  const rect = element.getBoundingClientRect();
+                  return style.position === 'fixed' && style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+                });
+                const scheduleText = document.querySelector('#schedule')?.innerText || '';
+                const resourceUrls = performance.getEntriesByType('resource').map(entry => entry.name);
+                const runtimeRepoAssets = resourceUrls.filter(url => /raw\.githubusercontent\.com\/sasta02001-hash\/magicoffice-deploy|cdn\.jsdelivr\.net\/gh\/sasta02001-hash\/magicoffice-deploy/i.test(url));
+                const crossOriginImageUrls = images.map(image => image.currentSrc || image.src).filter(Boolean).filter(url => {
+                  try { return new URL(url, location.href).origin !== location.origin; } catch { return true; }
+                });
+                return {
+                  version,
+                  expectedVersion: version === expected,
+                  background: bodyStyle.backgroundColor,
+                  font: bodyStyle.fontFamily,
+                  rawBlueLink: Boolean(firstLinkStyle && firstLinkStyle.color === 'rgb(0, 0, 238)' && firstLinkStyle.textDecorationLine.includes('underline')),
+                  viewportWidth: innerWidth,
+                  scrollWidth: document.documentElement.scrollWidth,
+                  noHorizontalOverflow: document.documentElement.scrollWidth <= innerWidth + 2,
+                  imageCount: images.length,
+                  brokenImages: images.filter(image => !image.complete || image.naturalWidth <= 0).map(image => image.alt || image.currentSrc || image.src),
+                  crossOriginImageUrls,
+                  runtimeRepoAssets,
+                  sections: Object.fromEntries(requiredSections.map(selector => [selector, Boolean(document.querySelector(selector))])),
+                  quickVisible,
+                  lineFixed,
+                  scheduleReferencesInstagram: /Instagram|官方\s*IG|以\s*IG\s*為準/i.test(scheduleText),
+                  robots: document.querySelector('meta[name="robots"]')?.content || '',
+                  hasLine: [...document.querySelectorAll('a[href]')].some(a => a.href.includes('lin.ee/NcCGG1P')),
+                  hasInstagram: [...document.querySelectorAll('a[href]')].some(a => a.href.includes('instagram.com/maid_magicoffice')),
+                  hasReservation: [...document.querySelectorAll('a[href]')].some(a => a.href.includes('gforms.app/r/71hSwQR')),
+                  width,
+                };
+              }, {expected, width:item.width});
+
+              let menu = {required:item.width <= 1180, toggleFound:true, opened:true, closed:true, lineEntry:true};
+              if (menu.required) {
+                const toggle = page.locator('.menu-toggle').first();
+                menu.toggleFound = await toggle.count() > 0;
+                if (menu.toggleFound) {
+                  await toggle.click();
+                  await page.waitForTimeout(300);
+                  menu.opened = await page.evaluate(() => {
+                    const toggle = document.querySelector('.menu-toggle');
+                    const nav = document.querySelector('.main-nav');
+                    if (!toggle || !nav) return false;
+                    const style = getComputedStyle(nav);
+                    const rect = nav.getBoundingClientRect();
+                    return toggle.getAttribute('aria-expanded') === 'true' && style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+                  });
+                  menu.lineEntry = await page.evaluate(() => [...document.querySelectorAll('.main-nav a')].some(link => (link.textContent || '').includes('LINE 官方')));
+                  await toggle.click();
+                  await page.waitForTimeout(220);
+                  menu.closed = await page.evaluate(() => document.querySelector('.menu-toggle')?.getAttribute('aria-expanded') === 'false');
+                } else {
+                  menu.opened = false;
+                  menu.closed = false;
+                  menu.lineEntry = false;
+                }
+              }
+
+              const checks = {
+                http200: response?.status() === 200,
+                expectedVersion: state.expectedVersion,
+                styled: !['rgba(0, 0, 0, 0)','rgb(255, 255, 255)'].includes(state.background) && !state.rawBlueLink,
+                responsive: state.noHorizontalOverflow,
+                imagesLoaded: state.imageCount >= 40 && state.brokenImages.length === 0,
+                imagesSameOrigin: state.crossOriginImageUrls.length === 0,
+                noRepoRuntimeAssets: state.runtimeRepoAssets.length === 0,
+                sections: Object.values(state.sections).every(Boolean),
+                quickNavRule: item.width <= 640 ? state.quickVisible : true,
+                lineFloatRule: item.width <= 640 ? !state.lineFixed : state.lineFixed,
+                attendanceChannel: !state.scheduleReferencesInstagram,
+                indexableProduction: !/noindex/i.test(state.robots),
+                lineLink: state.hasLine,
+                instagramLink: state.hasInstagram,
+                reservationLink: state.hasReservation,
+                menuOpened: !menu.required || menu.opened,
+                menuClosed: !menu.required || menu.closed,
+                menuLineEntry: !menu.required || menu.lineEntry,
+                noPageErrors: pageErrors.length === 0,
+                noRequestFailures: requestFailures.length === 0,
+              };
+              const failures = Object.entries(checks).filter(([,value]) => !value).map(([key]) => key);
+              results.push({name:item.name, engine:item.engine, viewport:{width:item.width,height:item.height}, passed:failures.length===0, checks, failures, state, menu, pageErrors, requestFailures, status:response?.status() || 0});
+              await context.close();
+            }
+          } finally {
+            await browsers.chromium.close();
+            await browsers.webkit.close();
+          }
+
+          const report = {
+            version: expected,
+            target,
+            generatedAt: new Date().toISOString(),
+            buildReport,
+            buildChecks,
+            testedCases: results.length,
+            passedCases: results.filter(r => r.passed).length,
+            failedCases: results.filter(r => !r.passed).length,
+            productionModified: true,
+            attendanceSpreadsheetModified: false,
+            releaseGate: {
+              productionOnline: results.every(r => r.passed) && Object.values(buildChecks).every(Boolean),
+              rollbackRequired: !(results.every(r => r.passed) && Object.values(buildChecks).every(Boolean)),
+            },
+            results,
+          };
+          fs.mkdirSync('v207-analysis', {recursive:true});
+          fs.writeFileSync('v207-analysis/v2071-production-smoke-qa.json', JSON.stringify(report, null, 2));
+          console.log('MAGICOFFICE_V2071_PRODUCTION_QA', JSON.stringify({testedCases:report.testedCases, passedCases:report.passedCases, failedCases:report.failedCases, buildChecks, productionOnline:report.releaseGate.productionOnline}));
+          if (!report.releaseGate.productionOnline) process.exit(1);
+          JS
+          node v2071-production-qa.mjs
+
+      - name: Commit production QA report
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f v207-analysis/v2071-production-smoke-qa.json ]; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/v2071-production-smoke-qa.json
+          if git diff --cached --quiet; then
+            echo 'No production QA report changes.'
+          else
+            git commit -m 'Verify MagicOffice v2.0.7.1 production deployment'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
