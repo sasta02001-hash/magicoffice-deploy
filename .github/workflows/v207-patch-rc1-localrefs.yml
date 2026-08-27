@@ -1,0 +1,54 @@
+name: Patch MagicOffice v2.0.7 RC1 local-reference validator
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-patch-rc1-localrefs.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Ignore CSS fragments and JavaScript template placeholders
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('v207-rc1/build_preview.py')
+          text = path.read_text('utf-8')
+          old = '''                if ref.startswith(("http://", "https://", "mailto:", "tel:", "#", "data:", "javascript:")):
+                    continue
+                clean = ref.split("?", 1)[0].split("#", 1)[0]
+'''
+          new = '''                if ref.startswith(("http://", "https://", "mailto:", "tel:", "#", "data:", "javascript:")):
+                    continue
+                if ref.startswith(("%", "${")):
+                    continue
+                clean = ref.split("?", 1)[0].split("#", 1)[0]
+'''
+          if old not in text:
+              raise SystemExit('Validator marker not found')
+          path.write_text(text.replace(old, new, 1), 'utf-8')
+          print('PATCHED_RC1_LOCAL_REFERENCE_VALIDATOR')
+          PY
+      - name: Commit validator patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-rc1/build_preview.py
+          git commit -m 'Fix MagicOffice v2.0.7 Preview RC1 local-reference validation'
+          git pull --rebase origin v2.0.7-preview-source
+          git push origin HEAD:v2.0.7-preview-source
