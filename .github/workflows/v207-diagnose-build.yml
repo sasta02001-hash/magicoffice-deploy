@@ -1,0 +1,83 @@
+name: Diagnose MagicOffice v2.0.7 preview reconstruction
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-diagnose-build.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Diagnose code archive and source structure
+        shell: bash
+        run: |
+          set -u
+          python - <<'PY'
+          from pathlib import Path
+          import base64, hashlib, json, tarfile, traceback
+
+          report = {
+              'expected_archive_sha256': '1f700aaf5900bc1186371a03ac808035a0926a6af3109f60042f5f24bcceaa8f',
+              'errors': [],
+          }
+          try:
+              code_dir = Path('v207-transfer/code')
+              chunks = sorted(code_dir.glob('chunk-*.b64'))
+              report['chunk_count'] = len(chunks)
+              report['chunks'] = [{'name': p.name, 'bytes': p.stat().st_size, 'sha256': hashlib.sha256(p.read_bytes()).hexdigest()} for p in chunks]
+              encoded = ''.join(p.read_text('utf-8').strip() for p in chunks)
+              report['encoded_chars'] = len(encoded)
+              report['encoded_mod4'] = len(encoded) % 4
+              archive = base64.b64decode(encoded, validate=True)
+              report['archive_bytes'] = len(archive)
+              report['archive_sha256'] = hashlib.sha256(archive).hexdigest()
+              report['archive_sha_matches_expected'] = report['archive_sha256'] == report['expected_archive_sha256']
+              archive_path = Path('v207-analysis/diagnostic-code.tar.gz')
+              archive_path.parent.mkdir(parents=True, exist_ok=True)
+              archive_path.write_bytes(archive)
+              with tarfile.open(archive_path, 'r:gz') as tf:
+                  members = tf.getmembers()
+                  report['tar_member_count'] = len(members)
+                  report['tar_members'] = [{'name': m.name, 'size': m.size, 'type': str(m.type)} for m in members]
+              archive_path.unlink(missing_ok=True)
+          except Exception as exc:
+              report['errors'].append({'stage': 'archive', 'type': type(exc).__name__, 'message': str(exc), 'traceback': traceback.format_exc()})
+
+          try:
+              report['coverage_exists'] = Path('v207-analysis/asset-coverage-summary.json').exists()
+              report['live_map_exists'] = Path('v207-analysis/live-asset-map.json').exists()
+              report['fingerprints_exists'] = Path('v207-input/v206-original-fingerprints.tsv').exists()
+              report['reused_asset_count'] = len(list(Path('v207-reused-assets').glob('*'))) if Path('v207-reused-assets').exists() else 0
+              report['live_asset_count'] = len(list(Path('v207-live-assets').glob('*'))) if Path('v207-live-assets').exists() else 0
+          except Exception as exc:
+              report['errors'].append({'stage': 'assets', 'type': type(exc).__name__, 'message': str(exc), 'traceback': traceback.format_exc()})
+
+          out = Path('v207-analysis/build-diagnostic.json')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(json.dumps(report, ensure_ascii=False, indent=2), 'utf-8')
+          print('MAGICOFFICE_V207_DIAGNOSTIC', json.dumps(report, ensure_ascii=False))
+          PY
+      - name: Commit diagnostic report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/build-diagnostic.json
+          if git diff --cached --quiet; then
+            echo 'No diagnostic changes.'
+          else
+            git commit -m 'Diagnose MagicOffice v2.0.7 preview reconstruction'
+            git push origin HEAD:v2.0.7-preview-source
+          fi
