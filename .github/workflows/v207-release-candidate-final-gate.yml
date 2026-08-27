@@ -1,0 +1,129 @@
+name: Finalize MagicOffice v2.0.7 release-candidate gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-release-candidate-final-gate.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_URL: https://magicoffice-v207-release-candidate.vercel.app/
+      EXPECTED_VERSION: 2.0.7-preview-verification
+      EXPECTED_REVISION: rc5-release-candidate
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Install Chromium
+        shell: bash
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Recheck desktop image delivery and merge final gate
+        shell: bash
+        run: |
+          cat > final-gate.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const target=process.env.TARGET_URL;
+          const expected=process.env.EXPECTED_VERSION;
+          const revision=process.env.EXPECTED_REVISION;
+          const previous=JSON.parse(fs.readFileSync('v207-analysis/release-candidate-qa.json','utf8'));
+          const build=JSON.parse(fs.readFileSync('v207-site/preview-build.json','utf8'));
+          const priorPassing=previous.results.filter(result=>result.name!=='desktop-chromium');
+          if(priorPassing.length!==5||priorPassing.some(result=>!result.passed))throw new Error('The five non-desktop release-candidate cases are not all passing');
+          if(build.fallback_asset_count!==0||build.production_release_allowed!==true)throw new Error('Build release gate is not ready');
+
+          const browser=await chromium.launch({headless:true});
+          let desktop;
+          try{
+            const context=await browser.newContext({viewport:{width:1366,height:900},screen:{width:1366,height:900},locale:'zh-TW',timezoneId:'Asia/Taipei',serviceWorkers:'block'});
+            const page=await context.newPage();
+            const pageErrors=[],requestFailures=[];
+            page.on('pageerror',error=>pageErrors.push(String(error?.stack||error)));
+            page.on('requestfailed',request=>requestFailures.push({url:request.url(),error:request.failure()?.errorText||'unknown'}));
+            const response=await page.goto(`${target}?finalgate=${Date.now()}`,{waitUntil:'domcontentloaded',timeout:120000});
+            await page.waitForFunction(({expected,revision})=>{const current=document.body?.dataset?.siteVersion||document.documentElement?.dataset?.siteVersion||document.querySelector('meta[name="x-magicoffice-preview"]')?.content||'';return current===expected&&document.documentElement?.dataset?.remotePreview===revision&&document.body?.textContent?.includes('魔幻姶仕社');},{expected,revision},{timeout:120000});
+            await page.waitForTimeout(1000);
+            await page.evaluate(()=>{for(const image of document.images){image.loading='eager';image.decoding='sync';}});
+            const fullHeight=await page.evaluate(()=>Math.max(document.body.scrollHeight,document.documentElement.scrollHeight));
+            for(let y=0;y<=fullHeight;y+=650){await page.evaluate(value=>scrollTo(0,value),y);await page.waitForTimeout(38);}
+            await page.evaluate(()=>scrollTo(0,0));await page.waitForTimeout(1300);
+
+            const imageState=await page.evaluate(()=>[...document.images].map(image=>{
+              const source=image.currentSrc||image.src;
+              const hiddenByClosedDetails=Boolean(image.closest('details:not([open])'));
+              const visible=image.getClientRects().length>0&&!hiddenByClosedDetails;
+              return {alt:image.alt||'',source,complete:image.complete,naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight,visible,hiddenByClosedDetails};
+            }));
+            const uniqueSources=[...new Set(imageState.map(item=>item.source).filter(source=>source&&!source.startsWith('data:')))];
+            const resourceResults=[];
+            for(const source of uniqueSources){
+              try{
+                const resource=await page.request.get(source,{timeout:60000,failOnStatusCode:false});
+                resourceResults.push({source,status:resource.status(),ok:resource.ok(),contentType:resource.headers()['content-type']||''});
+              }catch(error){resourceResults.push({source,status:0,ok:false,error:String(error)});}
+            }
+            const visibleBroken=imageState.filter(item=>item.visible&&(!item.complete||item.naturalWidth<=0));
+            const resourceFailures=resourceResults.filter(item=>!item.ok||item.status<200||item.status>=400||!/^image\//i.test(item.contentType));
+            const state=await page.evaluate(()=>({
+              version:document.body?.dataset?.siteVersion||document.documentElement?.dataset?.siteVersion||document.querySelector('meta[name="x-magicoffice-preview"]')?.content||'',
+              revision:document.documentElement?.dataset?.remotePreview||'',
+              background:getComputedStyle(document.body).backgroundColor,
+              font:getComputedStyle(document.body).fontFamily,
+              scrollWidth:document.documentElement.scrollWidth,
+              viewportWidth:innerWidth,
+              sections:['#worlds','#roster','#schedule','#event-hub','#menu','#first-visit','#location'].every(selector=>Boolean(document.querySelector(selector))),
+              attendanceReferencesInstagram:/Instagram|官方\s*IG|以\s*IG\s*為準/i.test(document.querySelector('#schedule')?.textContent||''),
+              robotsNoindex:/noindex/i.test(document.querySelector('meta[name="robots"]')?.content||''),
+              fixedLineVisible:[...document.querySelectorAll('a[href*="lin.ee"]')].some(link=>{const style=getComputedStyle(link),rect=link.getBoundingClientRect();return style.position==='fixed'&&style.display!=='none'&&style.visibility!=='hidden'&&rect.width>0&&rect.height>0;})
+            }));
+            const checks={http200:response?.status()===200,version:state.version===expected,revision:state.revision===revision,styled:state.background!=='rgb(255, 255, 255)'&&!state.font.includes('Times New Roman'),responsive:state.scrollWidth<=state.viewportWidth+2,sections:state.sections,visibleImages:visibleBroken.length===0,allImageResources:resourceFailures.length===0,attendance:!state.attendanceReferencesInstagram,noindex:state.robotsNoindex,lineFloat:state.fixedLineVisible,noPageErrors:pageErrors.length===0,noRequestFailures:requestFailures.filter(item=>item.url.includes('magicoffice-v207-release-candidate')||item.url.includes('cdn.jsdelivr.net/gh/sasta02001-hash/magicoffice-deploy')||item.url.includes('raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy')).length===0};
+            const failures=Object.entries(checks).filter(([,value])=>!value).map(([key])=>key);
+            desktop={name:'desktop-chromium',engine:'chromium',viewport:{width:1366,height:900},passed:failures.length===0,checks,failures,state,imageSummary:{imageCount:imageState.length,visibleBroken,uniqueResourceCount:uniqueSources.length,resourceFailures},pageErrors,requestFailures,status:response?.status()||0};
+            await page.screenshot({path:'final-desktop-chromium-top.png'});
+            await context.close();
+          }finally{await browser.close();}
+
+          const results=[desktop,...priorPassing];
+          const report={version:expected,remotePreviewRevision:revision,target,generatedAt:new Date().toISOString(),method:'Five previously passing cross-engine/device cases plus a desktop resource-delivery retest that distinguishes hidden lazy images from visible failures.',buildGate:{fallbackAssetCount:build.fallback_asset_count,productionReleaseAllowed:build.production_release_allowed},productionModified:false,attendanceSpreadsheetModified:false,testedCases:results.length,passedCases:results.filter(result=>result.passed).length,failedCases:results.filter(result=>!result.passed).length,releaseGate:{automatedPreviewPassed:results.every(result=>result.passed),manualRealDeviceReviewRequired:true,productionPromotionAuthorized:false},results};
+          fs.mkdirSync('v207-analysis',{recursive:true});fs.writeFileSync('v207-analysis/release-candidate-final-gate.json',JSON.stringify(report,null,2));console.log('MAGICOFFICE_V207_FINAL_GATE',JSON.stringify({testedCases:report.testedCases,passedCases:report.passedCases,failedCases:report.failedCases,automatedPreviewPassed:report.releaseGate.automatedPreviewPassed}));if(report.failedCases)process.exit(1);
+          JS
+          node final-gate.mjs
+      - name: Commit final gate report
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f v207-analysis/release-candidate-final-gate.json ]; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/release-candidate-final-gate.json
+          if git diff --cached --quiet; then
+            echo 'No final gate changes.'
+          else
+            git commit -m 'Finalize MagicOffice v2.0.7 release-candidate gate'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
+      - name: Upload final gate screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v2.0.7_release_candidate_final_gate
+          path: |
+            v207-analysis/release-candidate-final-gate.json
+            final-desktop-chromium-top.png
+          if-no-files-found: warn
+          retention-days: 14
