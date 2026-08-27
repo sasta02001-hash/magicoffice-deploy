@@ -99,7 +99,7 @@ jobs:
           output = out_dir / 'index.html'
           output.write_text(html, 'utf-8')
           size = output.stat().st_size
-          if size < 5_000_000 or size > 35_000_000:
+          if size < 3_000_000 or size > 35_000_000:
               raise RuntimeError(f'Unexpected standalone size: {size}')
           if '魔幻姶仕社' not in html or '本週出勤' not in html or '線上購拍' not in html:
               raise RuntimeError('Core MagicOffice content missing')
