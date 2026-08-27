@@ -1,0 +1,367 @@
+{
+  "version": "2.0.7.1-broken-asset-hotfix",
+  "target": "https://magicoffice-v207-release-candidate.vercel.app/",
+  "generatedAt": "2026-08-27T13:10:40.466Z",
+  "testedCases": 5,
+  "passedCases": 0,
+  "failedCases": 5,
+  "productionModified": false,
+  "attendanceSpreadsheetModified": false,
+  "releaseGate": {
+    "brokenAssetHotfixPassed": false,
+    "productionPromotionAuthorized": false
+  },
+  "results": [
+    {
+      "name": "desktop-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 1366,
+        "height": 900
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "fullyEmbedded": false,
+        "styled": true,
+        "responsive": true,
+        "images": true,
+        "everyHtmlImageEmbedded": true,
+        "noLocalAssetReferences": true,
+        "noRemoteAssetReferences": true,
+        "sections": true,
+        "mobileBarRule": true,
+        "lineFloatRule": true,
+        "attendance": true,
+        "noindex": true,
+        "links": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noCriticalFailures": true
+      },
+      "failures": [
+        "fullyEmbedded"
+      ],
+      "state": {
+        "version": "2.0.7.1-broken-asset-hotfix",
+        "assetMode": "",
+        "bodyBackground": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "viewport": 1366,
+        "scrollWidth": 1366,
+        "imageCount": 47,
+        "brokenImages": [],
+        "nonDataImageSources": [],
+        "hasLocalAssetReference": false,
+        "hasRawGithubAssetReference": false,
+        "hasJsdelivrAssetReference": false,
+        "sections": true,
+        "mobileBarVisible": false,
+        "fixedLineVisible": true,
+        "scheduleReferencesInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasReservation": true,
+        "expectedVersion": true,
+        "width": 1366
+      },
+      "menu": {
+        "required": false,
+        "toggleFound": false,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "requestFailures": [],
+      "status": 200
+    },
+    {
+      "name": "tablet-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "fullyEmbedded": false,
+        "styled": true,
+        "responsive": true,
+        "images": true,
+        "everyHtmlImageEmbedded": true,
+        "noLocalAssetReferences": true,
+        "noRemoteAssetReferences": true,
+        "sections": true,
+        "mobileBarRule": true,
+        "lineFloatRule": true,
+        "attendance": true,
+        "noindex": true,
+        "links": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noCriticalFailures": true
+      },
+      "failures": [
+        "fullyEmbedded"
+      ],
+      "state": {
+        "version": "2.0.7.1-broken-asset-hotfix",
+        "assetMode": "",
+        "bodyBackground": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "viewport": 1024,
+        "scrollWidth": 1024,
+        "imageCount": 47,
+        "brokenImages": [],
+        "nonDataImageSources": [],
+        "hasLocalAssetReference": false,
+        "hasRawGithubAssetReference": false,
+        "hasJsdelivrAssetReference": false,
+        "sections": true,
+        "mobileBarVisible": false,
+        "fixedLineVisible": true,
+        "scheduleReferencesInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasReservation": true,
+        "expectedVersion": true,
+        "width": 1024
+      },
+      "menu": {
+        "required": true,
+        "toggleFound": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "requestFailures": [],
+      "status": 200
+    },
+    {
+      "name": "android-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "fullyEmbedded": false,
+        "styled": true,
+        "responsive": true,
+        "images": true,
+        "everyHtmlImageEmbedded": true,
+        "noLocalAssetReferences": true,
+        "noRemoteAssetReferences": true,
+        "sections": true,
+        "mobileBarRule": true,
+        "lineFloatRule": true,
+        "attendance": true,
+        "noindex": true,
+        "links": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noCriticalFailures": true
+      },
+      "failures": [
+        "fullyEmbedded"
+      ],
+      "state": {
+        "version": "2.0.7.1-broken-asset-hotfix",
+        "assetMode": "",
+        "bodyBackground": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "viewport": 360,
+        "scrollWidth": 360,
+        "imageCount": 47,
+        "brokenImages": [],
+        "nonDataImageSources": [],
+        "hasLocalAssetReference": false,
+        "hasRawGithubAssetReference": false,
+        "hasJsdelivrAssetReference": false,
+        "sections": true,
+        "mobileBarVisible": true,
+        "fixedLineVisible": false,
+        "scheduleReferencesInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasReservation": true,
+        "expectedVersion": true,
+        "width": 360
+      },
+      "menu": {
+        "required": true,
+        "toggleFound": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "requestFailures": [],
+      "status": 200
+    },
+    {
+      "name": "iphone-webkit",
+      "engine": "webkit",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "fullyEmbedded": false,
+        "styled": true,
+        "responsive": true,
+        "images": true,
+        "everyHtmlImageEmbedded": true,
+        "noLocalAssetReferences": true,
+        "noRemoteAssetReferences": true,
+        "sections": true,
+        "mobileBarRule": true,
+        "lineFloatRule": true,
+        "attendance": true,
+        "noindex": true,
+        "links": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noCriticalFailures": true
+      },
+      "failures": [
+        "fullyEmbedded"
+      ],
+      "state": {
+        "version": "2.0.7.1-broken-asset-hotfix",
+        "assetMode": "",
+        "bodyBackground": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "viewport": 390,
+        "scrollWidth": 390,
+        "imageCount": 47,
+        "brokenImages": [],
+        "nonDataImageSources": [],
+        "hasLocalAssetReference": false,
+        "hasRawGithubAssetReference": false,
+        "hasJsdelivrAssetReference": false,
+        "sections": true,
+        "mobileBarVisible": true,
+        "fixedLineVisible": false,
+        "scheduleReferencesInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasReservation": true,
+        "expectedVersion": true,
+        "width": 390
+      },
+      "menu": {
+        "required": true,
+        "toggleFound": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "consoleErrors": [],
+      "requestFailures": [],
+      "status": 200
+    },
+    {
+      "name": "iphone-large-webkit",
+      "engine": "webkit",
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "fullyEmbedded": false,
+        "styled": true,
+        "responsive": true,
+        "images": true,
+        "everyHtmlImageEmbedded": true,
+        "noLocalAssetReferences": true,
+        "noRemoteAssetReferences": true,
+        "sections": true,
+        "mobileBarRule": true,
+        "lineFloatRule": true,
+        "attendance": true,
+        "noindex": true,
+        "links": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noCriticalFailures": true
+      },
+      "failures": [
+        "fullyEmbedded"
+      ],
+      "state": {
+        "version": "2.0.7.1-broken-asset-hotfix",
+        "assetMode": "",
+        "bodyBackground": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "viewport": 430,
+        "scrollWidth": 430,
+        "imageCount": 47,
+        "brokenImages": [],
+        "nonDataImageSources": [],
+        "hasLocalAssetReference": false,
+        "hasRawGithubAssetReference": false,
+        "hasJsdelivrAssetReference": false,
+        "sections": true,
+        "mobileBarVisible": true,
+        "fixedLineVisible": false,
+        "scheduleReferencesInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasReservation": true,
+        "expectedVersion": true,
+        "width": 430
+      },
+      "menu": {
+        "required": true,
+        "toggleFound": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "consoleErrors": [],
+      "requestFailures": [],
+      "status": 200
+    }
+  ]
+}
