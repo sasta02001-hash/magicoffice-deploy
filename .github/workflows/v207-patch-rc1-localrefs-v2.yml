@@ -1,0 +1,52 @@
+name: Patch MagicOffice v2.0.7 RC1 reference check v2
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-patch-rc1-localrefs-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Patch false-positive local references
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('v207-rc1/build_preview.py')
+          text = path.read_text('utf-8')
+          marker = '                clean = ref.split("?", 1)[0].split("#", 1)[0]\n'
+          insertion = '                if ref.startswith(("%", chr(36) + "{")):\n                    continue\n' + marker
+          if marker not in text:
+              raise SystemExit('Reference validation marker not found')
+          if 'chr(36) + "{"' not in text:
+              text = text.replace(marker, insertion, 1)
+          path.write_text(text, 'utf-8')
+          print('PATCHED_RC1_REFERENCE_CHECK_V2')
+          PY
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-rc1/build_preview.py
+          if git diff --cached --quiet; then
+            echo 'Patch already present.'
+          else
+            git commit -m 'Fix MagicOffice v2.0.7 Preview RC1 reference check'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
