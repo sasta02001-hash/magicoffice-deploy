@@ -1,0 +1,145 @@
+{
+  "expected_archive_sha256": "1f700aaf5900bc1186371a03ac808035a0926a6af3109f60042f5f24bcceaa8f",
+  "errors": [],
+  "chunk_count": 9,
+  "chunks": [
+    {
+      "name": "chunk-000.b64",
+      "bytes": 12000,
+      "sha256": "3d7ad2c0e542a6a2e05a04f2831d9053b0ab4ceb27f86948194ba05c5a3baa6e"
+    },
+    {
+      "name": "chunk-001.b64",
+      "bytes": 12000,
+      "sha256": "1a5ede1ecd480eec348902083a67046c70468bd68aad976d476ccbd062df8553"
+    },
+    {
+      "name": "chunk-002.b64",
+      "bytes": 12000,
+      "sha256": "e4b9645659e3cdc8dcbcec0015ee4ab6980898ceab8ed8b699c47318b0412690"
+    },
+    {
+      "name": "chunk-003.b64",
+      "bytes": 12000,
+      "sha256": "26b85ee01149ea1be52d91a8badfd625ba09e8aa95301cf12b12e6e8964290ea"
+    },
+    {
+      "name": "chunk-004.b64",
+      "bytes": 12000,
+      "sha256": "14c5ba8f526349be29fb787eeb06e54fb24b37d7ab0bae35c15751a0ee3369bd"
+    },
+    {
+      "name": "chunk-005.b64",
+      "bytes": 12000,
+      "sha256": "cfbcacb67199d1f21c7443a87e098fb649578153991ec00512e08dcf3d1f04bd"
+    },
+    {
+      "name": "chunk-006.b64",
+      "bytes": 12000,
+      "sha256": "5ba3a3c3b7cb7961cb3646b59bf7023f1302ae4e1abe279633a3f63b6fe6e947"
+    },
+    {
+      "name": "chunk-007.b64",
+      "bytes": 12000,
+      "sha256": "e0acb30e090939590b6a1667a190d1077b2c4087f7e818362cca200a4397772c"
+    },
+    {
+      "name": "chunk-008.b64",
+      "bytes": 9116,
+      "sha256": "8e70fe5df705eae8d929a44833acb41ab0d409bd06d0e6a2dccb9a59975ad8b5"
+    }
+  ],
+  "encoded_chars": 105116,
+  "encoded_mod4": 0,
+  "archive_bytes": 78835,
+  "archive_sha256": "1f700a9517296c198831dbfc89cb1882e91984dcdbb55725c9d29aa124e83363",
+  "archive_sha_matches_expected": false,
+  "tar_member_count": 16,
+  "tar_members": [
+    {
+      "name": "./sitemap.xml",
+      "size": 261,
+      "type": "b'0'"
+    },
+    {
+      "name": "./404.html",
+      "size": 860,
+      "type": "b'0'"
+    },
+    {
+      "name": "./assets/js/magic-channel-v2-script.js",
+      "size": 1606,
+      "type": "b'0'"
+    },
+    {
+      "name": "./assets/js/magic-mibao-override-js.js",
+      "size": 487,
+      "type": "b'0'"
+    },
+    {
+      "name": "./assets/js/magicoffice-v202-editorial-js.js",
+      "size": 1237,
+      "type": "b'0'"
+    },
+    {
+      "name": "./assets/js/magicoffice-v203-event-system-js.js",
+      "size": 6327,
+      "type": "b'0'"
+    },
+    {
+      "name": "./assets/js/magic-core-js.js",
+      "size": 12492,
+      "type": "b'0'"
+    },
+    {
+      "name": "./assets/js/mo-v206-build-marker-v2.0.6.js",
+      "size": 336,
+      "type": "b'0'"
+    },
+    {
+      "name": "./assets/js/magic-schedule-js-v2.0.6.js",
+      "size": 83598,
+      "type": "b'0'"
+    },
+    {
+      "name": "./assets/css/site-v2.0.6.css",
+      "size": 103773,
+      "type": "b'0'"
+    },
+    {
+      "name": "./assets/icons/apple-touch-icon.png",
+      "size": 12595,
+      "type": "b'0'"
+    },
+    {
+      "name": "./assets/icons/favicon-64.png",
+      "size": 2935,
+      "type": "b'0'"
+    },
+    {
+      "name": "./site.webmanifest",
+      "size": 462,
+      "type": "b'0'"
+    },
+    {
+      "name": "./robots.txt",
+      "size": 87,
+      "type": "b'0'"
+    },
+    {
+      "name": "./vercel.json",
+      "size": 1164,
+      "type": "b'0'"
+    },
+    {
+      "name": "./index.html",
+      "size": 76307,
+      "type": "b'0'"
+    }
+  ],
+  "coverage_exists": true,
+  "live_map_exists": true,
+  "fingerprints_exists": true,
+  "reused_asset_count": 14,
+  "live_asset_count": 46
+}
