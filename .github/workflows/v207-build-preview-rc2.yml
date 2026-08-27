@@ -1,0 +1,56 @@
+name: Build MagicOffice v2.0.7 Preview RC2
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-build-preview-rc2.yml'
+      - 'v207-rc1/run_preview_rc2.py'
+      - 'v207-rc1/build_preview.py'
+      - 'v207-transfer/code/**'
+      - 'v207-input/**'
+      - 'v207-live-assets/**'
+      - 'v207-reused-assets/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Install Pillow
+        run: python -m pip install --quiet pillow
+      - name: Build Preview RC2
+        run: python v207-rc1/run_preview_rc2.py
+      - name: Validate JavaScript and preview markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f v207-site/index.html
+          test -f v207-site/vercel.json
+          test -f v207-remote-preview/index.html
+          grep -q 'data-site-version="2.0.7-preview-verification"' v207-site/index.html
+          grep -q 'noindex,nofollow,noarchive,max-image-preview:large' v207-site/index.html
+          grep -q 'Disallow: /' v207-site/robots.txt
+          for file in v207-site/assets/js/*.js; do node --check "$file"; done
+      - name: Commit Preview RC2 outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-site v207-remote-preview v207-analysis/v207-rc1-build-report.json
+          if git diff --cached --quiet; then
+            echo 'No Preview RC2 output changes.'
+          else
+            git commit -m 'Build MagicOffice v2.0.7 Preview RC2'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
