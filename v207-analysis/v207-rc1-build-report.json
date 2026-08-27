@@ -1,0 +1,582 @@
+{
+  "version": "2.0.7-preview-verification",
+  "build": "2026-08-27-preview-rc1",
+  "code_archive_sha256": "1f700a9517296c198831dbfc89cb1882e91984dcdbb55725c9d29aa124e83363",
+  "target_original_count": 51,
+  "asset_records": [
+    {
+      "name": "05f19666ed49f368.png",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/05f19666ed49f368.png",
+      "target_width": 522,
+      "target_height": 295,
+      "output_width": 320,
+      "output_height": 181,
+      "sha256": "57ceb6ce89172b0b2b5f1c73e2a46296ebd4e56dcc51114337af5128fbb522c6"
+    },
+    {
+      "name": "065cb975e20e85a9.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/065cb975e20e85a9.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "065cb975e20e85a9d8327a9b3574240e3051593fd19f5ff9b5cc00eb397e1f67"
+    },
+    {
+      "name": "0f2282fd5b53948f.webp",
+      "method": "generated-placeholder",
+      "source": "generated-placeholder",
+      "target_width": 1000,
+      "target_height": 1250,
+      "output_width": 1000,
+      "output_height": 1250,
+      "sha256": "b1f831978810c2d010a08ef2b838f4df1ef9accbefd0fabc5873af2d3f5c0f7b"
+    },
+    {
+      "name": "183eaf19e84ad365.webp",
+      "method": "generated-placeholder",
+      "source": "generated-placeholder",
+      "target_width": 946,
+      "target_height": 1182,
+      "output_width": 946,
+      "output_height": 1182,
+      "sha256": "3d5724aa77ae96605ab0ef4d00a9d2f252d11118a295f0a6a59eee0819d34d3c"
+    },
+    {
+      "name": "1d6e303714642bf6.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/1d6e303714642bf6.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "cbc711a9056e61abfd99d49ea28bfba332039d2d9c451e47872ce17d5f012177"
+    },
+    {
+      "name": "1e9e2e722f5c6e9e.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/1e9e2e722f5c6e9e.webp",
+      "target_width": 1000,
+      "target_height": 563,
+      "output_width": 320,
+      "output_height": 180,
+      "sha256": "796c6202fbf7f6f0428e4d38ba58ced6a82811648b6c42d689466686cffc1966"
+    },
+    {
+      "name": "29b2257a9fedd26b.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/29b2257a9fedd26b.webp",
+      "target_width": 1000,
+      "target_height": 563,
+      "output_width": 320,
+      "output_height": 180,
+      "sha256": "a6386141782535b11df1f9678b380b8e4bdbb78841ea0a308701f5072ccfae72"
+    },
+    {
+      "name": "2d5ed350d26c050b.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/2d5ed350d26c050b.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "133f9cab1041b48caa2456ae2a5435ca7fb82f6d64329a2a75bf2dfbb6e61e1c"
+    },
+    {
+      "name": "3241306c93000ad3.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/3241306c93000ad3.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "a9840ba1be6e3cc020a58e042c35502507143580f9c17f7911419074d3121f63"
+    },
+    {
+      "name": "3760e1f1d1df1182.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/3760e1f1d1df1182.webp",
+      "target_width": 946,
+      "target_height": 1015,
+      "output_width": 220,
+      "output_height": 236,
+      "sha256": "8c30b96ef53b833f8ada2203a6628f2bece470ce18912cf8dbc5c94d77b76d26"
+    },
+    {
+      "name": "38f7487b4a48705b.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/38f7487b4a48705b.webp",
+      "target_width": 1672,
+      "target_height": 941,
+      "output_width": 320,
+      "output_height": 180,
+      "sha256": "1586235b2aaf58668d7ac8f633cc6b911ab0d94004f0f0877fdb9d9362ac48c6"
+    },
+    {
+      "name": "40b77f0c5b9cab43.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/40b77f0c5b9cab43.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "40b77f0c5b9cab430839197c9e647da1e4e9beeb9dad155fe1f72b46840b4902"
+    },
+    {
+      "name": "4213a5bd8175d801.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/4213a5bd8175d801.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "4213a5bd8175d8010379f6f8dcfb6f407f77cfe21625548ee9692615223482e9"
+    },
+    {
+      "name": "44049d5f46ae6a12.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/44049d5f46ae6a12.webp",
+      "target_width": 1000,
+      "target_height": 1333,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "f97c07e58d8d9a15da0f83729855ec43fdaded6a371f0d411f6bab89695023ca"
+    },
+    {
+      "name": "441b778dda048206.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/441b778dda048206.webp",
+      "target_width": 1000,
+      "target_height": 563,
+      "output_width": 320,
+      "output_height": 180,
+      "sha256": "aa285373f8c58e0f74bb8ef6d86b4ad69afd9fac87835079f7d2b0c79d8d5c3f"
+    },
+    {
+      "name": "4538292ff5eca3cf.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/4538292ff5eca3cf.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "4538292ff5eca3cf07614165630cde6bd81b91eee147b05294241e5eea78b503"
+    },
+    {
+      "name": "46a75e190baad8e8.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/46a75e190baad8e8.webp",
+      "target_width": 600,
+      "target_height": 800,
+      "output_width": 600,
+      "output_height": 800,
+      "sha256": "46a75e190baad8e8669b0662b8a07d9ede469f5ac106207a3c8311dfa3b96f20"
+    },
+    {
+      "name": "4739c5c2017c4c0e.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/4739c5c2017c4c0e.webp",
+      "target_width": 1672,
+      "target_height": 941,
+      "output_width": 320,
+      "output_height": 180,
+      "sha256": "c4e4f9a71992294c2b6a8a6bec2d938b0f904666768029626b45a4674af2746e"
+    },
+    {
+      "name": "49acafbeb1e4b6bb.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/49acafbeb1e4b6bb.webp",
+      "target_width": 1672,
+      "target_height": 941,
+      "output_width": 320,
+      "output_height": 180,
+      "sha256": "aa285373f8c58e0f74bb8ef6d86b4ad69afd9fac87835079f7d2b0c79d8d5c3f"
+    },
+    {
+      "name": "4bf65583e3739d3f.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/4bf65583e3739d3f.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "cb1a78bf7f01ac6c418fbdb76f383ebf4c50892eb20cf44a0774eabee6f9515f"
+    },
+    {
+      "name": "4fd4c223e064c15d.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/4fd4c223e064c15d.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "36a4ad866a8f4992e6fabf8cf8b4fb2a3702b333d094f0c83f47283b8647347b"
+    },
+    {
+      "name": "59f9acb8861a6595.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/59f9acb8861a6595.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "617536cd4f25ad70e24981f05b090b134db29de5a6ab58749ed6ae06e3c72e36"
+    },
+    {
+      "name": "5b07190f56f5759b.webp",
+      "method": "generated-placeholder",
+      "source": "generated-placeholder",
+      "target_width": 946,
+      "target_height": 1160,
+      "output_width": 946,
+      "output_height": 1160,
+      "sha256": "78e565322b9776f337b713ef917d1867486af53b4474aaa04023415302cfed20"
+    },
+    {
+      "name": "617f58b1207050e6.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/617f58b1207050e6.webp",
+      "target_width": 900,
+      "target_height": 1192,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "a33db4504c358593260754cad09a24e4a256ed6f412502e52465581a08ce5ef5"
+    },
+    {
+      "name": "6577d53b1cb3b2d1.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/6577d53b1cb3b2d1.webp",
+      "target_width": 946,
+      "target_height": 1010,
+      "output_width": 220,
+      "output_height": 235,
+      "sha256": "17a0cd0c1a4f5dab9292eb132b0332f5cc07166c7dc636d83ee320aafc810570"
+    },
+    {
+      "name": "6abf49f3aab3c507.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/6abf49f3aab3c507.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "2970328b9a92dbd48ee68858398ae1b74d3e7b5c77e260ee0c21a1631a76985c"
+    },
+    {
+      "name": "735af9e4bef7878c.png",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/735af9e4bef7878c.png",
+      "target_width": 64,
+      "target_height": 64,
+      "output_width": 220,
+      "output_height": 220,
+      "sha256": "0548c7c781924f82a3007a3cd4feed9ac5dd8a50f7e7fc0511ab7d35a5110d44"
+    },
+    {
+      "name": "815c2fdfd2a254ce.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/815c2fdfd2a254ce.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "0277c23e6eaefcef2b7df51fbd3da2063d8abdf4862d6b4d8598a7a5c8c67724"
+    },
+    {
+      "name": "82d07bafb9d31903.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/82d07bafb9d31903.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "82d07bafb9d31903f214f6f772c6496c8ea664f7d3b5b0c7ae51e45e50b91644"
+    },
+    {
+      "name": "8f1e2635714effb9.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/8f1e2635714effb9.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "1f16c275d6a879cbc6e2ae9ccfb8b4badc392abfddf7023ba8f7e0141a636961"
+    },
+    {
+      "name": "9cf5f3c7c8e43450.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/9cf5f3c7c8e43450.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "9070165bd528f2e868dc9bf70360435bbafa553060a9becca81afcd953b58def"
+    },
+    {
+      "name": "a1b97912e03ddf75.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/a1b97912e03ddf75.webp",
+      "target_width": 900,
+      "target_height": 1125,
+      "output_width": 900,
+      "output_height": 1125,
+      "sha256": "a1b97912e03ddf75915ab97cc2680ad5d8582638d1e0a17f0f47b957254d48e7"
+    },
+    {
+      "name": "aa59a517161edaeb.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/aa59a517161edaeb.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "aa59a517161edaeb719fab4d36a6201983ac64594c3345ef07ee1f3d6582c912"
+    },
+    {
+      "name": "aa7f2899b9a883f5.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/aa7f2899b9a883f5.webp",
+      "target_width": 1080,
+      "target_height": 1350,
+      "output_width": 1080,
+      "output_height": 1350,
+      "sha256": "bb582511448f1c1d3df75f41394fa303ee247310a6cca6ef297033198de654bb"
+    },
+    {
+      "name": "ac868759ec08626e.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/ac868759ec08626e.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "ac868759ec08626ee74cb38cd10be77f6f81b00c256f43cf5da2d08cea86e80b"
+    },
+    {
+      "name": "b1e7d92e49e334d4.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/b1e7d92e49e334d4.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "b1e7d92e49e334d4e0e4e85e83340593d2151f1019d15c2623f54347211359c3"
+    },
+    {
+      "name": "b27ac3e14ebc9fa7.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/b27ac3e14ebc9fa7.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "b27ac3e14ebc9fa7fbda3142d810a9801dbe2470bbf893e2b6425dbff996cf69"
+    },
+    {
+      "name": "be1b96881d52ce48.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/be1b96881d52ce48.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "be1b96881d52ce48c20db9d2d6a02c57fcfbd44946921a0cb2ab8de2edd1ab03"
+    },
+    {
+      "name": "d0aed7c77fe2c752.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/d0aed7c77fe2c752.webp",
+      "target_width": 1000,
+      "target_height": 750,
+      "output_width": 220,
+      "output_height": 165,
+      "sha256": "4e55298998fcfb3d09c6b49920e8d42c45075d134ec3998b29a2f54e73e61b56"
+    },
+    {
+      "name": "d878f9472706fdbe.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/d878f9472706fdbe.webp",
+      "target_width": 1672,
+      "target_height": 941,
+      "output_width": 320,
+      "output_height": 180,
+      "sha256": "18c8c544178828abe9f874e20fc320863cf4143dc3eb0e8158c8e0e5856e986e"
+    },
+    {
+      "name": "d9800fa21c1b6e2e.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/d9800fa21c1b6e2e.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "6904c39b726e3bbf91c7f439839a2cef03e94619b1d2befaab99415dcc2a9484"
+    },
+    {
+      "name": "d9961b8b48fdb587.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/d9961b8b48fdb587.webp",
+      "target_width": 1000,
+      "target_height": 563,
+      "output_width": 320,
+      "output_height": 180,
+      "sha256": "38c3fc947469646147ef8191e0131291fc8ce7ef9275aecabf5dcdded3205f8c"
+    },
+    {
+      "name": "da930bd7fba6ff56.png",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/da930bd7fba6ff56.png",
+      "target_width": 522,
+      "target_height": 295,
+      "output_width": 320,
+      "output_height": 181,
+      "sha256": "82f05d56a62bb83b6979220815648290965f6b9ab69b9146d60bff6dc391b696"
+    },
+    {
+      "name": "e22350b8ec2d748a.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/e22350b8ec2d748a.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "a81337568d3f6c0b47e4ca77696422a653197cdf6eef6af0843d44fab3d84a4b"
+    },
+    {
+      "name": "e284222013366784.webp",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/e284222013366784.webp",
+      "target_width": 520,
+      "target_height": 520,
+      "output_width": 520,
+      "output_height": 520,
+      "sha256": "e2842220133667845b1129b2c07bf1c7d90be1384b36dd023255375b9793fa27"
+    },
+    {
+      "name": "e404ebb20f7273f8.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/e404ebb20f7273f8.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "e4e8d296b5b80bb9ff98f74bf1b744164a92538209f9d560ae93ce997b332311"
+    },
+    {
+      "name": "ea48add4d1a2b11d.png",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/ea48add4d1a2b11d.png",
+      "target_width": 180,
+      "target_height": 180,
+      "output_width": 220,
+      "output_height": 220,
+      "sha256": "6267db7a861c5880053d06dbb525247b8a88c54f5adf9007412073ec98793703"
+    },
+    {
+      "name": "eabca6a873f77362.jpg",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/eabca6a873f77362.jpg",
+      "target_width": 1200,
+      "target_height": 630,
+      "output_width": 320,
+      "output_height": 168,
+      "sha256": "da54b4bd1fa359bf9cad89961418c3f78fe58f235e3a488fb34aec4c5c403690"
+    },
+    {
+      "name": "f12cf40a97634cc9.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/f12cf40a97634cc9.webp",
+      "target_width": 1000,
+      "target_height": 563,
+      "output_width": 320,
+      "output_height": 180,
+      "sha256": "c4e4f9a71992294c2b6a8a6bec2d938b0f904666768029626b45a4674af2746e"
+    },
+    {
+      "name": "f2097a926bdf48b3.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/f2097a926bdf48b3.webp",
+      "target_width": 760,
+      "target_height": 1013,
+      "output_width": 120,
+      "output_height": 160,
+      "sha256": "3b7cc185b8e24624aed04443b6b64fc9e6be8cc70ff720ddede563487d9adce3"
+    },
+    {
+      "name": "f260809328cde7d1.webp",
+      "method": "live-perceptual-match",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-live-assets/f260809328cde7d1.webp",
+      "target_width": 1000,
+      "target_height": 563,
+      "output_width": 320,
+      "output_height": 180,
+      "sha256": "a37f1b8ff4f65cf16337861d41601950823e15d6b47c1204eadd65d4cb3ca172"
+    }
+  ],
+  "fallback_assets": [
+    {
+      "name": "0f2282fd5b53948f.webp",
+      "method": "generated-placeholder",
+      "source": "generated-placeholder",
+      "target_width": 1000,
+      "target_height": 1250,
+      "output_width": 1000,
+      "output_height": 1250,
+      "sha256": "b1f831978810c2d010a08ef2b838f4df1ef9accbefd0fabc5873af2d3f5c0f7b"
+    },
+    {
+      "name": "183eaf19e84ad365.webp",
+      "method": "generated-placeholder",
+      "source": "generated-placeholder",
+      "target_width": 946,
+      "target_height": 1182,
+      "output_width": 946,
+      "output_height": 1182,
+      "sha256": "3d5724aa77ae96605ab0ef4d00a9d2f252d11118a295f0a6a59eee0819d34d3c"
+    },
+    {
+      "name": "5b07190f56f5759b.webp",
+      "method": "generated-placeholder",
+      "source": "generated-placeholder",
+      "target_width": 946,
+      "target_height": 1160,
+      "output_width": 946,
+      "output_height": 1160,
+      "sha256": "78e565322b9776f337b713ef917d1867486af53b4474aaa04023415302cfed20"
+    }
+  ],
+  "fallback_asset_count": 3,
+  "generated_variant_count": 21,
+  "generated_variants": [
+    "0f2282fd5b53948f-640.webp",
+    "0f2282fd5b53948f-960.webp",
+    "183eaf19e84ad365-640.webp",
+    "3760e1f1d1df1182-640.webp",
+    "38f7487b4a48705b-640.webp",
+    "38f7487b4a48705b-960.webp",
+    "441b778dda048206-640.webp",
+    "441b778dda048206-960.webp",
+    "4739c5c2017c4c0e-640.webp",
+    "4739c5c2017c4c0e-960.webp",
+    "49acafbeb1e4b6bb-640.webp",
+    "49acafbeb1e4b6bb-960.webp",
+    "6577d53b1cb3b2d1-640.webp",
+    "aa7f2899b9a883f5-640.webp",
+    "aa7f2899b9a883f5-960.webp",
+    "d878f9472706fdbe-640.webp",
+    "d878f9472706fdbe-960.webp",
+    "d9961b8b48fdb587-640.webp",
+    "d9961b8b48fdb587-960.webp",
+    "f12cf40a97634cc9-640.webp",
+    "f12cf40a97634cc9-960.webp"
+  ],
+  "local_reference_missing_count": 0,
+  "duplicate_id_count": 0,
+  "site_file_count": 89,
+  "site_bytes": 2054342,
+  "production_modified": false,
+  "attendance_spreadsheet_modified": false,
+  "production_release_allowed": false
+}

@@ -1,0 +1,2 @@
+window.MagicOfficeBuild=Object.freeze({version:"2.0.6",channel:"production-readiness",builtAt:"2026-08-27T05:45:00+08:00",attendanceAuthority:"website",attendancePrimary:"existing-schedule-sheet",attendanceFallback:"recent-cache-and-embedded-snapshot",tableMutation:"none"});
+document.documentElement.dataset.magicOfficeVersion="2.0.6";

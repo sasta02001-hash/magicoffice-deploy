@@ -1,0 +1,22 @@
+{
+  "name": "MagicOffice／魔幻姶仕社",
+  "short_name": "MagicOffice",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#090708",
+  "theme_color": "#090708",
+  "lang": "zh-Hant",
+  "icons": [
+    {
+      "src": "/assets/icons/favicon-64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
