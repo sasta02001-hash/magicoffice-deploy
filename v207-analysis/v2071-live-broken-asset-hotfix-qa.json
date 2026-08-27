@@ -1,7 +1,7 @@
 {
   "version": "2.0.7.1-broken-asset-hotfix",
   "target": "https://magicoffice-v207-release-candidate.vercel.app/",
-  "generatedAt": "2026-08-27T13:10:40.466Z",
+  "generatedAt": "2026-08-27T13:14:50.255Z",
   "testedCases": 5,
   "passedCases": 0,
   "failedCases": 5,
