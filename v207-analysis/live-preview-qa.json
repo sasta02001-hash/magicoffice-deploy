@@ -1,0 +1,541 @@
+{
+  "version": "2.0.7-preview-verification",
+  "target": "https://magicoffice-v207-preview-rc2.vercel.app/",
+  "generatedAt": "2026-08-27T10:39:38.411Z",
+  "timezone": "Asia/Taipei",
+  "productionModified": false,
+  "attendanceSpreadsheetModified": false,
+  "testedCases": 6,
+  "passedCases": 0,
+  "failedCases": 6,
+  "releaseGate": {
+    "previewReviewAllowed": false,
+    "productionAllowed": false,
+    "productionBlocker": "Three original visual assets remain replaced by clearly marked Preview-only fallbacks."
+  },
+  "results": [
+    {
+      "name": "desktop-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 1366,
+        "height": 900
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "brandedTitle": true,
+        "styled": false,
+        "notRawHtml": false,
+        "responsive": true,
+        "imagesLoaded": false,
+        "coreContent": true,
+        "quickNavRule": true,
+        "lineFloatRule": false,
+        "attendanceChannel": true,
+        "robotsNoindex": true,
+        "lineLink": true,
+        "instagramLink": true,
+        "reservationLink": true,
+        "menuOpened": true,
+        "menuClosed": true,
+        "menuLineEntry": true,
+        "noPageErrors": true,
+        "noLocalRequestFailures": false
+      },
+      "failures": [
+        "styled",
+        "notRawHtml",
+        "imagesLoaded",
+        "lineFloatRule",
+        "noLocalRequestFailures"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "expectedVersion": true,
+        "title": "MagicOffice｜魔幻姶仕社",
+        "background": "rgba(0, 0, 0, 0)",
+        "font": "\"Times New Roman\"",
+        "rawBlueLink": true,
+        "viewportWidth": 1366,
+        "scrollWidth": 1366,
+        "noHorizontalOverflow": true,
+        "imageCount": 47,
+        "brokenImages": [
+          "MagicOffice 夏日海軍活動主視覺，活動期間 2026 年 8 月 19 日至 8 月 31 日",
+          "中秋月宴｜魔幻烤肉大會 IG 烤肉 A 版主視覺",
+          "Jubi 生誕祭主視覺",
+          "Jubi 生誕祭當天流程官方圖",
+          "Jubi 生誕周邊",
+          "Jubi 掛軸競標",
+          "午後咖啡浪花氛圍場景",
+          "夜間酒吧夜雪氛圍場景圖",
+          "品牌主題場景圖",
+          "午後咖啡場景",
+          "夜間酒吧場景",
+          "浮世繪與收藏場景",
+          "櫻花王座場景",
+          "午後咖啡座位",
+          "魔窟夜間吧台"
+        ],
+        "coreText": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickNavVisible": false,
+        "fixedLineVisible": false,
+        "scheduleReferencesInstagram": false,
+        "robotsNoindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "mobile": false,
+        "width": 1366
+      },
+      "menu": {
+        "required": false,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "localFailures": [
+        {
+          "url": "https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/v2.0.7-preview-source/v207-site/assets/css/site-v2.0.6.css",
+          "error": "net::ERR_BLOCKED_BY_ORB"
+        }
+      ],
+      "responseStatus": 200
+    },
+    {
+      "name": "tablet-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "brandedTitle": true,
+        "styled": false,
+        "notRawHtml": false,
+        "responsive": true,
+        "imagesLoaded": false,
+        "coreContent": true,
+        "quickNavRule": false,
+        "lineFloatRule": true,
+        "attendanceChannel": true,
+        "robotsNoindex": true,
+        "lineLink": true,
+        "instagramLink": true,
+        "reservationLink": true,
+        "menuOpened": true,
+        "menuClosed": true,
+        "menuLineEntry": true,
+        "noPageErrors": true,
+        "noLocalRequestFailures": false
+      },
+      "failures": [
+        "styled",
+        "notRawHtml",
+        "imagesLoaded",
+        "quickNavRule",
+        "noLocalRequestFailures"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "expectedVersion": true,
+        "title": "MagicOffice｜魔幻姶仕社",
+        "background": "rgba(0, 0, 0, 0)",
+        "font": "\"Times New Roman\"",
+        "rawBlueLink": true,
+        "viewportWidth": 1024,
+        "scrollWidth": 1024,
+        "noHorizontalOverflow": true,
+        "imageCount": 47,
+        "brokenImages": [
+          "MagicOffice 夏日海軍活動主視覺，活動期間 2026 年 8 月 19 日至 8 月 31 日",
+          "中秋月宴｜魔幻烤肉大會 IG 烤肉 A 版主視覺",
+          "Jubi 生誕祭主視覺",
+          "Jubi 生誕祭當天流程官方圖",
+          "Jubi 生誕周邊",
+          "Jubi 掛軸競標",
+          "午後咖啡浪花氛圍場景",
+          "夜間酒吧夜雪氛圍場景圖",
+          "品牌主題場景圖",
+          "午後咖啡場景",
+          "夜間酒吧場景",
+          "浮世繪與收藏場景",
+          "櫻花王座場景",
+          "午後咖啡座位",
+          "魔窟夜間吧台"
+        ],
+        "coreText": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickNavVisible": false,
+        "fixedLineVisible": false,
+        "scheduleReferencesInstagram": false,
+        "robotsNoindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "mobile": false,
+        "width": 1024
+      },
+      "menu": {
+        "required": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true,
+        "toggleFound": true
+      },
+      "pageErrors": [],
+      "localFailures": [
+        {
+          "url": "https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/v2.0.7-preview-source/v207-site/assets/css/site-v2.0.6.css",
+          "error": "net::ERR_BLOCKED_BY_ORB"
+        }
+      ],
+      "responseStatus": 200
+    },
+    {
+      "name": "android-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "brandedTitle": true,
+        "styled": false,
+        "notRawHtml": false,
+        "responsive": false,
+        "imagesLoaded": true,
+        "coreContent": true,
+        "quickNavRule": false,
+        "lineFloatRule": true,
+        "attendanceChannel": true,
+        "robotsNoindex": true,
+        "lineLink": true,
+        "instagramLink": true,
+        "reservationLink": true,
+        "menuOpened": true,
+        "menuClosed": true,
+        "menuLineEntry": true,
+        "noPageErrors": true,
+        "noLocalRequestFailures": false
+      },
+      "failures": [
+        "styled",
+        "notRawHtml",
+        "responsive",
+        "quickNavRule",
+        "noLocalRequestFailures"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "expectedVersion": true,
+        "title": "MagicOffice｜魔幻姶仕社",
+        "background": "rgba(0, 0, 0, 0)",
+        "font": "\"Times New Roman\"",
+        "rawBlueLink": true,
+        "viewportWidth": 1440,
+        "scrollWidth": 1720,
+        "noHorizontalOverflow": false,
+        "imageCount": 47,
+        "brokenImages": [],
+        "coreText": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickNavVisible": false,
+        "fixedLineVisible": false,
+        "scheduleReferencesInstagram": false,
+        "robotsNoindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "mobile": true,
+        "width": 360
+      },
+      "menu": {
+        "required": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true,
+        "toggleFound": true
+      },
+      "pageErrors": [],
+      "localFailures": [
+        {
+          "url": "https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/v2.0.7-preview-source/v207-site/assets/css/site-v2.0.6.css",
+          "error": "net::ERR_BLOCKED_BY_ORB"
+        }
+      ],
+      "responseStatus": 200
+    },
+    {
+      "name": "small-android-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "brandedTitle": true,
+        "styled": false,
+        "notRawHtml": false,
+        "responsive": false,
+        "imagesLoaded": true,
+        "coreContent": true,
+        "quickNavRule": false,
+        "lineFloatRule": true,
+        "attendanceChannel": true,
+        "robotsNoindex": true,
+        "lineLink": true,
+        "instagramLink": true,
+        "reservationLink": true,
+        "menuOpened": true,
+        "menuClosed": true,
+        "menuLineEntry": true,
+        "noPageErrors": true,
+        "noLocalRequestFailures": false
+      },
+      "failures": [
+        "styled",
+        "notRawHtml",
+        "responsive",
+        "quickNavRule",
+        "noLocalRequestFailures"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "expectedVersion": true,
+        "title": "MagicOffice｜魔幻姶仕社",
+        "background": "rgba(0, 0, 0, 0)",
+        "font": "\"Times New Roman\"",
+        "rawBlueLink": true,
+        "viewportWidth": 1280,
+        "scrollWidth": 1720,
+        "noHorizontalOverflow": false,
+        "imageCount": 47,
+        "brokenImages": [],
+        "coreText": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickNavVisible": false,
+        "fixedLineVisible": false,
+        "scheduleReferencesInstagram": false,
+        "robotsNoindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "mobile": true,
+        "width": 320
+      },
+      "menu": {
+        "required": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true,
+        "toggleFound": true
+      },
+      "pageErrors": [],
+      "localFailures": [
+        {
+          "url": "https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/v2.0.7-preview-source/v207-site/assets/css/site-v2.0.6.css",
+          "error": "net::ERR_BLOCKED_BY_ORB"
+        }
+      ],
+      "responseStatus": 200
+    },
+    {
+      "name": "iphone-webkit",
+      "engine": "webkit",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "brandedTitle": true,
+        "styled": false,
+        "notRawHtml": false,
+        "responsive": false,
+        "imagesLoaded": true,
+        "coreContent": true,
+        "quickNavRule": false,
+        "lineFloatRule": true,
+        "attendanceChannel": true,
+        "robotsNoindex": true,
+        "lineLink": true,
+        "instagramLink": true,
+        "reservationLink": true,
+        "menuOpened": true,
+        "menuClosed": true,
+        "menuLineEntry": true,
+        "noPageErrors": true,
+        "noLocalRequestFailures": true
+      },
+      "failures": [
+        "styled",
+        "notRawHtml",
+        "responsive",
+        "quickNavRule"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "expectedVersion": true,
+        "title": "MagicOffice｜魔幻姶仕社",
+        "background": "rgba(0, 0, 0, 0)",
+        "font": "-webkit-standard",
+        "rawBlueLink": true,
+        "viewportWidth": 390,
+        "scrollWidth": 1720,
+        "noHorizontalOverflow": false,
+        "imageCount": 47,
+        "brokenImages": [],
+        "coreText": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickNavVisible": false,
+        "fixedLineVisible": false,
+        "scheduleReferencesInstagram": false,
+        "robotsNoindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "mobile": true,
+        "width": 390
+      },
+      "menu": {
+        "required": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true,
+        "toggleFound": true
+      },
+      "pageErrors": [],
+      "localFailures": [],
+      "responseStatus": 200
+    },
+    {
+      "name": "iphone-large-webkit",
+      "engine": "webkit",
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "expectedVersion": true,
+        "brandedTitle": true,
+        "styled": false,
+        "notRawHtml": false,
+        "responsive": false,
+        "imagesLoaded": true,
+        "coreContent": true,
+        "quickNavRule": false,
+        "lineFloatRule": true,
+        "attendanceChannel": true,
+        "robotsNoindex": true,
+        "lineLink": true,
+        "instagramLink": true,
+        "reservationLink": true,
+        "menuOpened": true,
+        "menuClosed": true,
+        "menuLineEntry": true,
+        "noPageErrors": true,
+        "noLocalRequestFailures": true
+      },
+      "failures": [
+        "styled",
+        "notRawHtml",
+        "responsive",
+        "quickNavRule"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "expectedVersion": true,
+        "title": "MagicOffice｜魔幻姶仕社",
+        "background": "rgba(0, 0, 0, 0)",
+        "font": "-webkit-standard",
+        "rawBlueLink": true,
+        "viewportWidth": 430,
+        "scrollWidth": 1720,
+        "noHorizontalOverflow": false,
+        "imageCount": 47,
+        "brokenImages": [],
+        "coreText": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickNavVisible": false,
+        "fixedLineVisible": false,
+        "scheduleReferencesInstagram": false,
+        "robotsNoindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "mobile": true,
+        "width": 430
+      },
+      "menu": {
+        "required": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true,
+        "toggleFound": true
+      },
+      "pageErrors": [],
+      "localFailures": [],
+      "responseStatus": 200
+    }
+  ]
+}
