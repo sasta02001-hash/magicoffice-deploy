@@ -37,6 +37,8 @@ jobs:
               html = html.replace('</head>', compat + '\n</head>', 1)
           if '2.0.7-preview-verification' not in html:
               html = html.replace('</head>', '<meta name="x-loader-expected-version" content="2.0.7-preview-verification">\n</head>', 1)
+          if 'data-asset-mode="fully-embedded"' not in html:
+              html = re.sub(r'<body\b([^>]*)>', r'<body\1 data-asset-mode="fully-embedded" data-hotfix-scope="broken-assets-only">', html, count=1, flags=re.I)
           if '2.0.7.1-broken-asset-hotfix' not in html:
               raise RuntimeError('Hotfix source marker missing')
           # All website visuals/styles/scripts must remain embedded.
@@ -50,6 +52,7 @@ jobs:
               'remotePreviewRevision': 'rc5-release-candidate-self-contained-hotfix',
               'loaderCompatibilityVersion': '2.0.7-preview-verification',
               'loaderCompatibilityRevision': 'rc5-release-candidate',
+              'assetMode': 'fully-embedded',
               'bytes': output.stat().st_size,
               'sha256': hashlib.sha256(output.read_bytes()).hexdigest(),
               'sourceSha256': hashlib.sha256(source.read_bytes()).hexdigest(),
