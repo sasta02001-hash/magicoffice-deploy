@@ -1,0 +1,229 @@
+name: Fetch and match live MagicOffice assets for v2.0.7 preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-fetch-live-assets.yml'
+      - 'v207-input/v206-original-fingerprints.tsv'
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-match:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+
+      - name: Install image tooling
+        run: python -m pip install --quiet pillow
+
+      - name: Crawl current official site and match v2.0.6 images
+        shell: bash
+        env:
+          LIVE_ORIGIN: https://magicoffice-preview-v2.vercel.app
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageOps
+          from urllib.parse import urljoin, urlparse
+          from urllib.request import Request, urlopen
+          import base64, csv, hashlib, io, json, math, mimetypes, os, re, ssl, time
+
+          ORIGIN = os.environ['LIVE_ORIGIN'].rstrip('/') + '/'
+          INPUT = Path('v207-input/v206-original-fingerprints.tsv')
+          REPORT = Path('v207-analysis/live-asset-map.json')
+          OUT = Path('v207-live-assets')
+          OUT.mkdir(parents=True, exist_ok=True)
+          UA = 'MagicOffice-v2.0.7-preview-asset-migrator/1.0'
+          context = ssl.create_default_context()
+
+          def fetch(url, binary=True):
+              req = Request(url, headers={'User-Agent': UA, 'Accept': '*/*'})
+              last = None
+              for attempt in range(4):
+                  try:
+                      with urlopen(req, timeout=45, context=context) as r:
+                          return r.read()
+                  except Exception as exc:
+                      last = exc
+                      time.sleep(1.5 * (attempt + 1))
+              raise last
+
+          def hex_bits(bits):
+              return f'{int("".join("1" if b else "0" for b in bits), 2):064x}'
+
+          def fingerprints(image):
+              image = ImageOps.exif_transpose(image).convert('L')
+              d = image.resize((17, 16), Image.Resampling.LANCZOS)
+              dbits = [d.getpixel((x, y)) > d.getpixel((x + 1, y)) for y in range(16) for x in range(16)]
+              a = image.resize((16, 16), Image.Resampling.LANCZOS)
+              vals = list(a.getdata())
+              avg = sum(vals) / len(vals)
+              abits = [v > avg for v in vals]
+              return hex_bits(dbits), hex_bits(abits)
+
+          def hamming(a, b):
+              return (int(a, 16) ^ int(b, 16)).bit_count()
+
+          def urls_in(text, base):
+              found = set()
+              # quoted/unquoted absolute or root-relative web assets
+              for raw in re.findall(r'''(?ix)(?:["'=(,:\s])((?:https?:)?//[^"'()\s]+|/[^"'()\s]+|\.\.?/[^"'()\s]+)''', text):
+                  raw = raw.rstrip(';,')
+                  found.add(urljoin(base, raw))
+              # CSS url(...)
+              for raw in re.findall(r'''(?ix)url\(\s*["']?([^"')]+)''', text):
+                  found.add(urljoin(base, raw.strip()))
+              return found
+
+          homepage = urljoin(ORIGIN, '?v207-live-crawl=1')
+          html_bytes = fetch(homepage)
+          html = html_bytes.decode('utf-8', errors='ignore')
+          text_sources = [(homepage, html)]
+          linked = urls_in(html, ORIGIN)
+          for url in sorted(linked):
+              path = urlparse(url).path.lower()
+              if path.endswith(('.css', '.js')) and urlparse(url).netloc.endswith('vercel.app'):
+                  try:
+                      body = fetch(url).decode('utf-8', errors='ignore')
+                      text_sources.append((url, body))
+                  except Exception as exc:
+                      print('SKIP_TEXT', url, type(exc).__name__, str(exc)[:100])
+
+          image_ext = ('.png','.jpg','.jpeg','.webp','.gif','.avif','.svg')
+          image_urls = set()
+          data_candidates = []
+          data_pat = re.compile(r'data:(image/[a-zA-Z0-9.+-]+);base64,([A-Za-z0-9+/=]+)')
+          for base, text in text_sources:
+              for mime, payload in data_pat.findall(text):
+                  try:
+                      data_candidates.append((f'data:{mime}:{len(data_candidates)}', mime, base64.b64decode(payload)))
+                  except Exception:
+                      pass
+              for url in urls_in(text, base):
+                  parsed = urlparse(url)
+                  clean = parsed.path.lower()
+                  if clean.endswith(image_ext) and (parsed.netloc.endswith('vercel.app') or parsed.netloc == ''):
+                      image_urls.add(url)
+
+          raw_candidates = list(data_candidates)
+          for url in sorted(image_urls):
+              try:
+                  raw = fetch(url)
+                  ctype, _ = mimetypes.guess_type(urlparse(url).path)
+                  raw_candidates.append((url, ctype or 'application/octet-stream', raw))
+              except Exception as exc:
+                  print('SKIP_IMAGE', url, type(exc).__name__, str(exc)[:100])
+
+          candidates = []
+          seen = set()
+          for source, mime, raw in raw_candidates:
+              sha = hashlib.sha256(raw).hexdigest()
+              if sha in seen:
+                  continue
+              seen.add(sha)
+              try:
+                  image = Image.open(io.BytesIO(raw))
+                  image.load()
+                  width, height = image.size
+                  dh, ah = fingerprints(image)
+                  candidates.append({'source': source, 'mime': mime, 'raw': raw, 'sha256': sha,
+                                     'width': width, 'height': height, 'dhash256': dh,
+                                     'ahash256': ah, 'image': image.copy()})
+              except Exception as exc:
+                  print('SKIP_DECODE', source, type(exc).__name__, str(exc)[:100])
+
+          targets = []
+          with INPUT.open(newline='', encoding='utf-8') as f:
+              for row in csv.DictReader(f, delimiter='\t'):
+                  row['width'] = int(row['width'])
+                  row['height'] = int(row['height'])
+                  targets.append(row)
+
+          results = []
+          accepted = exact = 0
+          for target in targets:
+              tw, th = target['width'], target['height']
+              tar = tw / th
+              scored = []
+              for item in candidates:
+                  exact_sha = item['sha256'] == target['sha256']
+                  aspect_delta = abs(math.log((item['width'] / item['height']) / tar))
+                  dd = hamming(item['dhash256'], target['dhash256'])
+                  ad = hamming(item['ahash256'], target['ahash256'])
+                  combined = dd + ad
+                  score = -100000 if exact_sha else combined + round(min(aspect_delta, 1.0) * 240)
+                  scored.append((score, exact_sha, aspect_delta, combined, dd, ad, item))
+              scored.sort(key=lambda x: x[0])
+              if not scored:
+                  results.append({'target': target['name'], 'accepted': False, 'method': 'no-candidates'})
+                  continue
+              score, exact_sha, aspect_delta, combined, dd, ad, best = scored[0]
+              ok = bool(exact_sha or (aspect_delta <= 0.035 and combined <= 48))
+              method = 'exact-sha256' if exact_sha else ('perceptual' if ok else 'unmatched')
+              if ok:
+                  accepted += 1
+                  exact += int(exact_sha)
+                  dest = OUT / target['name']
+                  if exact_sha:
+                      dest.write_bytes(best['raw'])
+                  else:
+                      im = best['image']
+                      suffix = dest.suffix.lower()
+                      if suffix == '.webp':
+                          im.save(dest, 'WEBP', quality=96, method=6)
+                      elif suffix == '.png':
+                          im.save(dest, 'PNG', optimize=True)
+                      elif suffix in ('.jpg', '.jpeg'):
+                          im.convert('RGB').save(dest, 'JPEG', quality=96, optimize=True, progressive=True)
+                      else:
+                          dest.write_bytes(best['raw'])
+              top = []
+              for s, ex, ar, co, d1, a1, it in scored[:3]:
+                  top.append({'source': it['source'], 'sha256': it['sha256'], 'width': it['width'],
+                              'height': it['height'], 'exact_sha256': ex,
+                              'aspect_delta': round(ar,6), 'dhash_distance': d1,
+                              'ahash_distance': a1, 'combined_distance': co, 'score': s})
+              results.append({'target': target['name'], 'target_sha256': target['sha256'],
+                              'target_width': tw, 'target_height': th, 'accepted': ok,
+                              'method': method, 'best': top[0], 'candidates': top})
+
+          report = {
+              'origin': ORIGIN,
+              'html_bytes': len(html_bytes),
+              'text_source_count': len(text_sources),
+              'discovered_image_url_count': len(image_urls),
+              'decoded_unique_candidate_count': len(candidates),
+              'target_count': len(targets),
+              'accepted_count': accepted,
+              'exact_count': exact,
+              'perceptual_count': accepted-exact,
+              'unmatched_count': len(targets)-accepted,
+              'results': results,
+          }
+          REPORT.parent.mkdir(parents=True, exist_ok=True)
+          REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2), 'utf-8')
+          print('MAGICOFFICE_V207_LIVE_MATCH', json.dumps({k: report[k] for k in ['html_bytes','text_source_count','discovered_image_url_count','decoded_unique_candidate_count','target_count','accepted_count','exact_count','perceptual_count','unmatched_count']}))
+          PY
+
+      - name: Commit live match report and assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/live-asset-map.json v207-live-assets
+          if git diff --cached --quiet; then
+            echo 'No live-asset changes.'
+          else
+            git commit -m 'Fetch live assets for MagicOffice v2.0.7 preview'
+            git push origin HEAD:v2.0.7-preview-source
+          fi
