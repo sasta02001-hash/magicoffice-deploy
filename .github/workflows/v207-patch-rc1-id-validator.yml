@@ -1,0 +1,73 @@
+name: Patch MagicOffice v2.0.7 RC1 HTML ID validator
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-patch-rc1-id-validator.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Replace text regex with actual HTML tag parsing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('v207-rc1/build_preview.py')
+          text = path.read_text('utf-8')
+          old = '''def check_duplicate_ids() -> list[str]:
+    html = (SITE / "index.html").read_text("utf-8")
+    ids = re.findall(r"\\bid=[\\\"']([^\\\"']+)", html)
+    return sorted({value for value in ids if ids.count(value) > 1})
+'''
+          new = '''def check_duplicate_ids() -> list[str]:
+    from html.parser import HTMLParser
+
+    class IdCollector(HTMLParser):
+        def __init__(self) -> None:
+            super().__init__(convert_charrefs=True)
+            self.ids: list[str] = []
+
+        def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+            for key, value in attrs:
+                if key.lower() == "id" and value:
+                    self.ids.append(value)
+
+        def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+            self.handle_starttag(tag, attrs)
+
+    parser = IdCollector()
+    parser.feed((SITE / "index.html").read_text("utf-8"))
+    return sorted({value for value in parser.ids if parser.ids.count(value) > 1})
+'''
+          if old not in text:
+              raise SystemExit('Duplicate-ID validator marker not found')
+          path.write_text(text.replace(old, new, 1), 'utf-8')
+          print('PATCHED_RC1_HTML_ID_VALIDATOR')
+          PY
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-rc1/build_preview.py
+          if git diff --cached --quiet; then
+            echo 'HTML ID validator already patched.'
+          else
+            git commit -m 'Fix MagicOffice v2.0.7 Preview RC1 HTML ID validation'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
