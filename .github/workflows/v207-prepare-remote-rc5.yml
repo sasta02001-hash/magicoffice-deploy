@@ -1,0 +1,50 @@
+name: Prepare MagicOffice v2.0.7 release-candidate remote Preview RC5
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-prepare-remote-rc5.yml'
+      - 'v207-rc1/prepare_remote_rc5.py'
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Build MIME-safe release-candidate remote preview
+        run: python v207-rc1/prepare_remote_rc5.py
+      - name: Validate release-candidate remote preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f v207-remote-preview/index.html
+          test -f v207-remote-preview/remote-preview.json
+          grep -q 'data-remote-preview="rc5-release-candidate"' v207-remote-preview/index.html
+          grep -q 'data-site-version="2.0.7-preview-verification"' v207-remote-preview/index.html
+          grep -q 'd0c26168ccb347a858f7339aa271687f6d60e9db' v207-remote-preview/index.html
+          grep -q '"fallbackAssetCount": 0' v207-remote-preview/remote-preview.json
+          grep -q '"productionReleaseAllowed": true' v207-remote-preview/remote-preview.json
+          ! grep -q 'raw.githubusercontent.com.*assets/css' v207-remote-preview/index.html
+      - name: Commit release-candidate remote preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-remote-preview
+          if git diff --cached --quiet; then
+            echo 'No release-candidate remote preview changes.'
+          else
+            git commit -m 'Prepare MagicOffice v2.0.7 release-candidate remote preview'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
