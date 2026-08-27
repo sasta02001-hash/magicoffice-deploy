@@ -1,0 +1,155 @@
+name: Verify MagicOffice v2.0.7.1 live broken-asset hotfix
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v2071-live-broken-asset-hotfix-qa.yml'
+      - 'v207-remote-preview/**'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_URL: https://magicoffice-v207-release-candidate.vercel.app/
+      EXPECTED_VERSION: 2.0.7.1-broken-asset-hotfix
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Install Playwright
+        shell: bash
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+      - name: Run cross-engine live hotfix QA
+        shell: bash
+        run: |
+          cat > v2071-live-qa.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium, webkit } from 'playwright';
+          const target=process.env.TARGET_URL;
+          const expected=process.env.EXPECTED_VERSION;
+          const cases=[
+            {name:'desktop-chromium',engine:'chromium',width:1366,height:900,mobile:false,touch:false},
+            {name:'tablet-chromium',engine:'chromium',width:1024,height:768,mobile:false,touch:true},
+            {name:'android-chromium',engine:'chromium',width:360,height:800,mobile:true,touch:true,ua:'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36'},
+            {name:'iphone-webkit',engine:'webkit',width:390,height:844,mobile:true,touch:true,ua:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1'},
+            {name:'iphone-large-webkit',engine:'webkit',width:430,height:932,mobile:true,touch:true,ua:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1'}
+          ];
+          const browsers={chromium:await chromium.launch({headless:true}),webkit:await webkit.launch({headless:true})};
+          const results=[];
+          try{
+            for(const item of cases){
+              const context=await browsers[item.engine].newContext({viewport:{width:item.width,height:item.height},screen:{width:item.width,height:item.height},isMobile:item.mobile,hasTouch:item.touch,userAgent:item.ua,locale:'zh-TW',timezoneId:'Asia/Taipei',serviceWorkers:'block'});
+              const page=await context.newPage();
+              const pageErrors=[],consoleErrors=[],failed=[];
+              page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
+              page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
+              page.on('requestfailed',r=>failed.push({url:r.url(),error:r.failure()?.errorText||'unknown'}));
+              const response=await page.goto(`${target}?hotfixqa=${Date.now()}-${item.name}`,{waitUntil:'domcontentloaded',timeout:120000});
+              await page.waitForFunction(version=>{
+                const current=document.body?.dataset?.siteVersion||document.querySelector('meta[name="x-magicoffice-hotfix"]')?.content||'';
+                return current===version && document.body?.innerText?.includes('魔幻姶仕社');
+              },expected,{timeout:120000});
+              await page.waitForTimeout(1500);
+              await page.evaluate(()=>{for(const img of document.images){img.loading='eager';img.decoding='sync'}});
+              const h=await page.evaluate(()=>Math.max(document.body.scrollHeight,document.documentElement.scrollHeight));
+              for(let y=0;y<=h;y+=650){await page.evaluate(v=>scrollTo(0,v),y);await page.waitForTimeout(25)}
+              await page.evaluate(()=>scrollTo(0,0));
+              await page.waitForTimeout(1500);
+              const state=await page.evaluate(({expected,width})=>{
+                const visible=el=>{if(!el)return false;const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0};
+                const imgs=[...document.images];
+                const sources=imgs.map(i=>i.currentSrc||i.src);
+                const body=getComputedStyle(document.body);
+                const fixedLine=[...document.querySelectorAll('a[href*="lin.ee"]')].some(el=>getComputedStyle(el).position==='fixed'&&visible(el));
+                return {
+                  version:document.body?.dataset?.siteVersion||document.querySelector('meta[name="x-magicoffice-hotfix"]')?.content||'',
+                  assetMode:document.body?.dataset?.assetMode||'',
+                  bodyBackground:body.backgroundColor,
+                  font:body.fontFamily,
+                  viewport:innerWidth,
+                  scrollWidth:document.documentElement.scrollWidth,
+                  imageCount:imgs.length,
+                  brokenImages:imgs.filter(i=>!i.complete||i.naturalWidth<=0).map(i=>i.alt||i.src.slice(0,120)),
+                  nonDataImageSources:sources.filter(src=>!src.startsWith('data:image/')),
+                  hasLocalAssetReference:document.documentElement.innerHTML.includes('/assets/'),
+                  hasRawGithubAssetReference:/raw\.githubusercontent\.com[^"']+assets\//.test(document.documentElement.innerHTML),
+                  hasJsdelivrAssetReference:/cdn\.jsdelivr\.net[^"']+assets\//.test(document.documentElement.innerHTML),
+                  sections:['#worlds','#roster','#schedule','#event-hub','#menu','#first-visit','#location'].every(id=>document.querySelector(id)),
+                  mobileBarVisible:visible(document.querySelector('.mobile-bar')),
+                  fixedLineVisible:fixedLine,
+                  scheduleReferencesInstagram:/Instagram|官方\s*IG|以\s*IG\s*為準/i.test(document.querySelector('#schedule')?.innerText||''),
+                  noindex:/noindex/i.test(document.querySelector('meta[name=robots]')?.content||''),
+                  hasLine:[...document.querySelectorAll('a[href]')].some(a=>a.href.includes('lin.ee/NcCGG1P')),
+                  hasReservation:[...document.querySelectorAll('a[href]')].some(a=>a.href.includes('gforms.app/r/71hSwQR')),
+                  expectedVersion:(document.body?.dataset?.siteVersion||document.querySelector('meta[name="x-magicoffice-hotfix"]')?.content||'')===expected,
+                  width
+                };
+              },{expected,width:item.width});
+              let menu={required:item.width<=1180,toggleFound:false,opened:true,closed:true,lineEntry:true};
+              if(menu.required){
+                const toggle=page.locator('.menu-toggle').first();menu.toggleFound=await toggle.count()>0;
+                if(menu.toggleFound){await toggle.click();await page.waitForTimeout(300);menu.opened=await page.evaluate(()=>document.querySelector('.menu-toggle')?.getAttribute('aria-expanded')==='true'&&getComputedStyle(document.querySelector('.main-nav')).display!=='none');menu.lineEntry=await page.locator('.main-nav a',{hasText:'LINE 官方'}).count()>0;await page.screenshot({path:`v2071-${item.name}-menu.png`,fullPage:false});await toggle.click();await page.waitForTimeout(200);menu.closed=await toggle.getAttribute('aria-expanded')==='false'}else{menu.opened=false;menu.closed=false;menu.lineEntry=false}
+              }
+              await page.screenshot({path:`v2071-${item.name}-top.png`,fullPage:false});
+              const checks={
+                http200:response?.status()===200,
+                expectedVersion:state.expectedVersion,
+                fullyEmbedded:state.assetMode==='fully-embedded',
+                styled:!['rgba(0, 0, 0, 0)','rgb(255, 255, 255)'].includes(state.bodyBackground),
+                responsive:state.scrollWidth<=state.viewport+2,
+                images:state.imageCount>=40&&state.brokenImages.length===0,
+                everyHtmlImageEmbedded:state.nonDataImageSources.length===0,
+                noLocalAssetReferences:!state.hasLocalAssetReference,
+                noRemoteAssetReferences:!state.hasRawGithubAssetReference&&!state.hasJsdelivrAssetReference,
+                sections:state.sections,
+                mobileBarRule:item.width<=760?state.mobileBarVisible:!state.mobileBarVisible,
+                lineFloatRule:item.width<=760?!state.fixedLineVisible:state.fixedLineVisible,
+                attendance:!state.scheduleReferencesInstagram,
+                noindex:state.noindex,
+                links:state.hasLine&&state.hasReservation,
+                menu:!menu.required||(menu.opened&&menu.closed&&menu.lineEntry),
+                noPageErrors:pageErrors.length===0,
+                noCriticalFailures:failed.filter(x=>!x.url.includes('docs.google.com')&&!x.url.includes('googleusercontent.com')).length===0
+              };
+              const failures=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);
+              results.push({name:item.name,engine:item.engine,viewport:{width:item.width,height:item.height},passed:failures.length===0,checks,failures,state,menu,pageErrors,consoleErrors,requestFailures:failed,status:response?.status()||0});
+              await context.close();
+            }
+          }finally{await browsers.chromium.close();await browsers.webkit.close()}
+          const report={version:expected,target,generatedAt:new Date().toISOString(),testedCases:results.length,passedCases:results.filter(r=>r.passed).length,failedCases:results.filter(r=>!r.passed).length,productionModified:false,attendanceSpreadsheetModified:false,releaseGate:{brokenAssetHotfixPassed:results.every(r=>r.passed),productionPromotionAuthorized:false},results};
+          fs.mkdirSync('v207-analysis',{recursive:true});
+          fs.writeFileSync('v207-analysis/v2071-live-broken-asset-hotfix-qa.json',JSON.stringify(report,null,2));
+          console.log('MAGICOFFICE_V2071_LIVE_QA',JSON.stringify({testedCases:report.testedCases,passedCases:report.passedCases,failedCases:report.failedCases,brokenAssetHotfixPassed:report.releaseGate.brokenAssetHotfixPassed}));
+          if(report.failedCases)process.exit(1);
+          JS
+          node v2071-live-qa.mjs
+      - name: Commit QA report
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f v207-analysis/v2071-live-broken-asset-hotfix-qa.json ]; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/v2071-live-broken-asset-hotfix-qa.json
+          if git diff --cached --quiet; then echo 'No live hotfix QA changes.'; else git commit -m 'Verify MagicOffice v2.0.7.1 live broken-asset hotfix'; git pull --rebase origin v2.0.7-preview-source; git push origin HEAD:v2.0.7-preview-source; fi
+      - name: Upload QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v2.0.7.1_live_broken_asset_hotfix_QA
+          path: |
+            v207-analysis/v2071-live-broken-asset-hotfix-qa.json
+            v2071-*.png
+          if-no-files-found: warn
+          retention-days: 14
