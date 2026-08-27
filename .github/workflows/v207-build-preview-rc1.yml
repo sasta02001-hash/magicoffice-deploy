@@ -1,0 +1,60 @@
+name: Build MagicOffice v2.0.7 Preview RC1
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-build-preview-rc1.yml'
+      - 'v207-rc1/**'
+      - 'v207-transfer/code/**'
+      - 'v207-input/**'
+      - 'v207-live-assets/**'
+      - 'v207-reused-assets/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Install build dependencies
+        run: python -m pip install --quiet pillow
+      - name: Build Preview RC1 site and remote preview document
+        run: python v207-rc1/build_preview.py
+      - name: Validate package
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f v207-site/index.html
+          test -f v207-site/vercel.json
+          test -f v207-site/assets/css/site-v2.0.6.css
+          test -f v207-remote-preview/index.html
+          grep -q 'data-site-version="2.0.7-preview-verification"' v207-site/index.html
+          grep -q 'noindex,nofollow,noarchive,max-image-preview:large' v207-site/index.html
+          grep -q 'Disallow: /' v207-site/robots.txt
+          for f in v207-site/assets/js/*.js; do node --check "$f"; done
+          if grep -Rqi '出勤.*Instagram\|Instagram.*出勤\|以.*IG.*為準' v207-site/index.html v207-site/assets/js; then
+            echo 'Attendance wording incorrectly references Instagram.' >&2
+            exit 1
+          fi
+      - name: Commit Preview RC1 outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-site v207-remote-preview v207-analysis/v207-rc1-build-report.json
+          if git diff --cached --quiet; then
+            echo 'No Preview RC1 output changes.'
+          else
+            git commit -m 'Build MagicOffice v2.0.7 Preview RC1'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
