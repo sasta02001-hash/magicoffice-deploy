@@ -1,0 +1,13 @@
+{
+  "HAS_VERCEL_TOKEN": false,
+  "HAS_VERCEL_ORG_ID": false,
+  "HAS_VERCEL_PROJECT_ID": false,
+  "HAS_MAGICOFFICE_VERCEL_TOKEN": false,
+  "HAS_MAGICOFFICE_VERCEL_ORG_ID": false,
+  "HAS_MAGICOFFICE_VERCEL_PROJECT_ID": false,
+  "HAS_VAR_VERCEL_ORG_ID": false,
+  "HAS_VAR_VERCEL_PROJECT_ID": false,
+  "anyDeployToken": false,
+  "productionModified": false,
+  "attendanceSpreadsheetModified": false
+}
