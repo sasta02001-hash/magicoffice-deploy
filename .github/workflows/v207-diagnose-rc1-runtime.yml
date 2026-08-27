@@ -65,3 +65,5 @@ jobs:
             git pull --rebase origin v2.0.7-preview-source
             git push origin HEAD:v2.0.7-preview-source
           fi
+
+# Diagnostic rerun: 2026-08-27T10:31+08:00
