@@ -226,13 +226,13 @@
     },
     {
       "name": "5b07190f56f5759b.webp",
-      "method": "generated-placeholder",
-      "source": "generated-placeholder",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/5b07190f56f5759b.webp",
       "target_width": 946,
       "target_height": 1160,
-      "output_width": 946,
-      "output_height": 1160,
-      "sha256": "78e565322b9776f337b713ef917d1867486af53b4474aaa04023415302cfed20"
+      "output_width": 360,
+      "output_height": 441,
+      "sha256": "ba96b49f38a5c963f3560a52026f17d7b16b0af4268a67314a1a034e216bffad"
     },
     {
       "name": "617f58b1207050e6.webp",
@@ -535,19 +535,9 @@
       "output_width": 946,
       "output_height": 1182,
       "sha256": "3d5724aa77ae96605ab0ef4d00a9d2f252d11118a295f0a6a59eee0819d34d3c"
-    },
-    {
-      "name": "5b07190f56f5759b.webp",
-      "method": "generated-placeholder",
-      "source": "generated-placeholder",
-      "target_width": 946,
-      "target_height": 1160,
-      "output_width": 946,
-      "output_height": 1160,
-      "sha256": "78e565322b9776f337b713ef917d1867486af53b4474aaa04023415302cfed20"
     }
   ],
-  "fallback_asset_count": 3,
+  "fallback_asset_count": 2,
   "generated_variant_count": 21,
   "generated_variants": [
     "0f2282fd5b53948f-640.webp",
@@ -575,7 +565,7 @@
   "local_reference_missing_count": 0,
   "duplicate_id_count": 0,
   "site_file_count": 89,
-  "site_bytes": 2054342,
+  "site_bytes": 2055558,
   "production_modified": false,
   "attendance_spreadsheet_modified": false,
   "production_release_allowed": false

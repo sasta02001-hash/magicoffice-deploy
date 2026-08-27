@@ -3,10 +3,10 @@
   "build": "2026-08-27-preview-rc1",
   "code_archive_sha256": "1f700a9517296c198831dbfc89cb1882e91984dcdbb55725c9d29aa124e83363",
   "target_original_count": 51,
-  "fallback_asset_count": 3,
+  "fallback_asset_count": 2,
   "generated_variant_count": 21,
   "site_file_count": 89,
-  "site_bytes": 2054342,
+  "site_bytes": 2055558,
   "production_modified": false,
   "attendance_spreadsheet_modified": false,
   "production_release_allowed": false
