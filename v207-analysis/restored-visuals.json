@@ -1,0 +1,53 @@
+{
+  "version": "2.0.7-preview-verification",
+  "restoredVisualCount": 3,
+  "allVerified": true,
+  "productionModified": false,
+  "attendanceSpreadsheetModified": false,
+  "records": [
+    {
+      "stem": "0f2282fd5b53948f",
+      "file": "v207-reused-assets/0f2282fd5b53948f.webp",
+      "label": "Jubi schedule visual",
+      "parts": [
+        "part00.b64",
+        "part01.b64",
+        "part02.b64"
+      ],
+      "bytes": 7960,
+      "sha256": "a50f09f0c9a9fcc8cd160ab0cb363284439672eb06650860e9d1d68067b343f5",
+      "width": 200,
+      "height": 250,
+      "format": "WEBP",
+      "source": "MagicOffice v2.0.6 source, web-optimized without visual substitution"
+    },
+    {
+      "stem": "183eaf19e84ad365",
+      "file": "v207-reused-assets/183eaf19e84ad365.webp",
+      "label": "Jubi birthday poster",
+      "parts": [
+        "part00.b64",
+        "part01.b64",
+        "part02.b64"
+      ],
+      "bytes": 7098,
+      "sha256": "7b3ca3ec224eff65e57d3224bd8ca6fc9d9027fba3aa0da65adb951f217705f6",
+      "width": 200,
+      "height": 250,
+      "format": "WEBP",
+      "source": "MagicOffice v2.0.6 source, web-optimized without visual substitution"
+    },
+    {
+      "stem": "5b07190f56f5759b",
+      "file": "v207-reused-assets/5b07190f56f5759b.webp",
+      "label": "MagicOffice interior visual",
+      "parts": [],
+      "bytes": 5444,
+      "sha256": "ba96b49f38a5c963f3560a52026f17d7b16b0af4268a67314a1a034e216bffad",
+      "width": 360,
+      "height": 441,
+      "format": "WEBP",
+      "source": "MagicOffice v2.0.6 source, web-optimized without visual substitution"
+    }
+  ]
+}
