@@ -1,0 +1,67 @@
+name: Diagnose MagicOffice v2.0.7 Preview RC1 runtime
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-diagnose-rc1-runtime.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Install dependencies
+        run: python -m pip install --quiet pillow
+      - name: Run builder and capture complete exception
+        shell: bash
+        run: |
+          set -u
+          python - <<'PY'
+          from pathlib import Path
+          import importlib.util, json, traceback
+          report = {'success': False, 'error': None, 'partial_site_files': [], 'partial_remote_files': []}
+          try:
+              script = Path('v207-rc1/build_preview.py')
+              spec = importlib.util.spec_from_file_location('v207_builder', script)
+              module = importlib.util.module_from_spec(spec)
+              assert spec and spec.loader
+              spec.loader.exec_module(module)
+              module.main()
+              report['success'] = True
+          except Exception as exc:
+              report['error'] = {
+                  'type': type(exc).__name__,
+                  'message': str(exc),
+                  'traceback': traceback.format_exc(),
+              }
+              print('MAGICOFFICE_V207_RC1_RUNTIME_ERROR', json.dumps(report['error'], ensure_ascii=False))
+          for folder, key in [(Path('v207-site'), 'partial_site_files'), (Path('v207-remote-preview'), 'partial_remote_files')]:
+              if folder.exists():
+                  report[key] = [str(p.relative_to(folder)) for p in folder.rglob('*') if p.is_file()]
+          out = Path('v207-analysis/v207-rc1-runtime-diagnostic.json')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(json.dumps(report, ensure_ascii=False, indent=2), 'utf-8')
+          PY
+      - name: Commit runtime diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/v207-rc1-runtime-diagnostic.json
+          if git diff --cached --quiet; then
+            echo 'No runtime diagnostic changes.'
+          else
+            git commit -m 'Diagnose MagicOffice v2.0.7 Preview RC1 runtime'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
