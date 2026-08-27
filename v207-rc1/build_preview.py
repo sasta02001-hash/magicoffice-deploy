@@ -207,6 +207,8 @@ def check_local_references() -> list[dict[str, str]]:
             for ref in pattern.findall(text):
                 if ref.startswith(("http://", "https://", "mailto:", "tel:", "#", "data:", "javascript:")):
                     continue
+                if ref.startswith(("%", chr(36) + "{")):
+                    continue
                 clean = ref.split("?", 1)[0].split("#", 1)[0]
                 if not clean:
                     continue
