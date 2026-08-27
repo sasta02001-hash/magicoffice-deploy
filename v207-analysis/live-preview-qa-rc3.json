@@ -1,0 +1,437 @@
+{
+  "version": "2.0.7-preview-verification",
+  "previewRevision": "rc3",
+  "target": "https://magicoffice-v207-preview-rc3.vercel.app/",
+  "generatedAt": "2026-08-27T10:49:43.562Z",
+  "productionModified": false,
+  "attendanceSpreadsheetModified": false,
+  "testedCases": 6,
+  "passedCases": 1,
+  "failedCases": 5,
+  "releaseGate": {
+    "previewReviewAllowed": false,
+    "productionAllowed": false,
+    "productionBlocker": "Three Preview-only visual fallbacks remain."
+  },
+  "results": [
+    {
+      "name": "desktop-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 1366,
+        "height": 900
+      },
+      "passed": true,
+      "checks": {
+        "http200": true,
+        "version": true,
+        "remoteRevision": true,
+        "styled": true,
+        "notRaw": true,
+        "responsive": true,
+        "images": true,
+        "core": true,
+        "quickNav": true,
+        "lineFloat": true,
+        "attendance": true,
+        "noindex": true,
+        "line": true,
+        "instagram": true,
+        "reservation": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noAssetFailures": true
+      },
+      "failures": [],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "remoteRevision": "rc3",
+        "background": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "rawBlue": false,
+        "viewport": 1366,
+        "scroll": 1366,
+        "images": 47,
+        "broken": [],
+        "core": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickVisible": false,
+        "lineFloatVisible": true,
+        "scheduleInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "width": 1366
+      },
+      "menu": {
+        "required": false,
+        "toggleFound": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "assetFailures": [],
+      "status": 200
+    },
+    {
+      "name": "tablet-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "version": true,
+        "remoteRevision": true,
+        "styled": true,
+        "notRaw": true,
+        "responsive": true,
+        "images": true,
+        "core": false,
+        "quickNav": true,
+        "lineFloat": false,
+        "attendance": true,
+        "noindex": true,
+        "line": true,
+        "instagram": true,
+        "reservation": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noAssetFailures": true
+      },
+      "failures": [
+        "core",
+        "lineFloat"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "remoteRevision": "rc3",
+        "background": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "rawBlue": false,
+        "viewport": 1024,
+        "scroll": 1024,
+        "images": 47,
+        "broken": [],
+        "core": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": false,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickVisible": false,
+        "lineFloatVisible": true,
+        "scheduleInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "width": 1024
+      },
+      "menu": {
+        "required": true,
+        "toggleFound": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "assetFailures": [],
+      "status": 200
+    },
+    {
+      "name": "android-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "version": true,
+        "remoteRevision": true,
+        "styled": true,
+        "notRaw": true,
+        "responsive": true,
+        "images": true,
+        "core": true,
+        "quickNav": true,
+        "lineFloat": false,
+        "attendance": true,
+        "noindex": true,
+        "line": true,
+        "instagram": true,
+        "reservation": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noAssetFailures": true
+      },
+      "failures": [
+        "lineFloat"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "remoteRevision": "rc3",
+        "background": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "rawBlue": false,
+        "viewport": 360,
+        "scroll": 360,
+        "images": 47,
+        "broken": [],
+        "core": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickVisible": true,
+        "lineFloatVisible": true,
+        "scheduleInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "width": 360
+      },
+      "menu": {
+        "required": true,
+        "toggleFound": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "assetFailures": [],
+      "status": 200
+    },
+    {
+      "name": "small-android-chromium",
+      "engine": "chromium",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "version": true,
+        "remoteRevision": true,
+        "styled": true,
+        "notRaw": true,
+        "responsive": true,
+        "images": true,
+        "core": true,
+        "quickNav": true,
+        "lineFloat": false,
+        "attendance": true,
+        "noindex": true,
+        "line": true,
+        "instagram": true,
+        "reservation": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noAssetFailures": true
+      },
+      "failures": [
+        "lineFloat"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "remoteRevision": "rc3",
+        "background": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "rawBlue": false,
+        "viewport": 320,
+        "scroll": 320,
+        "images": 47,
+        "broken": [],
+        "core": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickVisible": true,
+        "lineFloatVisible": true,
+        "scheduleInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "width": 320
+      },
+      "menu": {
+        "required": true,
+        "toggleFound": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "assetFailures": [],
+      "status": 200
+    },
+    {
+      "name": "iphone-webkit",
+      "engine": "webkit",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "version": true,
+        "remoteRevision": true,
+        "styled": true,
+        "notRaw": true,
+        "responsive": true,
+        "images": true,
+        "core": true,
+        "quickNav": true,
+        "lineFloat": false,
+        "attendance": true,
+        "noindex": true,
+        "line": true,
+        "instagram": true,
+        "reservation": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noAssetFailures": true
+      },
+      "failures": [
+        "lineFloat"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "remoteRevision": "rc3",
+        "background": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "rawBlue": false,
+        "viewport": 390,
+        "scroll": 390,
+        "images": 47,
+        "broken": [],
+        "core": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickVisible": true,
+        "lineFloatVisible": true,
+        "scheduleInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "width": 390
+      },
+      "menu": {
+        "required": true,
+        "toggleFound": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "assetFailures": [],
+      "status": 200
+    },
+    {
+      "name": "iphone-large-webkit",
+      "engine": "webkit",
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "passed": false,
+      "checks": {
+        "http200": true,
+        "version": true,
+        "remoteRevision": true,
+        "styled": true,
+        "notRaw": true,
+        "responsive": true,
+        "images": true,
+        "core": true,
+        "quickNav": true,
+        "lineFloat": false,
+        "attendance": true,
+        "noindex": true,
+        "line": true,
+        "instagram": true,
+        "reservation": true,
+        "menu": true,
+        "noPageErrors": true,
+        "noAssetFailures": true
+      },
+      "failures": [
+        "lineFloat"
+      ],
+      "state": {
+        "version": "2.0.7-preview-verification",
+        "remoteRevision": "rc3",
+        "background": "rgb(8, 6, 7)",
+        "font": "\"Noto Sans TC\", \"PingFang TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+        "rawBlue": false,
+        "viewport": 430,
+        "scroll": 430,
+        "images": 47,
+        "broken": [],
+        "core": {
+          "魔幻姶仕社": true,
+          "姶仕名錄": true,
+          "本週出勤": true,
+          "活動快報": true,
+          "服務價目": true,
+          "立即訂位": true,
+          "線上購拍": true
+        },
+        "quickVisible": true,
+        "lineFloatVisible": true,
+        "scheduleInstagram": false,
+        "noindex": true,
+        "hasLine": true,
+        "hasInstagram": true,
+        "hasReservation": true,
+        "width": 430
+      },
+      "menu": {
+        "required": true,
+        "toggleFound": true,
+        "opened": true,
+        "closed": true,
+        "lineEntry": true
+      },
+      "pageErrors": [],
+      "assetFailures": [],
+      "status": 200
+    }
+  ]
+}
