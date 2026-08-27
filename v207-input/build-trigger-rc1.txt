@@ -1,4 +1,4 @@
 MagicOffice v2.0.7 Preview RC1 rebuild trigger
-Timestamp: 2026-08-27T10:15:00+08:00
-Purpose: Re-run preview reconstruction after all nine verified code chunks and current asset coverage became available.
+Timestamp: 2026-08-27T10:29:00+08:00
+Purpose: Run the corrected RC1 builder after excluding CSS fragments and JavaScript template placeholders from local-reference validation.
 Safety: Preview only; do not modify Production or any attendance spreadsheet.
