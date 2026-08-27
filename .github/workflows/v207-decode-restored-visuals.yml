@@ -1,0 +1,140 @@
+name: Decode MagicOffice v2.0.7 restored visuals
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-decode-restored-visuals.yml'
+      - 'v207-binary-transfer/**'
+
+permissions:
+  contents: write
+
+jobs:
+  decode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Install image validation tooling
+        run: python -m pip install --quiet pillow
+      - name: Decode and verify restored v2.0.6 visuals
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          import base64, hashlib, json
+
+          specs = {
+              '0f2282fd5b53948f': {
+                  'bytes': 7960,
+                  'sha256': 'a50f09f0c9a9fcc8cd160ab0cb363284439672eb06650860e9d1d68067b343f5',
+                  'size': [200, 250],
+                  'label': 'Jubi schedule visual',
+              },
+              '183eaf19e84ad365': {
+                  'bytes': 7098,
+                  'sha256': '7b3ca3ec224eff65e57d3224bd8ca6fc9d9027fba3aa0da65adb951f217705f6',
+                  'size': [200, 250],
+                  'label': 'Jubi birthday poster',
+              },
+          }
+          out_dir = Path('v207-reused-assets')
+          out_dir.mkdir(parents=True, exist_ok=True)
+          records = []
+          for stem, spec in specs.items():
+              transfer = Path('v207-binary-transfer') / stem
+              parts = sorted(transfer.glob('part*.b64'))
+              if not parts:
+                  raise RuntimeError(f'No transfer chunks found for {stem}')
+              encoded = ''.join(part.read_text('utf-8').strip() for part in parts)
+              raw = base64.b64decode(encoded, validate=True)
+              actual_sha = hashlib.sha256(raw).hexdigest()
+              if len(raw) != spec['bytes']:
+                  raise RuntimeError(f'{stem} byte count mismatch: {len(raw)} != {spec["bytes"]}')
+              if actual_sha != spec['sha256']:
+                  raise RuntimeError(f'{stem} SHA-256 mismatch: {actual_sha}')
+              destination = out_dir / f'{stem}.webp'
+              destination.write_bytes(raw)
+              with Image.open(destination) as image:
+                  image.load()
+                  actual_size = list(image.size)
+                  actual_format = image.format
+              if actual_format != 'WEBP':
+                  raise RuntimeError(f'{stem} format mismatch: {actual_format}')
+              if actual_size != spec['size']:
+                  raise RuntimeError(f'{stem} dimensions mismatch: {actual_size} != {spec["size"]}')
+              records.append({
+                  'stem': stem,
+                  'file': str(destination),
+                  'label': spec['label'],
+                  'parts': [part.name for part in parts],
+                  'bytes': len(raw),
+                  'sha256': actual_sha,
+                  'width': actual_size[0],
+                  'height': actual_size[1],
+                  'format': actual_format,
+                  'source': 'MagicOffice v2.0.6 source, web-optimized without visual substitution',
+              })
+
+          # The third visual was committed directly as a verified binary blob.
+          interior = out_dir / '5b07190f56f5759b.webp'
+          if not interior.exists():
+              raise RuntimeError('Missing restored interior visual')
+          interior_raw = interior.read_bytes()
+          interior_sha = hashlib.sha256(interior_raw).hexdigest()
+          if len(interior_raw) != 5444 or interior_sha != 'ba96b49f38a5c963f3560a52026f17d7b16b0af4268a67314a1a034e216bffad':
+              raise RuntimeError(f'Interior visual verification failed: bytes={len(interior_raw)} sha={interior_sha}')
+          with Image.open(interior) as image:
+              image.load()
+              if image.format != 'WEBP' or image.size != (360, 441):
+                  raise RuntimeError(f'Interior visual image metadata mismatch: {image.format} {image.size}')
+          records.append({
+              'stem': '5b07190f56f5759b',
+              'file': str(interior),
+              'label': 'MagicOffice interior visual',
+              'parts': [],
+              'bytes': len(interior_raw),
+              'sha256': interior_sha,
+              'width': 360,
+              'height': 441,
+              'format': 'WEBP',
+              'source': 'MagicOffice v2.0.6 source, web-optimized without visual substitution',
+          })
+
+          report = {
+              'version': '2.0.7-preview-verification',
+              'restoredVisualCount': len(records),
+              'allVerified': len(records) == 3,
+              'productionModified': False,
+              'attendanceSpreadsheetModified': False,
+              'records': records,
+          }
+          Path('v207-analysis').mkdir(exist_ok=True)
+          Path('v207-analysis/restored-visuals.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), 'utf-8')
+          print('MAGICOFFICE_V207_RESTORED_VISUALS', json.dumps({
+              'restoredVisualCount': report['restoredVisualCount'],
+              'allVerified': report['allVerified'],
+              'files': [record['file'] for record in records],
+          }, ensure_ascii=False))
+          PY
+      - name: Commit verified restored visuals
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-reused-assets/0f2282fd5b53948f.webp v207-reused-assets/183eaf19e84ad365.webp v207-reused-assets/5b07190f56f5759b.webp v207-analysis/restored-visuals.json
+          if git diff --cached --quiet; then
+            echo 'Restored visuals already current.'
+          else
+            git commit -m 'Restore all MagicOffice v2.0.7 visuals from v2.0.6 source'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
