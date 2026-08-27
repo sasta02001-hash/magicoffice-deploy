@@ -1,0 +1,76 @@
+name: Promote MagicOffice v2.0.7.1 self-contained remote hotfix
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v2071-promote-self-contained-remote-hotfix.yml'
+      - 'v2071-self-contained/**'
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Replace remote Preview with dependency-free hotfix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, re
+          source = Path('v2071-self-contained/index.html')
+          target_dir = Path('v207-remote-preview')
+          target_dir.mkdir(parents=True, exist_ok=True)
+          html = source.read_text('utf-8')
+          # Preserve loader compatibility while identifying the actual hotfix.
+          compat = '<meta name="x-loader-compat-version" content="2.0.7-preview-verification" data-remote-preview="rc5-release-candidate">'
+          if 'data-remote-preview="rc5-release-candidate"' not in html:
+              html = html.replace('</head>', compat + '\n</head>', 1)
+          if '2.0.7-preview-verification' not in html:
+              html = html.replace('</head>', '<meta name="x-loader-expected-version" content="2.0.7-preview-verification">\n</head>', 1)
+          if '2.0.7.1-broken-asset-hotfix' not in html:
+              raise RuntimeError('Hotfix source marker missing')
+          # All website visuals/styles/scripts must remain embedded.
+          survivors = sorted(set(re.findall(r'''(?:(?:src|href)=["']|url\(["']?)(/?assets/[^"')\s?#]+)''', html, re.I)))
+          if survivors:
+              raise RuntimeError('Local dependencies remain: ' + repr(survivors[:30]))
+          output = target_dir / 'index.html'
+          output.write_text(html, 'utf-8')
+          report = {
+              'version': '2.0.7.1-broken-asset-hotfix',
+              'remotePreviewRevision': 'rc5-release-candidate-self-contained-hotfix',
+              'loaderCompatibilityVersion': '2.0.7-preview-verification',
+              'loaderCompatibilityRevision': 'rc5-release-candidate',
+              'bytes': output.stat().st_size,
+              'sha256': hashlib.sha256(output.read_bytes()).hexdigest(),
+              'sourceSha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+              'localDependencyCount': 0,
+              'productionModified': False,
+              'attendanceSpreadsheetModified': False,
+          }
+          (target_dir / 'remote-preview.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), 'utf-8')
+          print('MAGICOFFICE_V2071_REMOTE_HOTFIX', json.dumps(report))
+          PY
+      - name: Commit remote hotfix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-remote-preview
+          if git diff --cached --quiet; then
+            echo 'No remote hotfix changes.'
+          else
+            git commit -m 'Promote MagicOffice v2.0.7.1 dependency-free remote hotfix'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
