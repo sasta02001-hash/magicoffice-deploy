@@ -1,0 +1,163 @@
+name: Match MagicOffice v2.0.6 assets for v2.0.7 preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-match-assets.yml'
+      - 'v207-input/v206-original-fingerprints.tsv'
+
+permissions:
+  contents: write
+
+jobs:
+  match:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+
+      - name: Install image tooling
+        run: python -m pip install --quiet pillow
+
+      - name: Match and extract reusable assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageOps
+          import base64, csv, hashlib, io, json, math, re, shutil
+
+          ROOT = Path('.')
+          SOURCE = ROOT / 'production-standalone/index.html'
+          INPUT = ROOT / 'v207-input/v206-original-fingerprints.tsv'
+          OUT = ROOT / 'v207-analysis/perceptual-map.json'
+          ASSET_DIR = ROOT / 'v207-reused-assets'
+          ASSET_DIR.mkdir(parents=True, exist_ok=True)
+
+          def hex_bits(bits):
+              return f'{int("".join("1" if b else "0" for b in bits), 2):064x}'
+
+          def fingerprints(image):
+              image = ImageOps.exif_transpose(image).convert('L')
+              d = image.resize((17, 16), Image.Resampling.LANCZOS)
+              dbits = [d.getpixel((x, y)) > d.getpixel((x + 1, y)) for y in range(16) for x in range(16)]
+              a = image.resize((16, 16), Image.Resampling.LANCZOS)
+              vals = list(a.getdata())
+              avg = sum(vals) / len(vals)
+              abits = [v > avg for v in vals]
+              return hex_bits(dbits), hex_bits(abits)
+
+          def hamming(a, b):
+              return (int(a, 16) ^ int(b, 16)).bit_count()
+
+          html = SOURCE.read_text('utf-8', errors='ignore')
+          pattern = re.compile(r'data:(image/[a-zA-Z0-9.+-]+);base64,([A-Za-z0-9+/=]+)')
+          old = []
+          seen = set()
+          for index, (mime, payload) in enumerate(pattern.findall(html)):
+              try:
+                  raw = base64.b64decode(payload)
+                  sha = hashlib.sha256(raw).hexdigest()
+                  if sha in seen:
+                      continue
+                  seen.add(sha)
+                  image = Image.open(io.BytesIO(raw))
+                  image.load()
+                  width, height = image.size
+                  dh, ah = fingerprints(image)
+                  old.append({'index': index, 'mime': mime, 'raw': raw, 'sha256': sha,
+                              'width': width, 'height': height, 'dhash256': dh,
+                              'ahash256': ah, 'image': image.copy()})
+              except Exception as exc:
+                  print('SKIP_OLD_ASSET', index, mime, type(exc).__name__, str(exc)[:120])
+
+          targets = []
+          with INPUT.open(newline='', encoding='utf-8') as f:
+              for row in csv.DictReader(f, delimiter='\t'):
+                  row['width'] = int(row['width'])
+                  row['height'] = int(row['height'])
+                  targets.append(row)
+
+          results = []
+          accepted = 0
+          exact = 0
+          for target in targets:
+              tw, th = target['width'], target['height']
+              tar = tw / th
+              scored = []
+              for item in old:
+                  exact_sha = item['sha256'] == target['sha256']
+                  aspect_delta = abs(math.log((item['width'] / item['height']) / tar))
+                  dd = hamming(item['dhash256'], target['dhash256'])
+                  ad = hamming(item['ahash256'], target['ahash256'])
+                  combined = dd + ad
+                  score = -100000 if exact_sha else combined + round(min(aspect_delta, 1.0) * 240)
+                  scored.append((score, exact_sha, aspect_delta, combined, dd, ad, item))
+              scored.sort(key=lambda x: x[0])
+              score, exact_sha, aspect_delta, combined, dd, ad, best = scored[0]
+              # Conservative threshold: same composition/aspect ratio, allowing re-encoding and mild resize noise.
+              ok = bool(exact_sha or (aspect_delta <= 0.035 and combined <= 46))
+              method = 'exact-sha256' if exact_sha else ('perceptual' if ok else 'unmatched')
+              if ok:
+                  accepted += 1
+                  exact += int(exact_sha)
+                  dest = ASSET_DIR / target['name']
+                  if exact_sha:
+                      dest.write_bytes(best['raw'])
+                  else:
+                      im = best['image']
+                      suffix = dest.suffix.lower()
+                      if suffix == '.webp':
+                          im.save(dest, 'WEBP', quality=96, method=6)
+                      elif suffix == '.png':
+                          im.save(dest, 'PNG', optimize=True)
+                      elif suffix in ('.jpg', '.jpeg'):
+                          im.convert('RGB').save(dest, 'JPEG', quality=96, optimize=True, progressive=True)
+                      else:
+                          dest.write_bytes(best['raw'])
+              candidates = []
+              for s, ex, ar, co, d1, a1, it in scored[:3]:
+                  candidates.append({'old_sha256': it['sha256'], 'old_prefix16': it['sha256'][:16],
+                                     'old_mime': it['mime'], 'old_width': it['width'], 'old_height': it['height'],
+                                     'exact_sha256': ex, 'aspect_delta': round(ar, 6),
+                                     'dhash_distance': d1, 'ahash_distance': a1,
+                                     'combined_distance': co, 'score': s})
+              results.append({'target': target['name'], 'target_sha256': target['sha256'],
+                              'target_width': tw, 'target_height': th, 'accepted': ok,
+                              'method': method, 'best': candidates[0], 'candidates': candidates})
+
+          report = {
+              'source': str(SOURCE),
+              'target_count': len(targets),
+              'old_unique_count': len(old),
+              'accepted_count': accepted,
+              'exact_count': exact,
+              'perceptual_count': accepted - exact,
+              'unmatched_count': len(targets) - accepted,
+              'acceptance_rule': {'max_aspect_delta': 0.035, 'max_combined_hash_distance': 46},
+              'results': results,
+          }
+          OUT.parent.mkdir(parents=True, exist_ok=True)
+          OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2), 'utf-8')
+          print('MAGICOFFICE_V207_MATCH', json.dumps({k: report[k] for k in ['target_count','old_unique_count','accepted_count','exact_count','perceptual_count','unmatched_count']}))
+          PY
+
+      - name: Commit match report and reusable assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/perceptual-map.json v207-reused-assets
+          if git diff --cached --quiet; then
+            echo 'No asset-match changes.'
+          else
+            git commit -m 'Match reusable assets for MagicOffice v2.0.7 preview'
+            git push origin HEAD:v2.0.7-preview-source
+          fi
