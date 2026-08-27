@@ -1,0 +1,56 @@
+name: Patch MagicOffice v2.0.7 Preview RC1 builder
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-patch-build-rc1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Correct archive fingerprint and preview release markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.github/workflows/v207-build-preview-site.yml')
+          text = path.read_text('utf-8')
+          replacements = {
+              '1f700aaf5900bc1186371a03ac808035a0926a6af3109f60042f5f24bcceaa8f': '1f700a9517296c198831dbfc89cb1882e91984dcdbb55725c9d29aa124e83363',
+              'data-site-version="2.0.7-preview"': 'data-site-version="2.0.7-preview-verification"',
+              "'2.0.7-preview'": "'2.0.7-preview-verification'",
+              'content="noindex,nofollow,noarchive"': 'content="noindex,nofollow,noarchive,max-image-preview:large"',
+              "grep -q 'noindex,nofollow,noarchive'": "grep -q 'noindex,nofollow,noarchive,max-image-preview:large'",
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  print('MARKER_NOT_FOUND', old)
+              text = text.replace(old, new)
+          path.write_text(text, 'utf-8')
+          print('PATCHED_BUILDER_RC1')
+          PY
+      - name: Commit builder correction
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/v207-build-preview-site.yml
+          if git diff --cached --quiet; then
+            echo 'Builder already corrected.'
+          else
+            git commit -m 'Correct MagicOffice v2.0.7 Preview RC1 builder'
+            git push origin HEAD:v2.0.7-preview-source
+          fi
