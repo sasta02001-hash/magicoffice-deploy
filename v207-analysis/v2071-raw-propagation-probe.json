@@ -1,0 +1,9 @@
+{
+  "url": "https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/v2.0.7-preview-source/v207-remote-preview/index.html?rc=20260827-rc5",
+  "result": {
+    "attempt": 12,
+    "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xfe in position 0: invalid start byte"
+  },
+  "productionModified": false,
+  "attendanceSpreadsheetModified": false
+}
