@@ -1,7 +1,15 @@
 {
   "version": "2.0.7-preview-verification",
-  "bytes": 190862,
-  "sha256": "345538c7d6ef1ec41ea73409fcf76f72a76abdf4fc011763d61812576fb54f6d",
-  "raw_url": "https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/v2.0.7-preview-source/v207-remote-preview/index.html",
-  "asset_base": "https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/v2.0.7-preview-source/v207-site/"
+  "remotePreviewRevision": "rc5-release-candidate",
+  "bytes": 301582,
+  "sha256": "0432929e90d0291dd00453561010d43c9d6d11e38b0db86315a98a9682deb4fc",
+  "stylesheetsInlined": 1,
+  "scriptsInlined": 7,
+  "assetCommit": "d0c26168ccb347a858f7339aa271687f6d60e9db",
+  "assetBase": "https://cdn.jsdelivr.net/gh/sasta02001-hash/magicoffice-deploy@d0c26168ccb347a858f7339aa271687f6d60e9db/v207-site/assets/",
+  "rawUrl": "https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/v2.0.7-preview-source/v207-remote-preview/index.html",
+  "fallbackAssetCount": 0,
+  "productionReleaseAllowed": true,
+  "productionModified": false,
+  "attendanceSpreadsheetModified": false
 }
