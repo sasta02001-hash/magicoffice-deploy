@@ -1,0 +1,63 @@
+name: Probe MagicOffice Vercel deployment credentials
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v2071-probe-vercel-auth.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    env:
+      HAS_VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN != '' }}
+      HAS_VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID != '' }}
+      HAS_VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID != '' }}
+      HAS_MAGICOFFICE_VERCEL_TOKEN: ${{ secrets.MAGICOFFICE_VERCEL_TOKEN != '' }}
+      HAS_MAGICOFFICE_VERCEL_ORG_ID: ${{ secrets.MAGICOFFICE_VERCEL_ORG_ID != '' }}
+      HAS_MAGICOFFICE_VERCEL_PROJECT_ID: ${{ secrets.MAGICOFFICE_VERCEL_PROJECT_ID != '' }}
+      HAS_VAR_VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID != '' }}
+      HAS_VAR_VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID != '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Write boolean-only credential report
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p v207-analysis
+          python - <<'PY'
+          import json, os
+          fields = [
+            'HAS_VERCEL_TOKEN','HAS_VERCEL_ORG_ID','HAS_VERCEL_PROJECT_ID',
+            'HAS_MAGICOFFICE_VERCEL_TOKEN','HAS_MAGICOFFICE_VERCEL_ORG_ID','HAS_MAGICOFFICE_VERCEL_PROJECT_ID',
+            'HAS_VAR_VERCEL_ORG_ID','HAS_VAR_VERCEL_PROJECT_ID'
+          ]
+          report = {name: os.environ.get(name, '').lower() == 'true' for name in fields}
+          report['anyDeployToken'] = report['HAS_VERCEL_TOKEN'] or report['HAS_MAGICOFFICE_VERCEL_TOKEN']
+          report['productionModified'] = False
+          report['attendanceSpreadsheetModified'] = False
+          open('v207-analysis/vercel-auth-probe.json','w',encoding='utf-8').write(json.dumps(report,indent=2))
+          print('VERCEL_AUTH_PROBE', json.dumps(report))
+          PY
+      - name: Commit boolean-only report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/vercel-auth-probe.json
+          if git diff --cached --quiet; then
+            echo 'No probe changes.'
+          else
+            git commit -m 'Probe MagicOffice Vercel deployment credential availability'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
