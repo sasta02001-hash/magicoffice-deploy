@@ -1,13 +1,15 @@
 {
   "version": "2.0.7.1-broken-asset-hotfix",
-  "remotePreviewRevision": "rc5-release-candidate-self-contained-hotfix",
+  "remotePreviewRevision": "high-quality-self-contained-hotfix",
+  "buildMarker": "high-quality-v2071-20260827",
+  "bytes": 14695824,
+  "sha256": "fdc433340dc5b347590259a397709831d9b843eb09a9fdeb77c440666d34fb1d",
+  "localDependencyCount": 0,
+  "embeddedImageOccurrenceCount": 99,
+  "visualFidelitySource": "MagicOffice v2.0.6 high-quality standalone source",
+  "strayEngineeringLabelRemoved": true,
   "loaderCompatibilityVersion": "2.0.7-preview-verification",
   "loaderCompatibilityRevision": "rc5-release-candidate",
-  "assetMode": "fully-embedded",
-  "bytes": 4104670,
-  "sha256": "65b20bc2c45af35dde2e16a70918909d7899ef175e9ee34def5ec268eb9e6a2a",
-  "sourceSha256": "d1e3a1209a593ca8e470bb06045f19741ff5278dd048c93223e7dc04db536b02",
-  "localDependencyCount": 0,
   "productionModified": false,
   "attendanceSpreadsheetModified": false
 }
