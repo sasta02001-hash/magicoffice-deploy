@@ -2,8 +2,8 @@
   "success": false,
   "error": {
     "type": "RuntimeError",
-    "message": "Missing local references: [{\"file\": \"assets/css/site-v2.0.6.css\", \"reference\": \"%23n\"}, {\"file\": \"assets/js/magic-core-js.js\", \"reference\": \"${p.image}\"}]",
-    "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 10, in <module>\n  File \"/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-rc1/build_preview.py\", line 299, in main\n    raise RuntimeError(\"Missing local references: \" + json.dumps(missing[:30], ensure_ascii=False))\nRuntimeError: Missing local references: [{\"file\": \"assets/css/site-v2.0.6.css\", \"reference\": \"%23n\"}, {\"file\": \"assets/js/magic-core-js.js\", \"reference\": \"${p.image}\"}]\n"
+    "message": "Duplicate HTML IDs: ['jubi-birthday', 'mid-autumn', 'summer-navy', 'yuzu-birthday']",
+    "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 10, in <module>\n  File \"/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-rc1/build_preview.py\", line 303, in main\n    raise RuntimeError(f\"Duplicate HTML IDs: {duplicates}\")\nRuntimeError: Duplicate HTML IDs: ['jubi-birthday', 'mid-autumn', 'summer-navy', 'yuzu-birthday']\n"
   },
   "partial_site_files": [
     "index.html",
