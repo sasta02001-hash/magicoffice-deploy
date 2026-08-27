@@ -1,0 +1,285 @@
+name: Verify MagicOffice v2.0.7.1 high-quality visual fidelity
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v2071-high-quality-visual-fidelity-qa.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_URL: https://magicoffice-v207-release-candidate.vercel.app/
+      EXPECTED_VERSION: 2.0.7.1-broken-asset-hotfix
+      EXPECTED_BUILD: high-quality-v2071-20260827
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+
+      - name: Run cross-engine visual fidelity QA
+        shell: bash
+        run: |
+          cat > v2071-hq-qa.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium, webkit } from 'playwright';
+
+          const target = process.env.TARGET_URL;
+          const expectedVersion = process.env.EXPECTED_VERSION;
+          const expectedBuild = process.env.EXPECTED_BUILD;
+          const cases = [
+            {name:'desktop-chromium', engine:'chromium', width:1366, height:900, mobile:false, touch:false},
+            {name:'tablet-chromium', engine:'chromium', width:1024, height:768, mobile:false, touch:true},
+            {name:'android-chromium', engine:'chromium', width:360, height:800, mobile:true, touch:true, ua:'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36'},
+            {name:'iphone-webkit', engine:'webkit', width:390, height:844, mobile:true, touch:true, ua:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1'},
+            {name:'iphone-large-webkit', engine:'webkit', width:430, height:932, mobile:true, touch:true, ua:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1'}
+          ];
+
+          const browsers = {
+            chromium: await chromium.launch({headless:true}),
+            webkit: await webkit.launch({headless:true})
+          };
+          const results = [];
+
+          async function loadFresh(page, label) {
+            let last = '';
+            for (let attempt = 1; attempt <= 18; attempt++) {
+              await page.goto(`${target}?hq=${Date.now()}-${label}-${attempt}`, {waitUntil:'domcontentloaded', timeout:180000});
+              try {
+                await page.waitForFunction(({version, build}) => {
+                  const currentVersion = document.body?.dataset?.siteVersion || document.querySelector('meta[name="x-magicoffice-hotfix"]')?.content || '';
+                  const currentBuild = document.body?.dataset?.highQualityBuild || document.querySelector('meta[name="x-magicoffice-high-quality-build"]')?.content || '';
+                  return currentVersion === version && currentBuild === build && document.body?.innerText?.includes('魔幻姶仕社');
+                }, {version:expectedVersion, build:expectedBuild}, {timeout:15000});
+                return;
+              } catch (error) {
+                last = String(error);
+                await page.waitForTimeout(12000);
+              }
+            }
+            throw new Error(`High-quality build did not become visible: ${last}`);
+          }
+
+          try {
+            for (const item of cases) {
+              const context = await browsers[item.engine].newContext({
+                viewport:{width:item.width,height:item.height},
+                screen:{width:item.width,height:item.height},
+                isMobile:item.mobile,
+                hasTouch:item.touch,
+                userAgent:item.ua,
+                locale:'zh-TW',
+                timezoneId:'Asia/Taipei',
+                serviceWorkers:'block'
+              });
+              const page = await context.newPage();
+              const pageErrors = [];
+              const requestFailures = [];
+              page.on('pageerror', error => pageErrors.push(String(error?.stack || error)));
+              page.on('requestfailed', request => requestFailures.push({url:request.url(), error:request.failure()?.errorText || 'unknown'}));
+
+              await loadFresh(page, item.name);
+              await page.waitForTimeout(1800);
+              await page.evaluate(() => {
+                for (const image of document.images) {
+                  image.loading = 'eager';
+                  image.decoding = 'sync';
+                }
+              });
+              const fullHeight = await page.evaluate(() => Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
+              for (let y = 0; y <= fullHeight; y += 620) {
+                await page.evaluate(value => scrollTo(0, value), y);
+                await page.waitForTimeout(24);
+              }
+              await page.evaluate(() => scrollTo(0, 0));
+              await page.waitForTimeout(1800);
+
+              const state = await page.evaluate(({expectedVersion, expectedBuild, width}) => {
+                const visible = element => {
+                  if (!element) return false;
+                  const style = getComputedStyle(element);
+                  const rect = element.getBoundingClientRect();
+                  return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+                };
+                const bodyText = document.body.innerText;
+                const images = [...document.images];
+                const imageByAlt = needle => images.find(image => (image.alt || '').includes(needle));
+                const hero = document.querySelector('.hero');
+                const heroBg = hero ? getComputedStyle(hero, '::before').backgroundImage : 'none';
+                const idolBg = getComputedStyle(document.querySelector('.world-card.idol .world-media')).backgroundImage;
+                const nightBg = getComputedStyle(document.querySelector('.world-card.night .world-media')).backgroundImage;
+                const dayBg = getComputedStyle(document.querySelector('.world-card.day .world-media')).backgroundImage;
+                const fixedLineVisible = [...document.querySelectorAll('a[href*="lin.ee"]')].some(element => getComputedStyle(element).position === 'fixed' && visible(element));
+                const jubiPoster = imageByAlt('Jubi 生誕祭主視覺');
+                const jubiSchedule = imageByAlt('Jubi 生誕祭當天流程官方圖');
+                return {
+                  version: document.body?.dataset?.siteVersion || document.querySelector('meta[name="x-magicoffice-hotfix"]')?.content || '',
+                  build: document.body?.dataset?.highQualityBuild || document.querySelector('meta[name="x-magicoffice-high-quality-build"]')?.content || '',
+                  expectedVersion: (document.body?.dataset?.siteVersion || document.querySelector('meta[name="x-magicoffice-hotfix"]')?.content || '') === expectedVersion,
+                  expectedBuild: (document.body?.dataset?.highQualityBuild || document.querySelector('meta[name="x-magicoffice-high-quality-build"]')?.content || '') === expectedBuild,
+                  viewportWidth: innerWidth,
+                  scrollWidth: document.documentElement.scrollWidth,
+                  bodyBackground: getComputedStyle(document.body).backgroundColor,
+                  font: getComputedStyle(document.body).fontFamily,
+                  imageCount: images.length,
+                  brokenImages: images.filter(image => !image.complete || image.naturalWidth <= 0).map(image => image.alt || image.src.slice(0, 100)),
+                  nonEmbeddedImages: images.filter(image => !(image.currentSrc || image.src).startsWith('data:image/')).map(image => image.alt || image.src.slice(0, 100)),
+                  heroBg,
+                  idolBg,
+                  nightBg,
+                  dayBg,
+                  backgroundVisualsEmbedded: [heroBg, idolBg, nightBg, dayBg].every(value => value && value !== 'none' && value.includes('data:image/')),
+                  jubiPoster: jubiPoster ? {width:jubiPoster.naturalWidth, height:jubiPoster.naturalHeight} : null,
+                  jubiSchedule: jubiSchedule ? {width:jubiSchedule.naturalWidth, height:jubiSchedule.naturalHeight} : null,
+                  jubiHighResolution: Boolean(jubiPoster && jubiPoster.naturalWidth >= 800 && jubiSchedule && jubiSchedule.naturalWidth >= 800),
+                  requiredSections: ['#worlds','#roster','#schedule','#event-hub','#menu','#first-visit','#location'].every(selector => document.querySelector(selector)),
+                  mobileBarVisible: visible(document.querySelector('.mobile-bar')),
+                  fixedLineVisible,
+                  scheduleReferencesInstagram: /Instagram|官方\s*IG|以\s*IG\s*為準/i.test(document.querySelector('#schedule')?.innerText || ''),
+                  strayEngineeringLabel: /PRODUCTION\s+READINESS\s+CANDIDATE/i.test(bodyText),
+                  noindex: /noindex/i.test(document.querySelector('meta[name="robots"]')?.content || ''),
+                  hasLine: [...document.querySelectorAll('a[href]')].some(link => link.href.includes('lin.ee/NcCGG1P')),
+                  hasReservation: [...document.querySelectorAll('a[href]')].some(link => link.href.includes('gforms.app/r/71hSwQR')),
+                  localAssetReferenceCount: (document.documentElement.innerHTML.match(/\/?assets\//g) || []).length,
+                  remoteAssetReferenceCount: (document.documentElement.innerHTML.match(/(?:raw\.githubusercontent\.com|cdn\.jsdelivr\.net)[^"']*assets\//g) || []).length,
+                  width
+                };
+              }, {expectedVersion, expectedBuild, width:item.width});
+
+              let menu = {required:item.width <= 1180, ok:true};
+              if (menu.required) {
+                const toggle = page.locator('.menu-toggle').first();
+                if (await toggle.count()) {
+                  await toggle.click();
+                  await page.waitForTimeout(280);
+                  const opened = await toggle.getAttribute('aria-expanded') === 'true';
+                  const lineEntry = await page.locator('.main-nav a', {hasText:'LINE 官方'}).count() > 0;
+                  await page.screenshot({path:`hq-${item.name}-menu.png`, fullPage:false});
+                  await toggle.click();
+                  await page.waitForTimeout(180);
+                  const closed = await toggle.getAttribute('aria-expanded') === 'false';
+                  menu = {required:true, opened, lineEntry, closed, ok:opened && lineEntry && closed};
+                } else {
+                  menu = {required:true, ok:false};
+                }
+              }
+
+              await page.screenshot({path:`hq-${item.name}-top.png`, fullPage:false});
+              const worlds = page.locator('#worlds');
+              if (await worlds.count()) {
+                await worlds.scrollIntoViewIfNeeded();
+                await page.waitForTimeout(400);
+                await page.screenshot({path:`hq-${item.name}-worlds.png`, fullPage:false});
+              }
+              const jubi = page.locator('img[alt*="Jubi 生誕祭主視覺"]').first();
+              if (await jubi.count()) {
+                await jubi.scrollIntoViewIfNeeded();
+                await page.waitForTimeout(400);
+                await page.screenshot({path:`hq-${item.name}-jubi.png`, fullPage:false});
+              }
+
+              const criticalFailures = requestFailures.filter(item => !item.url.includes('docs.google.com') && !item.url.includes('googleusercontent.com'));
+              const checks = {
+                expectedVersion: state.expectedVersion,
+                expectedBuild: state.expectedBuild,
+                styled: !['rgba(0, 0, 0, 0)','rgb(255, 255, 255)'].includes(state.bodyBackground),
+                responsive: state.scrollWidth <= state.viewportWidth + 2,
+                allImagesRendered: state.imageCount >= 40 && state.brokenImages.length === 0,
+                everyImageEmbedded: state.nonEmbeddedImages.length === 0,
+                backgroundVisualsEmbedded: state.backgroundVisualsEmbedded,
+                jubiHighResolution: state.jubiHighResolution,
+                sections: state.requiredSections,
+                mobileBarRule: item.width <= 760 ? state.mobileBarVisible : !state.mobileBarVisible,
+                lineFloatRule: item.width <= 760 ? !state.fixedLineVisible : state.fixedLineVisible,
+                menu: menu.ok,
+                attendance: !state.scheduleReferencesInstagram,
+                noStrayEngineeringLabel: !state.strayEngineeringLabel,
+                noindex: state.noindex,
+                links: state.hasLine && state.hasReservation,
+                noLocalAssetDependencies: state.localAssetReferenceCount === 0,
+                noRemoteAssetDependencies: state.remoteAssetReferenceCount === 0,
+                noPageErrors: pageErrors.length === 0,
+                noCriticalRequestFailures: criticalFailures.length === 0
+              };
+              const failures = Object.entries(checks).filter(([,value]) => !value).map(([key]) => key);
+              results.push({
+                name:item.name,
+                engine:item.engine,
+                viewport:{width:item.width,height:item.height},
+                passed:failures.length === 0,
+                checks,
+                failures,
+                state,
+                menu,
+                pageErrors,
+                requestFailures,
+                criticalFailures
+              });
+              await context.close();
+            }
+          } finally {
+            await browsers.chromium.close();
+            await browsers.webkit.close();
+          }
+
+          const report = {
+            version:expectedVersion,
+            build:expectedBuild,
+            target,
+            generatedAt:new Date().toISOString(),
+            testedCases:results.length,
+            passedCases:results.filter(result => result.passed).length,
+            failedCases:results.filter(result => !result.passed).length,
+            productionModified:false,
+            attendanceSpreadsheetModified:false,
+            releaseGate:{highQualityVisualFidelityPassed:results.every(result => result.passed), manualRealDeviceReviewRequired:true, productionPromotionAuthorized:false},
+            results
+          };
+          fs.mkdirSync('v207-analysis',{recursive:true});
+          fs.writeFileSync('v207-analysis/v2071-high-quality-visual-fidelity-qa.json', JSON.stringify(report,null,2));
+          console.log('MAGICOFFICE_V2071_HIGH_QUALITY_QA', JSON.stringify({testedCases:report.testedCases, passedCases:report.passedCases, failedCases:report.failedCases, passed:report.releaseGate.highQualityVisualFidelityPassed}));
+          if (report.failedCases) process.exit(1);
+          JS
+          node v2071-hq-qa.mjs
+
+      - name: Commit QA report
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f v207-analysis/v2071-high-quality-visual-fidelity-qa.json || exit 0
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/v2071-high-quality-visual-fidelity-qa.json
+          if git diff --cached --quiet; then
+            echo 'No high-quality QA changes.'
+          else
+            git commit -m 'Verify MagicOffice v2.0.7.1 high-quality visual fidelity'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
+
+      - name: Upload visual QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v2.0.7.1_high_quality_visual_fidelity_QA
+          path: |
+            v207-analysis/v2071-high-quality-visual-fidelity-qa.json
+            hq-*.png
+          if-no-files-found: warn
+          retention-days: 14
