@@ -1,0 +1,143 @@
+name: Verify MagicOffice v2.0.7 release candidate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v207-release-candidate-qa.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_URL: https://magicoffice-v207-release-candidate.vercel.app/
+      EXPECTED_VERSION: 2.0.7-preview-verification
+      EXPECTED_REVISION: rc5-release-candidate
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+      - name: Install Playwright
+        shell: bash
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+      - name: Run release-candidate QA
+        shell: bash
+        run: |
+          cat > release-qa.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium, webkit } from 'playwright';
+
+          const target=process.env.TARGET_URL;
+          const expected=process.env.EXPECTED_VERSION;
+          const revision=process.env.EXPECTED_REVISION;
+          const build=JSON.parse(fs.readFileSync('v207-site/preview-build.json','utf8'));
+          if(build.fallback_asset_count!==0||build.production_release_allowed!==true)throw new Error('Build gate is not release-ready');
+
+          const cases=[
+            ['desktop-chromium','chromium',1366,900,false,false],
+            ['tablet-chromium','chromium',1024,768,false,true],
+            ['android-chromium','chromium',360,800,true,true],
+            ['small-android-chromium','chromium',320,568,true,true],
+            ['iphone-webkit','webkit',390,844,true,true],
+            ['iphone-large-webkit','webkit',430,932,true,true]
+          ];
+          const engines={chromium:await chromium.launch({headless:true}),webkit:await webkit.launch({headless:true})};
+          const results=[];
+          const quickLabels=['姶仕名錄','本週出勤','線上購拍','活動快報','服務價目','立即訂位'];
+          const requiredSections=['#worlds','#roster','#schedule','#event-hub','#menu','#first-visit','#location'];
+
+          try{
+            for(const [name,engine,width,height,mobile,touch] of cases){
+              const context=await engines[engine].newContext({viewport:{width,height},screen:{width,height},isMobile:mobile,hasTouch:touch,locale:'zh-TW',timezoneId:'Asia/Taipei',serviceWorkers:'block'});
+              const page=await context.newPage();
+              const pageErrors=[],assetFailures=[];
+              page.on('pageerror',error=>pageErrors.push(String(error?.stack||error)));
+              page.on('requestfailed',request=>{const url=request.url();if(url.includes('magicoffice-v207-release-candidate')||url.includes('cdn.jsdelivr.net/gh/sasta02001-hash/magicoffice-deploy')||url.includes('raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy'))assetFailures.push({url,error:request.failure()?.errorText||'unknown'});});
+
+              const response=await page.goto(`${target}?releaseqa=${Date.now()}-${name}`,{waitUntil:'domcontentloaded',timeout:120000});
+              await page.waitForFunction(({expected,revision})=>{const current=document.body?.dataset?.siteVersion||document.documentElement?.dataset?.siteVersion||document.querySelector('meta[name="x-magicoffice-preview"]')?.content||'';return current===expected&&document.documentElement?.dataset?.remotePreview===revision&&document.body?.textContent?.includes('魔幻姶仕社');},{expected,revision},{timeout:120000});
+              await page.waitForTimeout(900);
+              await page.evaluate(()=>{for(const image of document.images){image.loading='eager';image.decoding='sync';}});
+              const fullHeight=await page.evaluate(()=>Math.max(document.body.scrollHeight,document.documentElement.scrollHeight));
+              for(let y=0;y<=fullHeight;y+=700){await page.evaluate(value=>scrollTo(0,value),y);await page.waitForTimeout(28);}
+              await page.evaluate(()=>scrollTo(0,0));await page.waitForTimeout(1500);
+
+              const state=await page.evaluate(({expected,revision,quickLabels,requiredSections,width})=>{
+                const bodyStyle=getComputedStyle(document.body),first=document.querySelector('a'),firstStyle=first?getComputedStyle(first):null,images=[...document.images],external=[...document.querySelectorAll('a[href]')].map(link=>link.href),scheduleText=document.querySelector('#schedule')?.textContent||'';
+                const version=document.body?.dataset?.siteVersion||document.documentElement?.dataset?.siteVersion||document.querySelector('meta[name="x-magicoffice-preview"]')?.content||'';
+                const fixed=[...document.querySelectorAll('body *')].filter(element=>{const style=getComputedStyle(element),rect=element.getBoundingClientRect();return style.position==='fixed'&&style.display!=='none'&&style.visibility!=='hidden'&&rect.width>0&&rect.height>0;});
+                return {
+                  version,
+                  revision:document.documentElement?.dataset?.remotePreview||'',
+                  background:bodyStyle.backgroundColor,
+                  font:bodyStyle.fontFamily,
+                  rawBlue:Boolean(firstStyle&&firstStyle.color==='rgb(0, 0, 238)'&&firstStyle.textDecorationLine.includes('underline')),
+                  viewport:innerWidth,
+                  scroll:document.documentElement.scrollWidth,
+                  imageCount:images.length,
+                  brokenImages:images.filter(image=>!image.complete||image.naturalWidth<=0).map(image=>image.alt||image.currentSrc||image.src),
+                  requiredSections:Object.fromEntries(requiredSections.map(selector=>[selector,Boolean(document.querySelector(selector))])),
+                  quickVisible:fixed.some(element=>quickLabels.every(label=>(element.innerText||'').includes(label))),
+                  fixedLineVisible:[...document.querySelectorAll('a[href*="lin.ee"]')].some(link=>{const style=getComputedStyle(link),rect=link.getBoundingClientRect();return style.position==='fixed'&&style.display!=='none'&&style.visibility!=='hidden'&&rect.width>0&&rect.height>0;}),
+                  attendanceReferencesInstagram:/Instagram|官方\s*IG|以\s*IG\s*為準/i.test(scheduleText),
+                  noindex:/noindex/i.test(document.querySelector('meta[name="robots"]')?.content||''),
+                  hasLine:external.some(url=>url.includes('lin.ee/NcCGG1P')),
+                  hasInstagram:external.some(url=>url.includes('instagram.com/maid_magicoffice')),
+                  hasReservation:external.some(url=>url.includes('gforms.app/r/71hSwQR')),
+                  allMediaPinned:images.every(image=>!image.currentSrc||image.currentSrc.includes('d0c26168ccb347a858f7339aa271687f6d60e9db')||image.currentSrc.startsWith('data:')),
+                  expectedVersion:version===expected,
+                  expectedRevision:(document.documentElement?.dataset?.remotePreview||'')===revision,
+                  width
+                };
+              },{expected,revision,quickLabels,requiredSections,width});
+
+              const menu={required:width<=1180,toggleFound:true,opened:true,closed:true,lineEntry:true};
+              if(menu.required){const toggle=page.locator('.menu-toggle').first();menu.toggleFound=await toggle.count()>0;if(menu.toggleFound){await toggle.click();await page.waitForTimeout(280);menu.opened=await page.evaluate(()=>{const nav=document.querySelector('.main-nav'),toggle=document.querySelector('.menu-toggle');if(!nav||!toggle)return false;const style=getComputedStyle(nav),rect=nav.getBoundingClientRect();return toggle.getAttribute('aria-expanded')==='true'&&style.display!=='none'&&style.visibility!=='hidden'&&rect.width>0&&rect.height>0;});menu.lineEntry=await page.evaluate(()=>Boolean([...document.querySelectorAll('.main-nav a')].find(link=>(link.textContent||'').includes('LINE 官方'))));await page.screenshot({path:`release-${name}-menu.png`});await toggle.click();await page.waitForTimeout(180);menu.closed=await page.evaluate(()=>document.querySelector('.menu-toggle')?.getAttribute('aria-expanded')==='false');}else{menu.opened=menu.closed=menu.lineEntry=false;}}
+              await page.screenshot({path:`release-${name}-top.png`});
+
+              const checks={http200:response?.status()===200,version:state.expectedVersion,revision:state.expectedRevision,styled:!['rgba(0, 0, 0, 0)','rgb(255, 255, 255)'].includes(state.background)&&!state.font.includes('Times New Roman'),notRaw:!state.rawBlue,responsive:state.scroll<=state.viewport+2,images:state.imageCount>=40&&state.brokenImages.length===0,sections:Object.values(state.requiredSections).every(Boolean),quickNav:width<=767?state.quickVisible:true,lineFloat:width<=767?!state.fixedLineVisible:(width>1180?state.fixedLineVisible:true),attendance:!state.attendanceReferencesInstagram,noindex:state.noindex,line:state.hasLine,instagram:state.hasInstagram,reservation:state.hasReservation,mediaPinned:state.allMediaPinned,menu:!menu.required||(menu.toggleFound&&menu.opened&&menu.closed&&menu.lineEntry),noPageErrors:pageErrors.length===0,noAssetFailures:assetFailures.length===0};
+              const failures=Object.entries(checks).filter(([,value])=>!value).map(([key])=>key);
+              results.push({name,engine,viewport:{width,height},passed:failures.length===0,checks,failures,state,menu,pageErrors,assetFailures,status:response?.status()||0});
+              await context.close();
+            }
+          }finally{await engines.chromium.close();await engines.webkit.close();}
+
+          const report={version:expected,remotePreviewRevision:revision,target,generatedAt:new Date().toISOString(),buildGate:{fallbackAssetCount:build.fallback_asset_count,productionReleaseAllowed:build.production_release_allowed},productionModified:false,attendanceSpreadsheetModified:false,testedCases:results.length,passedCases:results.filter(result=>result.passed).length,failedCases:results.filter(result=>!result.passed).length,releaseGate:{automatedPreviewPassed:results.every(result=>result.passed),manualRealDeviceReviewRequired:true,productionPromotionAuthorized:false},results};
+          fs.mkdirSync('v207-analysis',{recursive:true});fs.writeFileSync('v207-analysis/release-candidate-qa.json',JSON.stringify(report,null,2));console.log('MAGICOFFICE_V207_RELEASE_QA',JSON.stringify({testedCases:report.testedCases,passedCases:report.passedCases,failedCases:report.failedCases,automatedPreviewPassed:report.releaseGate.automatedPreviewPassed}));if(report.failedCases)process.exit(1);
+          JS
+          node release-qa.mjs
+      - name: Commit release-candidate QA report
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f v207-analysis/release-candidate-qa.json ]; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v207-analysis/release-candidate-qa.json
+          if git diff --cached --quiet; then
+            echo 'No release-candidate QA changes.'
+          else
+            git commit -m 'Verify MagicOffice v2.0.7 release candidate'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
+      - name: Upload release-candidate screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v2.0.7_release_candidate_QA
+          path: |
+            v207-analysis/release-candidate-qa.json
+            release-*.png
+          if-no-files-found: warn
+          retention-days: 14
