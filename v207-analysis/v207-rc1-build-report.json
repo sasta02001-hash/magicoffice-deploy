@@ -26,23 +26,23 @@
     },
     {
       "name": "0f2282fd5b53948f.webp",
-      "method": "generated-placeholder",
-      "source": "generated-placeholder",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/0f2282fd5b53948f.webp",
       "target_width": 1000,
       "target_height": 1250,
-      "output_width": 1000,
-      "output_height": 1250,
-      "sha256": "b1f831978810c2d010a08ef2b838f4df1ef9accbefd0fabc5873af2d3f5c0f7b"
+      "output_width": 200,
+      "output_height": 250,
+      "sha256": "a50f09f0c9a9fcc8cd160ab0cb363284439672eb06650860e9d1d68067b343f5"
     },
     {
       "name": "183eaf19e84ad365.webp",
-      "method": "generated-placeholder",
-      "source": "generated-placeholder",
+      "method": "reused-exact-or-approved",
+      "source": "/home/runner/work/magicoffice-deploy/magicoffice-deploy/v207-reused-assets/183eaf19e84ad365.webp",
       "target_width": 946,
       "target_height": 1182,
-      "output_width": 946,
-      "output_height": 1182,
-      "sha256": "3d5724aa77ae96605ab0ef4d00a9d2f252d11118a295f0a6a59eee0819d34d3c"
+      "output_width": 200,
+      "output_height": 250,
+      "sha256": "7b3ca3ec224eff65e57d3224bd8ca6fc9d9027fba3aa0da65adb951f217705f6"
     },
     {
       "name": "1d6e303714642bf6.webp",
@@ -515,29 +515,8 @@
       "sha256": "a37f1b8ff4f65cf16337861d41601950823e15d6b47c1204eadd65d4cb3ca172"
     }
   ],
-  "fallback_assets": [
-    {
-      "name": "0f2282fd5b53948f.webp",
-      "method": "generated-placeholder",
-      "source": "generated-placeholder",
-      "target_width": 1000,
-      "target_height": 1250,
-      "output_width": 1000,
-      "output_height": 1250,
-      "sha256": "b1f831978810c2d010a08ef2b838f4df1ef9accbefd0fabc5873af2d3f5c0f7b"
-    },
-    {
-      "name": "183eaf19e84ad365.webp",
-      "method": "generated-placeholder",
-      "source": "generated-placeholder",
-      "target_width": 946,
-      "target_height": 1182,
-      "output_width": 946,
-      "output_height": 1182,
-      "sha256": "3d5724aa77ae96605ab0ef4d00a9d2f252d11118a295f0a6a59eee0819d34d3c"
-    }
-  ],
-  "fallback_asset_count": 2,
+  "fallback_assets": [],
+  "fallback_asset_count": 0,
   "generated_variant_count": 21,
   "generated_variants": [
     "0f2282fd5b53948f-640.webp",
@@ -565,8 +544,8 @@
   "local_reference_missing_count": 0,
   "duplicate_id_count": 0,
   "site_file_count": 89,
-  "site_bytes": 2055558,
+  "site_bytes": 2085794,
   "production_modified": false,
   "attendance_spreadsheet_modified": false,
-  "production_release_allowed": false
+  "production_release_allowed": true
 }
