@@ -1,0 +1,151 @@
+name: Build MagicOffice v2.0.7.1 self-contained broken-asset hotfix
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - v2.0.7-preview-source
+    paths:
+      - '.github/workflows/v2071-build-self-contained-hotfix.yml'
+      - 'v207-site/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.0.7-preview-source
+          fetch-depth: 0
+
+      - name: Build one-file website with every local asset embedded
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import base64, hashlib, json, mimetypes, re
+
+          root = Path('.')
+          site = root / 'v207-site'
+          source = site / 'index.html'
+          out_dir = root / 'v2071-self-contained'
+          out_dir.mkdir(parents=True, exist_ok=True)
+          html = source.read_text('utf-8')
+
+          # Inline local stylesheets.
+          link_pattern = re.compile(r'<link\b[^>]*rel=["\'][^"\']*stylesheet[^"\']*["\'][^>]*href=["\']([^"\']+)["\'][^>]*>', re.I)
+          for match in list(link_pattern.finditer(html)):
+              href = match.group(1)
+              if href.startswith(('http://','https://','//','data:')):
+                  continue
+              path = site / href.split('?',1)[0].lstrip('/')
+              css = path.read_text('utf-8')
+              html = html.replace(match.group(0), f'<style data-inlined-from="{href}">\n{css}\n</style>')
+
+          # Inline local JavaScript files, preserving execution order.
+          script_pattern = re.compile(r'<script\b([^>]*)\bsrc=["\']([^"\']+)["\']([^>]*)>\s*</script>', re.I)
+          for match in list(script_pattern.finditer(html)):
+              src = match.group(2)
+              if src.startswith(('http://','https://','//','data:')):
+                  continue
+              path = site / src.split('?',1)[0].lstrip('/')
+              js = path.read_text('utf-8')
+              html = html.replace(match.group(0), f'<script data-inlined-from="{src}">\n{js}\n</script>')
+
+          # Build deterministic data URIs for every local asset. Longest paths first
+          # prevents a base filename from partially replacing a responsive variant.
+          asset_records = []
+          replacements = []
+          for path in sorted((site / 'assets').rglob('*')):
+              if not path.is_file():
+                  continue
+              rel = path.relative_to(site).as_posix()
+              raw = path.read_bytes()
+              mime = mimetypes.guess_type(path.name)[0] or 'application/octet-stream'
+              uri = f'data:{mime};base64,' + base64.b64encode(raw).decode('ascii')
+              replacements.append((rel, uri))
+              asset_records.append({
+                  'path': rel,
+                  'bytes': len(raw),
+                  'sha256': hashlib.sha256(raw).hexdigest(),
+                  'mime': mime,
+              })
+
+          for rel, uri in sorted(replacements, key=lambda item: len(item[0]), reverse=True):
+              html = html.replace('/' + rel, uri)
+              html = html.replace(rel, uri)
+
+          # Remove the external manifest link from this single-file review build.
+          html = re.sub(r'<link\b[^>]*rel=["\']manifest["\'][^>]*>', '', html, flags=re.I)
+
+          # Set explicit hotfix markers and keep the preview non-indexable.
+          html = re.sub(r'data-site-version="[^"]*"', 'data-site-version="2.0.7.1-broken-asset-hotfix"', html)
+          if 'data-site-version="2.0.7.1-broken-asset-hotfix"' not in html:
+              html = html.replace('<body', '<body data-site-version="2.0.7.1-broken-asset-hotfix"', 1)
+          html = re.sub(r'<meta[^>]+name=["\']robots["\'][^>]*>', '<meta name="robots" content="noindex,nofollow,noarchive,max-image-preview:large">', html, count=1, flags=re.I)
+          marker = '<meta name="x-magicoffice-hotfix" content="2.0.7.1-broken-asset-hotfix">'
+          if 'x-magicoffice-hotfix' not in html:
+              html = html.replace('</head>', marker + '\n</head>', 1)
+
+          # Fail if any website-local dependency survived.
+          survivors = sorted(set(re.findall(r'''(?:(?:src|href)=["']|url\(["']?)(/?assets/[^"')\s?#]+)''', html, re.I)))
+          if survivors:
+              raise RuntimeError('Local asset references remain: ' + json.dumps(survivors[:30], ensure_ascii=False))
+
+          output = out_dir / 'index.html'
+          output.write_text(html, 'utf-8')
+          size = output.stat().st_size
+          if size < 5_000_000 or size > 35_000_000:
+              raise RuntimeError(f'Unexpected standalone size: {size}')
+          if '魔幻姶仕社' not in html or '本週出勤' not in html or '線上購拍' not in html:
+              raise RuntimeError('Core MagicOffice content missing')
+          if '2.0.7.1-broken-asset-hotfix' not in html:
+              raise RuntimeError('Hotfix marker missing')
+
+          report = {
+              'version': '2.0.7.1-broken-asset-hotfix',
+              'source': 'v207-site',
+              'output': 'v2071-self-contained/index.html',
+              'bytes': size,
+              'sha256': hashlib.sha256(output.read_bytes()).hexdigest(),
+              'embeddedAssetCount': len(asset_records),
+              'survivingLocalReferences': survivors,
+              'productionModified': False,
+              'attendanceSpreadsheetModified': False,
+              'assets': asset_records,
+          }
+          (out_dir / 'build-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), 'utf-8')
+          print('MAGICOFFICE_V2071_SELF_CONTAINED', json.dumps({k: report[k] for k in ['version','bytes','sha256','embeddedAssetCount','productionModified','attendanceSpreadsheetModified']}))
+          PY
+
+      - name: Validate single-file asset independence
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE='v2071-self-contained/index.html'
+          test -f "$FILE"
+          grep -q '2.0.7.1-broken-asset-hotfix' "$FILE"
+          grep -q '魔幻姶仕社' "$FILE"
+          grep -q '本週出勤' "$FILE"
+          grep -q 'https://lin.ee/NcCGG1P' "$FILE"
+          ! grep -Eq '(src|href)=["'"']/?assets/' "$FILE"
+          ! grep -Eq 'url\(["'"']?/?assets/' "$FILE"
+
+      - name: Commit self-contained hotfix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v2071-self-contained
+          if git diff --cached --quiet; then
+            echo 'No standalone hotfix changes.'
+          else
+            git commit -m 'Build MagicOffice v2.0.7.1 self-contained asset hotfix'
+            git pull --rebase origin v2.0.7-preview-source
+            git push origin HEAD:v2.0.7-preview-source
+          fi
