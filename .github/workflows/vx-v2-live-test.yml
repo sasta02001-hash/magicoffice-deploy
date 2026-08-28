@@ -1,0 +1,63 @@
+name: Verify VX v2.0 production
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vx-v2-live-test.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-noble
+    steps:
+      - name: Run browser verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          cat > verify.js <<'JS'
+          const { chromium } = require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true,args:['--disable-dev-shm-usage']});
+            const page=await browser.newPage({viewport:{width:390,height:844},locale:'zh-TW'});
+            const consoleErrors=[]; const pageErrors=[]; const failed=[];
+            page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('requestfailed',r=>failed.push({url:r.url(),error:r.failure()?.errorText||''}));
+            const response=await page.goto('https://vxsagittarius.vercel.app/?playwright='+Date.now(),{waitUntil:'domcontentloaded',timeout:90000});
+            await page.waitForTimeout(8000);
+            const result=await page.evaluate(()=>({
+              title:document.title,
+              bodyText:document.body.innerText.slice(0,2000),
+              htmlBytes:new Blob([document.documentElement.outerHTML]).size,
+              templates:document.querySelectorAll('template[id^="page-"]').length,
+              hasApp:Boolean(document.querySelector('#app')),
+              hasNebula:document.documentElement.innerHTML.includes('id="nebula-preview"'),
+              hasLine:document.documentElement.innerHTML.includes('https://lin.ee/Roebk7r'),
+              hasInstagram:document.documentElement.innerHTML.includes('cara_raaa'),
+              hasServices:document.body.innerText.includes('服務與價目'),
+              hasLoading:document.body.innerText.includes('VX SAGITTARIUS · LOADING'),
+            }));
+            console.log('VX_BROWSER_RESULT',JSON.stringify({status:response?.status(),...result,consoleErrors,pageErrors,failed},null,2));
+            await page.screenshot({path:'vx-production.png',fullPage:false});
+            await browser.close();
+            if(response?.status()!==200||result.templates<10||!result.hasApp||!result.hasNebula||!result.hasLine||!result.hasInstagram||result.hasLoading||pageErrors.length){process.exit(1)}
+          })().catch(e=>{console.error(e.stack||String(e));process.exit(1)});
+          JS
+          node verify.js
+
+      - name: Upload screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: VX_v2_production_verification
+          path: vx-production.png
+          if-no-files-found: warn
+          retention-days: 7
