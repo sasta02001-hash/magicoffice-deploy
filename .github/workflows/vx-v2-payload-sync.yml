@@ -1,0 +1,98 @@
+name: Publish VX v2.0 verified source
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vx-v2-payload-sync.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Recover and verify VX v2.0 from production loader
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import base64, gzip, hashlib, json, re, time, urllib.request
+
+          url = f'https://vxsagittarius.vercel.app/?vx-source-recovery={time.time_ns()}'
+          request = urllib.request.Request(url, headers={'User-Agent': 'VX-v2-source-recovery/1.0'})
+          source = urllib.request.urlopen(request, timeout=60).read().decode('utf-8')
+
+          matches = re.findall(r'H4sI[A-Za-z0-9+/=]{100000,}', source)
+          if not matches:
+              raise SystemExit('No complete gzip payload found in current production loader.')
+          payload = max(matches, key=len)
+          raw = gzip.decompress(base64.b64decode(payload))
+          text = raw.decode('utf-8')
+          sha = hashlib.sha256(raw).hexdigest()
+
+          required = [
+              'OFFICIAL SITE v2.0',
+              'id="page-home"',
+              'id="nebula-preview"',
+              'VX TRIARCH NEBULA',
+              'TWO<br/>UNDERSTANDINGS',
+              'https://lin.ee/Roebk7r',
+              'cara_raaa',
+              'TRIASCEND',
+              'TRIFUSION',
+              'TRIFORM',
+              'TRIEVOLVE',
+          ]
+          missing = [item for item in required if item not in text]
+          if missing:
+              raise SystemExit('Missing required VX v2.0 markers: ' + ', '.join(missing))
+          if not (400000 <= len(raw) <= 900000):
+              raise SystemExit(f'Unexpected recovered site size: {len(raw)}')
+
+          out = Path('vx-v2-live')
+          out.mkdir(parents=True, exist_ok=True)
+          (out / 'site.html').write_bytes(raw)
+          (out / 'site.sha256').write_text(f'{sha}  site.html\n', encoding='utf-8')
+
+          for old in out.glob('c*.txt'):
+              old.unlink()
+          chunk_size = 16000
+          chunks = [payload[i:i+chunk_size] for i in range(0, len(payload), chunk_size)]
+          for index, chunk in enumerate(chunks):
+              (out / f'c{index:02d}.txt').write_text(chunk, encoding='ascii')
+
+          manifest = {
+              'version': '2.0.0-final-approved',
+              'source': url,
+              'siteBytes': len(raw),
+              'siteSha256': sha,
+              'payloadChars': len(payload),
+              'payloadChunks': len(chunks),
+              'publishedAt': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+          }
+          (out / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          print('VX_SOURCE_VERIFIED', json.dumps(manifest, ensure_ascii=False))
+          PY
+
+      - name: Commit verified VX source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add vx-v2-live
+          if git diff --cached --quiet; then
+            echo 'VX source already current.'
+          else
+            git commit -m 'Publish verified VX v2.0 final source'
+            git push origin HEAD:main
+          fi
