@@ -219,6 +219,13 @@ async function mirrorAssets(seedUrls) {
     const u = new URL(assetUrl);
     if (u.origin !== SOURCE_ORIGIN || /%23/i.test(u.pathname)) continue;
 
+    const localPath = localPathFromUrl(assetUrl);
+    try {
+      await fs.access(localPath);
+      console.log('Using local asset', u.pathname);
+      continue;
+    } catch (_) {}
+
     let response;
     try {
       response = await fetchResponse(assetUrl);
@@ -229,7 +236,6 @@ async function mirrorAssets(seedUrls) {
     }
 
     const buffer = Buffer.from(await response.arrayBuffer());
-    const localPath = localPathFromUrl(assetUrl);
     await fs.mkdir(path.dirname(localPath), {recursive:true});
     await fs.writeFile(localPath, buffer);
     console.log('Mirrored', u.pathname, `(${buffer.length} bytes)`);
