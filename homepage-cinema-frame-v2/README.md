@@ -1,0 +1,1 @@
+MagicOffice homepage cinema frame chunks. Build concatenates frame-00.part through frame-08.part and base64-decodes the locked ukiyo-e frame. Expected WebP SHA-256: 819f8253be6fac99f4a4e1c2706e876115d612e19182043541c3ebc5cc4cdef7
