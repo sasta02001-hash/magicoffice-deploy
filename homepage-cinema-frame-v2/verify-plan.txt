@@ -1,0 +1,1 @@
+Expected each frame part size: 50000 chars except frame-08.part 49812 chars. Expected decoded WebP SHA-256: 819f8253be6fac99f4a4e1c2706e876115d612e19182043541c3ebc5cc4cdef7.
