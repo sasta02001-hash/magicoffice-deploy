@@ -1,0 +1,1 @@
+Upload staging. Only frame-*.part files are consumed by the build.
