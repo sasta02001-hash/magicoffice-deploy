@@ -1,0 +1,529 @@
+name: Restore actual MagicOffice homepage background image
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/restore-home-static-background-live.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: magicoffice-production-home-static-background
+  cancel-in-progress: false
+
+env:
+  OFFICIAL_URL: https://magicoffice.vercel.app/
+  VERCEL_ORG_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+  VERCEL_PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+  VERCEL_SCOPE: magicoffice
+  RELEASE_MARKER: home-static-background-restored-2026-08-31-v2
+  BACKGROUND_PATH: /assets/media/44049d5f46ae6a12.webp
+  BACKGROUND_SHA256: 44049d5f46ae6a12665e7a658e4d4a344fa8078dfd2fbb06da725ebd8e40cc65
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Confirm deployment credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}" || { echo 'VERCEL_TOKEN is missing' >&2; exit 78; }
+
+      - name: Mirror the exact current Production site and all same-origin assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import re
+          import time
+          import urllib.parse
+          import urllib.request
+          from collections import deque
+          from pathlib import Path
+
+          BASE = 'https://magicoffice.vercel.app/'
+          HOST = urllib.parse.urlparse(BASE).netloc
+          ROOT = Path('site')
+          ROOT.mkdir(parents=True, exist_ok=True)
+          HEADERS = {
+              'User-Agent': 'Mozilla/5.0 (compatible; MagicOffice-Background-Restore/2.0)',
+              'Cache-Control': 'no-cache',
+              'Pragma': 'no-cache',
+          }
+
+          def fetch(url: str, retries: int = 5):
+              last = None
+              for attempt in range(retries):
+                  try:
+                      req = urllib.request.Request(url, headers=HEADERS)
+                      with urllib.request.urlopen(req, timeout=90) as response:
+                          data = response.read()
+                          status = response.status
+                          content_type = response.headers.get('content-type', '').split(';')[0].lower()
+                          final_url = response.geturl()
+                      if status != 200:
+                          raise RuntimeError(f'HTTP {status}: {url}')
+                      if urllib.parse.urlparse(final_url).netloc not in {'', HOST}:
+                          raise RuntimeError(f'Unexpected redirect: {url} -> {final_url}')
+                      return data, content_type, final_url
+                  except Exception as exc:
+                      last = exc
+                      if attempt + 1 < retries:
+                          time.sleep(1.5 * (attempt + 1))
+              raise RuntimeError(f'Unable to fetch {url}: {last!r}')
+
+          html_bytes, _, _ = fetch(BASE + '?static-background-source=' + str(int(time.time())))
+          if b'homepage-hero-v2' not in html_bytes or b'home-dynamic-sakura-restored-2026-08-31-v1' not in html_bytes:
+              raise SystemExit('Current Production does not contain the expected hero and falling-petal release.')
+          html = html_bytes.decode('utf-8')
+          (ROOT / 'index.html').write_text(html, encoding='utf-8')
+
+          attr = re.compile(r'''(?:src|href|poster|content)\s*=\s*["']([^"']+)["']''', re.I)
+          srcset = re.compile(r'''srcset\s*=\s*["']([^"']+)["']''', re.I)
+          css_url = re.compile(r'''url\(\s*["']?([^"')]+)["']?\s*\)''', re.I)
+          css_import = re.compile(r'''@import\s+(?:url\()?\s*["']([^"']+)["']''', re.I)
+          js_path = re.compile(r'''["']((?:/assets/|/site\.webmanifest|/favicon\.png|/apple-touch-icon\.png)[^"']*)["']''')
+          queue = deque()
+          seen: set[str] = set()
+          assets = []
+
+          def normalize(raw: str, parent: str = BASE):
+              raw = raw.strip()
+              if not raw or raw.startswith(('#', 'data:', 'blob:', 'javascript:', 'mailto:', 'tel:')):
+                  return None
+              url = urllib.parse.urljoin(parent, raw)
+              parsed = urllib.parse.urlparse(url)
+              if parsed.netloc != HOST:
+                  return None
+              path = urllib.parse.unquote(parsed.path)
+              if not path or path == '/' or path.endswith('/') or '..' in Path(path).parts:
+                  return None
+              return urllib.parse.urlunparse((parsed.scheme, parsed.netloc, parsed.path, '', parsed.query, ''))
+
+          def discover(text: str, parent: str = BASE):
+              for raw in attr.findall(text):
+                  item = normalize(raw, parent)
+                  if item and urllib.parse.urlparse(item).path not in seen:
+                      queue.append(item)
+              for group in srcset.findall(text):
+                  for entry in group.split(','):
+                      raw = entry.strip().split()[0] if entry.strip() else ''
+                      item = normalize(raw, parent)
+                      if item and urllib.parse.urlparse(item).path not in seen:
+                          queue.append(item)
+
+          discover(html)
+          for required in (
+              '/site.webmanifest',
+              '/assets/css/site-v2.0.6.css',
+              '/assets/js/magic-core-js.js',
+              '/assets/media/44049d5f46ae6a12.webp?v=20260831-home-static-bg2',
+          ):
+              item = normalize(required)
+              if item:
+                  queue.append(item)
+
+          while queue:
+              url = queue.popleft()
+              parsed = urllib.parse.urlparse(url)
+              key = parsed.path
+              if key in seen:
+                  continue
+              seen.add(key)
+              data, content_type, final_url = fetch(url)
+              suffix = Path(key).suffix.lower()
+              if suffix in {'.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.ico', '.mp4', '.webm', '.woff', '.woff2'}:
+                  if data.lstrip()[:20].lower().startswith((b'<!doctype html', b'<html')):
+                      raise RuntimeError(f'Binary asset resolved to HTML: {url}')
+              target = ROOT / key.lstrip('/')
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_bytes(data)
+              assets.append({
+                  'path': key,
+                  'bytes': len(data),
+                  'contentType': content_type,
+                  'sha256': hashlib.sha256(data).hexdigest(),
+              })
+
+              text = None
+              if content_type.startswith('text/') or suffix in {'.css', '.js', '.json', '.webmanifest', '.svg'}:
+                  try:
+                      text = data.decode('utf-8')
+                  except UnicodeDecodeError:
+                      pass
+              if text and suffix == '.css':
+                  for raw in css_url.findall(text) + css_import.findall(text):
+                      item = normalize(raw, final_url)
+                      if item and urllib.parse.urlparse(item).path not in seen:
+                          queue.append(item)
+              elif text and suffix == '.js':
+                  for raw in js_path.findall(text):
+                      item = normalize(raw, final_url)
+                      if item and urllib.parse.urlparse(item).path not in seen:
+                          queue.append(item)
+              elif text and suffix in {'.json', '.webmanifest'}:
+                  try:
+                      payload = json.loads(text)
+                  except Exception:
+                      payload = None
+                  if isinstance(payload, dict):
+                      for icon in payload.get('icons', []):
+                          if isinstance(icon, dict):
+                              item = normalize(str(icon.get('src', '')), final_url)
+                              if item and urllib.parse.urlparse(item).path not in seen:
+                                  queue.append(item)
+
+          background = ROOT / 'assets/media/44049d5f46ae6a12.webp'
+          if not background.is_file():
+              raise SystemExit('The original homepage background asset was not mirrored.')
+          actual_sha = hashlib.sha256(background.read_bytes()).hexdigest()
+          expected_sha = '44049d5f46ae6a12665e7a658e4d4a344fa8078dfd2fbb06da725ebd8e40cc65'
+          if actual_sha != expected_sha:
+              raise SystemExit(f'Background SHA mismatch: {actual_sha}')
+          if len(assets) < 50:
+              raise SystemExit(f'Only {len(assets)} assets were mirrored; refusing an incomplete deployment.')
+
+          report = {
+              'source': BASE,
+              'assetCount': len(assets),
+              'assetBytes': sum(item['bytes'] for item in assets),
+              'background': {
+                  'path': '/assets/media/44049d5f46ae6a12.webp',
+                  'bytes': background.stat().st_size,
+                  'sha256': actual_sha,
+              },
+              'assets': assets,
+          }
+          Path('mirror-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+          print('MIRROR_OK', json.dumps({k: report[k] for k in ('assetCount', 'assetBytes', 'background')}))
+          PY
+
+      - name: Add the missing static background layer without changing the existing hero content
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('site/index.html')
+          text = path.read_text(encoding='utf-8')
+          release = 'home-static-background-restored-2026-08-31-v2'
+
+          text = re.sub(r'<meta\s+name=["\']x-magicoffice-home-static-background["\'][^>]*>', '', text, flags=re.I)
+          text = re.sub(r'<style\s+id=["\']magicoffice-home-static-background-v2["\']>.*?</style>', '', text, flags=re.I | re.S)
+          text = re.sub(r'<div\s+class=["\']mo-home-static-bg["\'][^>]*>\s*</div>', '', text, flags=re.I | re.S)
+
+          css = r'''
+          <meta name="x-magicoffice-home-static-background" content="home-static-background-restored-2026-08-31-v2"/>
+          <style id="magicoffice-home-static-background-v2">
+          /* Exact archived MagicOffice homepage background: 1000×1333 WebP, SHA-256 44049d5f... */
+          .homepage-hero-v2{position:relative!important;isolation:isolate!important;overflow:hidden!important;background:#080607!important}
+          .homepage-hero-v2>.home-hero-shell{position:relative!important;z-index:3!important}
+          .mo-home-static-bg{position:absolute!important;inset:0!important;z-index:0!important;display:block!important;visibility:visible!important;opacity:1!important;overflow:hidden!important;pointer-events:none!important;user-select:none!important;background:#080607!important}
+          .mo-home-static-bg::before{content:""!important;position:absolute!important;inset:-1.5%!important;display:block!important;background-image:url("/assets/media/44049d5f46ae6a12.webp?v=20260831-home-static-bg2")!important;background-repeat:no-repeat!important;background-size:cover!important;background-position:68% 28%!important;filter:saturate(.78) brightness(.62)!important;transform:translateZ(0)!important}
+          .mo-home-static-bg::after{content:""!important;position:absolute!important;inset:0!important;display:block!important;background:linear-gradient(90deg,rgba(5,4,4,.98) 0%,rgba(9,6,7,.92) 43%,rgba(9,6,7,.42) 75%,rgba(5,4,4,.72) 100%),linear-gradient(to top,#080607 0%,transparent 26%)!important}
+          .mo-home-motion-bg{z-index:1!important}
+          @media(max-width:960px){
+            .mo-home-static-bg::before{background-position:63% 24%!important}
+            .mo-home-static-bg::after{background:linear-gradient(to top,rgba(5,4,4,.99) 4%,rgba(7,5,6,.86) 58%,rgba(7,5,6,.26)),linear-gradient(90deg,rgba(5,4,4,.68),transparent)!important}
+          }
+          </style>
+          '''
+          layer = '<div class="mo-home-static-bg" aria-hidden="true"></div>'
+
+          if '</head>' not in text:
+              raise SystemExit('Missing </head>.')
+          text = text.replace('</head>', css + '\n</head>', 1)
+
+          hero = re.compile(r'(<section\b[^>]*class=["\'][^"\']*\bhomepage-hero-v2\b[^"\']*["\'][^>]*>)', re.I)
+          text, count = hero.subn(lambda m: m.group(1) + '\n' + layer, text, count=1)
+          if count != 1:
+              raise SystemExit('Could not insert the static background into the homepage hero.')
+
+          required = [
+              release,
+              'class="mo-home-static-bg"',
+              '/assets/media/44049d5f46ae6a12.webp',
+              'class="mo-home-motion-bg"',
+              'home-hero-stage',
+              'homepage-integrated-hero-v1-js',
+              'heartbeat-support',
+              '立即訂位',
+          ]
+          missing = [value for value in required if value not in text]
+          if missing:
+              raise SystemExit('Patch removed required content: ' + ', '.join(missing))
+          if text.count('class="mo-home-static-bg"') != 1:
+              raise SystemExit('Static background layer count must equal one.')
+          if text.count('class="mo-home-petal"') != 4:
+              raise SystemExit('Existing four-petal animation was not preserved.')
+
+          path.write_text(text, encoding='utf-8')
+          print('STATIC_BACKGROUND_PATCH_OK', path.stat().st_size)
+          PY
+
+      - name: Bind the exact Vercel Production project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p site/.vercel
+          cat > site/.vercel/project.json <<JSON
+          {"orgId":"${VERCEL_ORG_ID}","projectId":"${VERCEL_PROJECT_ID}"}
+          JSON
+          cat > site/vercel.json <<'JSON'
+          {
+            "framework": null,
+            "cleanUrls": true,
+            "trailingSlash": false,
+            "headers": [
+              {
+                "source": "/(.*)",
+                "headers": [
+                  {"key":"X-Content-Type-Options","value":"nosniff"},
+                  {"key":"Referrer-Policy","value":"strict-origin-when-cross-origin"}
+                ]
+              }
+            ]
+          }
+          JSON
+
+      - name: Install browser validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Validate the actual rendered background locally on desktop and mobile
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m http.server 4173 --directory site >local-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
+
+          cat > verify-static-background.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const base = process.env.TEST_URL || 'http://127.0.0.1:4173/';
+          const browser = await chromium.launch({ headless: true });
+          const cases = [
+            { name: 'desktop', viewport: { width: 1440, height: 900 }, mobile: false },
+            { name: 'mobile', viewport: { width: 390, height: 844 }, mobile: true },
+          ];
+          const results = [];
+          try {
+            for (const item of cases) {
+              const context = await browser.newContext({
+                viewport: item.viewport,
+                screen: item.viewport,
+                isMobile: item.mobile,
+                hasTouch: item.mobile,
+                deviceScaleFactor: item.mobile ? 2 : 1,
+                locale: 'zh-TW',
+                timezoneId: 'Asia/Taipei',
+                reducedMotion: 'no-preference',
+              });
+              const page = await context.newPage();
+              const errors = [];
+              page.on('pageerror', error => errors.push(String(error)));
+              const response = await page.goto(`${base}?background-render-check=${Date.now()}-${item.name}`, { waitUntil: 'networkidle', timeout: 120000 });
+              await page.waitForTimeout(1200);
+              const state = await page.evaluate(async () => {
+                const hero = document.querySelector('.homepage-hero-v2');
+                const bg = document.querySelector('.mo-home-static-bg');
+                const motion = document.querySelector('.mo-home-motion-bg');
+                const style = bg ? getComputedStyle(bg, '::before') : null;
+                const heroRect = hero?.getBoundingClientRect();
+                const bgRect = bg?.getBoundingClientRect();
+                const url = new URL('/assets/media/44049d5f46ae6a12.webp?v=render-check', location.href).href;
+                const image = await new Promise(resolve => {
+                  const img = new Image();
+                  img.onload = () => resolve({ ok: true, width: img.naturalWidth, height: img.naturalHeight });
+                  img.onerror = () => resolve({ ok: false, width: 0, height: 0 });
+                  img.src = url;
+                });
+                return {
+                  marker: document.querySelector('meta[name="x-magicoffice-home-static-background"]')?.content || '',
+                  hasHero: Boolean(hero),
+                  hasBackground: Boolean(bg),
+                  hasMotion: Boolean(motion),
+                  backgroundImage: style?.backgroundImage || '',
+                  backgroundPosition: style?.backgroundPosition || '',
+                  backgroundSize: style?.backgroundSize || '',
+                  bgDisplay: bg ? getComputedStyle(bg).display : '',
+                  bgVisibility: bg ? getComputedStyle(bg).visibility : '',
+                  bgOpacity: bg ? getComputedStyle(bg).opacity : '',
+                  heroWidth: heroRect?.width || 0,
+                  heroHeight: heroRect?.height || 0,
+                  bgWidth: bgRect?.width || 0,
+                  bgHeight: bgRect?.height || 0,
+                  image,
+                  petalCount: document.querySelectorAll('.mo-home-petal').length,
+                  hasBooking: document.body.innerText.includes('立即訂位'),
+                  hasVideoStage: Boolean(document.querySelector('.home-hero-stage')),
+                  scrollWidth: document.documentElement.scrollWidth,
+                  viewportWidth: innerWidth,
+                };
+              });
+              const checks = {
+                http200: response?.status() === 200,
+                marker: state.marker === 'home-static-background-restored-2026-08-31-v2',
+                layerExists: state.hasHero && state.hasBackground && state.hasMotion,
+                cssUsesAsset: state.backgroundImage.includes('44049d5f46ae6a12.webp'),
+                cssVisible: state.bgDisplay !== 'none' && state.bgVisibility === 'visible' && Number(state.bgOpacity) > 0,
+                coversHero: state.bgWidth >= state.heroWidth - 1 && state.bgHeight >= state.heroHeight - 1 && state.heroHeight > 200,
+                exactImageLoaded: state.image.ok && state.image.width === 1000 && state.image.height === 1333,
+                petalsPreserved: state.petalCount === 4,
+                heroPreserved: state.hasBooking && state.hasVideoStage,
+                responsive: state.scrollWidth <= state.viewportWidth + 2,
+                noPageErrors: errors.length === 0,
+              };
+              const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
+              await page.screenshot({ path: `${item.name}-static-background.png`, fullPage: false });
+              results.push({ name: item.name, state, checks, failures, errors });
+              await context.close();
+              if (failures.length) throw new Error(`${item.name} failed: ${failures.join(', ')}\n${JSON.stringify(results.at(-1), null, 2)}`);
+            }
+          } finally {
+            await browser.close();
+          }
+          fs.writeFileSync('static-background-render-report.json', JSON.stringify(results, null, 2));
+          console.log('STATIC_BACKGROUND_RENDER_OK', JSON.stringify(results.map(r => ({ name: r.name, state: r.state }))));
+          JS
+
+          node verify-static-background.mjs
+
+      - name: Record current Production for rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, urllib.parse, urllib.request
+          query = urllib.parse.urlencode({
+              'projectId': os.environ['VERCEL_PROJECT_ID'],
+              'teamId': os.environ['VERCEL_ORG_ID'],
+              'target': 'production',
+              'limit': 1,
+          })
+          request = urllib.request.Request(
+              'https://api.vercel.com/v6/deployments?' + query,
+              headers={'Authorization': 'Bearer ' + os.environ['VERCEL_TOKEN']},
+          )
+          with urllib.request.urlopen(request, timeout=60) as response:
+              payload = json.load(response)
+          current = (payload.get('deployments') or [None])[0]
+          if not current:
+              raise SystemExit('No current Production deployment was found.')
+          record = {'id': current['uid'], 'url': current['url']}
+          open('previous-production.json', 'w', encoding='utf-8').write(json.dumps(record, indent=2))
+          print('PREVIOUS_PRODUCTION', json.dumps(record))
+          PY
+
+      - name: Deploy to the locked MagicOffice Production project
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --silent --no-save vercel@latest
+          OUTPUT="$(npx vercel deploy site --prod --yes --archive=tgz --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" 2>&1 | tee deploy-output.log)"
+          URL="$(printf '%s\n' "$OUTPUT" | grep -Eo 'https://[^ ]+\.vercel\.app' | tail -1)"
+          test -n "$URL" || { echo 'Unable to determine deployment URL.' >&2; exit 1; }
+          printf '%s' "$URL" > deployed-url.txt
+          echo "DEPLOYED_URL=$URL" >> "$GITHUB_ENV"
+
+      - name: Verify the official domain renders the actual background or roll back
+        shell: bash
+        run: |
+          set -euo pipefail
+          ready=false
+          for i in $(seq 1 45); do
+            if curl -fsSL --max-time 45 "${OFFICIAL_URL}?static-background-release=${RELEASE_MARKER}-${i}" -o official.html; then
+              if grep -q "$RELEASE_MARKER" official.html; then ready=true; break; fi
+            fi
+            sleep 4
+          done
+          if [ "$ready" != true ]; then
+            PREVIOUS_URL="$(python -c 'import json; print(json.load(open("previous-production.json"))["url"])')"
+            npx vercel rollback "$PREVIOUS_URL" --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" || true
+            echo 'Official domain never exposed the static-background marker; rolled back.' >&2
+            exit 1
+          fi
+
+          if ! TEST_URL="$OFFICIAL_URL" node verify-static-background.mjs; then
+            PREVIOUS_URL="$(python -c 'import json; print(json.load(open("previous-production.json"))["url"])')"
+            npx vercel rollback "$PREVIOUS_URL" --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" || true
+            echo 'Official rendered-background verification failed; rolled back.' >&2
+            exit 1
+          fi
+
+          curl -fsSL --max-time 60 "${OFFICIAL_URL}${BACKGROUND_PATH}?verify=${RELEASE_MARKER}" -o official-background.webp
+          ACTUAL_SHA="$(sha256sum official-background.webp | awk '{print $1}')"
+          test "$ACTUAL_SHA" = "$BACKGROUND_SHA256" || {
+            PREVIOUS_URL="$(python -c 'import json; print(json.load(open("previous-production.json"))["url"])')"
+            npx vercel rollback "$PREVIOUS_URL" --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" || true
+            echo "Official background SHA mismatch: $ACTUAL_SHA" >&2
+            exit 1
+          }
+          echo "OFFICIAL_STATIC_BACKGROUND_OK deployment=${DEPLOYED_URL} sha=${ACTUAL_SHA}"
+
+      - name: Write final report
+        if: success()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          report = {
+              'ok': True,
+              'officialUrl': os.environ['OFFICIAL_URL'],
+              'deploymentUrl': Path('deployed-url.txt').read_text().strip(),
+              'projectId': os.environ['VERCEL_PROJECT_ID'],
+              'release': os.environ['RELEASE_MARKER'],
+              'backgroundPath': os.environ['BACKGROUND_PATH'],
+              'backgroundSha256': os.environ['BACKGROUND_SHA256'],
+              'backgroundDimensions': [1000, 1333],
+              'desktopPosition': '68% 28%',
+              'mobilePosition': '63% 24%',
+              'fallingPetalsPreserved': True,
+              'mirror': json.load(open('mirror-report.json', encoding='utf-8')),
+              'renderValidation': json.load(open('static-background-render-report.json', encoding='utf-8')),
+          }
+          Path('home-static-background-final-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+          print('FINAL_REPORT_OK', json.dumps({k: report[k] for k in ('officialUrl', 'deploymentUrl', 'release', 'backgroundPath')}))
+          PY
+
+      - name: Upload screenshots and reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_home_static_background_restore_v2
+          path: |
+            mirror-report.json
+            previous-production.json
+            deployed-url.txt
+            deploy-output.log
+            official.html
+            official-background.webp
+            static-background-render-report.json
+            home-static-background-final-report.json
+            desktop-static-background.png
+            mobile-static-background.png
+          if-no-files-found: warn
+          retention-days: 14
