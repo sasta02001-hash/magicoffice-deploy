@@ -1,0 +1,161 @@
+name: Verify visible homepage refinement v2
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/verify-visible-home-bg-v2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PRODUCTION_URL: https://magicoffice.vercel.app/
+      PREVIEW_URL: https://magicoffice-61kqdgrnw-magicoffice.vercel.app/?_vercel_share=ddgZFrsKyHDpH6PMikwPAU9sRVSGfNHb
+      RELEASE_MARKER: home-bg-visible-refinement-2026-09-01-v2
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install browser and image comparison tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-audit --no-fund playwright@1.55.0 sharp@0.34.3
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Capture production and preview and verify visible difference
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > verify-visible-v2.mjs <<'JS'
+          import fs from 'node:fs';
+          import sharp from 'sharp';
+          import { chromium } from 'playwright';
+
+          const browser = await chromium.launch({ headless: true });
+          const cases = [
+            { name: 'desktop', viewport: { width: 1440, height: 900 }, mobile: false },
+            { name: 'mobile', viewport: { width: 390, height: 844 }, mobile: true },
+          ];
+          const report = [];
+
+          async function capture(baseUrl, kind, item) {
+            const context = await browser.newContext({
+              viewport: item.viewport,
+              screen: item.viewport,
+              isMobile: item.mobile,
+              hasTouch: item.mobile,
+              deviceScaleFactor: 1,
+              locale: 'zh-TW',
+              timezoneId: 'Asia/Taipei',
+              reducedMotion: 'no-preference',
+            });
+            const page = await context.newPage();
+            const pageErrors = [];
+            page.on('pageerror', error => pageErrors.push(String(error)));
+            const separator = baseUrl.includes('?') ? '&' : '?';
+            const url = `${baseUrl}${separator}visual-check=${Date.now()}-${kind}-${item.name}`;
+            const response = await page.goto(url, { waitUntil: 'load', timeout: 120000 });
+            await page.waitForSelector('.homepage-hero-v2', { state: 'visible', timeout: 30000 });
+            await page.locator('.mo-home-static-bg-image').evaluate(node => node.decode());
+            await page.waitForTimeout(2600);
+            const state = await page.evaluate(() => {
+              const image = document.querySelector('.mo-home-static-bg-image');
+              const shade = document.querySelector('.mo-home-static-bg-shade');
+              const motion = document.querySelector('.mo-home-motion-bg');
+              const imageStyle = image ? getComputedStyle(image) : null;
+              const shadeStyle = shade ? getComputedStyle(shade) : null;
+              return {
+                marker: document.querySelector('meta[name="x-magicoffice-home-static-background"]')?.content || '',
+                dynamicMarker: document.querySelector('meta[name="x-magicoffice-home-dynamic-background"]')?.content || '',
+                imageSrc: image?.currentSrc || image?.src || '',
+                naturalWidth: image?.naturalWidth || 0,
+                naturalHeight: image?.naturalHeight || 0,
+                imageFilter: imageStyle?.filter || '',
+                shadeBackground: shadeStyle?.backgroundImage || '',
+                petals: document.querySelectorAll('.mo-home-petal').length,
+                motionDisplay: motion ? getComputedStyle(motion).display : '',
+                booking: document.body.innerText.includes('立即訂位'),
+                schedule: document.body.innerText.includes('本週出勤'),
+                video: Boolean(document.querySelector('.home-hero-stage')),
+              };
+            });
+            const hero = page.locator('.homepage-hero-v2');
+            const file = `${kind}-${item.name}.png`;
+            await hero.screenshot({ path: file, animations: 'allow' });
+            await context.close();
+            return { url, status: response?.status(), state, pageErrors, file };
+          }
+
+          async function difference(fileA, fileB) {
+            const a = await sharp(fileA).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+            const b = await sharp(fileB).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+            if (a.info.width !== b.info.width || a.info.height !== b.info.height) {
+              throw new Error(`Image dimensions differ: ${a.info.width}x${a.info.height} vs ${b.info.width}x${b.info.height}`);
+            }
+            let sum = 0;
+            let changed = 0;
+            const pixels = a.info.width * a.info.height;
+            for (let i = 0; i < a.data.length; i += 4) {
+              const d = (Math.abs(a.data[i] - b.data[i]) + Math.abs(a.data[i + 1] - b.data[i + 1]) + Math.abs(a.data[i + 2] - b.data[i + 2])) / 3;
+              sum += d;
+              if (d >= 12) changed += 1;
+            }
+            return { meanAbsoluteDifference: sum / pixels, changedPixelShare: changed / pixels };
+          }
+
+          try {
+            for (const item of cases) {
+              const production = await capture(process.env.PRODUCTION_URL, 'production-v1', item);
+              const preview = await capture(process.env.PREVIEW_URL, 'visible-v2', item);
+              const diff = await difference(production.file, preview.file);
+              const checks = {
+                preview200: preview.status === 200,
+                markers: preview.state.marker === process.env.RELEASE_MARKER && preview.state.dynamicMarker === process.env.RELEASE_MARKER,
+                refinedAsset: preview.state.imageSrc.includes('magicoffice-home-bg-visible-v2.webp'),
+                imageDimensions: preview.state.naturalWidth === 1000 && preview.state.naturalHeight === 1333,
+                sixPetals: preview.state.petals === 6 && preview.state.motionDisplay !== 'none',
+                preserved: preview.state.booking && preview.state.schedule && preview.state.video,
+                noPreviewErrors: preview.pageErrors.length === 0,
+                visuallyDifferent: diff.meanAbsoluteDifference >= 6 && diff.changedPixelShare >= 0.18,
+              };
+              const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
+              report.push({ item, production, preview, diff, checks, failures });
+              if (failures.length) throw new Error(`${item.name}: ${failures.join(', ')}\n${JSON.stringify(report.at(-1), null, 2)}`);
+            }
+          } finally {
+            await browser.close();
+          }
+
+          fs.writeFileSync('visible-v2-browser-report.json', JSON.stringify(report, null, 2));
+          console.log('VISIBLE_V2_DESKTOP_MOBILE_OK', JSON.stringify(report.map(entry => ({
+            viewport: entry.item.name,
+            meanAbsoluteDifference: Number(entry.diff.meanAbsoluteDifference.toFixed(2)),
+            changedPixelShare: Number(entry.diff.changedPixelShare.toFixed(3)),
+            filter: entry.preview.state.imageFilter,
+            petals: entry.preview.state.petals,
+          }))));
+          JS
+          node verify-visible-v2.mjs
+
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_visible_home_refinement_v2
+          path: |
+            visible-v2-browser-report.json
+            production-v1-desktop.png
+            visible-v2-desktop.png
+            production-v1-mobile.png
+            visible-v2-mobile.png
+          if-no-files-found: warn
+          retention-days: 14
