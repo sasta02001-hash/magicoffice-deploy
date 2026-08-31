@@ -1,0 +1,55 @@
+name: Verify public MagicOffice background proof v3
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/verify-bg-proof-v3.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TEST_URL: https://magicoffice-bg-proof-20260831.vercel.app/
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium >/dev/null
+      - name: Capture desktop and mobile rendered evidence
+        run: |
+          cat > verify.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+          const browser=await chromium.launch({headless:true});
+          const cases=[{name:'desktop',viewport:{width:1440,height:900},mobile:false},{name:'mobile',viewport:{width:390,height:844},mobile:true}];
+          const report=[];
+          try{
+            for(const item of cases){
+              const context=await browser.newContext({viewport:item.viewport,screen:item.viewport,isMobile:item.mobile,hasTouch:item.mobile,deviceScaleFactor:item.mobile?2:1,locale:'zh-TW',timezoneId:'Asia/Taipei',reducedMotion:'no-preference'});
+              const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+              const response=await page.goto(`${process.env.TEST_URL}?visual=${Date.now()}-${item.name}`,{waitUntil:'networkidle',timeout:120000});await page.waitForTimeout(1800);
+              const state=await page.evaluate(()=>{const hero=document.querySelector('.homepage-hero-v2'),layer=document.querySelector('.mo-home-static-bg'),img=document.querySelector('.mo-home-static-bg-image'),shade=document.querySelector('.mo-home-static-bg-shade'),motion=document.querySelector('.mo-home-motion-bg');const r=e=>e?.getBoundingClientRect(),cs=e=>e?getComputedStyle(e):null,hr=r(hero),lr=r(layer),is=cs(img),ls=cs(layer),ss=cs(shade);return{marker:document.querySelector('meta[name="x-magicoffice-home-static-background"]')?.content||'',hero:Boolean(hero),layer:Boolean(layer),image:Boolean(img),motion:Boolean(motion),imageComplete:Boolean(img?.complete),naturalWidth:img?.naturalWidth||0,naturalHeight:img?.naturalHeight||0,src:img?.currentSrc||img?.src||'',layerDisplay:ls?.display||'',layerVisibility:ls?.visibility||'',layerOpacity:ls?.opacity||'',layerZ:ls?.zIndex||'',imageDisplay:is?.display||'',imageVisibility:is?.visibility||'',imageOpacity:is?.opacity||'',objectFit:is?.objectFit||'',objectPosition:is?.objectPosition||'',filter:is?.filter||'',shadeBackground:ss?.backgroundImage||'',heroRect:hr?{x:hr.x,y:hr.y,width:hr.width,height:hr.height}:null,layerRect:lr?{x:lr.x,y:lr.y,width:lr.width,height:lr.height}:null,petals:document.querySelectorAll('.mo-home-petal').length,booking:document.body.innerText.includes('立即訂位'),videoStage:Boolean(document.querySelector('.home-hero-stage')),scrollWidth:document.documentElement.scrollWidth,viewportWidth:innerWidth};});
+              const checks={http200:response?.status()===200,marker:state.marker==='home-static-background-restored-2026-08-31-v3',elements:state.hero&&state.layer&&state.image&&state.motion,imageLoaded:state.imageComplete&&state.naturalWidth===1000&&state.naturalHeight===1333,visible:state.layerDisplay!=='none'&&state.layerVisibility==='visible'&&Number(state.layerOpacity)>0&&state.imageDisplay!=='none'&&state.imageVisibility==='visible'&&Number(state.imageOpacity)>0,covers:state.layerRect&&state.heroRect&&state.layerRect.width>=state.heroRect.width-1&&state.layerRect.height>=state.heroRect.height-1,petals:state.petals===4,content:state.booking&&state.videoStage,responsive:state.scrollWidth<=state.viewportWidth+2,noErrors:errors.length===0};
+              const failures=Object.entries(checks).filter(([,ok])=>!ok).map(([k])=>k);await page.screenshot({path:`${item.name}-bg-proof-v3.png`,fullPage:false});report.push({name:item.name,status:response?.status(),state,checks,failures,errors});await context.close();if(failures.length)throw new Error(`${item.name}: ${failures.join(', ')}\n${JSON.stringify(report.at(-1),null,2)}`);
+            }
+          }finally{await browser.close();}
+          fs.writeFileSync('bg-proof-v3-report.json',JSON.stringify(report,null,2));console.log('BACKGROUND_PROOF_VISUAL_OK',JSON.stringify(report.map(x=>({name:x.name,state:x.state}))));
+          JS
+          node verify.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: MagicOffice_background_proof_v3_evidence
+          path: |
+            desktop-bg-proof-v3.png
+            mobile-bg-proof-v3.png
+            bg-proof-v3-report.json
+          if-no-files-found: warn
+          retention-days: 7
