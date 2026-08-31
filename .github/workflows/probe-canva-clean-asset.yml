@@ -1,0 +1,54 @@
+name: Probe Canva clean scene asset
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/probe-canva-clean-asset.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download signed Canva variants and inspect
+        shell: bash
+        env:
+          CANVA_QUERY: 'csig=AAAAAAAAAAAAAAAAAAAAAOPmE2r5oiCBGaMvLCkgUlgfvfRePbsTt9IZ0xeb05Kx&exp=1788218694&osig=AAAAAAAAAAAAAAAAAAAAAKWt5MowSxUEY7POCXvyVRJfdqvhfLR7ArQ3EjvW5OGZ&signer=media-rpc&x-canva-quality=thumbnail'
+        run: |
+          set -euo pipefail
+          BASE='https://media.canva.com/v2/image-resize'
+          URI='uri:ifs%3A%2F%2FM%2Fec024935-4eb4-4dc2-bb7e-f06f69e265a9'
+          URL_EXACT="$BASE/format:JPG/height:200/quality:75/$URI/watermark:F/width:150?$CANVA_QUERY"
+          URL_LARGE_JPG="$BASE/format:JPG/height:1333/quality:90/$URI/watermark:F/width:1000?$CANVA_QUERY"
+          URL_LARGE_WEBP="$BASE/format:WEBP/height:1333/quality:90/$URI/watermark:F/width:1000?$CANVA_QUERY"
+          for spec in "exact|$URL_EXACT" "large-jpg|$URL_LARGE_JPG" "large-webp|$URL_LARGE_WEBP"; do
+            name="${spec%%|*}"
+            url="${spec#*|}"
+            code="$(curl -L --silent --show-error --output "$name.bin" --write-out '%{http_code}' "$url" || true)"
+            bytes="$(wc -c < "$name.bin" 2>/dev/null || echo 0)"
+            mime="$(file --brief --mime-type "$name.bin" 2>/dev/null || true)"
+            echo "$name HTTP=$code BYTES=$bytes MIME=$mime"
+          done
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          for path in sorted(Path('.').glob('*.bin')):
+              try:
+                  with Image.open(path) as im:
+                      print(path.name, im.format, im.size)
+              except Exception as exc:
+                  print(path.name, 'NOT_IMAGE', repr(exc), path.read_bytes()[:120])
+          PY
+
+      - name: Upload probe files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canva-clean-asset-probe
+          path: '*.bin'
+          if-no-files-found: warn
+          retention-days: 1
