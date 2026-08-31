@@ -1,0 +1,181 @@
+name: Fast verify restored homepage motion
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/verify-home-dynamic-background-fast.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-noble
+
+    steps:
+      - name: Install Playwright package
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+
+      - name: Verify computed animation on desktop and mobile
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > fast-verify.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const SITE = 'https://magicoffice.vercel.app/';
+          const RELEASE = 'home-dynamic-sakura-restored-2026-08-31-v1';
+          const browser = await chromium.launch({ headless: true, args: ['--disable-dev-shm-usage'] });
+          const report = { site: SITE, release: RELEASE, generatedAt: new Date().toISOString(), cases: [], reducedMotion: null, allPassed: false };
+
+          async function inspect(name, width, height, mobile, expectedWidth, expectedHeight, expectedOpacity) {
+            const context = await browser.newContext({
+              viewport: { width, height },
+              screen: { width, height },
+              isMobile: mobile,
+              hasTouch: mobile,
+              deviceScaleFactor: mobile ? 2 : 1,
+              locale: 'zh-TW',
+              timezoneId: 'Asia/Taipei',
+              reducedMotion: 'no-preference',
+              serviceWorkers: 'block'
+            });
+            const page = await context.newPage();
+            page.setDefaultTimeout(30000);
+            page.setDefaultNavigationTimeout(45000);
+            await page.route('**/*', async route => {
+              const request = route.request();
+              const type = request.resourceType();
+              const url = request.url();
+              if (['image', 'media', 'font'].includes(type)) return route.abort('blockedbyclient');
+              if (!url.startsWith(SITE) && type !== 'document') return route.abort('blockedbyclient');
+              return route.continue();
+            });
+            const pageErrors = [];
+            page.on('pageerror', error => pageErrors.push(String(error?.stack || error)));
+            const response = await page.goto(`${SITE}?fast-motion-check=${Date.now()}-${name}`, { waitUntil: 'domcontentloaded' });
+            await page.waitForTimeout(800);
+            const before = await page.evaluate(() => {
+              const petals = [...document.querySelectorAll('.mo-home-petal')];
+              const first = petals[0];
+              const firstStyle = first ? getComputedStyle(first) : null;
+              const layer = document.querySelector('.mo-home-motion-bg');
+              const shell = document.querySelector('.homepage-hero-v2 > .home-hero-shell');
+              return {
+                marker: document.querySelector('meta[name="x-magicoffice-home-dynamic-background"]')?.content || '',
+                petalCount: petals.length,
+                transforms: petals.map(node => getComputedStyle(node).transform),
+                animationName: firstStyle?.animationName || '',
+                animationDuration: firstStyle?.animationDuration || '',
+                width: firstStyle?.width || '',
+                height: firstStyle?.height || '',
+                opacity: Number(firstStyle?.opacity || 0),
+                color: firstStyle?.backgroundColor || '',
+                layerDisplay: layer ? getComputedStyle(layer).display : '',
+                layerPointerEvents: layer ? getComputedStyle(layer).pointerEvents : '',
+                layerZ: Number(layer ? getComputedStyle(layer).zIndex : NaN),
+                shellZ: Number(shell ? getComputedStyle(shell).zIndex : NaN),
+                hasHero: Boolean(document.querySelector('.homepage-hero-v2')),
+                hasStage: Boolean(document.querySelector('.home-hero-stage')),
+                hasFullscreen: Boolean(document.querySelector('.cinema-fullscreen-button')),
+                hasBooking: document.body.innerText.includes('立即訂位'),
+                hasSchedule: document.body.innerText.includes('本週出勤'),
+                hasHeartbeat: document.body.innerText.includes('心跳應援'),
+                viewportWidth: innerWidth,
+                documentWidth: document.documentElement.scrollWidth
+              };
+            });
+            await page.waitForTimeout(700);
+            const after = await page.evaluate(() => [...document.querySelectorAll('.mo-home-petal')].map(node => getComputedStyle(node).transform));
+            const changed = before.transforms.filter((value, index) => value !== after[index]).length;
+            const checks = {
+              http200: response?.status() === 200,
+              marker: before.marker === RELEASE,
+              layerVisible: before.layerDisplay !== 'none',
+              fourPetals: before.petalCount === 4,
+              animationBound: before.animationName.includes('mo-home-petal-fall') && before.animationDuration === '10s',
+              animationAdvances: changed >= 1,
+              correctDimensions: before.width === expectedWidth && before.height === expectedHeight,
+              correctOpacity: Math.abs(before.opacity - expectedOpacity) < 0.03,
+              correctColor: before.color === 'rgb(143, 38, 61)',
+              nonBlocking: before.layerPointerEvents === 'none',
+              behindContent: before.layerZ < before.shellZ,
+              homepagePreserved: before.hasHero && before.hasStage && before.hasFullscreen && before.hasBooking && before.hasSchedule && before.hasHeartbeat,
+              responsive: before.documentWidth <= before.viewportWidth + 2,
+              noPageErrors: pageErrors.length === 0
+            };
+            const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([key]) => key);
+            const result = { name, before, after, changed, checks, failures, pageErrors, passed: failures.length === 0 };
+            await page.screenshot({ path: `${name}-fast.png`, fullPage: false });
+            await context.close();
+            return result;
+          }
+
+          try {
+            report.cases.push(await inspect('desktop', 1440, 900, false, '18px', '10px', 0.62));
+            report.cases.push(await inspect('mobile', 390, 844, true, '14px', '8px', 0.46));
+
+            const context = await browser.newContext({
+              viewport: { width: 390, height: 844 },
+              isMobile: true,
+              hasTouch: true,
+              deviceScaleFactor: 2,
+              reducedMotion: 'reduce',
+              serviceWorkers: 'block'
+            });
+            const page = await context.newPage();
+            await page.route('**/*', async route => {
+              const type = route.request().resourceType();
+              const url = route.request().url();
+              if (['image', 'media', 'font'].includes(type)) return route.abort('blockedbyclient');
+              if (!url.startsWith(SITE) && type !== 'document') return route.abort('blockedbyclient');
+              return route.continue();
+            });
+            const response = await page.goto(`${SITE}?fast-reduced-motion=${Date.now()}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+            await page.waitForTimeout(300);
+            const state = await page.evaluate(() => {
+              const layer = document.querySelector('.mo-home-motion-bg');
+              const petal = document.querySelector('.mo-home-petal');
+              return {
+                layerExists: Boolean(layer),
+                display: layer ? getComputedStyle(layer).display : '',
+                animationName: petal ? getComputedStyle(petal).animationName : ''
+              };
+            });
+            const checks = {
+              http200: response?.status() === 200,
+              layerExists: state.layerExists,
+              reducedMotionHonored: state.display === 'none' || state.animationName === 'none'
+            };
+            const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([key]) => key);
+            report.reducedMotion = { state, checks, failures, passed: failures.length === 0 };
+            await context.close();
+          } finally {
+            await browser.close();
+          }
+
+          report.allPassed = report.cases.every(item => item.passed) && report.reducedMotion?.passed === true;
+          fs.writeFileSync('fast-home-motion-report.json', JSON.stringify(report, null, 2));
+          console.log('FAST_HOME_MOTION_VERIFY', JSON.stringify({ allPassed: report.allPassed, cases: report.cases, reducedMotion: report.reducedMotion }));
+          if (!report.allPassed) process.exit(1);
+          JS
+          node fast-verify.mjs
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_fast_home_motion_verify
+          path: |
+            desktop-fast.png
+            mobile-fast.png
+            fast-home-motion-report.json
+          if-no-files-found: warn
+          retention-days: 14
