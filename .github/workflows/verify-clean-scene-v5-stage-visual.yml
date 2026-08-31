@@ -1,0 +1,167 @@
+name: Verify clean-scene v5 staging visuals
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/verify-clean-scene-v5-stage-visual.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TEST_URL: https://magicoffice-clean-scene-v5-stage.vercel.app/
+      RELEASE: home-clean-scene-2026-09-01-v5
+      ASSET: magicoffice-home-clean-scene-v5.webp
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install browser
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Verify desktop and mobile rendering
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > verify-stage.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const browser = await chromium.launch({ headless: true });
+          const cases = [
+            { name: 'desktop', viewport: { width: 1440, height: 900 }, mobile: false, expectedVisiblePetals: 7 },
+            { name: 'mobile', viewport: { width: 390, height: 844 }, mobile: true, expectedVisiblePetals: 6 },
+          ];
+          const report = [];
+
+          try {
+            for (const item of cases) {
+              const context = await browser.newContext({
+                viewport: item.viewport,
+                screen: item.viewport,
+                isMobile: item.mobile,
+                hasTouch: item.mobile,
+                deviceScaleFactor: item.mobile ? 2 : 1,
+                locale: 'zh-TW',
+                timezoneId: 'Asia/Taipei',
+                reducedMotion: 'no-preference',
+              });
+              const page = await context.newPage();
+              const errors = [];
+              const failed = [];
+              page.on('pageerror', error => errors.push(String(error)));
+              page.on('requestfailed', request => {
+                if (request.url().startsWith(process.env.TEST_URL)) {
+                  failed.push({ url: request.url(), error: request.failure()?.errorText || '' });
+                }
+              });
+
+              const url = new URL(process.env.TEST_URL);
+              url.searchParams.set('visual-check', `${Date.now()}-${item.name}`);
+              const response = await page.goto(url.href, { waitUntil: 'load', timeout: 120000 });
+              await page.waitForTimeout(1400);
+
+              const image = page.locator('.mo-home-static-bg-image');
+              await image.waitFor({ state: 'visible', timeout: 30000 });
+              await image.evaluate(node => node.decode());
+              const before = await page.locator('.mo-home-petal').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform));
+              await page.waitForTimeout(900);
+              const after = await page.locator('.mo-home-petal').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform));
+
+              const state = await page.evaluate(() => {
+                const hero = document.querySelector('.homepage-hero-v2');
+                const layer = document.querySelector('.mo-home-static-bg');
+                const image = document.querySelector('.mo-home-static-bg-image');
+                const motion = document.querySelector('.mo-home-motion-bg');
+                const petals = [...document.querySelectorAll('.mo-home-petal')];
+                const heroRect = hero?.getBoundingClientRect();
+                const layerRect = layer?.getBoundingClientRect();
+                const imageStyle = image ? getComputedStyle(image) : null;
+                const layerStyle = layer ? getComputedStyle(layer) : null;
+                return {
+                  marker: document.querySelector('meta[name="x-magicoffice-home-static-background"]')?.content || '',
+                  dynamicMarker: document.querySelector('meta[name="x-magicoffice-home-dynamic-background"]')?.content || '',
+                  imageSrc: image?.currentSrc || image?.src || '',
+                  imageComplete: Boolean(image?.complete),
+                  naturalWidth: image?.naturalWidth || 0,
+                  naturalHeight: image?.naturalHeight || 0,
+                  imageDisplay: imageStyle?.display || '',
+                  imageVisibility: imageStyle?.visibility || '',
+                  imageOpacity: imageStyle?.opacity || '',
+                  imageFilter: imageStyle?.filter || '',
+                  objectPosition: imageStyle?.objectPosition || '',
+                  layerDisplay: layerStyle?.display || '',
+                  layerVisibility: layerStyle?.visibility || '',
+                  layerOpacity: layerStyle?.opacity || '',
+                  heroRect: heroRect ? { x: heroRect.x, y: heroRect.y, width: heroRect.width, height: heroRect.height } : null,
+                  layerRect: layerRect ? { x: layerRect.x, y: layerRect.y, width: layerRect.width, height: layerRect.height } : null,
+                  domPetals: petals.length,
+                  visiblePetals: petals.filter(petal => {
+                    const style = getComputedStyle(petal);
+                    return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity) > 0;
+                  }).length,
+                  animationNames: petals.map(petal => getComputedStyle(petal).animationName),
+                  hasLogo: Boolean(document.querySelector('.home-hero-logo')),
+                  hasBooking: document.body.innerText.includes('立即訂位'),
+                  hasSchedule: document.body.innerText.includes('本週出勤'),
+                  hasVideoStage: Boolean(document.querySelector('.home-hero-stage')),
+                  viewportWidth: innerWidth,
+                  scrollWidth: document.documentElement.scrollWidth,
+                };
+              });
+
+              const movedPetals = before.filter((value, index) => value !== after[index]).length;
+              const checks = {
+                http200: response?.status() === 200,
+                releaseMarkers: state.marker === process.env.RELEASE && state.dynamicMarker === process.env.RELEASE,
+                correctAsset: state.imageSrc.includes(process.env.ASSET),
+                decodedDimensions: state.imageComplete && state.naturalWidth === 1000 && state.naturalHeight === 1333,
+                visibleBackground: state.imageDisplay !== 'none' && state.imageVisibility === 'visible' && Number(state.imageOpacity) > 0 && state.layerDisplay !== 'none' && state.layerVisibility === 'visible' && Number(state.layerOpacity) > 0,
+                coversHero: state.heroRect && state.layerRect && state.layerRect.width >= state.heroRect.width - 1 && state.layerRect.height >= state.heroRect.height - 1,
+                sevenPetalsInDom: state.domPetals === 7,
+                correctVisiblePetals: state.visiblePetals === item.expectedVisiblePetals,
+                petalsAnimate: movedPetals >= item.expectedVisiblePetals && state.animationNames.every(name => name.includes('mo-home-clean-petal-fall-v5')),
+                preservedContent: state.hasLogo && state.hasBooking && state.hasSchedule && state.hasVideoStage,
+                responsive: state.scrollWidth <= state.viewportWidth + 2,
+                noPageErrors: errors.length === 0,
+                noSameOriginFailures: failed.length === 0,
+              };
+              const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
+              await page.screenshot({ path: `stage-${item.name}.png`, fullPage: false });
+              report.push({ name: item.name, url: url.href, status: response?.status(), state, movedPetals, checks, failures, errors, failed });
+              await context.close();
+              if (failures.length) throw new Error(`${item.name} failed: ${failures.join(', ')}\n${JSON.stringify(report.at(-1), null, 2)}`);
+            }
+          } finally {
+            await browser.close();
+          }
+
+          fs.writeFileSync('stage-browser-report.json', JSON.stringify(report, null, 2));
+          console.log('CLEAN_SCENE_V5_STAGE_VISUAL_OK', JSON.stringify(report.map(item => ({ name: item.name, image: item.state.imageSrc, visiblePetals: item.state.visiblePetals, movedPetals: item.movedPetals }))));
+          JS
+          node verify-stage.mjs
+
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_clean_scene_v5_stage_visual
+          path: |
+            stage-browser-report.json
+            stage-desktop.png
+            stage-mobile.png
+          if-no-files-found: warn
+          retention-days: 14
