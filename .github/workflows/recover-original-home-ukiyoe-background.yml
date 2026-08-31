@@ -12,11 +12,13 @@ permissions:
 jobs:
   recover:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Extract and validate the exact original hero background
+      - name: Extract and validate the exact original hero background from full history
         shell: bash
         run: |
           set -euo pipefail
@@ -28,14 +30,11 @@ jobs:
           import json
           import re
           import struct
+          import subprocess
           from pathlib import Path
 
-          PREFIX = 'UklGRngMAgBXRUJQVlA4IGwMAgCwSwmdASroAzUF'
-          CANDIDATES = [
-              Path('production-source-v1.5.6/index.html'),
-              Path('index.html'),
-              Path('production-standalone/index.html'),
-          ]
+          PREFIX = b'UklGRngMAgBXRUJQVlA4IGwMAgCwSwmdASroAzUF'
+          MARKER = b'data:image/webp;base64,' + PREFIX
 
           def webp_size(data: bytes):
               if len(data) < 30 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
@@ -49,37 +48,55 @@ jobs:
                   height = int.from_bytes(data[pos+5:pos+7], 'little') & 0x3fff
                   return width, height
               if kind == b'VP8X' and len(data) >= 30:
-                  width = 1 + int.from_bytes(data[24:27], 'little')
-                  height = 1 + int.from_bytes(data[27:30], 'little')
-                  return width, height
+                  return 1 + int.from_bytes(data[24:27], 'little'), 1 + int.from_bytes(data[27:30], 'little')
               if kind == b'VP8L' and len(data) >= 25 and data[20] == 0x2f:
                   bits = int.from_bytes(data[21:25], 'little')
-                  width = (bits & 0x3fff) + 1
-                  height = ((bits >> 14) & 0x3fff) + 1
-                  return width, height
+                  return (bits & 0x3fff) + 1, ((bits >> 14) & 0x3fff) + 1
               return None
 
+          objects = subprocess.check_output(['git', 'rev-list', '--objects', '--all'], text=True).splitlines()
+          html_objects = []
+          for row in objects:
+              parts = row.split(' ', 1)
+              if len(parts) != 2:
+                  continue
+              oid, path = parts
+              if not path.lower().endswith(('.html', '.htm')):
+                  continue
+              try:
+                  if subprocess.check_output(['git', 'cat-file', '-t', oid], text=True).strip() != 'blob':
+                      continue
+                  size = int(subprocess.check_output(['git', 'cat-file', '-s', oid], text=True).strip())
+              except Exception:
+                  continue
+              if size <= 0 or size > 80_000_000:
+                  continue
+              html_objects.append((oid, path, size))
+
+          # Scan smaller likely source files first, while still covering every historical HTML blob.
+          html_objects.sort(key=lambda item: (0 if 'production' in item[1].lower() or item[1] == 'index.html' else 1, item[2]))
           found = None
           source = None
-          for path in CANDIDATES:
-              if not path.is_file():
-                  continue
-              text = path.read_text(encoding='utf-8')
-              marker = 'data:image/webp;base64,' + PREFIX
-              start = text.find(marker)
+          scanned = []
+          for oid, path, size in html_objects:
+              blob = subprocess.check_output(['git', 'cat-file', 'blob', oid])
+              scanned.append({'oid': oid, 'path': path, 'bytes': size})
+              start = blob.find(MARKER)
               if start < 0:
                   continue
-              payload_start = start + len('data:image/webp;base64,')
-              match = re.match(r'[A-Za-z0-9+/=]+', text[payload_start:])
+              payload_start = start + len(b'data:image/webp;base64,')
+              match = re.match(br'[A-Za-z0-9+/=]+', blob[payload_start:])
               if not match:
-                  raise SystemExit(f'Found marker but not a complete base64 payload in {path}')
-              encoded = match.group(0)
-              found = base64.b64decode(encoded, validate=True)
-              source = str(path)
+                  raise SystemExit(f'Found marker but no complete base64 payload in {path}@{oid}')
+              found = base64.b64decode(match.group(0), validate=True)
+              source = {'oid': oid, 'path': path, 'blobBytes': size}
               break
 
           if found is None or source is None:
-              raise SystemExit('The exact original hero WebP prefix was not found in any verified source file.')
+              Path('recovery-history-scan.json').write_text(
+                  json.dumps({'scannedCount': len(scanned), 'scanned': scanned}, indent=2), encoding='utf-8'
+              )
+              raise SystemExit(f'The exact original hero WebP prefix was not found in {len(scanned)} historical HTML blobs.')
 
           dims = webp_size(found)
           if dims != (1000, 1333):
@@ -95,13 +112,14 @@ jobs:
           sha = hashlib.sha256(found).hexdigest()
           report = {
               'source': source,
-              'matchPrefix': PREFIX,
+              'matchPrefix': PREFIX.decode(),
               'file': str(asset),
               'bytes': len(found),
               'sha256': sha,
               'width': dims[0],
               'height': dims[1],
               'mime': 'image/webp',
+              'historicalHtmlBlobsScanned': len(scanned),
               'purpose': 'Exact original MagicOffice homepage ukiyo-e background used behind the independent falling-petal layer',
           }
           (out_dir / 'magicoffice-home-original-ukiyoe.json').write_text(
@@ -109,8 +127,8 @@ jobs:
           )
           (out_dir / 'README.md').write_text(
               '# MagicOffice original homepage background\n\n'
-              'Recovered byte-for-byte from the verified historical homepage data URI.\n'
-              'Do not replace it with the horizontal venue image.\n',
+              'Recovered byte-for-byte from a verified historical homepage data URI.\n'
+              'Dimensions: 1000 × 1333. Do not replace it with the horizontal venue image.\n',
               encoding='utf-8',
           )
           print('ORIGINAL_HOME_BACKGROUND_RECOVERED', json.dumps(report, ensure_ascii=False))
@@ -140,4 +158,6 @@ jobs:
             recovered-assets/magicoffice-home-original-ukiyoe.webp
             recovered-assets/magicoffice-home-original-ukiyoe.json
             recovered-assets/README.md
+            recovery-history-scan.json
+          if-no-files-found: warn
           retention-days: 14
