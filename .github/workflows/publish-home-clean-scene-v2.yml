@@ -1,0 +1,246 @@
+name: Publish approved clean-scene homepage background v2
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/publish-home-clean-scene-v2.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: magicoffice-home-clean-scene-production
+  cancel-in-progress: false
+
+env:
+  OFFICIAL_URL: https://magicoffice.vercel.app/
+  VERCEL_ORG_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+  VERCEL_PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+  VERCEL_SCOPE: magicoffice
+  RELEASE_MARKER: home-clean-scene-2026-09-01-v2
+  CLEAN_SOURCE: source-assets/magicoffice-home-clean-scene-v1.webp
+  CLEAN_ASSET: assets/media/magicoffice-home-clean-scene-v1.webp
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Confirm deployment credential and install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}" || { echo 'VERCEL_TOKEN is missing' >&2; exit 78; }
+          npm install --no-audit --no-fund
+
+      - name: Acquire the full-resolution approved clean scene
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p source-assets
+          rm -f "$CLEAN_SOURCE"
+          cat > /tmp/clean-scene-sources.txt <<'URLS'
+          https://mo-clean-scene-asset-0901.vercel.app/clean.webp
+          https://drive.usercontent.google.com/download?id=1weWp95DYDvKoPYZ5_QQvURqNJAS4kOXr&export=download&confirm=t
+          https://drive.google.com/uc?export=download&id=1weWp95DYDvKoPYZ5_QQvURqNJAS4kOXr
+          https://s3.amazonaws.com/document-export.canva.com/wTCm8/DAHT4owTCm8/1/thumbnail/0001.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH4GDRW44L%2F20260831%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260831T095558Z&X-Amz-Expires=35409&X-Amz-Signature=b55ed057a8626d56abaded5dd17e3eb68cedf2dbed3433e4e094def89f690e5c&X-Amz-SignedHeaders=host&response-expires=Mon%2C%2031%20Aug%202026%2019%3A46%3A07%20GMT
+          URLS
+
+          selected=''
+          n=0
+          while IFS= read -r url; do
+            n=$((n+1))
+            candidate="/tmp/clean-scene-${n}"
+            rm -f "$candidate"
+            echo "Trying clean-scene source ${n}"
+            if ! curl --fail --location --silent --show-error --max-time 90 "$url" -o "$candidate"; then
+              continue
+            fi
+            if CANDIDATE="$candidate" node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import sharp from 'sharp';
+          const file = process.env.CANDIDATE;
+          try {
+            const meta = await sharp(file).metadata();
+            const bytes = fs.statSync(file).size;
+            const ok = meta.width === 1000 && meta.height === 1333 && bytes >= 100000;
+            console.log('CANDIDATE', JSON.stringify({ file, width: meta.width, height: meta.height, bytes, ok }));
+            process.exit(ok ? 0 : 1);
+          } catch (error) {
+            console.log('CANDIDATE_INVALID', file, String(error));
+            process.exit(1);
+          }
+          NODE
+            then
+              selected="$candidate"
+              break
+            fi
+          done < /tmp/clean-scene-sources.txt
+
+          test -n "$selected" || { echo 'No source produced the required 1000x1333 clean-scene image.' >&2; exit 1; }
+          SELECTED="$selected" node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import sharp from 'sharp';
+          const input = process.env.SELECTED;
+          const output = process.env.CLEAN_SOURCE;
+          await sharp(input).rotate().webp({ quality: 95, alphaQuality: 100, effort: 6, smartSubsample: true }).toFile(output);
+          const meta = await sharp(output).metadata();
+          const bytes = fs.statSync(output).size;
+          if (meta.width !== 1000 || meta.height !== 1333 || bytes < 100000) throw new Error(`Stored clean scene invalid: ${JSON.stringify(meta)} bytes=${bytes}`);
+          console.log('APPROVED_CLEAN_SCENE_READY', JSON.stringify({ width: meta.width, height: meta.height, bytes }));
+          NODE
+
+      - name: Make the clean-scene build durable in the repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path('package.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          data.setdefault('scripts', {})['build'] = 'node build.mjs && node postprocess.mjs && node clean-scene-postprocess-v2.mjs'
+          data.setdefault('dependencies', {})['sharp'] = '0.34.3'
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+          npm install --package-lock-only --no-audit --no-fund
+          git config user.name 'MagicOffice Production Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add "$CLEAN_SOURCE" clean-scene-postprocess-v2.mjs package.json package-lock.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish approved clutter-removed homepage scene'
+            git push origin HEAD:main
+          fi
+
+      - name: Build and prove the clean-scene output
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run build
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import sharp from 'sharp';
+          const health = JSON.parse(fs.readFileSync('dist/health.json', 'utf8'));
+          const source = fs.readFileSync(process.env.CLEAN_SOURCE);
+          const output = fs.readFileSync(`dist/${process.env.CLEAN_ASSET}`);
+          const sha = value => crypto.createHash('sha256').update(value).digest('hex');
+          const meta = await sharp(output).metadata();
+          const html = fs.readFileSync('dist/index.html','utf8');
+          const checks = {
+            release: health.release === process.env.RELEASE_MARKER,
+            exactImage: sha(source) === sha(output),
+            dimensions: meta.width === 1000 && meta.height === 1333,
+            assetReference: html.includes('/assets/media/magicoffice-home-clean-scene-v1.webp?v=20260901-clean-scene-v2'),
+            cleanTreatment: health.background?.treatment?.includes('scene clutter removed'),
+            desktopPetals: health.petals?.desktop === 7,
+            mobilePetals: health.petals?.mobile === 6,
+            preserved: html.includes('立即訂位') && html.includes('本週出勤') && html.includes('home-hero-stage')
+          };
+          const failures = Object.entries(checks).filter(([,ok]) => !ok).map(([name]) => name);
+          fs.writeFileSync('clean-scene-v2-build-report.json', JSON.stringify({ checks, failures, health }, null, 2));
+          if (failures.length) throw new Error(`Build verification failed: ${failures.join(', ')}`);
+          console.log('CLEAN_SCENE_V2_BUILD_VERIFIED', JSON.stringify(checks));
+          NODE
+
+      - name: Capture existing Production for rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, urllib.parse, urllib.request
+          query = urllib.parse.urlencode({'projectId': os.environ['VERCEL_PROJECT_ID'], 'teamId': os.environ['VERCEL_ORG_ID'], 'target': 'production', 'limit': 1})
+          request = urllib.request.Request('https://api.vercel.com/v6/deployments?' + query, headers={'Authorization': 'Bearer ' + os.environ['VERCEL_TOKEN']})
+          with urllib.request.urlopen(request, timeout=60) as response:
+              payload = json.load(response)
+          deployment = payload['deployments'][0]
+          open('previous-production.json','w',encoding='utf-8').write(json.dumps({'id': deployment['uid'], 'url': deployment['url']}, indent=2))
+          PY
+
+      - name: Deploy to the locked MagicOffice Production project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/.vercel
+          printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > dist/.vercel/project.json
+          cat > dist/vercel.json <<'JSON'
+          {
+            "framework": null,
+            "cleanUrls": true,
+            "trailingSlash": false,
+            "headers": [
+              {
+                "source": "/assets/media/magicoffice-home-clean-scene-v1.webp",
+                "headers": [
+                  { "key": "Content-Type", "value": "image/webp" },
+                  { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+                ]
+              },
+              {
+                "source": "/(.*)",
+                "headers": [
+                  { "key": "X-Content-Type-Options", "value": "nosniff" },
+                  { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+                ]
+              }
+            ]
+          }
+          JSON
+          DEPLOY_OUTPUT="$(npx --yes vercel@latest deploy dist --prod --yes --archive=tgz --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" 2>&1 | tee deploy-output-v2.log)"
+          DEPLOY_URL="$(printf '%s\n' "$DEPLOY_OUTPUT" | grep -Eo 'https://[^ ]+\.vercel\.app' | tail -1)"
+          test -n "$DEPLOY_URL" || { echo 'Could not determine deployment URL' >&2; exit 1; }
+          printf '%s' "$DEPLOY_URL" > deployed-url-v2.txt
+          echo "DEPLOYED_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
+
+      - name: Verify official bytes and roll back on any mismatch
+        shell: bash
+        run: |
+          set -euo pipefail
+          rollback() {
+            PREVIOUS_URL="$(python -c 'import json; print(json.load(open("previous-production.json"))["url"])')"
+            npx --yes vercel@latest rollback "https://${PREVIOUS_URL}" --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" || true
+          }
+          ready=false
+          for i in $(seq 1 50); do
+            if curl -fsSL --max-time 45 "${OFFICIAL_URL}health.json?clean-scene-v2=${i}-$(date +%s)" -o official-health-v2.json; then
+              if grep -q "$RELEASE_MARKER" official-health-v2.json && grep -q 'magicoffice-home-clean-scene-v1.webp' official-health-v2.json; then ready=true; break; fi
+            fi
+            sleep 4
+          done
+          if [ "$ready" != true ]; then rollback; exit 1; fi
+          curl -fsSL "${OFFICIAL_URL}?clean-scene-v2=$(date +%s)" -o official-v2.html
+          grep -q "$RELEASE_MARKER" official-v2.html || { rollback; exit 1; }
+          grep -q '/assets/media/magicoffice-home-clean-scene-v1.webp?v=20260901-clean-scene-v2' official-v2.html || { rollback; exit 1; }
+          curl -fsSL "${OFFICIAL_URL}${CLEAN_ASSET}?v=20260901-clean-scene-v2" -o official-clean-scene-v2.webp
+          cmp -s "$CLEAN_SOURCE" official-clean-scene-v2.webp || { rollback; exit 1; }
+          echo "OFFICIAL_CLEAN_SCENE_V2_VERIFIED deployment=${DEPLOYED_URL}"
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_home_clean_scene_v2_evidence
+          path: |
+            source-assets/magicoffice-home-clean-scene-v1.webp
+            clean-scene-v2-build-report.json
+            dist/health.json
+            previous-production.json
+            deployed-url-v2.txt
+            deploy-output-v2.log
+            official-health-v2.json
+            official-v2.html
+            official-clean-scene-v2.webp
+          if-no-files-found: warn
+          retention-days: 14
