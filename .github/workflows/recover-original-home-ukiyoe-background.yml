@@ -1,0 +1,143 @@
+name: Recover original MagicOffice homepage ukiyo-e background
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/recover-original-home-ukiyoe-background.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract and validate the exact original hero background
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import hashlib
+          import json
+          import re
+          import struct
+          from pathlib import Path
+
+          PREFIX = 'UklGRngMAgBXRUJQVlA4IGwMAgCwSwmdASroAzUF'
+          CANDIDATES = [
+              Path('production-source-v1.5.6/index.html'),
+              Path('index.html'),
+              Path('production-standalone/index.html'),
+          ]
+
+          def webp_size(data: bytes):
+              if len(data) < 30 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+                  return None
+              kind = data[12:16]
+              if kind == b'VP8 ':
+                  pos = data.find(b'\x9d\x01\x2a', 20)
+                  if pos < 0 or pos + 7 > len(data):
+                      return None
+                  width = int.from_bytes(data[pos+3:pos+5], 'little') & 0x3fff
+                  height = int.from_bytes(data[pos+5:pos+7], 'little') & 0x3fff
+                  return width, height
+              if kind == b'VP8X' and len(data) >= 30:
+                  width = 1 + int.from_bytes(data[24:27], 'little')
+                  height = 1 + int.from_bytes(data[27:30], 'little')
+                  return width, height
+              if kind == b'VP8L' and len(data) >= 25 and data[20] == 0x2f:
+                  bits = int.from_bytes(data[21:25], 'little')
+                  width = (bits & 0x3fff) + 1
+                  height = ((bits >> 14) & 0x3fff) + 1
+                  return width, height
+              return None
+
+          found = None
+          source = None
+          for path in CANDIDATES:
+              if not path.is_file():
+                  continue
+              text = path.read_text(encoding='utf-8')
+              marker = 'data:image/webp;base64,' + PREFIX
+              start = text.find(marker)
+              if start < 0:
+                  continue
+              payload_start = start + len('data:image/webp;base64,')
+              match = re.match(r'[A-Za-z0-9+/=]+', text[payload_start:])
+              if not match:
+                  raise SystemExit(f'Found marker but not a complete base64 payload in {path}')
+              encoded = match.group(0)
+              found = base64.b64decode(encoded, validate=True)
+              source = str(path)
+              break
+
+          if found is None or source is None:
+              raise SystemExit('The exact original hero WebP prefix was not found in any verified source file.')
+
+          dims = webp_size(found)
+          if dims != (1000, 1333):
+              raise SystemExit(f'Unexpected recovered dimensions: {dims}')
+          declared = struct.unpack('<I', found[4:8])[0] + 8
+          if declared != len(found):
+              raise SystemExit(f'RIFF length mismatch: declared={declared} actual={len(found)}')
+
+          out_dir = Path('recovered-assets')
+          out_dir.mkdir(parents=True, exist_ok=True)
+          asset = out_dir / 'magicoffice-home-original-ukiyoe.webp'
+          asset.write_bytes(found)
+          sha = hashlib.sha256(found).hexdigest()
+          report = {
+              'source': source,
+              'matchPrefix': PREFIX,
+              'file': str(asset),
+              'bytes': len(found),
+              'sha256': sha,
+              'width': dims[0],
+              'height': dims[1],
+              'mime': 'image/webp',
+              'purpose': 'Exact original MagicOffice homepage ukiyo-e background used behind the independent falling-petal layer',
+          }
+          (out_dir / 'magicoffice-home-original-ukiyoe.json').write_text(
+              json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8'
+          )
+          (out_dir / 'README.md').write_text(
+              '# MagicOffice original homepage background\n\n'
+              'Recovered byte-for-byte from the verified historical homepage data URI.\n'
+              'Do not replace it with the horizontal venue image.\n',
+              encoding='utf-8',
+          )
+          print('ORIGINAL_HOME_BACKGROUND_RECOVERED', json.dumps(report, ensure_ascii=False))
+          PY
+
+      - name: Commit recovered binary asset and manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Recovery Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add recovered-assets/magicoffice-home-original-ukiyoe.webp \
+                  recovered-assets/magicoffice-home-original-ukiyoe.json \
+                  recovered-assets/README.md
+          if git diff --cached --quiet; then
+            echo 'Recovered asset already matches the exact historical source.'
+          else
+            git commit -m 'Recover exact original MagicOffice homepage background'
+            git push origin HEAD:main
+          fi
+
+      - name: Upload recovery evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_original_home_ukiyoe_background
+          path: |
+            recovered-assets/magicoffice-home-original-ukiyoe.webp
+            recovered-assets/magicoffice-home-original-ukiyoe.json
+            recovered-assets/README.md
+          retention-days: 14
