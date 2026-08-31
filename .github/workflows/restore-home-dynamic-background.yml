@@ -1,0 +1,550 @@
+name: Restore MagicOffice homepage dynamic background
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/restore-home-dynamic-background.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: magicoffice-production-home-background
+  cancel-in-progress: false
+
+env:
+  OFFICIAL_URL: https://magicoffice.vercel.app/
+  VERCEL_ORG_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+  VERCEL_PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+  VERCEL_SCOPE: magicoffice
+  RELEASE_MARKER: home-dynamic-sakura-restored-2026-08-31-v1
+
+jobs:
+  restore-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Confirm deployment credential is available
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo 'VERCEL_TOKEN secret is not configured.' >&2
+            exit 78
+          fi
+          echo 'VERCEL_TOKEN_PRESENT=true'
+
+      - name: Mirror the exact current Production website
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import mimetypes
+          import re
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from collections import deque
+          from pathlib import Path
+
+          BASE = 'https://magicoffice.vercel.app/'
+          HOST = urllib.parse.urlparse(BASE).netloc
+          ROOT = Path('site')
+          ROOT.mkdir(parents=True, exist_ok=True)
+
+          headers = {
+              'User-Agent': 'Mozilla/5.0 (compatible; MagicOffice-Production-Restore/1.0)',
+              'Cache-Control': 'no-cache',
+              'Pragma': 'no-cache',
+          }
+
+          def request_bytes(url: str, retries: int = 5):
+              last = None
+              for attempt in range(retries):
+                  try:
+                      req = urllib.request.Request(url, headers=headers)
+                      with urllib.request.urlopen(req, timeout=75) as response:
+                          data = response.read()
+                          status = response.status
+                          content_type = response.headers.get('content-type', '').split(';')[0].lower()
+                          final_url = response.geturl()
+                      if status != 200:
+                          raise RuntimeError(f'HTTP {status}: {url}')
+                      final_host = urllib.parse.urlparse(final_url).netloc
+                      if final_host not in {HOST, ''}:
+                          raise RuntimeError(f'Unexpected redirect {url} -> {final_url}')
+                      return data, content_type, final_url
+                  except Exception as exc:
+                      last = exc
+                      if attempt + 1 < retries:
+                          time.sleep(1.5 * (attempt + 1))
+              raise RuntimeError(f'Failed to fetch {url}: {last!r}')
+
+          cache_bust = str(int(time.time()))
+          html_bytes, html_type, _ = request_bytes(BASE + '?restore-bg-source=' + cache_bust)
+          if b'homepage-hero-v2' not in html_bytes or b'MagicOffice' not in html_bytes:
+              raise SystemExit('Current Production HTML does not contain required homepage markers.')
+          html = html_bytes.decode('utf-8')
+          (ROOT / 'index.html').write_text(html, encoding='utf-8')
+
+          queue: deque[str] = deque()
+          seen: set[str] = set()
+          downloaded: list[dict] = []
+
+          attr_pattern = re.compile(
+              r'''(?:src|href|poster|content)\s*=\s*["']([^"']+)["']''',
+              re.I,
+          )
+          srcset_pattern = re.compile(r'''srcset\s*=\s*["']([^"']+)["']''', re.I)
+          css_url_pattern = re.compile(r'''url\(\s*["']?([^"')]+)["']?\s*\)''', re.I)
+          css_import_pattern = re.compile(r'''@import\s+(?:url\()?\s*["']([^"']+)["']''', re.I)
+          js_path_pattern = re.compile(r'''["']((?:/assets/|/site\.webmanifest|/favicon\.png|/apple-touch-icon\.png)[^"']*)["']''')
+
+          def normalize(raw: str, parent_url: str = BASE):
+              raw = raw.strip()
+              if not raw or raw.startswith(('#', 'data:', 'blob:', 'javascript:', 'mailto:', 'tel:')):
+                  return None
+              url = urllib.parse.urljoin(parent_url, raw)
+              parsed = urllib.parse.urlparse(url)
+              if parsed.netloc != HOST:
+                  return None
+              path = urllib.parse.unquote(parsed.path)
+              if not path or path == '/' or path.endswith('/'):
+                  return None
+              if '..' in Path(path).parts:
+                  raise RuntimeError(f'Unsafe asset path: {path}')
+              return urllib.parse.urlunparse((parsed.scheme, parsed.netloc, parsed.path, '', parsed.query, ''))
+
+          def add_from_text(text: str, parent_url: str = BASE):
+              for raw in attr_pattern.findall(text):
+                  item = normalize(raw, parent_url)
+                  if item and item not in seen:
+                      queue.append(item)
+              for group in srcset_pattern.findall(text):
+                  for entry in group.split(','):
+                      raw = entry.strip().split()[0] if entry.strip() else ''
+                      item = normalize(raw, parent_url)
+                      if item and item not in seen:
+                          queue.append(item)
+
+          add_from_text(html)
+          for required in ('/site.webmanifest', '/assets/css/site-v2.0.6.css', '/assets/js/magic-core-js.js'):
+              item = normalize(required)
+              if item and item not in seen:
+                  queue.append(item)
+
+          while queue:
+              url = queue.popleft()
+              parsed = urllib.parse.urlparse(url)
+              key = parsed.path
+              if key in seen:
+                  continue
+              seen.add(key)
+
+              data, content_type, final_url = request_bytes(url)
+              suffix = Path(parsed.path).suffix.lower()
+              if suffix in {'.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.ico', '.mp4', '.webm', '.woff', '.woff2'}:
+                  head = data.lstrip()[:64].lower()
+                  if head.startswith((b'<!doctype html', b'<html')):
+                      raise RuntimeError(f'Binary asset resolved to HTML: {url}')
+
+              target = ROOT / parsed.path.lstrip('/')
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_bytes(data)
+              downloaded.append({
+                  'path': parsed.path,
+                  'bytes': len(data),
+                  'contentType': content_type,
+                  'sha256': hashlib.sha256(data).hexdigest(),
+              })
+
+              text = None
+              if content_type.startswith('text/') or suffix in {'.css', '.js', '.json', '.webmanifest', '.svg'}:
+                  try:
+                      text = data.decode('utf-8')
+                  except UnicodeDecodeError:
+                      text = None
+
+              if text and suffix == '.css':
+                  for raw in css_url_pattern.findall(text) + css_import_pattern.findall(text):
+                      item = normalize(raw, final_url)
+                      if item and urllib.parse.urlparse(item).path not in seen:
+                          queue.append(item)
+              elif text and suffix == '.js':
+                  for raw in js_path_pattern.findall(text):
+                      item = normalize(raw, final_url)
+                      if item and urllib.parse.urlparse(item).path not in seen:
+                          queue.append(item)
+              elif text and suffix in {'.json', '.webmanifest'}:
+                  try:
+                      payload = json.loads(text)
+                  except Exception:
+                      payload = None
+                  if isinstance(payload, dict):
+                      for icon in payload.get('icons', []):
+                          if isinstance(icon, dict):
+                              item = normalize(str(icon.get('src', '')), final_url)
+                              if item and urllib.parse.urlparse(item).path not in seen:
+                                  queue.append(item)
+
+          if len(downloaded) < 45:
+              raise SystemExit(f'Only {len(downloaded)} same-origin assets were mirrored; expected at least 45.')
+
+          report = {
+              'source': BASE,
+              'htmlBytes': len(html_bytes),
+              'assetCount': len(downloaded),
+              'assetBytes': sum(item['bytes'] for item in downloaded),
+              'assets': downloaded,
+          }
+          Path('mirror-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+          print('MIRROR_OK', json.dumps({k: report[k] for k in ('htmlBytes', 'assetCount', 'assetBytes')}))
+          PY
+
+      - name: Restore the original restrained falling-sakura background layer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('site/index.html')
+          text = path.read_text(encoding='utf-8')
+          release = 'home-dynamic-sakura-restored-2026-08-31-v1'
+
+          # Make this operation idempotent.
+          text = re.sub(
+              r'<meta\s+name=["\']x-magicoffice-home-dynamic-background["\'][^>]*>',
+              '',
+              text,
+              flags=re.I,
+          )
+          text = re.sub(
+              r'<style\s+id=["\']magicoffice-home-dynamic-background-v1["\']>.*?</style>',
+              '',
+              text,
+              flags=re.I | re.S,
+          )
+          text = re.sub(
+              r'<div\s+class=["\']mo-home-motion-bg["\'][^>]*>.*?</div>',
+              '',
+              text,
+              flags=re.I | re.S,
+          )
+
+          css = r'''
+          <meta name="x-magicoffice-home-dynamic-background" content="home-dynamic-sakura-restored-2026-08-31-v1"/>
+          <style id="magicoffice-home-dynamic-background-v1">
+          /* Restored from the original MagicOffice homepage: four restrained wine-red falling petals. */
+          .homepage-hero-v2{position:relative!important;isolation:isolate!important;overflow:hidden!important}
+          .homepage-hero-v2>.home-hero-shell{position:relative!important;z-index:3!important}
+          .mo-home-motion-bg{position:absolute!important;inset:0!important;z-index:1!important;overflow:hidden!important;pointer-events:none!important;user-select:none!important;contain:layout paint style!important}
+          .mo-home-petal{position:absolute!important;left:var(--left)!important;top:var(--top)!important;width:18px!important;height:10px!important;border-radius:90% 0 90% 0!important;background:#8f263d!important;opacity:.62!important;will-change:transform,opacity!important;transform-origin:50% 50%!important;animation:mo-home-petal-fall var(--duration,10s) linear var(--delay,0s) infinite!important}
+          @keyframes mo-home-petal-fall{
+            from{transform:translate3d(0,-30px,0) rotate(0deg) scale(var(--scale,1));opacity:.62}
+            to{transform:translate3d(var(--drift,65px),880px,0) rotate(540deg) scale(var(--scale,1));opacity:.62}
+          }
+          @media(max-width:960px){
+            .mo-home-petal{width:14px!important;height:8px!important;opacity:.46!important}
+            @keyframes mo-home-petal-fall{
+              from{transform:translate3d(0,-24px,0) rotate(0deg) scale(var(--scale,1));opacity:.46}
+              to{transform:translate3d(var(--drift,48px),620px,0) rotate(500deg) scale(var(--scale,1));opacity:.46}
+            }
+          }
+          @media(prefers-reduced-motion:reduce){.mo-home-motion-bg{display:none!important}.mo-home-petal{animation:none!important}}
+          </style>
+          '''
+
+          layer = r'''
+          <div class="mo-home-motion-bg" aria-hidden="true">
+            <i class="mo-home-petal" style="--left:13%;--top:5%;--delay:0s;--duration:10s;--drift:65px;--scale:1"></i>
+            <i class="mo-home-petal" style="--left:65%;--top:14%;--delay:-3s;--duration:10s;--drift:65px;--scale:.82"></i>
+            <i class="mo-home-petal" style="--left:86%;--top:30%;--delay:-6s;--duration:10s;--drift:65px;--scale:.92"></i>
+            <i class="mo-home-petal" style="--left:39%;--top:20%;--delay:-8s;--duration:10s;--drift:65px;--scale:.72"></i>
+          </div>
+          '''
+
+          if '</head>' not in text:
+              raise SystemExit('Missing </head> in mirrored HTML.')
+          text = text.replace('</head>', css + '\n</head>', 1)
+
+          section = re.compile(
+              r'(<section\b[^>]*class=["\'][^"\']*\bhomepage-hero-v2\b[^"\']*["\'][^>]*>)',
+              re.I,
+          )
+          text, count = section.subn(lambda match: match.group(1) + layer, text, count=1)
+          if count != 1:
+              fallback = re.compile(r'(<section\b[^>]*id=["\']top["\'][^>]*>)', re.I)
+              text, count = fallback.subn(lambda match: match.group(1) + layer, text, count=1)
+          if count != 1:
+              raise SystemExit('Could not locate the homepage hero section.')
+
+          required = [
+              release,
+              'class="mo-home-motion-bg"',
+              'mo-home-petal-fall',
+              'homepage-integrated-hero-v1-js',
+              'home-hero-stage',
+              'heartbeat-support',
+              '立即訂位',
+          ]
+          missing = [marker for marker in required if marker not in text]
+          if missing:
+              raise SystemExit('Missing required markers after patch: ' + ', '.join(missing))
+          if text.count('class="mo-home-petal"') != 4:
+              raise SystemExit('Restored background must contain exactly four petals.')
+
+          path.write_text(text, encoding='utf-8')
+          print('DYNAMIC_BACKGROUND_PATCH_OK bytes=', path.stat().st_size)
+          PY
+
+      - name: Add exact Vercel project binding and headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p site/.vercel
+          cat > site/.vercel/project.json <<JSON
+          {"orgId":"${VERCEL_ORG_ID}","projectId":"${VERCEL_PROJECT_ID}"}
+          JSON
+          cat > site/vercel.json <<'JSON'
+          {
+            "framework": null,
+            "cleanUrls": true,
+            "trailingSlash": false,
+            "headers": [
+              {
+                "source": "/(.*)",
+                "headers": [
+                  {"key": "X-Content-Type-Options", "value": "nosniff"},
+                  {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}
+                ]
+              }
+            ]
+          }
+          JSON
+
+      - name: Validate desktop and mobile locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+          npx playwright install --with-deps chromium >/dev/null
+          python -m http.server 4173 --directory site >local-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+
+          cat > verify-home-background.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const target = process.env.TEST_URL || 'http://127.0.0.1:4173/';
+          const browser = await chromium.launch({ headless: true });
+          const cases = [
+            { name: 'desktop', viewport: { width: 1440, height: 900 }, mobile: false },
+            { name: 'mobile', viewport: { width: 390, height: 844 }, mobile: true },
+          ];
+          const results = [];
+          try {
+            for (const item of cases) {
+              const context = await browser.newContext({
+                viewport: item.viewport,
+                screen: item.viewport,
+                isMobile: item.mobile,
+                hasTouch: item.mobile,
+                deviceScaleFactor: item.mobile ? 2 : 1,
+                locale: 'zh-TW',
+                timezoneId: 'Asia/Taipei',
+                reducedMotion: 'no-preference',
+              });
+              const page = await context.newPage();
+              const pageErrors = [];
+              const failed = [];
+              page.on('pageerror', error => pageErrors.push(String(error)));
+              page.on('requestfailed', request => {
+                if (request.url().startsWith(target)) failed.push({ url: request.url(), error: request.failure()?.errorText || '' });
+              });
+              const response = await page.goto(`${target}?dynamic-background-check=${Date.now()}-${item.name}`, { waitUntil: 'networkidle', timeout: 120000 });
+              await page.waitForTimeout(1400);
+              const state = await page.evaluate(() => {
+                const layer = document.querySelector('.mo-home-motion-bg');
+                const petals = [...document.querySelectorAll('.mo-home-petal')];
+                const hero = document.querySelector('.homepage-hero-v2');
+                const shell = document.querySelector('.homepage-hero-v2 > .home-hero-shell');
+                const first = petals[0];
+                const style = first ? getComputedStyle(first) : null;
+                return {
+                  marker: document.querySelector('meta[name="x-magicoffice-home-dynamic-background"]')?.content || '',
+                  layer: Boolean(layer),
+                  petals: petals.length,
+                  animationName: style?.animationName || '',
+                  animationDuration: style?.animationDuration || '',
+                  pointerEvents: layer ? getComputedStyle(layer).pointerEvents : '',
+                  shellZ: shell ? getComputedStyle(shell).zIndex : '',
+                  heroOverflow: hero ? getComputedStyle(hero).overflow : '',
+                  hasVideoStage: Boolean(document.querySelector('.home-hero-stage')),
+                  hasBooking: document.body.innerText.includes('立即訂位'),
+                  hasHeartbeat: document.body.innerText.includes('心跳應援'),
+                  viewportWidth: innerWidth,
+                  scrollWidth: document.documentElement.scrollWidth,
+                };
+              });
+              const checks = {
+                http200: response?.status() === 200,
+                marker: state.marker === 'home-dynamic-sakura-restored-2026-08-31-v1',
+                layer: state.layer,
+                fourPetals: state.petals === 4,
+                animation: state.animationName.includes('mo-home-petal-fall'),
+                nonBlocking: state.pointerEvents === 'none',
+                preservedHero: state.hasVideoStage && state.hasBooking && state.hasHeartbeat,
+                responsive: state.scrollWidth <= state.viewportWidth + 2,
+                noPageErrors: pageErrors.length === 0,
+                noFailedLocalRequests: failed.length === 0,
+              };
+              const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
+              await page.screenshot({ path: `${item.name}-home-background.png`, fullPage: false });
+              results.push({ name: item.name, target, state, checks, failures, pageErrors, failed });
+              await context.close();
+              if (failures.length) throw new Error(`${item.name} failed: ${failures.join(', ')}\n${JSON.stringify(results.at(-1), null, 2)}`);
+            }
+          } finally {
+            await browser.close();
+          }
+          fs.writeFileSync('home-background-local-report.json', JSON.stringify(results, null, 2));
+          console.log('LOCAL_HOME_BACKGROUND_OK', JSON.stringify(results.map(r => ({ name: r.name, state: r.state }))));
+          JS
+
+          node verify-home-background.mjs
+
+      - name: Capture current Production deployment for automatic rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, urllib.parse, urllib.request
+          team = os.environ['VERCEL_ORG_ID']
+          project = os.environ['VERCEL_PROJECT_ID']
+          token = os.environ['VERCEL_TOKEN']
+          query = urllib.parse.urlencode({'projectId': project, 'teamId': team, 'target': 'production', 'limit': 1})
+          request = urllib.request.Request(
+              'https://api.vercel.com/v6/deployments?' + query,
+              headers={'Authorization': 'Bearer ' + token},
+          )
+          with urllib.request.urlopen(request, timeout=60) as response:
+              payload = json.load(response)
+          deployments = payload.get('deployments') or []
+          if not deployments:
+              raise SystemExit('No existing Production deployment found.')
+          previous = deployments[0]
+          record = {'id': previous['uid'], 'url': previous['url']}
+          open('previous-production.json', 'w', encoding='utf-8').write(json.dumps(record, indent=2))
+          print('PREVIOUS_PRODUCTION', json.dumps(record))
+          PY
+
+      - name: Deploy restored background to the locked MagicOffice Production project
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --silent --no-save vercel@latest
+          DEPLOY_OUTPUT="$(npx vercel deploy site --prod --yes --archive=tgz --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" 2>&1 | tee deploy-output.log)"
+          DEPLOY_URL="$(printf '%s\n' "$DEPLOY_OUTPUT" | grep -Eo 'https://[^ ]+\.vercel\.app' | tail -1)"
+          if [ -z "$DEPLOY_URL" ]; then
+            echo 'Could not determine Production deployment URL.' >&2
+            exit 1
+          fi
+          printf '%s' "$DEPLOY_URL" > deployed-url.txt
+          echo "DEPLOYED_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
+          echo "PRODUCTION_DEPLOY_CREATED=$DEPLOY_URL"
+
+      - name: Verify official domain after Production promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          verified='false'
+          for i in $(seq 1 45); do
+            if curl -fsSL --max-time 45 "${OFFICIAL_URL}?dynamic-bg-release=${RELEASE_MARKER}-${i}" -o official.html; then
+              if grep -q "$RELEASE_MARKER" official.html; then
+                verified='true'
+                break
+              fi
+            fi
+            sleep 4
+          done
+
+          if [ "$verified" != 'true' ]; then
+            echo 'Official domain did not expose the restored release marker. Rolling back.' >&2
+            PREVIOUS_URL="$(python -c 'import json; print(json.load(open("previous-production.json"))["url"])')"
+            npx vercel rollback "$PREVIOUS_URL" --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" || true
+            exit 1
+          fi
+
+          TEST_URL="$OFFICIAL_URL" node verify-home-background.mjs || {
+            echo 'Official browser validation failed. Rolling back.' >&2
+            PREVIOUS_URL="$(python -c 'import json; print(json.load(open("previous-production.json"))["url"])')"
+            npx vercel rollback "$PREVIOUS_URL" --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" || true
+            exit 1
+          }
+
+          echo "OFFICIAL_HOME_DYNAMIC_BACKGROUND_OK url=${OFFICIAL_URL} deployment=${DEPLOYED_URL}"
+
+      - name: Write deployment report
+        if: success()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          html = Path('site/index.html').read_bytes()
+          report = {
+              'ok': True,
+              'officialUrl': os.environ['OFFICIAL_URL'],
+              'deploymentUrl': Path('deployed-url.txt').read_text().strip(),
+              'projectId': os.environ['VERCEL_PROJECT_ID'],
+              'teamId': os.environ['VERCEL_ORG_ID'],
+              'release': os.environ['RELEASE_MARKER'],
+              'effect': 'original four restrained wine-red falling petals',
+              'petalCount': 4,
+              'desktop': '18x10px, #8f263d, opacity .62, 10s linear, 65px drift, 540deg rotation',
+              'mobile': '14x8px, opacity .46, reduced vertical travel',
+              'reducedMotion': 'hidden',
+              'htmlBytes': len(html),
+              'htmlSha256': hashlib.sha256(html).hexdigest(),
+              'mirrored': json.load(open('mirror-report.json', encoding='utf-8')),
+          }
+          Path('home-dynamic-background-deployment-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+          print('REPORT_OK', json.dumps({k: report[k] for k in ('officialUrl', 'deploymentUrl', 'release', 'petalCount', 'htmlBytes')}))
+          PY
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_home_dynamic_background_restore_v1
+          path: |
+            mirror-report.json
+            previous-production.json
+            deployed-url.txt
+            deploy-output.log
+            home-background-local-report.json
+            home-dynamic-background-deployment-report.json
+            desktop-home-background.png
+            mobile-home-background.png
+            official.html
+          if-no-files-found: warn
+          retention-days: 14
