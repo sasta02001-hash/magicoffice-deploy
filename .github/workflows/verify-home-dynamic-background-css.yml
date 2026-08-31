@@ -1,0 +1,181 @@
+name: Deterministic verify homepage dynamic background CSS
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/verify-home-dynamic-background-css.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-noble
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Playwright package
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+
+      - name: Verify live HTML and CSS animation deterministically
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > verify-css.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const SITE = 'https://magicoffice.vercel.app/';
+          const RELEASE = 'home-dynamic-sakura-restored-2026-08-31-v1';
+          const browser = await chromium.launch({ headless: true, args: ['--disable-dev-shm-usage'] });
+          const report = { site: SITE, release: RELEASE, generatedAt: new Date().toISOString(), cases: [], allPassed: false };
+
+          async function inspect({ name, width, height, mobile, reducedMotion, expectedWidth, expectedHeight, expectedOpacity }) {
+            const context = await browser.newContext({
+              viewport: { width, height },
+              screen: { width, height },
+              isMobile: mobile,
+              hasTouch: mobile,
+              deviceScaleFactor: mobile ? 2 : 1,
+              javaScriptEnabled: false,
+              reducedMotion,
+              locale: 'zh-TW',
+              timezoneId: 'Asia/Taipei',
+              serviceWorkers: 'block'
+            });
+            const page = await context.newPage();
+            page.setDefaultTimeout(20000);
+            page.setDefaultNavigationTimeout(30000);
+            await page.route('**/*', route => {
+              const request = route.request();
+              const type = request.resourceType();
+              const url = request.url();
+              if (['image', 'media', 'font', 'script'].includes(type)) return route.abort('blockedbyclient');
+              if (!url.startsWith(SITE) && type !== 'document') return route.abort('blockedbyclient');
+              return route.continue();
+            });
+
+            let navigationError = '';
+            let status = 0;
+            try {
+              const response = await page.goto(`${SITE}?css-motion-check=${Date.now()}-${name}`, { waitUntil: 'domcontentloaded' });
+              status = response?.status() || 0;
+            } catch (error) {
+              navigationError = String(error?.stack || error);
+            }
+
+            await page.waitForSelector('.mo-home-motion-bg', { state: 'attached' });
+            await page.waitForTimeout(650);
+            const before = await page.evaluate(() => {
+              const layer = document.querySelector('.mo-home-motion-bg');
+              const petals = [...document.querySelectorAll('.mo-home-petal')];
+              const first = petals[0];
+              const style = first ? getComputedStyle(first) : null;
+              const shell = document.querySelector('.homepage-hero-v2 > .home-hero-shell');
+              return {
+                marker: document.querySelector('meta[name="x-magicoffice-home-dynamic-background"]')?.content || '',
+                layerExists: Boolean(layer),
+                layerDisplay: layer ? getComputedStyle(layer).display : '',
+                pointerEvents: layer ? getComputedStyle(layer).pointerEvents : '',
+                layerZ: Number(layer ? getComputedStyle(layer).zIndex : NaN),
+                shellZ: Number(shell ? getComputedStyle(shell).zIndex : NaN),
+                petalCount: petals.length,
+                transforms: petals.map(node => getComputedStyle(node).transform),
+                animationName: style?.animationName || '',
+                animationDuration: style?.animationDuration || '',
+                width: style?.width || '',
+                height: style?.height || '',
+                opacity: Number(style?.opacity || 0),
+                color: style?.backgroundColor || '',
+                hasHero: Boolean(document.querySelector('.homepage-hero-v2')),
+                hasStage: Boolean(document.querySelector('.home-hero-stage')),
+                hasFullscreen: Boolean(document.querySelector('.cinema-fullscreen-button')),
+                hasBooking: document.body.innerText.includes('立即訂位'),
+                hasSchedule: document.body.innerText.includes('本週出勤'),
+                hasHeartbeat: document.body.innerText.includes('心跳應援'),
+                viewportWidth: innerWidth,
+                documentWidth: document.documentElement.scrollWidth
+              };
+            });
+            await page.waitForTimeout(650);
+            const afterTransforms = await page.evaluate(() => [...document.querySelectorAll('.mo-home-petal')].map(node => getComputedStyle(node).transform));
+            const changedTransforms = before.transforms.filter((value, index) => value !== afterTransforms[index]).length;
+
+            const reduced = reducedMotion === 'reduce';
+            const checks = {
+              http200: status === 200,
+              noNavigationError: !navigationError,
+              releaseMarker: before.marker === RELEASE,
+              layerExists: before.layerExists,
+              fourPetals: before.petalCount === 4,
+              reducedMotionBehavior: reduced ? (before.layerDisplay === 'none' || before.animationName === 'none') : before.layerDisplay !== 'none',
+              animationBound: reduced || (before.animationName.includes('mo-home-petal-fall') && before.animationDuration === '10s'),
+              animationActuallyMoves: reduced || changedTransforms >= 1,
+              correctDimensions: before.width === expectedWidth && before.height === expectedHeight,
+              correctOpacity: Math.abs(before.opacity - expectedOpacity) < 0.03,
+              correctColor: before.color === 'rgb(143, 38, 61)',
+              pointerSafe: before.pointerEvents === 'none',
+              behindHomepageContent: before.layerZ < before.shellZ,
+              homepageStructurePreserved: before.hasHero && before.hasStage && before.hasFullscreen && before.hasBooking && before.hasSchedule && before.hasHeartbeat,
+              responsiveWidth: before.documentWidth <= before.viewportWidth + 2
+            };
+            const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([key]) => key);
+            const result = { name, reducedMotion, status, navigationError, before, afterTransforms, changedTransforms, checks, failures, passed: failures.length === 0 };
+            await context.close();
+            return result;
+          }
+
+          try {
+            report.cases.push(await inspect({ name: 'desktop', width: 1440, height: 900, mobile: false, reducedMotion: 'no-preference', expectedWidth: '18px', expectedHeight: '10px', expectedOpacity: 0.62 }));
+            report.cases.push(await inspect({ name: 'mobile', width: 390, height: 844, mobile: true, reducedMotion: 'no-preference', expectedWidth: '14px', expectedHeight: '8px', expectedOpacity: 0.46 }));
+            report.cases.push(await inspect({ name: 'mobile-reduced-motion', width: 390, height: 844, mobile: true, reducedMotion: 'reduce', expectedWidth: '14px', expectedHeight: '8px', expectedOpacity: 0.46 }));
+          } finally {
+            await browser.close();
+          }
+
+          report.allPassed = report.cases.every(item => item.passed);
+          fs.mkdirSync('verification', { recursive: true });
+          fs.writeFileSync('verification/home-dynamic-background-latest.json', JSON.stringify(report, null, 2));
+          console.log('DETERMINISTIC_HOME_BACKGROUND_VERIFY', JSON.stringify({ allPassed: report.allPassed, cases: report.cases.map(item => ({ name: item.name, passed: item.passed, failures: item.failures, changedTransforms: item.changedTransforms, status: item.status, before: item.before })) }));
+          JS
+          node verify-css.mjs
+
+      - name: Publish verification report to the repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p verification
+          git config user.name 'MagicOffice Verification Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add verification/home-dynamic-background-latest.json
+          if git diff --cached --quiet; then
+            echo 'Verification report unchanged.'
+          else
+            git commit -m 'Record MagicOffice homepage dynamic background verification'
+            git push origin HEAD:main
+          fi
+
+      - name: Enforce verification result
+        shell: bash
+        run: |
+          node - <<'JS'
+          const report = require('./verification/home-dynamic-background-latest.json');
+          console.log(JSON.stringify({ allPassed: report.allPassed, cases: report.cases.map(item => ({ name: item.name, passed: item.passed, failures: item.failures })) }));
+          if (!report.allPassed) process.exit(1);
+          JS
+
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_deterministic_home_background_verify
+          path: verification/home-dynamic-background-latest.json
+          if-no-files-found: error
+          retention-days: 14
