@@ -1,0 +1,43 @@
+name: Probe Canva clean scene fallback
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/probe-canva-fallback-clean-scene.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Fetch the signed Canva page-render fallback
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://s3.amazonaws.com/document-export.canva.com/wTCm8/DAHT4owTCm8/1/thumbnail/0001.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH4GDRW44L%2F20260831%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260831T095558Z&X-Amz-Expires=35409&X-Amz-Signature=b55ed057a8626d56abaded5dd17e3eb68cedf2dbed3433e4e094def89f690e5c&X-Amz-SignedHeaders=host&response-expires=Mon%2C%2031%20Aug%202026%2019%3A46%3A07%20GMT'
+          curl --fail --location --silent --show-error "$URL" --output canva-fallback.png
+          file canva-fallback.png
+          wc -c canva-fallback.png
+          sha256sum canva-fallback.png
+          python - <<'PY'
+          import struct
+          from pathlib import Path
+          data=Path('canva-fallback.png').read_bytes()
+          if data[:8] != b'\x89PNG\r\n\x1a\n':
+              raise SystemExit('NOT_PNG')
+          width,height=struct.unpack('>II',data[16:24])
+          print(f'PNG_DIMENSIONS={width}x{height}')
+          if width < 900 or height < 1200:
+              raise SystemExit(f'RENDER_TOO_SMALL={width}x{height}')
+          PY
+
+      - name: Upload candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: canva-clean-scene-fallback-probe
+          path: canva-fallback.png
+          retention-days: 1
