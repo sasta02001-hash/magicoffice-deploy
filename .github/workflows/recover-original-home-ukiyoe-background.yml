@@ -18,7 +18,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Scan all historical binary blobs for the exact original 1000x1333 WebP
+      - name: Download the archived v2.0.7 source from Google Drive
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet gdown
+          gdown --fuzzy 'https://drive.google.com/file/d/1IvJxaaGMiW3JyhMkKkOqPn44-Q1JAtaF/view?usp=drivesdk' -O archived-v207-source.html
+          test -s archived-v207-source.html
+          SIZE="$(wc -c < archived-v207-source.html | tr -d ' ')"
+          echo "ARCHIVED_SOURCE_BYTES=$SIZE"
+          test "$SIZE" -gt 10000000
+
+      - name: Extract and validate the exact original background WebP
         shell: bash
         run: |
           set -euo pipefail
@@ -28,129 +39,70 @@ jobs:
           import base64
           import hashlib
           import json
+          import re
           import struct
-          import subprocess
           from pathlib import Path
 
-          EXPECTED_PREFIX = 'UklGRngMAgBXRUJQVlA4IGwMAgCwSwmdASroAzUF'
-          EXPECTED_DIMS = (1000, 1333)
+          source = Path('archived-v207-source.html')
+          text = source.read_text(encoding='utf-8')
+          expected_prefix = 'UklGRngMAgBXRUJQVlA4IGwMAgCwSwmdASroAzUF'
+          marker = 'data:image/webp;base64,' + expected_prefix
+          start = text.find(marker)
+          if start < 0:
+              raise SystemExit('Exact historical background prefix not found in archived source.')
 
-          def webp_size(data: bytes):
-              if len(data) < 30 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
-                  return None
-              kind = data[12:16]
-              if kind == b'VP8 ':
-                  pos = data.find(b'\x9d\x01\x2a', 20, 80)
-                  if pos < 0 or pos + 7 > len(data):
-                      return None
-                  return (
-                      int.from_bytes(data[pos+3:pos+5], 'little') & 0x3fff,
-                      int.from_bytes(data[pos+5:pos+7], 'little') & 0x3fff,
-                  )
-              if kind == b'VP8X' and len(data) >= 30:
-                  return (
-                      1 + int.from_bytes(data[24:27], 'little'),
-                      1 + int.from_bytes(data[27:30], 'little'),
-                  )
-              if kind == b'VP8L' and len(data) >= 25 and data[20] == 0x2f:
-                  bits = int.from_bytes(data[21:25], 'little')
-                  return (bits & 0x3fff) + 1, ((bits >> 14) & 0x3fff) + 1
-              return None
+          payload_start = start + len('data:image/webp;base64,')
+          match = re.match(r'[A-Za-z0-9+/=]+', text[payload_start:])
+          if not match:
+              raise SystemExit('Background base64 payload is incomplete.')
+          data = base64.b64decode(match.group(0), validate=True)
 
-          rows = subprocess.check_output(['git', 'rev-list', '--objects', '--all'], text=True).splitlines()
-          objects = []
-          seen = set()
-          for row in rows:
-              parts = row.split(' ', 1)
-              oid = parts[0]
-              path = parts[1] if len(parts) == 2 else ''
-              if oid in seen:
-                  continue
-              seen.add(oid)
-              try:
-                  if subprocess.check_output(['git', 'cat-file', '-t', oid], text=True).strip() != 'blob':
-                      continue
-                  size = int(subprocess.check_output(['git', 'cat-file', '-s', oid], text=True).strip())
-              except Exception:
-                  continue
-              # Original RIFF length is roughly 134 KB. Keep a generous range.
-              if size < 10_000 or size > 5_000_000:
-                  continue
-              priority = 0 if path.lower().endswith('.webp') or 'sakura-throne' in path.lower() else 1
-              objects.append((priority, size, oid, path))
-
-          objects.sort()
-          scanned = 0
-          webps = []
-          candidates = []
-          exact = None
-          for _, size, oid, path in objects:
-              head = subprocess.check_output(['git', 'cat-file', 'blob', oid])
-              scanned += 1
-              dims = webp_size(head)
-              if not dims:
-                  continue
-              prefix = base64.b64encode(head).decode()[:len(EXPECTED_PREFIX)]
-              item = {
-                  'oid': oid,
-                  'path': path,
-                  'bytes': len(head),
-                  'width': dims[0],
-                  'height': dims[1],
-                  'base64Prefix': prefix,
-                  'sha256': hashlib.sha256(head).hexdigest(),
-              }
-              webps.append(item)
-              if dims == EXPECTED_DIMS:
-                  candidates.append(item)
-              if dims == EXPECTED_DIMS and prefix == EXPECTED_PREFIX:
-                  exact = (head, item)
-                  break
-
-          diagnostics = {
-              'objectCandidatesScanned': scanned,
-              'webpObjectsFound': len(webps),
-              'matchingDimensions': candidates,
-              'firstWebpObjects': webps[:100],
-          }
-          Path('recovery-binary-scan.json').write_text(
-              json.dumps(diagnostics, ensure_ascii=False, indent=2), encoding='utf-8'
-          )
-
-          if exact is None:
-              raise SystemExit(
-                  'Exact original WebP was not found in Git history. '
-                  f'Scanned {scanned} candidate blobs, found {len(webps)} WebPs and '
-                  f'{len(candidates)} with dimensions 1000x1333.'
-              )
-
-          data, source = exact
+          if data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+              raise SystemExit('Recovered payload is not WebP.')
           declared = struct.unpack('<I', data[4:8])[0] + 8
           if declared != len(data):
               raise SystemExit(f'RIFF length mismatch: declared={declared} actual={len(data)}')
+          frame = data.find(b'\x9d\x01\x2a', 20, 80)
+          if frame < 0:
+              raise SystemExit('VP8 frame header missing.')
+          width = int.from_bytes(data[frame+3:frame+5], 'little') & 0x3fff
+          height = int.from_bytes(data[frame+5:frame+7], 'little') & 0x3fff
+          if (width, height) != (1000, 1333):
+              raise SystemExit(f'Unexpected dimensions: {width}x{height}')
 
-          out_dir = Path('recovered-assets')
-          out_dir.mkdir(parents=True, exist_ok=True)
-          asset = out_dir / 'magicoffice-home-original-ukiyoe.webp'
+          sha = hashlib.sha256(data).hexdigest()
+          expected_sha = '44049d5f46ae6a12665e7a658e4d4a344fa8078dfd2fbb06da725ebd8e40cc65'
+          if sha != expected_sha:
+              raise SystemExit(f'Unexpected SHA256: {sha}')
+
+          out = Path('recovered-assets')
+          out.mkdir(parents=True, exist_ok=True)
+          asset = out / 'magicoffice-home-original-background.webp'
           asset.write_bytes(data)
           report = {
-              'source': source,
+              'sourceDriveFileId': '1IvJxaaGMiW3JyhMkKkOqPn44-Q1JAtaF',
+              'sourceFile': source.name,
+              'dataUriOffset': start,
               'file': str(asset),
               'bytes': len(data),
-              'sha256': hashlib.sha256(data).hexdigest(),
-              'width': EXPECTED_DIMS[0],
-              'height': EXPECTED_DIMS[1],
+              'sha256': sha,
+              'width': width,
+              'height': height,
               'mime': 'image/webp',
-              'exactHistoricalBase64PrefixMatched': True,
-              'purpose': 'Exact original MagicOffice homepage ukiyo-e background behind the separate falling-petal layer',
+              'base64Prefix': expected_prefix,
+              'desktopBackgroundPosition': '68% 28%',
+              'mobileBackgroundPosition': '58% center',
+              'filter': 'saturate(.78) brightness(.62)',
+              'purpose': 'Exact original MagicOffice homepage static background behind the separate four-petal animation layer'
           }
-          (out_dir / 'magicoffice-home-original-ukiyoe.json').write_text(
+          (out / 'magicoffice-home-original-background.json').write_text(
               json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8'
           )
-          (out_dir / 'README.md').write_text(
+          (out / 'README.md').write_text(
               '# MagicOffice original homepage background\n\n'
-              'Recovered byte-for-byte from Git object history by matching both the original WebP base64 prefix and 1000 × 1333 dimensions.\n',
-              encoding='utf-8',
+              'Recovered byte-for-byte from the archived v2.0.7 source.\n'
+              'Validated as WebP 1000 × 1333, SHA-256 44049d5f46ae6a12665e7a658e4d4a344fa8078dfd2fbb06da725ebd8e40cc65.\n',
+              encoding='utf-8'
           )
           print('ORIGINAL_HOME_BACKGROUND_RECOVERED', json.dumps(report, ensure_ascii=False))
           PY
@@ -161,11 +113,11 @@ jobs:
           set -euo pipefail
           git config user.name 'MagicOffice Recovery Bot'
           git config user.email 'actions@users.noreply.github.com'
-          git add recovered-assets/magicoffice-home-original-ukiyoe.webp \
-                  recovered-assets/magicoffice-home-original-ukiyoe.json \
+          git add recovered-assets/magicoffice-home-original-background.webp \
+                  recovered-assets/magicoffice-home-original-background.json \
                   recovered-assets/README.md
           if git diff --cached --quiet; then
-            echo 'Recovered asset already matches the exact historical source.'
+            echo 'Exact background asset is already present.'
           else
             git commit -m 'Recover exact original MagicOffice homepage background'
             git push origin HEAD:main
@@ -175,11 +127,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: MagicOffice_original_home_ukiyoe_background_binary_scan
+          name: MagicOffice_original_home_background_recovery
           path: |
-            recovered-assets/magicoffice-home-original-ukiyoe.webp
-            recovered-assets/magicoffice-home-original-ukiyoe.json
+            recovered-assets/magicoffice-home-original-background.webp
+            recovered-assets/magicoffice-home-original-background.json
             recovered-assets/README.md
-            recovery-binary-scan.json
           if-no-files-found: warn
           retention-days: 14
