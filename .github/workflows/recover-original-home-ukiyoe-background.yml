@@ -23,7 +23,7 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install --quiet gdown
-          gdown --fuzzy 'https://drive.google.com/file/d/1IvJxaaGMiW3JyhMkKkOqPn44-Q1JAtaF/view?usp=drivesdk' -O archived-v207-source.html
+          gdown '1IvJxaaGMiW3JyhMkKkOqPn44-Q1JAtaF' -O archived-v207-source.html
           test -s archived-v207-source.html
           SIZE="$(wc -c < archived-v207-source.html | tr -d ' ')"
           echo "ARCHIVED_SOURCE_BYTES=$SIZE"
