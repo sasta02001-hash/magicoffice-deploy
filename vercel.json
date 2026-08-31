@@ -6,7 +6,7 @@
   "trailingSlash": false,
   "headers": [
     {
-      "source": "/assets/media/44049d5f46ae6a12.webp",
+      "source": "/assets/media/magicoffice-home-bg-beautified-v1.webp",
       "headers": [
         { "key": "Content-Type", "value": "image/webp" },
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
