@@ -1,0 +1,387 @@
+name: Publish beautified homepage background and petal pass
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/publish-home-bg-beautified-petals-v1.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: magicoffice-production-home-bg-beautified-petals-v1
+  cancel-in-progress: false
+
+env:
+  OFFICIAL_URL: https://magicoffice.vercel.app/
+  VERCEL_ORG_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+  VERCEL_PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+  VERCEL_SCOPE: magicoffice
+  RELEASE_MARKER: home-bg-beautified-petals-2026-09-01-v1
+  OUTPUT_BG: assets/media/magicoffice-home-bg-beautified-v1.webp
+  SOURCE_BG: assets/media/44049d5f46ae6a12.webp
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Confirm deployment credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo 'VERCEL_TOKEN secret is not configured.' >&2
+            exit 78
+          fi
+          echo 'VERCEL_TOKEN_PRESENT=true'
+
+      - name: Install build dependencies and generate the exact site
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-audit --no-fund
+          npm run build
+
+      - name: Prove that the photo was physically beautified
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > verify-image.mjs <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import sharp from 'sharp';
+
+          const health = JSON.parse(fs.readFileSync('dist/health.json', 'utf8'));
+          const sourcePath = `dist/${process.env.SOURCE_BG}`;
+          const outputPath = `dist/${process.env.OUTPUT_BG}`;
+          const source = fs.readFileSync(sourcePath);
+          const output = fs.readFileSync(outputPath);
+          const sha = value => crypto.createHash('sha256').update(value).digest('hex');
+          const sourceMeta = await sharp(source).metadata();
+          const outputMeta = await sharp(output).metadata();
+          const sourceStats = await sharp(source).stats();
+          const outputStats = await sharp(output).stats();
+          const mean = stats => stats.channels.slice(0, 3).reduce((sum, channel) => sum + channel.mean, 0) / 3;
+          const sourceMean = mean(sourceStats);
+          const outputMean = mean(outputStats);
+
+          const checks = {
+            release: health.release === process.env.RELEASE_MARKER,
+            petalCount: health.petals === 6,
+            sourceDimensions: sourceMeta.width === 1000 && sourceMeta.height === 1333,
+            outputDimensions: outputMeta.width === 1000 && outputMeta.height === 1333,
+            actualOutputFile: output.length > 50000,
+            distinctFile: sha(source) !== sha(output),
+            declaredSha: health.background.sha256 === sha(output),
+            conservativeExposure: outputMean >= sourceMean - 2 && outputMean <= sourceMean + 28,
+            beautificationRecorded: health.background.beautification?.webpQuality === 92,
+          };
+          const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
+          const report = {
+            checks,
+            failures,
+            source: { bytes: source.length, sha256: sha(source), metadata: sourceMeta, mean: sourceMean },
+            output: { bytes: output.length, sha256: sha(output), metadata: outputMeta, mean: outputMean },
+            health,
+          };
+          fs.writeFileSync('image-beautification-report.json', JSON.stringify(report, null, 2));
+          if (failures.length) throw new Error(`Image verification failed: ${failures.join(', ')}\n${JSON.stringify(report, null, 2)}`);
+          console.log('IMAGE_BEAUTIFICATION_OK', JSON.stringify({ sourceMean, outputMean, outputBytes: output.length, outputSha: sha(output), petals: health.petals }));
+          JS
+          node verify-image.mjs
+
+      - name: Install browser verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Create desktop and mobile validation script
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > verify-home.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const target = process.env.TEST_URL;
+          const prefix = process.env.EVIDENCE_PREFIX || 'site';
+          if (!target) throw new Error('TEST_URL is required');
+
+          const browser = await chromium.launch({ headless: true });
+          const cases = [
+            { name: 'desktop', viewport: { width: 1440, height: 900 }, mobile: false },
+            { name: 'mobile', viewport: { width: 390, height: 844 }, mobile: true },
+          ];
+          const report = [];
+
+          try {
+            for (const item of cases) {
+              const context = await browser.newContext({
+                viewport: item.viewport,
+                screen: item.viewport,
+                isMobile: item.mobile,
+                hasTouch: item.mobile,
+                deviceScaleFactor: item.mobile ? 2 : 1,
+                locale: 'zh-TW',
+                timezoneId: 'Asia/Taipei',
+                reducedMotion: 'no-preference',
+              });
+              const page = await context.newPage();
+              const pageErrors = [];
+              page.on('pageerror', error => pageErrors.push(String(error)));
+              const url = new URL(target);
+              url.searchParams.set('beautified-bg-check', `${Date.now()}-${item.name}`);
+              const response = await page.goto(url.href, { waitUntil: 'load', timeout: 120000 });
+              await page.waitForTimeout(1200);
+              const image = page.locator('.mo-home-static-bg-image');
+              await image.evaluate(node => node.decode());
+
+              const beforeTransforms = await page.locator('.mo-home-petal').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform));
+              await page.waitForTimeout(850);
+              const afterTransforms = await page.locator('.mo-home-petal').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform));
+
+              const state = await page.evaluate(() => {
+                const hero = document.querySelector('.homepage-hero-v2');
+                const layer = document.querySelector('.mo-home-static-bg');
+                const image = document.querySelector('.mo-home-static-bg-image');
+                const motion = document.querySelector('.mo-home-motion-bg');
+                const petals = [...document.querySelectorAll('.mo-home-petal')];
+                const rect = element => element?.getBoundingClientRect();
+                const style = element => element ? getComputedStyle(element) : null;
+                const heroRect = rect(hero);
+                const layerRect = rect(layer);
+                const imageStyle = style(image);
+                const layerStyle = style(layer);
+                const petalStyles = petals.map(petal => style(petal));
+                return {
+                  marker: document.querySelector('meta[name="x-magicoffice-home-static-background"]')?.content || '',
+                  dynamicMarker: document.querySelector('meta[name="x-magicoffice-home-dynamic-background"]')?.content || '',
+                  hero: Boolean(hero),
+                  layer: Boolean(layer),
+                  image: Boolean(image),
+                  motion: Boolean(motion),
+                  imageComplete: Boolean(image?.complete),
+                  naturalWidth: image?.naturalWidth || 0,
+                  naturalHeight: image?.naturalHeight || 0,
+                  imageSrc: image?.currentSrc || image?.src || '',
+                  imageOpacity: imageStyle?.opacity || '',
+                  imageVisibility: imageStyle?.visibility || '',
+                  imageDisplay: imageStyle?.display || '',
+                  imageFilter: imageStyle?.filter || '',
+                  objectPosition: imageStyle?.objectPosition || '',
+                  layerOpacity: layerStyle?.opacity || '',
+                  layerVisibility: layerStyle?.visibility || '',
+                  layerDisplay: layerStyle?.display || '',
+                  heroRect: heroRect ? { width: heroRect.width, height: heroRect.height } : null,
+                  layerRect: layerRect ? { width: layerRect.width, height: layerRect.height } : null,
+                  petals: petals.length,
+                  petalAnimations: petalStyles.map(value => value?.animationName || ''),
+                  hasLogo: Boolean(document.querySelector('.home-hero-logo, .home-hero-brand-lockup, [class*="hero-logo"]')),
+                  hasBooking: document.body.innerText.includes('立即訂位'),
+                  hasVideoStage: Boolean(document.querySelector('.home-hero-stage')),
+                  hasAttendance: document.body.innerText.includes('本週出勤'),
+                  hasHeartbeat: document.body.innerText.includes('心跳應援'),
+                  viewportWidth: innerWidth,
+                  scrollWidth: document.documentElement.scrollWidth,
+                };
+              });
+
+              const movedPetals = beforeTransforms.filter((value, index) => value !== afterTransforms[index]).length;
+              const checks = {
+                http200: response?.status() === 200,
+                releaseMarkers: state.marker === process.env.RELEASE_MARKER && state.dynamicMarker === process.env.RELEASE_MARKER,
+                layersExist: state.hero && state.layer && state.image && state.motion,
+                beautifiedAssetLoaded: state.imageComplete && state.naturalWidth === 1000 && state.naturalHeight === 1333 && state.imageSrc.includes('magicoffice-home-bg-beautified-v1.webp'),
+                visiblyRendered: state.imageDisplay !== 'none' && state.imageVisibility === 'visible' && Number(state.imageOpacity) > 0 && state.layerDisplay !== 'none' && state.layerVisibility === 'visible' && Number(state.layerOpacity) > 0,
+                coversHero: state.layerRect && state.heroRect && state.layerRect.width >= state.heroRect.width - 1 && state.layerRect.height >= state.heroRect.height - 1,
+                sixPetals: state.petals === 6,
+                petalsAnimate: movedPetals >= 5 && state.petalAnimations.every(name => name.includes('mo-home-petal-fall')),
+                preservedContent: state.hasBooking && state.hasVideoStage && state.hasAttendance && state.hasHeartbeat,
+                responsive: state.scrollWidth <= state.viewportWidth + 2,
+                noPageErrors: pageErrors.length === 0,
+              };
+              const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
+              await page.screenshot({ path: `${prefix}-${item.name}.png`, fullPage: false });
+              report.push({ name: item.name, url: url.href, status: response?.status(), state, movedPetals, checks, failures, pageErrors });
+              await context.close();
+              if (failures.length) throw new Error(`${item.name} failed: ${failures.join(', ')}\n${JSON.stringify(report.at(-1), null, 2)}`);
+            }
+          } finally {
+            await browser.close();
+          }
+
+          fs.writeFileSync(`${prefix}-browser-report.json`, JSON.stringify(report, null, 2));
+          console.log('HOME_BEAUTIFIED_BACKGROUND_BROWSER_OK', JSON.stringify(report.map(item => ({ name: item.name, movedPetals: item.movedPetals, image: item.state.imageSrc, filter: item.state.imageFilter }))));
+          JS
+
+      - name: Validate locally before touching Production
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m http.server 4173 --directory dist >local-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+          TEST_URL='http://127.0.0.1:4173/' EVIDENCE_PREFIX='local' node verify-home.mjs
+
+      - name: Capture current Production deployment for automatic rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, urllib.parse, urllib.request
+          team = os.environ['VERCEL_ORG_ID']
+          project = os.environ['VERCEL_PROJECT_ID']
+          token = os.environ['VERCEL_TOKEN']
+          query = urllib.parse.urlencode({'projectId': project, 'teamId': team, 'target': 'production', 'limit': 1})
+          request = urllib.request.Request(
+              'https://api.vercel.com/v6/deployments?' + query,
+              headers={'Authorization': 'Bearer ' + token},
+          )
+          with urllib.request.urlopen(request, timeout=60) as response:
+              payload = json.load(response)
+          deployments = payload.get('deployments') or []
+          if not deployments:
+              raise SystemExit('No existing Production deployment found.')
+          previous = deployments[0]
+          record = {'id': previous['uid'], 'url': previous['url']}
+          open('previous-production.json', 'w', encoding='utf-8').write(json.dumps(record, indent=2))
+          print('PREVIOUS_PRODUCTION', json.dumps(record))
+          PY
+
+      - name: Bind and deploy the validated static output to MagicOffice Production
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/.vercel
+          printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > dist/.vercel/project.json
+          cat > dist/vercel.json <<'JSON'
+          {
+            "framework": null,
+            "cleanUrls": true,
+            "trailingSlash": false,
+            "headers": [
+              {
+                "source": "/assets/media/magicoffice-home-bg-beautified-v1.webp",
+                "headers": [
+                  { "key": "Content-Type", "value": "image/webp" },
+                  { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+                ]
+              },
+              {
+                "source": "/(.*)",
+                "headers": [
+                  { "key": "X-Content-Type-Options", "value": "nosniff" },
+                  { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+                ]
+              }
+            ]
+          }
+          JSON
+          DEPLOY_OUTPUT="$(npx --yes vercel@latest deploy dist --prod --yes --archive=tgz --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" 2>&1 | tee deploy-output.log)"
+          DEPLOY_URL="$(printf '%s\n' "$DEPLOY_OUTPUT" | grep -Eo 'https://[^ ]+\.vercel\.app' | tail -1)"
+          if [ -z "$DEPLOY_URL" ]; then
+            echo 'Could not determine Production deployment URL.' >&2
+            exit 1
+          fi
+          printf '%s' "$DEPLOY_URL" > deployed-url.txt
+          echo "DEPLOYED_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
+          echo "PRODUCTION_DEPLOY_CREATED=$DEPLOY_URL"
+
+      - name: Verify the official domain or automatically roll back
+        shell: bash
+        run: |
+          set -euo pipefail
+          rollback() {
+            PREVIOUS_URL="$(python -c 'import json; print(json.load(open("previous-production.json"))["url"])')"
+            echo "Rolling back to https://${PREVIOUS_URL}" >&2
+            npx --yes vercel@latest rollback "https://${PREVIOUS_URL}" --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" || true
+          }
+
+          verified='false'
+          for i in $(seq 1 45); do
+            if curl -fsSL --max-time 45 "${OFFICIAL_URL}health.json?release=${RELEASE_MARKER}-${i}" -o official-health.json; then
+              if grep -q "$RELEASE_MARKER" official-health.json && grep -q '"petals": 6' official-health.json; then
+                verified='true'
+                break
+              fi
+            fi
+            sleep 4
+          done
+          if [ "$verified" != 'true' ]; then
+            echo 'The official domain never exposed the new release marker.' >&2
+            rollback
+            exit 1
+          fi
+
+          if ! TEST_URL="$OFFICIAL_URL" EVIDENCE_PREFIX='official' node verify-home.mjs; then
+            echo 'Official desktop/mobile browser validation failed.' >&2
+            rollback
+            exit 1
+          fi
+
+          echo "OFFICIAL_BEAUTIFIED_BACKGROUND_AND_PETALS_OK url=${OFFICIAL_URL} deployment=${DEPLOYED_URL}"
+
+      - name: Write Production deployment report
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          report = {
+              'ok': True,
+              'officialUrl': os.environ['OFFICIAL_URL'],
+              'deploymentUrl': open('deployed-url.txt', encoding='utf-8').read().strip(),
+              'projectId': os.environ['VERCEL_PROJECT_ID'],
+              'teamId': os.environ['VERCEL_ORG_ID'],
+              'release': os.environ['RELEASE_MARKER'],
+              'background': json.load(open('dist/health.json', encoding='utf-8'))['background'],
+              'petals': 6,
+              'validation': {
+                  'localDesktopMobile': True,
+                  'officialDesktopMobile': True,
+                  'automaticRollbackGuard': True,
+              },
+          }
+          open('production-deployment-report.json', 'w', encoding='utf-8').write(json.dumps(report, ensure_ascii=False, indent=2))
+          print('PRODUCTION_REPORT_OK', json.dumps(report, ensure_ascii=False))
+          PY
+
+      - name: Upload visual and technical evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_home_bg_beautified_petals_v1_evidence
+          path: |
+            dist/health.json
+            image-beautification-report.json
+            local-browser-report.json
+            official-browser-report.json
+            production-deployment-report.json
+            previous-production.json
+            deployed-url.txt
+            deploy-output.log
+            official-health.json
+            local-desktop.png
+            local-mobile.png
+            official-desktop.png
+            official-mobile.png
+          if-no-files-found: warn
+          retention-days: 14
