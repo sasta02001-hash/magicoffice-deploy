@@ -1,0 +1,221 @@
+name: Verify restored MagicOffice homepage dynamic background
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/verify-home-dynamic-background-production.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-noble
+
+    steps:
+      - name: Install matching Playwright package
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install --silent playwright@1.55.0
+
+      - name: Verify motion, responsiveness and preserved homepage content
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > verify.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const SITE = 'https://magicoffice.vercel.app/';
+          const RELEASE = 'home-dynamic-sakura-restored-2026-08-31-v1';
+          const cases = [
+            {
+              name: 'desktop',
+              viewport: { width: 1440, height: 900 },
+              isMobile: false,
+              hasTouch: false,
+              deviceScaleFactor: 1,
+              expectedWidth: '18px',
+              expectedHeight: '10px',
+              expectedOpacity: 0.62
+            },
+            {
+              name: 'mobile',
+              viewport: { width: 390, height: 844 },
+              isMobile: true,
+              hasTouch: true,
+              deviceScaleFactor: 2,
+              expectedWidth: '14px',
+              expectedHeight: '8px',
+              expectedOpacity: 0.46
+            }
+          ];
+
+          const browser = await chromium.launch({ headless: true, args: ['--disable-dev-shm-usage'] });
+          const report = { site: SITE, release: RELEASE, generatedAt: new Date().toISOString(), cases: [], reducedMotion: null, allPassed: false };
+
+          try {
+            for (const item of cases) {
+              const context = await browser.newContext({
+                viewport: item.viewport,
+                screen: item.viewport,
+                isMobile: item.isMobile,
+                hasTouch: item.hasTouch,
+                deviceScaleFactor: item.deviceScaleFactor,
+                locale: 'zh-TW',
+                timezoneId: 'Asia/Taipei',
+                reducedMotion: 'no-preference',
+                serviceWorkers: 'block'
+              });
+              const page = await context.newPage();
+              const pageErrors = [];
+              const failedOfficialRequests = [];
+              page.on('pageerror', error => pageErrors.push(String(error?.stack || error)));
+              page.on('requestfailed', request => {
+                if (request.url().startsWith(SITE)) {
+                  failedOfficialRequests.push({ url: request.url(), error: request.failure()?.errorText || 'unknown' });
+                }
+              });
+
+              const response = await page.goto(`${SITE}?verify-home-motion=${Date.now()}-${item.name}`, {
+                waitUntil: 'domcontentloaded',
+                timeout: 120000
+              });
+              await page.waitForTimeout(2200);
+
+              const before = await page.evaluate(() => {
+                const layer = document.querySelector('.mo-home-motion-bg');
+                const petals = [...document.querySelectorAll('.mo-home-petal')];
+                const firstStyle = petals[0] ? getComputedStyle(petals[0]) : null;
+                const hero = document.querySelector('.homepage-hero-v2');
+                const shell = document.querySelector('.homepage-hero-v2 > .home-hero-shell');
+                return {
+                  marker: document.querySelector('meta[name="x-magicoffice-home-dynamic-background"]')?.content || '',
+                  layerExists: Boolean(layer),
+                  layerDisplay: layer ? getComputedStyle(layer).display : '',
+                  layerPointerEvents: layer ? getComputedStyle(layer).pointerEvents : '',
+                  layerZIndex: layer ? getComputedStyle(layer).zIndex : '',
+                  shellZIndex: shell ? getComputedStyle(shell).zIndex : '',
+                  heroOverflow: hero ? getComputedStyle(hero).overflow : '',
+                  petalCount: petals.length,
+                  animationName: firstStyle?.animationName || '',
+                  animationDuration: firstStyle?.animationDuration || '',
+                  width: firstStyle?.width || '',
+                  height: firstStyle?.height || '',
+                  opacity: Number(firstStyle?.opacity || 0),
+                  backgroundColor: firstStyle?.backgroundColor || '',
+                  transforms: petals.map(petal => getComputedStyle(petal).transform),
+                  hasHeroStage: Boolean(document.querySelector('.home-hero-stage')),
+                  hasFullscreenButton: Boolean(document.querySelector('.cinema-fullscreen-button')),
+                  hasBooking: document.body.innerText.includes('立即訂位'),
+                  hasSchedule: document.body.innerText.includes('本週出勤'),
+                  hasHeartbeat: document.body.innerText.includes('心跳應援'),
+                  viewportWidth: innerWidth,
+                  documentWidth: document.documentElement.scrollWidth,
+                  heroTop: hero?.getBoundingClientRect().top ?? null,
+                  headerBottom: document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? null
+                };
+              });
+
+              await page.screenshot({ path: `${item.name}-before.png`, fullPage: false });
+              await page.waitForTimeout(1300);
+
+              const after = await page.evaluate(() => ({
+                transforms: [...document.querySelectorAll('.mo-home-petal')].map(petal => getComputedStyle(petal).transform)
+              }));
+              await page.screenshot({ path: `${item.name}-after.png`, fullPage: false });
+
+              const changedTransforms = before.transforms.filter((value, index) => value !== after.transforms[index]).length;
+              const checks = {
+                http200: response?.status() === 200,
+                marker: before.marker === RELEASE,
+                layerVisible: before.layerExists && before.layerDisplay !== 'none',
+                fourPetals: before.petalCount === 4,
+                correctAnimation: before.animationName.includes('mo-home-petal-fall') && before.animationDuration === '10s',
+                motionActuallyAdvances: changedTransforms >= 1,
+                correctSize: before.width === item.expectedWidth && before.height === item.expectedHeight,
+                correctOpacity: Math.abs(before.opacity - item.expectedOpacity) < 0.03,
+                correctColor: before.backgroundColor === 'rgb(143, 38, 61)',
+                nonBlocking: before.layerPointerEvents === 'none',
+                behindContent: Number(before.layerZIndex) < Number(before.shellZIndex),
+                preservedHomepage: before.hasHeroStage && before.hasFullscreenButton && before.hasBooking && before.hasSchedule && before.hasHeartbeat,
+                responsiveWidth: before.documentWidth <= before.viewportWidth + 2,
+                mobileSafeTop: !item.isMobile || (before.heroTop !== null && before.headerBottom !== null && before.heroTop >= 0),
+                noPageErrors: pageErrors.length === 0,
+                noFailedOfficialRequests: failedOfficialRequests.length === 0
+              };
+              const failures = Object.entries(checks).filter(([, pass]) => !pass).map(([name]) => name);
+              const result = { name: item.name, responseStatus: response?.status() || 0, before, after, changedTransforms, checks, failures, pageErrors, failedOfficialRequests, passed: failures.length === 0 };
+              report.cases.push(result);
+              await context.close();
+            }
+
+            const reducedContext = await browser.newContext({
+              viewport: { width: 390, height: 844 },
+              isMobile: true,
+              hasTouch: true,
+              deviceScaleFactor: 2,
+              locale: 'zh-TW',
+              timezoneId: 'Asia/Taipei',
+              reducedMotion: 'reduce',
+              serviceWorkers: 'block'
+            });
+            const reducedPage = await reducedContext.newPage();
+            const reducedResponse = await reducedPage.goto(`${SITE}?verify-reduced-motion=${Date.now()}`, { waitUntil: 'domcontentloaded', timeout: 120000 });
+            await reducedPage.waitForTimeout(800);
+            const reducedState = await reducedPage.evaluate(() => {
+              const layer = document.querySelector('.mo-home-motion-bg');
+              const first = document.querySelector('.mo-home-petal');
+              return {
+                layerExists: Boolean(layer),
+                layerDisplay: layer ? getComputedStyle(layer).display : '',
+                animationName: first ? getComputedStyle(first).animationName : ''
+              };
+            });
+            const reducedChecks = {
+              http200: reducedResponse?.status() === 200,
+              layerExists: reducedState.layerExists,
+              motionHidden: reducedState.layerDisplay === 'none' || reducedState.animationName === 'none'
+            };
+            report.reducedMotion = {
+              state: reducedState,
+              checks: reducedChecks,
+              failures: Object.entries(reducedChecks).filter(([, pass]) => !pass).map(([name]) => name),
+              passed: Object.values(reducedChecks).every(Boolean)
+            };
+            await reducedContext.close();
+          } finally {
+            await browser.close();
+          }
+
+          report.allPassed = report.cases.length === cases.length && report.cases.every(item => item.passed) && report.reducedMotion?.passed === true;
+          fs.writeFileSync('home-dynamic-background-production-report.json', JSON.stringify(report, null, 2));
+          console.log('HOME_DYNAMIC_BACKGROUND_PRODUCTION_VERIFY', JSON.stringify({
+            allPassed: report.allPassed,
+            cases: report.cases.map(item => ({ name: item.name, passed: item.passed, failures: item.failures, changedTransforms: item.changedTransforms, before: item.before })),
+            reducedMotion: report.reducedMotion
+          }));
+          if (!report.allPassed) process.exit(1);
+          JS
+
+          node verify.mjs
+
+      - name: Upload screenshots and verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_home_dynamic_background_production_verify
+          path: |
+            desktop-before.png
+            desktop-after.png
+            mobile-before.png
+            mobile-after.png
+            home-dynamic-background-production-report.json
+          if-no-files-found: warn
+          retention-days: 14
