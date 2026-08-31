@@ -1,0 +1,204 @@
+name: Verify beautified homepage background and petals locally
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/verify-home-bg-beautified-petals-local-v1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      RELEASE_MARKER: home-bg-beautified-petals-2026-09-01-v1
+      OUTPUT_BG: assets/media/magicoffice-home-bg-beautified-v1.webp
+      SOURCE_BG: assets/media/44049d5f46ae6a12.webp
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build exact homepage from current Production source
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-audit --no-fund
+          npm run build
+
+      - name: Verify physical image beautification
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > verify-image.mjs <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import sharp from 'sharp';
+
+          const health = JSON.parse(fs.readFileSync('dist/health.json', 'utf8'));
+          const source = fs.readFileSync(`dist/${process.env.SOURCE_BG}`);
+          const output = fs.readFileSync(`dist/${process.env.OUTPUT_BG}`);
+          const sha = value => crypto.createHash('sha256').update(value).digest('hex');
+          const sourceMeta = await sharp(source).metadata();
+          const outputMeta = await sharp(output).metadata();
+          const sourceStats = await sharp(source).stats();
+          const outputStats = await sharp(output).stats();
+          const mean = stats => stats.channels.slice(0, 3).reduce((sum, channel) => sum + channel.mean, 0) / 3;
+          const sourceMean = mean(sourceStats);
+          const outputMean = mean(outputStats);
+          const checks = {
+            release: health.release === process.env.RELEASE_MARKER,
+            petals: health.petals === 6,
+            sourceDimensions: sourceMeta.width === 1000 && sourceMeta.height === 1333,
+            outputDimensions: outputMeta.width === 1000 && outputMeta.height === 1333,
+            physicalOutput: output.length > 50000,
+            outputChanged: sha(source) !== sha(output),
+            outputDeclared: health.background.sha256 === sha(output),
+            restrainedExposure: outputMean >= sourceMean - 2 && outputMean <= sourceMean + 28,
+          };
+          const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
+          const report = {
+            checks,
+            failures,
+            source: { bytes: source.length, sha256: sha(source), mean: sourceMean, metadata: sourceMeta },
+            output: { bytes: output.length, sha256: sha(output), mean: outputMean, metadata: outputMeta },
+            health,
+          };
+          fs.writeFileSync('image-beautification-report.json', JSON.stringify(report, null, 2));
+          if (failures.length) throw new Error(`Image validation failed: ${failures.join(', ')}\n${JSON.stringify(report, null, 2)}`);
+          console.log('IMAGE_BEAUTIFICATION_OK', JSON.stringify(report.output));
+          JS
+          node verify-image.mjs
+
+      - name: Install browser and capture desktop/mobile evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium >/dev/null
+          python -m http.server 4173 --directory dist >local-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+
+          cat > verify-browser.mjs <<'JS'
+          import fs from 'node:fs';
+          import { chromium } from 'playwright';
+
+          const browser = await chromium.launch({ headless: true });
+          const cases = [
+            { name: 'desktop', viewport: { width: 1440, height: 900 }, mobile: false },
+            { name: 'mobile', viewport: { width: 390, height: 844 }, mobile: true },
+          ];
+          const report = [];
+          try {
+            for (const item of cases) {
+              const context = await browser.newContext({
+                viewport: item.viewport,
+                screen: item.viewport,
+                isMobile: item.mobile,
+                hasTouch: item.mobile,
+                deviceScaleFactor: item.mobile ? 2 : 1,
+                locale: 'zh-TW',
+                timezoneId: 'Asia/Taipei',
+                reducedMotion: 'no-preference',
+              });
+              const page = await context.newPage();
+              const errors = [];
+              page.on('pageerror', error => errors.push(String(error)));
+              const response = await page.goto(`http://127.0.0.1:4173/?local-bg-check=${Date.now()}-${item.name}`, { waitUntil: 'load', timeout: 120000 });
+              await page.waitForTimeout(1200);
+              await page.locator('.mo-home-static-bg-image').evaluate(node => node.decode());
+              const before = await page.locator('.mo-home-petal').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform));
+              await page.waitForTimeout(900);
+              const after = await page.locator('.mo-home-petal').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform));
+              const state = await page.evaluate(() => {
+                const hero = document.querySelector('.homepage-hero-v2');
+                const layer = document.querySelector('.mo-home-static-bg');
+                const image = document.querySelector('.mo-home-static-bg-image');
+                const motion = document.querySelector('.mo-home-motion-bg');
+                const rect = element => element?.getBoundingClientRect();
+                const imageStyle = image ? getComputedStyle(image) : null;
+                const layerStyle = layer ? getComputedStyle(layer) : null;
+                const heroRect = rect(hero);
+                const layerRect = rect(layer);
+                return {
+                  marker: document.querySelector('meta[name="x-magicoffice-home-static-background"]')?.content || '',
+                  dynamicMarker: document.querySelector('meta[name="x-magicoffice-home-dynamic-background"]')?.content || '',
+                  hero: Boolean(hero),
+                  layer: Boolean(layer),
+                  image: Boolean(image),
+                  motion: Boolean(motion),
+                  imageComplete: Boolean(image?.complete),
+                  naturalWidth: image?.naturalWidth || 0,
+                  naturalHeight: image?.naturalHeight || 0,
+                  imageSrc: image?.currentSrc || image?.src || '',
+                  imageDisplay: imageStyle?.display || '',
+                  imageVisibility: imageStyle?.visibility || '',
+                  imageOpacity: imageStyle?.opacity || '',
+                  imageFilter: imageStyle?.filter || '',
+                  layerDisplay: layerStyle?.display || '',
+                  layerVisibility: layerStyle?.visibility || '',
+                  layerOpacity: layerStyle?.opacity || '',
+                  heroRect: heroRect ? { width: heroRect.width, height: heroRect.height } : null,
+                  layerRect: layerRect ? { width: layerRect.width, height: layerRect.height } : null,
+                  petals: document.querySelectorAll('.mo-home-petal').length,
+                  animations: [...document.querySelectorAll('.mo-home-petal')].map(node => getComputedStyle(node).animationName),
+                  booking: document.body.innerText.includes('立即訂位'),
+                  attendance: document.body.innerText.includes('本週出勤'),
+                  heartbeat: document.body.innerText.includes('心跳應援'),
+                  video: Boolean(document.querySelector('.home-hero-stage')),
+                  scrollWidth: document.documentElement.scrollWidth,
+                  viewportWidth: innerWidth,
+                };
+              });
+              const moved = before.filter((value, index) => value !== after[index]).length;
+              const checks = {
+                http200: response?.status() === 200,
+                markers: state.marker === process.env.RELEASE_MARKER && state.dynamicMarker === process.env.RELEASE_MARKER,
+                layers: state.hero && state.layer && state.image && state.motion,
+                beautifiedImage: state.imageComplete && state.naturalWidth === 1000 && state.naturalHeight === 1333 && state.imageSrc.includes('magicoffice-home-bg-beautified-v1.webp'),
+                visible: state.imageDisplay !== 'none' && state.imageVisibility === 'visible' && Number(state.imageOpacity) > 0 && state.layerDisplay !== 'none' && state.layerVisibility === 'visible' && Number(state.layerOpacity) > 0,
+                coverage: state.layerRect && state.heroRect && state.layerRect.width >= state.heroRect.width - 1 && state.layerRect.height >= state.heroRect.height - 1,
+                sixPetals: state.petals === 6,
+                motion: moved >= 5 && state.animations.every(name => name.includes('mo-home-petal-fall')),
+                preserved: state.booking && state.attendance && state.heartbeat && state.video,
+                responsive: state.scrollWidth <= state.viewportWidth + 2,
+                noErrors: errors.length === 0,
+              };
+              const failures = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
+              await page.screenshot({ path: `local-${item.name}.png`, fullPage: false });
+              report.push({ name: item.name, status: response?.status(), moved, state, checks, failures, errors });
+              await context.close();
+              if (failures.length) throw new Error(`${item.name}: ${failures.join(', ')}\n${JSON.stringify(report.at(-1), null, 2)}`);
+            }
+          } finally {
+            await browser.close();
+          }
+          fs.writeFileSync('local-browser-report.json', JSON.stringify(report, null, 2));
+          console.log('LOCAL_DESKTOP_MOBILE_OK', JSON.stringify(report.map(item => ({ name: item.name, moved: item.moved, filter: item.state.imageFilter }))));
+          JS
+          node verify-browser.mjs
+
+      - name: Upload local visual proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_home_bg_beautified_petals_local_v1
+          path: |
+            dist/health.json
+            image-beautification-report.json
+            local-browser-report.json
+            local-desktop.png
+            local-mobile.png
+            dist/assets/media/magicoffice-home-bg-beautified-v1.webp
+          if-no-files-found: warn
+          retention-days: 14
