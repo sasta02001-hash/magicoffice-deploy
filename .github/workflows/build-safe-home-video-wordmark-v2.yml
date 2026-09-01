@@ -1,0 +1,366 @@
+name: Build safe incremental MagicOffice home video and wordmark v2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build-safe-home-video-wordmark-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: magicoffice-safe-home-video-wordmark-v2
+  cancel-in-progress: false
+
+env:
+  OFFICIAL_URL: https://magicoffice.vercel.app/
+  RELEASE: home-video-wordmark-safe-2026-09-01-v2
+  POSTER_URL: https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/home-hero-preview-v3/magicoffice-home-video-poster-v1.webp
+  DESKTOP_BG_URL: https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/home-clean-scene-desktop-v1/magicoffice-home-clean-scene-desktop-v1.webp
+  VIDEO_URL: https://github.com/sasta02001-hash/magicoffice-deploy/releases/download/magicoffice-home-trial-v1/magicoffice-home-trial-720p-v1.mp4
+  VIDEO_BYTES: '67334731'
+  VIDEO_SHA256: b65929fe53cd056a00281562bcee3ca58268f4cfef476eb4c1bef3cd6ea6a958
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch the exact currently restored Production page
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/mo-safe-v2 assets/home-hero-production-safe-v2
+          curl --fail --location --silent --show-error --max-time 90 \
+            "${OFFICIAL_URL}?safe-source=${RELEASE}-$(date +%s)" \
+            -o /tmp/mo-safe-v2/current.html
+          test "$(wc -c < /tmp/mo-safe-v2/current.html)" -gt 100000
+          grep -q 'new-domain-v1.0.4' /tmp/mo-safe-v2/current.html
+          grep -q 'id="roster"' /tmp/mo-safe-v2/current.html
+          grep -q 'id="schedule"' /tmp/mo-safe-v2/current.html
+          grep -q 'id="event-hub"' /tmp/mo-safe-v2/current.html
+          grep -q 'id="menu"' /tmp/mo-safe-v2/current.html
+          grep -q 'id="location"' /tmp/mo-safe-v2/current.html
+          if grep -q 'home-video-wordmark-safe-2026-09-01-v2' /tmp/mo-safe-v2/current.html; then
+            echo 'Production already contains this candidate marker; refusing to use it as a source.' >&2
+            exit 1
+          fi
+
+      - name: Apply only the approved hero changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          import base64, gzip, hashlib, json, os, re
+
+          source = Path('/tmp/mo-safe-v2/current.html')
+          approved = Path('assets/home-hero-preview-v3/preview.html')
+          output_dir = Path('assets/home-hero-production-safe-v2')
+          output_dir.mkdir(parents=True, exist_ok=True)
+          html = source.read_text(encoding='utf-8')
+          preview = approved.read_text(encoding='utf-8')
+          release = os.environ['RELEASE']
+          poster_url = os.environ['POSTER_URL']
+          desktop_bg_url = os.environ['DESKTOP_BG_URL']
+          video_url = os.environ['VIDEO_URL']
+
+          def one(pattern, text, label, flags=re.I | re.S):
+              m = re.search(pattern, text, flags)
+              if not m:
+                  raise SystemExit(f'Missing {label}')
+              return m.group(0)
+
+          # Reuse the exact wordmark that the user approved in v3 Preview.
+          wordmark_meta = one(r'<meta\s+name=["\']x-magicoffice-home-video-wordmark["\'][^>]*>', preview, 'approved wordmark meta')
+          wordmark_style = one(r'<style\s+id=["\']magicoffice-home-video-wordmark-v1["\']>[\s\S]*?</style>', preview, 'approved wordmark style')
+          wordmark_div = one(r'<div\s+class=["\']home-video-wordmark["\'][^>]*>[\s\S]*?</div>', preview, 'approved wordmark overlay')
+
+          # Remove only prior candidate/wordmark/video injections, if any.
+          html = re.sub(r'<meta\s+name=["\']x-magicoffice-home-video-wordmark["\'][^>]*>', '', html, flags=re.I)
+          html = re.sub(r'<meta\s+name=["\']x-magicoffice-production-hero-trial["\'][^>]*>', '', html, flags=re.I)
+          html = re.sub(r'<style\s+id=["\']magicoffice-home-video-wordmark-v1["\']>[\s\S]*?</style>', '', html, flags=re.I)
+          html = re.sub(r'<style\s+id=["\']magicoffice-home-video-safe-v2["\']>[\s\S]*?</style>', '', html, flags=re.I)
+          html = re.sub(r'<div\s+class=["\']home-video-wordmark["\'][^>]*>[\s\S]*?</div>', '', html, flags=re.I)
+          html = re.sub(r'<img\b[^>]*class=["\'][^"\']*\bhome-video-poster\b[^"\']*["\'][^>]*>', '', html, flags=re.I)
+
+          safe_style = f'''<meta name="x-magicoffice-production-hero-trial" content="{release}"/>
+<style id="magicoffice-home-video-safe-v2">
+/* Incremental patch only: current restored Production remains the complete base. */
+.home-hero-shell{{width:min(1540px,calc(100vw - 64px))!important;grid-template-columns:minmax(320px,36fr) minmax(0,64fr)!important;gap:clamp(32px,4vw,64px)!important;align-items:center!important}}
+.home-hero-brand{{position:relative!important;isolation:isolate!important;min-width:0!important}}
+.home-hero-brand::before{{content:""!important;position:absolute!important;inset:-7% -9%!important;z-index:-1!important;background:radial-gradient(ellipse at 42% 46%,rgba(7,4,6,.60),rgba(7,4,6,.21) 57%,transparent 77%)!important;filter:blur(11px)!important;pointer-events:none!important}}
+.home-hero-eyebrow{{display:none!important}}
+.home-hero-media{{padding:0!important;min-width:0!important;overflow:visible!important}}
+.home-hero-media>.home-hero-ornament,.home-hero-media>[class*="home-hero-ornament"],.home-hero-media>.cinema-ornament{{display:none!important;visibility:hidden!important;opacity:0!important}}
+.homepage-cinema-stage.home-hero-stage{{position:relative!important;width:100%!important;aspect-ratio:16/9!important;min-height:0!important;background:#170b10!important;border:1px solid rgba(237,208,217,.26)!important;border-radius:16px!important;overflow:hidden!important;box-shadow:0 18px 46px rgba(0,0,0,.24)!important;isolation:isolate!important}}
+.homepage-cinema-stage.home-hero-stage::before,.homepage-cinema-stage.home-hero-stage::after{{content:none!important;display:none!important}}
+.home-video-poster{{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;display:block!important;object-fit:cover!important;object-position:center!important;opacity:1!important;visibility:visible!important;z-index:1!important;transition:opacity .32s ease,visibility .32s ease!important;background:#170b10!important;pointer-events:none!important}}
+.homepage-cinema-stage [data-home-video-mount]{{position:absolute!important;inset:0!important;z-index:2!important;display:block!important;opacity:0!important;visibility:hidden!important;transition:opacity .32s ease,visibility .32s ease!important;background:transparent!important}}
+.homepage-cinema-stage [data-home-video-mount] video{{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;background:#000!important;opacity:1!important}}
+.homepage-cinema-stage[data-video-ready="true"] .home-video-poster{{opacity:0!important;visibility:hidden!important}}
+.homepage-cinema-stage[data-video-ready="true"] [data-home-video-mount]{{opacity:1!important;visibility:visible!important}}
+.homepage-cinema-stage[data-video-playable="true"][data-video-ready="false"] .home-video-wordmark{{opacity:1!important;visibility:visible!important}}
+.homepage-cinema-stage[data-video-ready="true"] .home-video-wordmark{{opacity:0!important;visibility:hidden!important}}
+.homepage-cinema-stage[data-video-playable="true"]{{cursor:pointer}}
+.cinema-fullscreen-button{{z-index:6!important;opacity:0!important;pointer-events:none!important}}
+.homepage-cinema-stage[data-video-playable="true"] .cinema-fullscreen-button{{opacity:.88!important;pointer-events:auto!important}}
+.mo-home-static-bg{{background-image:url("{desktop_bg_url}")!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important}}
+.mo-home-static-bg>.mo-home-static-bg-image{{opacity:0!important;visibility:hidden!important}}
+.mobile-bar{{grid-template-columns:repeat(4,minmax(0,1fr))!important;transition:transform .24s ease,opacity .24s ease!important;will-change:transform,opacity!important}}
+.mobile-bar>.mobile-bottom-link{{min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;text-decoration:none!important;white-space:nowrap!important}}
+.mobile-bar>.mobile-bottom-link--primary{{font-weight:800!important;color:#fff4f6!important;background:linear-gradient(180deg,rgba(139,35,61,.95),rgba(92,18,40,.97))!important}}
+.mobile-bar.is-scrolled-hidden{{transform:translateY(calc(100% + env(safe-area-inset-bottom,0px) + 6px))!important;opacity:0!important;pointer-events:none!important}}
+@media(max-width:960px){{
+  .mo-home-static-bg{{background-image:none!important}}
+  .mo-home-static-bg>.mo-home-static-bg-image{{opacity:1!important;visibility:visible!important}}
+  .home-hero-shell{{width:min(calc(100% - 28px),720px)!important;display:flex!important;flex-direction:column!important;gap:18px!important;padding:0!important}}
+  .home-hero-brand{{width:100%!important;align-items:center!important;text-align:center!important}}
+  .home-hero-brand::before{{inset:-4% -5%!important;filter:blur(9px)!important}}
+  .home-hero-logo{{filter:drop-shadow(0 2px 11px rgba(0,0,0,.72))!important}}
+  .home-hero-media{{width:100%!important;padding:0!important}}
+  .homepage-cinema-stage.home-hero-stage{{border-radius:12px!important;aspect-ratio:16/9!important}}
+  .mobile-bar{{min-height:58px!important}}
+  .mobile-bar>.mobile-bottom-link{{padding:10px 4px!important;font-size:clamp(11px,3vw,13px)!important;line-height:1.2!important}}
+}}
+@media(max-width:430px){{.home-hero-shell{{width:calc(100% - 24px)!important;gap:12px!important}}.homepage-cinema-stage.home-hero-stage{{border-radius:8px!important}}}}
+@media(prefers-reduced-motion:reduce){{.home-video-poster,[data-home-video-mount],.home-video-wordmark,.mobile-bar{{transition:none!important}}}}
+</style>'''
+
+          # Keep the approved wordmark visible until the video is actually playing.
+          wordmark_style = wordmark_style.replace(
+              '.homepage-cinema-stage[data-video-ready="true"] .home-video-wordmark,.homepage-cinema-stage[data-video-playable="true"] .home-video-wordmark',
+              '.homepage-cinema-stage[data-video-ready="true"] .home-video-wordmark'
+          )
+
+          if '</head>' not in html:
+              raise SystemExit('Missing </head>')
+          html = html.replace('</head>', wordmark_meta + wordmark_style + safe_style + '</head>', 1)
+
+          # Reset the exact existing stage attributes, without replacing the surrounding page.
+          stage_open = re.compile(r'<div\s+class=["\']homepage-cinema-stage home-hero-stage["\'](?P<attrs>[^>]*)>', re.I)
+          sm = stage_open.search(html)
+          if not sm:
+              raise SystemExit('Home hero stage not found')
+          attrs = sm.group('attrs')
+          for key in ('data-video-ready','data-video-playable','data-home-video-runtime'):
+              attrs = re.sub(rf'\s{key}=["\'][^"\']*["\']', '', attrs, flags=re.I)
+          opening = f'<div class="homepage-cinema-stage home-hero-stage"{attrs} data-video-ready="false" data-video-playable="false" data-home-video-runtime="{release}">'
+          html = html[:sm.start()] + opening + html[sm.end():]
+
+          mount_re = re.compile(r'<div\s+class=["\']homepage-cinema-video-mount["\']\s+data-home-video-mount[^>]*>[\s\S]*?</div>', re.I)
+          mm = mount_re.search(html)
+          if not mm:
+              raise SystemExit('Original video mount not found')
+
+          poster = f'<img class="home-video-poster" src="{poster_url}" width="1280" height="720" alt="MagicOffice 影片封面" decoding="async" fetchpriority="high" loading="eager"/>'
+          video_mount = f'''<div class="homepage-cinema-video-mount" data-home-video-mount data-home-trial-video="{release}" aria-hidden="false"><video class="home-trial-video" muted autoplay loop playsinline webkit-playsinline preload="metadata" disablepictureinpicture poster="{poster_url}"><source src="{video_url}" type="video/mp4"/></video></div>'''
+          replacement = poster + wordmark_div + video_mount
+          html = html[:mm.start()] + replacement + html[mm.end():]
+
+          # Replace the old presence-based readiness script with actual playback-state handling.
+          runtime = f'''<script id="homepage-integrated-hero-v1-js">(()=>{{
+const RELEASE={json.dumps(release)};
+const stage=document.querySelector('.homepage-cinema-stage.home-hero-stage');
+if(!stage)return;
+const video=stage.querySelector('video.home-trial-video');
+const button=stage.querySelector('.cinema-fullscreen-button');
+const bar=document.querySelector('.mobile-bar');
+if(!video)return;
+video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;
+video.setAttribute('muted','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
+const setPlayable=v=>{{stage.dataset.videoPlayable=v?'true':'false'}};
+const setReady=v=>{{stage.dataset.videoReady=v?'true':'false';stage.classList.toggle('is-video-ready',!!v)}};
+const attempt=()=>{{try{{const p=video.play();if(p&&p.catch)p.catch(()=>{{setReady(false)}})}}catch(e){{setReady(false)}}}};
+const can=()=>{{if(!video.error&&video.readyState>=2){{setPlayable(true);attempt()}}}};
+const playing=()=>{{setPlayable(true);setReady(true)}};
+const failed=()=>{{setReady(false);setPlayable(false)}};
+video.addEventListener('loadedmetadata',can,{{passive:true}});
+video.addEventListener('loadeddata',can,{{passive:true}});
+video.addEventListener('canplay',can,{{passive:true}});
+video.addEventListener('playing',playing,{{passive:true}});
+video.addEventListener('error',failed,{{passive:true}});
+video.addEventListener('abort',failed,{{passive:true}});
+video.addEventListener('emptied',failed,{{passive:true}});
+video.addEventListener('stalled',()=>{{if(video.readyState<2)failed()}},{{passive:true}});
+stage.addEventListener('click',e=>{{if(e.target===button||button?.contains(e.target))return;if(stage.dataset.videoReady!=='true')attempt()}});
+async function fullscreen(){{
+  attempt();
+  try{{
+    if(typeof video.webkitEnterFullscreen==='function'&&/iPhone|iPad|iPod/i.test(navigator.userAgent)){{video.webkitEnterFullscreen();return}}
+    if(video.requestFullscreen){{await video.requestFullscreen();return}}
+    if(video.webkitRequestFullscreen){{video.webkitRequestFullscreen();return}}
+    if(stage.requestFullscreen)await stage.requestFullscreen();
+  }}catch(e){{}}
+}}
+if(button)button.addEventListener('click',e=>{{e.stopPropagation();fullscreen()}});
+setReady(false);setPlayable(video.readyState>=2&&!video.error);if(video.readyState>=2)attempt();
+let lastY=Math.max(0,window.scrollY),ticking=false;
+if(bar)window.addEventListener('scroll',()=>{{if(innerWidth>960||ticking)return;ticking=true;requestAnimationFrame(()=>{{const y=Math.max(0,window.scrollY),d=y-lastY;if(y<72||d<-9)bar.classList.remove('is-scrolled-hidden');else if(y>150&&d>9)bar.classList.add('is-scrolled-hidden');lastY=y;ticking=false}})}},{{passive:true}});
+document.documentElement.dataset.homeVideoRelease=RELEASE;
+window.MagicOfficeHomeVideo={{video,stage,play:attempt,fullscreen}};
+}})();</script>'''
+          script_re = re.compile(r'<script\s+id=["\']homepage-integrated-hero-v1-js["\']>[\s\S]*?</script>', re.I)
+          if not script_re.search(html):
+              raise SystemExit('Original hero script not found')
+          html = script_re.sub(runtime, html, count=1)
+
+          # Lock the compact four-action mobile bar that was approved in v3.
+          mobile = '''<div aria-label="手機版便捷選單" class="mobile-bar" data-home-mobile-nav="four-core-links"><a class="mobile-bottom-link" href="#roster">姶仕名錄</a><a class="mobile-bottom-link" href="#schedule">本週出勤</a><a class="mobile-bottom-link" href="#event-hub">活動快報</a><a class="mobile-bottom-link mobile-bottom-link--primary" href="https://gforms.app/r/71hSwQR" target="_blank" rel="noopener noreferrer">立即訂位</a></div>'''
+          mobile_re = re.compile(r'<div\s+aria-label=["\']手機版便捷選單["\']\s+class=["\']mobile-bar["\'][^>]*>[\s\S]*?</div>', re.I)
+          if not mobile_re.search(html):
+              raise SystemExit('Mobile bar not found')
+          html = mobile_re.sub(mobile, html, count=1)
+
+          checks = {
+              'releaseOnce': html.count(release) >= 3,
+              'wordmarkOnce': html.count('class="home-video-wordmark"') == 1,
+              'posterOnce': html.count('class="home-video-poster"') == 1,
+              'videoSourceOnce': html.count(video_url) == 1,
+              'actualPlayingGuard': "addEventListener('playing',playing" in html,
+              'errorFallback': "addEventListener('error',failed" in html,
+              'grid3664': '36fr' in html and '64fr' in html,
+              'desktopBackground': desktop_bg_url in html,
+              'fourMobileLinks': 'data-home-mobile-nav="four-core-links"' in html,
+              'noEmptyMount': not re.search(r'data-home-video-mount[^>]*>\s*</div>', html),
+              'indexable': 'index,follow' in html,
+              'sections': all(f'id="{x}"' in html for x in ['roster','schedule','event-hub','menu','first-visit','location','recruitment']),
+              'actions': all(x in html for x in ['立即訂位','本週出勤','LINE 官方']),
+          }
+          failed = [k for k,v in checks.items() if not v]
+          if failed:
+              raise SystemExit('Candidate validation failed: ' + ', '.join(failed))
+
+          out = output_dir / 'index.html'
+          out.write_text(html, encoding='utf-8')
+          raw = html.encode('utf-8')
+          compressed = gzip.compress(raw, compresslevel=9, mtime=0)
+          (output_dir / 'index.html.gz.b64').write_text(base64.b64encode(compressed).decode('ascii'))
+          manifest = {
+              'release': release,
+              'source': 'exact currently restored Production HTML',
+              'sourceBytes': source.stat().st_size,
+              'outputBytes': len(raw),
+              'outputSha256': hashlib.sha256(raw).hexdigest(),
+              'gzipBytes': len(compressed),
+              'video': {
+                  'url': video_url,
+                  'bytes': int(os.environ['VIDEO_BYTES']),
+                  'sha256': os.environ['VIDEO_SHA256'],
+                  'width': 1280,
+                  'height': 720,
+                  'fps': 24,
+                  'durationSeconds': 229.166667,
+                  'audio': False,
+              },
+              'checks': checks,
+          }
+          (output_dir / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
+          print('SAFE_CANDIDATE_BUILT', json.dumps(manifest, ensure_ascii=False))
+          PY
+
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+
+      - name: Browser-test desktop, mobile, poster fallback, and video playback
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-audit --no-fund puppeteer-core@24.16.0 >/dev/null
+          python3 -m http.server 4173 --directory assets/home-hero-production-safe-v2 >/tmp/mo-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
+          cat > /tmp/mo-safe-v2/test.mjs <<'NODE'
+          import puppeteer from 'puppeteer-core';
+          import fs from 'node:fs';
+          const browser = await puppeteer.launch({headless:true, executablePath:process.env.CHROME_PATH, args:['--no-sandbox','--disable-setuid-sandbox','--autoplay-policy=no-user-gesture-required']});
+          const results = {};
+          async function check(name, viewport, mobile=false){
+            const page = await browser.newPage();
+            await page.setViewport({...viewport,isMobile:mobile,hasTouch:mobile,deviceScaleFactor:1});
+            if(mobile) await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 Version/18.6 Mobile/15E148 Safari/604.1');
+            const pageErrors=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            await page.goto('http://127.0.0.1:4173/',{waitUntil:'domcontentloaded',timeout:120000});
+            await page.waitForSelector('.home-video-poster',{visible:true,timeout:30000});
+            const initial=await page.evaluate(()=>({ready:document.querySelector('.home-hero-stage')?.dataset.videoReady,poster:!!document.querySelector('.home-video-poster'),wordmark:!!document.querySelector('.home-video-wordmark'),mobileLinks:document.querySelectorAll('.mobile-bar>.mobile-bottom-link').length}));
+            await new Promise(r=>setTimeout(r,18000));
+            const state=await page.evaluate(()=>{
+              const stage=document.querySelector('.home-hero-stage');
+              const v=stage?.querySelector('video');
+              const rect=stage?.getBoundingClientRect();
+              return {
+                ready:stage?.dataset.videoReady,
+                playable:stage?.dataset.videoPlayable,
+                videoReadyState:v?.readyState,
+                currentTime:v?.currentTime,
+                paused:v?.paused,
+                error:v?.error?String(v.error.code):null,
+                width:rect?.width,
+                height:rect?.height,
+                ratio:rect?rect.width/rect.height:null,
+                horizontalOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
+                mobileLinks:document.querySelectorAll('.mobile-bar>.mobile-bottom-link').length,
+                brokenHeroImages:[...document.querySelectorAll('.homepage-hero-v2 img')].filter(i=>i.complete&&i.naturalWidth===0).map(i=>i.currentSrc||i.src),
+              };
+            });
+            await page.screenshot({path:`assets/home-hero-production-safe-v2/${name}.png`,fullPage:false});
+            await page.close();
+            results[name]={initial,state,pageErrors};
+          }
+          await check('desktop-1440x900',{width:1440,height:900},false);
+          await check('mobile-390x844',{width:390,height:844},true);
+          await browser.close();
+          const failures=[];
+          for(const [name,r] of Object.entries(results)){
+            if(r.initial.ready!=='false') failures.push(`${name}: poster not retained initially`);
+            if(!r.initial.poster||!r.initial.wordmark) failures.push(`${name}: poster/wordmark missing`);
+            if(r.state.ready!=='true'||r.state.playable!=='true') failures.push(`${name}: video did not reach playing state`);
+            if(!(r.state.currentTime>0.25)||r.state.paused) failures.push(`${name}: video time did not advance`);
+            if(r.state.error) failures.push(`${name}: media error ${r.state.error}`);
+            if(Math.abs(r.state.ratio-16/9)>.035) failures.push(`${name}: stage ratio ${r.state.ratio}`);
+            if(r.state.horizontalOverflow>2) failures.push(`${name}: horizontal overflow ${r.state.horizontalOverflow}`);
+            if(r.state.mobileLinks!==4) failures.push(`${name}: mobile links ${r.state.mobileLinks}`);
+            if(r.state.brokenHeroImages.length) failures.push(`${name}: broken hero images`);
+          }
+          fs.writeFileSync('assets/home-hero-production-safe-v2/browser-report.json',JSON.stringify({results,failures},null,2));
+          console.log(JSON.stringify({results,failures},null,2));
+          if(failures.length) process.exit(1);
+          NODE
+          node /tmp/mo-safe-v2/test.mjs
+
+      - name: Commit the verified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Safe Production Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-production-safe-v2/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Build verified incremental home video and wordmark candidate v2'
+            git push origin HEAD:main
+          fi
+
+      - name: Upload visual and machine-verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_safe_home_video_wordmark_v2_evidence
+          path: |
+            assets/home-hero-production-safe-v2/index.html
+            assets/home-hero-production-safe-v2/index.html.gz.b64
+            assets/home-hero-production-safe-v2/manifest.json
+            assets/home-hero-production-safe-v2/browser-report.json
+            assets/home-hero-production-safe-v2/desktop-1440x900.png
+            assets/home-hero-production-safe-v2/mobile-390x844.png
+            /tmp/mo-safe-v2/current.html
+          if-no-files-found: warn
+          retention-days: 14
