@@ -168,7 +168,9 @@ async function main() {
     const url = queue.shift();
     const key = `${url.pathname}${url.search}`;
     if (records.has(key)) continue;
-    const record = await fetchAsset(url);
+    const record = url.pathname === '/assets/og-card.jpg'
+      ? { url, finalUrl: url, buffer: poster, mime: 'image/webp' }
+      : await fetchAsset(url);
     records.set(key, record);
     const ext = path.extname(url.pathname).toLowerCase();
     const isText = record.mime.startsWith('text/') || ['.css', '.js', '.json', '.webmanifest', '.svg'].includes(ext);
