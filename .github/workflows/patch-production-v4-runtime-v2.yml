@@ -29,11 +29,7 @@ jobs:
           s=p.read_text()
 
           source_marker="  let html=fs.readFileSync(SOURCE_HTML,'utf8');"
-          isolation="""  let html=fs.readFileSync(SOURCE_HTML,'utf8');
-  for (const inlineId of ['magic-domain-runtime','magic-asset-diagnostic']) {
-    const pattern=new RegExp(`<script\\\\b([^>]*\\\\bid=[\"']${inlineId}[\"'][^>]*)>([\\\\s\\\\S]*?)<\\\\/script>`,'i');
-    html=html.replace(pattern,(_full,attrs,body)=>`<script${attrs}>(function(){\\n${body}\\n})();</script>`);
-  }"""
+          isolation="  let html=fs.readFileSync(SOURCE_HTML,'utf8');\n  for (const inlineId of ['magic-domain-runtime','magic-asset-diagnostic']) {\n    const pattern=new RegExp(`<script\\\\b([^>]*\\\\bid=[\\\"']${inlineId}[\\\"'][^>]*)>([\\\\s\\\\S]*?)<\\\\/script>`,'i');\n    html=html.replace(pattern,(_full,attrs,body)=>`<script${attrs}>(function(){\\n${body}\\n})();</script>`);\n  }"
           if source_marker not in s: raise SystemExit('inline isolation marker missing')
           s=s.replace(source_marker,isolation,1)
 
@@ -53,9 +49,7 @@ jobs:
           s=s.replace(old_fallback,new_fallback,1)
 
           old_video_init="  if(video){\n   video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');"
-          new_video_init="""  if(video){
-   video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
-   if(!fallback&&sourceNode){try{var binary=atob(sourceNode.textContent.trim()),chunks=[],chunkSize=524288;for(var offset=0;offset<binary.length;offset+=chunkSize){var end=Math.min(offset+chunkSize,binary.length),bytes=new Uint8Array(end-offset);for(var i=offset;i<end;i++)bytes[i-offset]=binary.charCodeAt(i);chunks.push(bytes)}objectUrl=URL.createObjectURL(new Blob(chunks,{type:'video/mp4'}));video.src=objectUrl;video.load();addEventListener('pagehide',function(){if(objectUrl)URL.revokeObjectURL(objectUrl)},{once:true})}catch(e){state(false,false,true)}}"""
+          new_video_init="  if(video){\n   video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');\n   if(!fallback&&sourceNode){try{var binary=atob(sourceNode.textContent.trim()),chunks=[],chunkSize=524288;for(var offset=0;offset<binary.length;offset+=chunkSize){var end=Math.min(offset+chunkSize,binary.length),bytes=new Uint8Array(end-offset);for(var i=offset;i<end;i++)bytes[i-offset]=binary.charCodeAt(i);chunks.push(bytes)}objectUrl=URL.createObjectURL(new Blob(chunks,{type:'video/mp4'}));video.src=objectUrl;video.load();addEventListener('pagehide',function(){if(objectUrl)URL.revokeObjectURL(objectUrl)},{once:true})}catch(e){state(false,false,true)}}"
           if old_video_init not in s: raise SystemExit('video init marker missing')
           s=s.replace(old_video_init,new_video_init,1)
 
