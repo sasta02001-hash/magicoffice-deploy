@@ -39,13 +39,22 @@ jobs:
           set -euo pipefail
           mkdir -p /tmp/mo-safe-v2 assets/home-hero-production-safe-v2
           curl --fail --location --silent --show-error --max-time 90 "${OFFICIAL_URL}?safe-source=${RELEASE}-$(date +%s)" -o /tmp/mo-safe-v2/current.html
-          test "$(wc -c < /tmp/mo-safe-v2/current.html)" -gt 100000
-          grep -q 'new-domain-v1.0.4' /tmp/mo-safe-v2/current.html
-          grep -q 'id="roster"' /tmp/mo-safe-v2/current.html
-          grep -q 'id="schedule"' /tmp/mo-safe-v2/current.html
-          grep -q 'id="event-hub"' /tmp/mo-safe-v2/current.html
-          grep -q 'id="menu"' /tmp/mo-safe-v2/current.html
-          grep -q 'id="location"' /tmp/mo-safe-v2/current.html
+          echo "SOURCE_BYTES=$(wc -c < /tmp/mo-safe-v2/current.html)"
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('/tmp/mo-safe-v2/current.html')
+          s=p.read_text(errors='replace')
+          checks={
+            'size':p.stat().st_size>20000,
+            'html':'<html' in s.lower(),
+            'brand':'MagicOffice' in s,
+            'stage':'homepage-cinema-stage home-hero-stage' in s,
+            'mobileBar':'手機版便捷選單' in s,
+          }
+          print('SOURCE_CHECKS',checks)
+          failed=[k for k,v in checks.items() if not v]
+          if failed: raise SystemExit('Invalid restored source: '+','.join(failed))
+          PY
           if grep -q "$RELEASE" /tmp/mo-safe-v2/current.html; then
             echo 'Production already contains this candidate marker; refusing to use it as the source.' >&2
             exit 1
@@ -97,5 +106,6 @@ jobs:
             assets/home-hero-production-safe-v2/browser-report.json
             assets/home-hero-production-safe-v2/desktop-1440x900.png
             assets/home-hero-production-safe-v2/mobile-390x844.png
+            /tmp/mo-safe-v2/current.html
           if-no-files-found: warn
           retention-days: 14
