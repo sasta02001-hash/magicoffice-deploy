@@ -1,0 +1,58 @@
+name: Inspect approved MagicOffice hero v3 runtime scripts
+
+on:
+  push:
+    paths:
+      - '.github/workflows/inspect-home-hero-v3-scripts.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract script inventory and video-related snippets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          import re,json
+          s=Path('assets/home-hero-preview-v3/preview.html').read_text(errors='replace')
+          scripts=[]
+          for i,m in enumerate(re.finditer(r'<script\b([^>]*)>([\s\S]*?)</script>',s,re.I)):
+              attrs=m.group(1); body=m.group(2)
+              idm=re.search(r'\bid=["\']([^"\']+)',attrs,re.I)
+              srcm=re.search(r'\bsrc=["\']([^"\']+)',attrs,re.I)
+              scripts.append({'index':i,'id':idm.group(1) if idm else None,'src':srcm.group(1) if srcm else None,'bytes':len(body),'videoRelated':any(x in body or x in attrs for x in ['data-video-ready','data-video-playable','data-home-video-mount','requestFullscreen','mobile-bar','is-scrolled-hidden'])})
+          snippets=[]
+          for needle in ['data-video-ready','data-video-playable','data-home-video-mount','requestFullscreen','is-scrolled-hidden']:
+              start=0
+              while True:
+                  pos=s.find(needle,start)
+                  if pos<0: break
+                  snippets.append(f'\n===== {needle} @ {pos} =====\n'+s[max(0,pos-700):min(len(s),pos+1800)])
+                  start=pos+len(needle)
+          out=Path('assets/home-hero-build-inspection')
+          out.mkdir(exist_ok=True)
+          (out/'script-inventory.json').write_text(json.dumps(scripts,ensure_ascii=False,indent=2))
+          (out/'video-runtime-snippets.txt').write_text(''.join(snippets))
+          print(json.dumps(scripts,ensure_ascii=False,indent=2))
+          PY
+      - name: Commit inspection files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-build-inspection/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record approved hero v3 runtime script inspection'
+            git push origin HEAD:main
+          fi
