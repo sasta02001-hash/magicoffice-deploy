@@ -1,0 +1,215 @@
+name: Build verify and deploy MagicOffice production home video v3
+
+on:
+  push:
+    paths:
+      - '.github/workflows/deploy-production-home-video-v3.yml'
+      - 'scripts/build_safe_home_v2.py'
+      - 'scripts/finalize-production-home-v3.py'
+      - 'scripts/test-production-home-video-v3.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: magicoffice-production-home-video-v3
+  cancel-in-progress: false
+
+env:
+  SOURCE_ORIGIN: https://magicoffice-hwpboyvf0-magicoffice.vercel.app/
+  RELEASE: home-hero-video-wordmark-production-2026-09-01-v3
+  POSTER_URL: /assets/media/magicoffice-home-video-poster-v1.webp
+  DESKTOP_BG_URL: /assets/media/magicoffice-home-clean-scene-desktop-v1.webp
+  MOBILE_BG_URL: /assets/media/magicoffice-home-clean-scene-mobile-v1.webp
+  VIDEO_URL: /assets/media/MagicOffice_home_trial_720p_12s_v1.mp4
+  VIDEO_BYTES: '3016896'
+  VIDEO_SHA256: 2251aa3eb1d386a4d3a889ab147f7a212838e7f1c56bcac018e92fb44bc5f7b1
+  OUTPUT_DIR: assets/home-hero-production-safe-v2
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build dependencies
+        run: python -m pip install --disable-pip-version-check --quiet requests pillow
+
+      - name: Fetch immutable restored Production source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/mo-safe-v2
+          curl --fail --location --silent --show-error --max-time 90 \
+            "${SOURCE_ORIGIN}?production-source=${RELEASE}-$(date +%s)" \
+            -o /tmp/mo-safe-v2/current.html
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('/tmp/mo-safe-v2/current.html')
+          text = p.read_text(encoding='utf-8', errors='replace')
+          checks = {
+              'bytes': p.stat().st_size > 20000,
+              'html': '<html' in text.lower(),
+              'brand': 'MagicOffice' in text,
+              'stableHero': '<section class="hero" id="top">' in text,
+              'mobileNav': '手機版便捷選單' in text,
+              'notVercelLogin': 'vercel.com/sso-api' not in text,
+          }
+          failed = [name for name, value in checks.items() if not value]
+          print('IMMUTABLE_SOURCE_CHECKS', checks)
+          if failed:
+              raise SystemExit('Invalid immutable source: ' + ', '.join(failed))
+          PY
+
+      - name: Build approved hero on the stable source
+        run: python scripts/build_safe_home_v2.py
+
+      - name: Make the deployment fully self-contained
+        run: python scripts/finalize-production-home-v3.py
+
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+
+      - name: Install browser and deployment tools
+        shell: bash
+        run: npm install --no-save --no-audit --no-fund puppeteer-core@24.16.0 vercel@latest >/dev/null
+
+      - name: Verify local desktop mobile playback fallback and all images
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          BASE_URL: http://127.0.0.1:4173/
+          TEST_FALLBACK: '1'
+          SCREENSHOT_DIR: assets/home-hero-production-safe-v2/audit-local
+          REPORT_PATH: assets/home-hero-production-safe-v2/audit-local/browser-report.json
+        run: |
+          set -euo pipefail
+          python -m http.server 4173 --directory "${OUTPUT_DIR}" >/tmp/mo-production-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} || true' EXIT
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/test-production-home-video-v3.mjs
+
+      - name: Link exact Vercel project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${OUTPUT_DIR}/.vercel"
+          cat > "${OUTPUT_DIR}/.vercel/project.json" <<'JSON'
+          {"orgId":"team_44tkvxP20I5s9SUmlxfUEQM1","projectId":"prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D"}
+          JSON
+
+      - name: Deploy verified files to Production
+        id: deploy
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN}"
+          cd "${OUTPUT_DIR}"
+          npx vercel deploy --prod --yes --archive=tgz --token "${VERCEL_TOKEN}" 2>&1 | tee /tmp/vercel-production-deploy.log
+          DEPLOYMENT_URL="$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/vercel-production-deploy.log | tail -1)"
+          test -n "${DEPLOYMENT_URL}"
+          echo "deployment_url=${DEPLOYMENT_URL}" >> "${GITHUB_OUTPUT}"
+          echo "DEPLOYMENT_URL=${DEPLOYMENT_URL}"
+
+      - name: Wait for official domain to serve this exact release
+        shell: bash
+        run: |
+          set -euo pipefail
+          ready=0
+          for i in $(seq 1 60); do
+            if curl --fail --location --silent --show-error --max-time 30 \
+              "https://magicoffice.vercel.app/?release-check=${RELEASE}-$(date +%s)" \
+              | grep -q "${RELEASE}"; then
+              ready=1
+              break
+            fi
+            sleep 3
+          done
+          test "${ready}" = '1'
+
+      - name: Verify the live official Production site
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          BASE_URL: https://magicoffice.vercel.app/
+          TEST_FALLBACK: '0'
+          SCREENSHOT_DIR: assets/home-hero-production-safe-v2/audit-production
+          REPORT_PATH: assets/home-hero-production-safe-v2/audit-production/browser-report.json
+        run: node scripts/test-production-home-video-v3.mjs
+
+      - name: Confirm Vercel media responses and byte ranges
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://magicoffice.vercel.app'
+          curl --fail --silent --show-error --location \
+            -H 'Range: bytes=0-1023' \
+            -D /tmp/video-headers.txt \
+            "${base}${VIDEO_URL}?range-check=${RELEASE}" \
+            -o /tmp/video-range.bin
+          python - <<'PY'
+          from pathlib import Path
+          headers = Path('/tmp/video-headers.txt').read_text(encoding='utf-8', errors='replace').lower()
+          data = Path('/tmp/video-range.bin').read_bytes()
+          checks = {
+              'rangeBytes': len(data) in (1024, 3016896),
+              'mp4Signature': b'ftyp' in data[:64],
+              'successStatus': (' 206 ' in headers) or (' 200 ' in headers),
+              'contentType': 'video/mp4' in headers,
+          }
+          failed = [name for name, value in checks.items() if not value]
+          print('LIVE_VIDEO_RANGE_CHECKS', checks)
+          if failed:
+              raise SystemExit('Live video response failed: ' + ', '.join(failed))
+          PY
+
+      - name: Write deployment receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "${OUTPUT_DIR}/production-deployment-receipt.json" <<JSON
+          {
+            "release": "${RELEASE}",
+            "officialUrl": "https://magicoffice.vercel.app/",
+            "deploymentUrl": "${{ steps.deploy.outputs.deployment_url }}",
+            "video": {
+              "path": "${VIDEO_URL}",
+              "bytes": 3016896,
+              "sha256": "${VIDEO_SHA256}",
+              "width": 1280,
+              "height": 720,
+              "fps": 24,
+              "durationSeconds": 12
+            },
+            "verified": true
+          }
+          JSON
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_production_home_video_v3_evidence
+          path: |
+            assets/home-hero-production-safe-v2/production-finalize-report.json
+            assets/home-hero-production-safe-v2/audit-local/
+            assets/home-hero-production-safe-v2/audit-production/
+            assets/home-hero-production-safe-v2/production-deployment-receipt.json
+            /tmp/vercel-production-deploy.log
+            /tmp/video-headers.txt
+          if-no-files-found: warn
+          retention-days: 14
