@@ -1,0 +1,110 @@
+name: Build and verify MagicOffice production home video v3
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build-production-home-video-v3.yml'
+      - 'scripts/build_production_home_video_v3.mjs'
+      - 'scripts/test_production_home_video_v3.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: magicoffice-production-home-video-v3
+  cancel-in-progress: false
+
+jobs:
+  build-test-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Syntax-check production builder and browser verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check scripts/build_production_home_video_v3.mjs
+          node --check scripts/test_production_home_video_v3.mjs
+
+      - name: Build self-contained production candidate from approved v3 preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/build_production_home_video_v3.mjs
+          test -s assets/production-home-video-v3/MagicOffice_home_video_v3.html
+          test -s assets/production-home-video-v3/manifest.json
+
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+
+      - name: Browser-test desktop, mobile, playback, fallback, images, navigation and sections
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-audit --no-fund puppeteer-core@24.16.0 >/dev/null
+          python3 -m http.server 4173 --directory assets/production-home-video-v3 >/tmp/magicoffice-v3-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/test_production_home_video_v3.mjs
+
+      - name: Record immutable build summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          root=Path('assets/production-home-video-v3')
+          html=root/'MagicOffice_home_video_v3.html'
+          manifest=json.loads((root/'manifest.json').read_text())
+          report=json.loads((root/'browser-report.json').read_text())
+          summary={
+            'release':manifest['release'],
+            'htmlBytes':html.stat().st_size,
+            'htmlSha256':hashlib.sha256(html.read_bytes()).hexdigest(),
+            'browserFailures':report.get('failures',[]),
+            'screenshots':['desktop-1440x900.png','mobile-390x844.png','fallback-390x844.png'],
+            'deploymentSource':'self-contained HTML; no production asset/CDN dependency',
+          }
+          (root/'BUILD_OK.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2))
+          print('MAGICOFFICE_PRODUCTION_HOME_VIDEO_V3_BUILD_OK',json.dumps(summary,ensure_ascii=False))
+          PY
+
+      - name: Commit verified production bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Production Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/production-home-video-v3/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Build verified self-contained MagicOffice home video v3'
+            git push origin HEAD:main
+          fi
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_production_home_video_v3_evidence
+          path: |
+            assets/production-home-video-v3/manifest.json
+            assets/production-home-video-v3/browser-report.json
+            assets/production-home-video-v3/BUILD_OK.json
+            assets/production-home-video-v3/desktop-1440x900.png
+            assets/production-home-video-v3/mobile-390x844.png
+            assets/production-home-video-v3/fallback-390x844.png
+            /tmp/magicoffice-v3-http.log
+          if-no-files-found: warn
+          retention-days: 14
