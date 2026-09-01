@@ -1,0 +1,99 @@
+name: Publish MagicOffice home trial video release v1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-home-trial-video-release-v1.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: magicoffice-home-trial-video-release-v1
+  cancel-in-progress: false
+
+env:
+  VIDEO_DRIVE_ID: 1UkzDJTameTu4XIRKRscEpV1j61Xe8Psq
+  VIDEO_FILE: magicoffice-home-trial-720p-v1.mp4
+  VIDEO_BYTES: '67334731'
+  VIDEO_SHA256: b65929fe53cd056a00281562bcee3ca58268f4cfef476eb4c1bef3cd6ea6a958
+  RELEASE_TAG: magicoffice-home-trial-v1
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download and verify the exact uploaded trial video
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f "$VIDEO_FILE"
+          urls=(
+            "https://drive.usercontent.google.com/download?id=${VIDEO_DRIVE_ID}&export=download&confirm=t"
+            "https://drive.google.com/uc?export=download&id=${VIDEO_DRIVE_ID}&confirm=t"
+          )
+          ok=false
+          for url in "${urls[@]}"; do
+            rm -f /tmp/trial-video-candidate
+            if curl --fail --location --silent --show-error --retry 3 --retry-delay 2 --max-time 600 "$url" -o /tmp/trial-video-candidate; then
+              bytes="$(stat -c%s /tmp/trial-video-candidate)"
+              sha="$(sha256sum /tmp/trial-video-candidate | cut -d' ' -f1)"
+              echo "candidate bytes=${bytes} sha256=${sha}"
+              if [ "$bytes" = "$VIDEO_BYTES" ] && [ "$sha" = "$VIDEO_SHA256" ]; then
+                mv /tmp/trial-video-candidate "$VIDEO_FILE"
+                ok=true
+                break
+              fi
+            fi
+          done
+          if [ "$ok" != true ]; then
+            python -m pip install --quiet gdown
+            gdown "https://drive.google.com/uc?id=${VIDEO_DRIVE_ID}" -O "$VIDEO_FILE"
+          fi
+          test "$(stat -c%s "$VIDEO_FILE")" = "$VIDEO_BYTES"
+          test "$(sha256sum "$VIDEO_FILE" | cut -d' ' -f1)" = "$VIDEO_SHA256"
+          printf '{"file":"%s","bytes":%s,"sha256":"%s"}\n' "$VIDEO_FILE" "$VIDEO_BYTES" "$VIDEO_SHA256" > trial-video-manifest.json
+
+      - name: Create or update the public GitHub release asset
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "$VIDEO_FILE" --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$RELEASE_TAG" "$VIDEO_FILE" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title 'MagicOffice Homepage Trial Video v1' \
+              --notes 'Web playback derivative for the MagicOffice homepage. H.264, 1280x720, 24fps, no audio, derived from the uploaded full composite. This is a trial playback asset, not the locked master.'
+          fi
+
+      - name: Verify release URL and downloadable bytes
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          url="$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[] | select(.name==env.VIDEO_FILE) | .url')"
+          browser="https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}/${VIDEO_FILE}"
+          test -n "$url"
+          curl --fail --location --silent --show-error --retry 3 --max-time 600 "$browser" -o verified-release-video.mp4
+          test "$(stat -c%s verified-release-video.mp4)" = "$VIDEO_BYTES"
+          test "$(sha256sum verified-release-video.mp4 | cut -d' ' -f1)" = "$VIDEO_SHA256"
+          printf '%s\n' "$browser" > trial-video-release-url.txt
+          echo "TRIAL_VIDEO_RELEASE_VERIFIED $browser"
+
+      - name: Upload release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_home_trial_video_release_v1_evidence
+          path: |
+            trial-video-manifest.json
+            trial-video-release-url.txt
+          if-no-files-found: warn
+          retention-days: 14
