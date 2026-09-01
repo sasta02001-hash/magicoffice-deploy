@@ -27,28 +27,12 @@ jobs:
 
           builder = Path('scripts/build_production_home_video_v4.mjs')
           s = builder.read_text()
-
           replacements = [
-            (
-              '<video class="home-hero-trial-video" muted loop playsinline webkit-playsinline preload="auto" aria-label="MagicOffice 試播影片" src="${videoUri}"></video>',
-              '<video class="home-hero-trial-video" muted autoplay loop playsinline webkit-playsinline preload="auto" aria-label="MagicOffice 試播影片" src="${videoUri}"></video>'
-            ),
-            (
-              '.homepage-cinema-stage [data-home-video-mount]{z-index:2!important;opacity:0!important;visibility:hidden!important;background:transparent!important;transition:opacity .32s ease,visibility .32s ease!important}',
-              '.homepage-cinema-stage [data-home-video-mount]{z-index:0!important;opacity:1!important;visibility:visible!important;background:transparent!important;transition:opacity .32s ease,visibility .32s ease!important}'
-            ),
-            (
-              '.homepage-cinema-stage[data-video-ready="true"] [data-home-video-mount]{opacity:1!important;visibility:visible!important}',
-              '.homepage-cinema-stage[data-video-ready="true"] [data-home-video-mount]{z-index:2!important;opacity:1!important;visibility:visible!important}'
-            ),
-            (
-              '.homepage-cinema-stage[data-video-ready="false"] [data-home-video-mount]{opacity:0!important;visibility:hidden!important}',
-              '.homepage-cinema-stage[data-video-ready="false"] [data-home-video-mount]{z-index:0!important;opacity:1!important;visibility:visible!important}'
-            ),
-            (
-              "video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');",
-              "video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');"
-            ),
+            ('<video class="home-hero-trial-video" muted loop playsinline webkit-playsinline preload="auto" aria-label="MagicOffice 試播影片" src="${videoUri}"></video>', '<video class="home-hero-trial-video" muted autoplay loop playsinline webkit-playsinline preload="auto" aria-label="MagicOffice 試播影片" src="${videoUri}"></video>'),
+            ('.homepage-cinema-stage [data-home-video-mount]{z-index:2!important;opacity:0!important;visibility:hidden!important;background:transparent!important;transition:opacity .32s ease,visibility .32s ease!important}', '.homepage-cinema-stage [data-home-video-mount]{z-index:0!important;opacity:1!important;visibility:visible!important;background:transparent!important;transition:opacity .32s ease,visibility .32s ease!important}'),
+            ('.homepage-cinema-stage[data-video-ready="true"] [data-home-video-mount]{opacity:1!important;visibility:visible!important}', '.homepage-cinema-stage[data-video-ready="true"] [data-home-video-mount]{z-index:2!important;opacity:1!important;visibility:visible!important}'),
+            ('.homepage-cinema-stage[data-video-ready="false"] [data-home-video-mount]{opacity:0!important;visibility:hidden!important}', '.homepage-cinema-stage[data-video-ready="false"] [data-home-video-mount]{z-index:0!important;opacity:1!important;visibility:visible!important}'),
+            ("video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');", "video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');"),
           ]
           for old, new in replacements:
             if old not in s:
@@ -58,16 +42,8 @@ jobs:
 
           test = Path('scripts/test_production_home_video_v4.mjs')
           t = test.read_text()
-          old_wait = """ if(fallback)await new Promise(r=>setTimeout(r,1600));
- else await page.waitForFunction(()=>{const s=document.querySelector('.homepage-cinema-stage'),v=s?.querySelector('.home-hero-trial-video');return s?.dataset.videoReady==='true'&&v&&!v.paused&&v.currentTime>.2},{timeout:30000});
-"""
-          new_wait = """ let playbackWaitError=null;
- if(fallback)await new Promise(r=>setTimeout(r,1600));
- else {
-  try { await page.waitForFunction(()=>{const s=document.querySelector('.homepage-cinema-stage'),v=s?.querySelector('.home-hero-trial-video');return s?.dataset.videoReady==='true'&&v&&!v.paused&&v.currentTime>.2},{timeout:30000}); }
-  catch(error){ playbackWaitError=String(error); }
- }
-"""
+          old_wait = " if(fallback)await new Promise(r=>setTimeout(r,1600));\n else await page.waitForFunction(()=>{const s=document.querySelector('.homepage-cinema-stage'),v=s?.querySelector('.home-hero-trial-video');return s?.dataset.videoReady==='true'&&v&&!v.paused&&v.currentTime>.2},{timeout:30000});\n"
+          new_wait = " let playbackWaitError=null;\n if(fallback)await new Promise(r=>setTimeout(r,1600));\n else {\n  try { await page.waitForFunction(()=>{const s=document.querySelector('.homepage-cinema-stage'),v=s?.querySelector('.home-hero-trial-video');return s?.dataset.videoReady==='true'&&v&&!v.paused&&v.currentTime>.2},{timeout:30000}); }\n  catch(error){ playbackWaitError=String(error); }\n }\n"
           if old_wait not in t:
             raise SystemExit('Test wait patch marker missing')
           t = t.replace(old_wait, new_wait, 1)
