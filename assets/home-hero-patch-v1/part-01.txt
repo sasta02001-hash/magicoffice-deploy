@@ -3,7 +3,7 @@ tions.events, false],
   ].map(([label, href, primary]) => `<a class="mobile-bottom-link${primary ? ' mobile-bottom-link--primary' : ''}" href="${escapeHtml(href)}"${externalAttrs(href)}>${label}</a>`).join('');
   html = html.replace(mobileNavPattern, (_full, tag, attrs) => `<${tag}${attrs} data-home-mobile-nav="four-core-links">${mobileLinks}</${tag}>`);
 
-  const headPatch = `<meta name="x-magicoffice-home-hero-patch" content="${RELEASE}"/><link id="magicoffice-home-video-poster-preload" rel="preload" as="image" href="${POSTER_PATH}?v=${POSTER_CACHE}" fetchpriority="high"/><style id="magicoffice-home-hero-patch-v1">
+  const headPatch = `<meta name="x-magicoffice-home-hero-patch" content="${RELEASE}"/><meta name="x-magicoffice-home-desktop-background" content="desktop-clean-scene-2026-09-01-v1"/><link id="magicoffice-home-video-poster-preload" rel="preload" as="image" href="${POSTER_PATH}?v=${POSTER_CACHE}" fetchpriority="high"/><link id="magicoffice-home-desktop-bg-preload" rel="preload" as="image" media="(min-width:961px)" href="${DESKTOP_BG_PATH}?v=${DESKTOP_BG_CACHE}"/><style id="magicoffice-home-hero-patch-v1">
   .home-hero-shell{width:min(1540px,calc(100vw - 64px))!important;grid-template-columns:minmax(320px,36fr) minmax(0,64fr)!important;gap:clamp(32px,4vw,64px)!important;align-items:center!important}
   .home-hero-brand{position:relative!important;isolation:isolate!important;min-width:0!important}
   .home-hero-brand::before{content:""!important;position:absolute!important;inset:-7% -9%!important;z-index:-1!important;background:radial-gradient(ellipse at 42% 46%,rgba(7,4,6,.58),rgba(7,4,6,.20) 57%,transparent 77%)!important;filter:blur(11px)!important;pointer-events:none!important}
@@ -18,23 +18,27 @@ tions.events, false],
   .homepage-cinema-stage[data-video-ready="true"] .home-video-poster{opacity:0!important;visibility:hidden!important}
   .homepage-cinema-stage[data-video-ready="true"] [data-home-video-mount]{opacity:1!important;visibility:visible!important}
   .cinema-fullscreen-button{z-index:4!important}
-  .mobile-bottom-bar>.mobile-bottom-link{min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;text-decoration:none!important;white-space:nowrap!important}
+  :is(.mobile-bottom-bar,.mobile-bar)>.mobile-bottom-link{min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;text-decoration:none!important;white-space:nowrap!important}
+  .mo-home-static-bg{background-image:url("${DESKTOP_BG_PATH}?v=${DESKTOP_BG_CACHE}")!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important}
+  .mo-home-static-bg>.mo-home-static-bg-image{opacity:0!important;visibility:hidden!important}
   @media(max-width:960px){
+    .mo-home-static-bg{background-image:none!important}
+    .mo-home-static-bg>.mo-home-static-bg-image{opacity:1!important;visibility:visible!important}
     .home-hero-shell{width:min(calc(100% - 28px),720px)!important;grid-template-columns:1fr!important;gap:18px!important}
     .home-hero-brand::before{inset:-4% -5%!important;filter:blur(9px)!important}
     .home-hero-logo{filter:drop-shadow(0 2px 11px rgba(0,0,0,.72))!important}
     .homepage-cinema-stage{border-radius:12px!important}
-    .mobile-bottom-bar{grid-template-columns:repeat(4,minmax(0,1fr))!important;min-height:58px!important;transition:transform .24s ease,opacity .24s ease!important;will-change:transform,opacity!important}
-    .mobile-bottom-bar>.mobile-bottom-link{padding:10px 4px!important;font-size:clamp(11px,3vw,13px)!important;line-height:1.2!important}
-    .mobile-bottom-bar>.mobile-bottom-link--primary{font-weight:800!important;color:#fff4f6!important;background:linear-gradient(180deg,rgba(139,35,61,.95),rgba(92,18,40,.97))!important}
-    .mobile-bottom-bar.is-scrolled-hidden{transform:translateY(calc(100% + env(safe-area-inset-bottom,0px) + 6px))!important;opacity:0!important;pointer-events:none!important}
+    :is(.mobile-bottom-bar,.mobile-bar){grid-template-columns:repeat(4,minmax(0,1fr))!important;min-height:58px!important;transition:transform .24s ease,opacity .24s ease!important;will-change:transform,opacity!important}
+    :is(.mobile-bottom-bar,.mobile-bar)>.mobile-bottom-link{padding:10px 4px!important;font-size:clamp(11px,3vw,13px)!important;line-height:1.2!important}
+    :is(.mobile-bottom-bar,.mobile-bar)>.mobile-bottom-link--primary{font-weight:800!important;color:#fff4f6!important;background:linear-gradient(180deg,rgba(139,35,61,.95),rgba(92,18,40,.97))!important}
+    :is(.mobile-bottom-bar,.mobile-bar).is-scrolled-hidden{transform:translateY(calc(100% + env(safe-area-inset-bottom,0px) + 6px))!important;opacity:0!important;pointer-events:none!important}
   }
-  @media(prefers-reduced-motion:reduce){.home-video-poster,[data-home-video-mount],.mobile-bottom-bar{transition:none!important}}
+  @media(prefers-reduced-motion:reduce){.home-video-poster,[data-home-video-mount],:is(.mobile-bottom-bar,.mobile-bar){transition:none!important}}
   </style>`;
   if (!html.includes('</head>')) throw new Error('Homepage has no </head>');
   html = html.replace('</head>', `${headPatch}</head>`);
 
-  const runtimePatch = `<script id="magicoffice-home-hero-patch-script-v1">(()=>{const RELEASE=${JSON.stringify(RELEASE)};const boot=()=>{const stage=document.querySelector('.homepage-cinema-stage');const mount=document.querySelector('[data-home-video-mount]');const nav=document.querySelector('.mobile-bottom-bar');if(!stage||!mount)return;const bound=new WeakSet();let internal=false;const setReady=(value)=>{const next=value?'true':'false';if(stage.dataset.videoReady===next)return;internal=true;stage.dataset.videoReady=next;stage.classList.toggle('is-video-ready',!!value);queueMicrotask(()=>{internal=false})};const assess=()=>{const video=mount.querySelector('video');if(!video){setReady(false);return}const ready=!video.error&&video.readyState>=2;setReady(ready)};const bind=(video)=>{if(bound.has(video))return;bound.add(video);const show=()=>{if(!video.error&&video.readyState>=2)setReady(true)};const hide=()=>setReady(false);['loadeddata','canplay','playing'].forEach(type=>video.addEventListener(type,show,{passive:true}));['error','emptied','abort','stalled'].forEach(type=>video.addEventListener(type,hide,{passive:true}));video.addEventListener('loadstart',assess,{passive:true});assess()};const scan=()=>{mount.querySelectorAll('video').forEach(bind);assess()};const observer=new MutationObserver(()=>scan());observer.observe(mount,{childList:true,subtree:true});const stageObserver=new MutationObserver(()=>{if(internal)return;assess()});stageObserver.observe(stage,{attributes:true,attributeFilter:['data-video-ready']});scan();if(nav){let last=Math.max(0,window.scrollY);let ticking=false;const update=()=>{const y=Math.max(0,window.scrollY);const delta=y-last;const mobile=window.matchMedia('(max-width:960px)').matches;if(!mobile||y<32||delta<-10)nav.classList.remove('is-scrolled-hidden');else if(delta>10&&y>96)nav.classList.add('is-scrolled-hidden');last=y;ticking=false};window.addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}},{passive:true});window.addEventListener('resize',()=>{if(!window.matchMedia('(max-width:960px)').matches)nav.classList.remove('is-scrolled-hidden')},{passive:true})}document.documentElement.dataset.homeHeroPatch=RELEASE};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot()})();</script>`;
+  const runtimePatch = `<script id="magicoffice-home-hero-patch-script-v1">(()=>{const RELEASE=${JSON.stringify(RELEASE)};const boot=()=>{const stage=document.querySelector('.homepage-cinema-stage');const mount=document.querySelector('[data-home-video-mount]');const nav=document.querySelector(':is(.mobile-bottom-bar,.mobile-bar)');if(!stage||!mount)return;const bound=new WeakSet();let internal=false;const setReady=(value)=>{const next=value?'true':'false';if(stage.dataset.videoReady===next)return;internal=true;stage.dataset.videoReady=next;stage.classList.toggle('is-video-ready',!!value);queueMicrotask(()=>{internal=false})};const assess=()=>{const video=mount.querySelector('video');if(!video){setReady(false);return}const ready=!video.error&&video.readyState>=2;setReady(ready)};const bind=(video)=>{if(bound.has(video))return;bound.add(video);const show=()=>{if(!video.error&&video.readyState>=2)setReady(true)};const hide=()=>setReady(false);['loadeddata','canplay','playing'].forEach(type=>video.addEventListener(type,show,{passive:true}));['error','emptied','abort','stalled'].forEach(type=>video.addEventListener(type,hide,{passive:true}));video.addEventListener('loadstart',assess,{passive:true});assess()};const scan=()=>{mount.querySelectorAll('video').forEach(bind);assess()};const observer=new MutationObserver(()=>scan());observer.observe(mount,{childList:true,subtree:true});const stageObserver=new MutationObserver(()=>{if(internal)return;assess()});stageObserver.observe(stage,{attributes:true,attributeFilter:['data-video-ready']});scan();if(nav){let last=Math.max(0,window.scrollY);let ticking=false;const update=()=>{const y=Math.max(0,window.scrollY);const delta=y-last;const mobile=window.matchMedia('(max-width:960px)').matches;if(!mobile||y<32||delta<-10)nav.classList.remove('is-scrolled-hidden');else if(delta>10&&y>96)nav.classList.add('is-scrolled-hidden');last=y;ticking=false};window.addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}},{passive:true});window.addEventListener('resize',()=>{if(!window.matchMedia('(max-width:960px)').matches)nav.classList.remove('is-scrolled-hidden')},{passive:true})}document.documentElement.dataset.homeHeroPatch=RELEASE};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot()})();</script>`;
   if (!html.includes('</body>')) throw new Error('Homepage has no </body>');
   html = html.replace('</body>', `${runtimePatch}</body>`);
 
@@ -49,6 +53,7 @@ tions.events, false],
     hosts: html.includes('姶仕名錄'),
     events: html.includes('活動快報'),
     backgroundPreserved: html.includes('magicoffice-home-clean-scene-v5.webp'),
+    desktopBackground: html.includes(`${DESKTOP_BG_PATH}?v=${DESKTOP_BG_CACHE}`),
     petalsPreserved: (html.match(/class="mo-home-petal"/g) || []).length >= 6,
   };
   const failures = Object.entries(finalChecks).filter(([, ok]) => !ok).map(([name]) => name);
@@ -71,6 +76,7 @@ tions.events, false],
       mobileColumns: '1fr',
       ornaments: 'hidden',
       repeatedEyebrow: 'hidden',
+      desktopBackground: { path: DESKTOP_BG_PATH, width: 2560, height: 1440, bytes: desktopBg.length, sha256: desktopSha, behavior: 'desktop only; mobile keeps approved clean-scene v5 portrait' },
     },
     mobileNavigation: {
       items: ['姶仕名錄', '本週出勤', '活動快報', '立即訂位'],

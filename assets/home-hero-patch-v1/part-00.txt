@@ -11,6 +11,11 @@ const POSTER_CACHE = '20260901-home-hero-poster-v1';
 const POSTER_BYTES = 70654;
 const POSTER_SHA256 = 'f69fb516d01861fe28486ce14c536c5e2109846a0fcd757cbcdc1a0d04ec9d94';
 const POSTER_BASE = 'https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/homepage-poster-v3';
+const DESKTOP_BG_PATH = '/assets/media/magicoffice-home-clean-scene-desktop-v1.webp';
+const DESKTOP_BG_CACHE = '20260901-desktop-clean-scene-v1';
+const DESKTOP_BG_BYTES = 198942;
+const DESKTOP_BG_SHA256 = 'bd41188ff12ed9f4755d96f3309fee6019d7608b39cf30853a83af33baf65bab';
+const DESKTOP_BG_URL = 'https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/home-clean-scene-desktop-v1/magicoffice-home-clean-scene-desktop-v1.webp';
 
 fs.rmSync(DIST, { recursive: true, force: true });
 fs.mkdirSync(DIST, { recursive: true });
@@ -183,6 +188,15 @@ function externalAttrs(href) {
   }
   writeAsset(POSTER_PATH, poster);
 
+  // Checksum-lock and mirror the 2560x1440 desktop-only background.
+  const desktopResult = await fetchBytes(`${DESKTOP_BG_URL}?v=${DESKTOP_BG_CACHE}`);
+  const desktopBg = desktopResult.data;
+  const desktopSha = crypto.createHash('sha256').update(desktopBg).digest('hex');
+  if (desktopBg.length !== DESKTOP_BG_BYTES || desktopSha !== DESKTOP_BG_SHA256) {
+    throw new Error(`Desktop background verification failed bytes=${desktopBg.length} sha256=${desktopSha}`);
+  }
+  writeAsset(DESKTOP_BG_PATH, desktopBg);
+
   // Required existing destinations are read from the live page; no booking URL is guessed.
   const destinations = {
     hosts: findHrefByText(html, '姶仕名錄'),
@@ -215,7 +229,7 @@ function externalAttrs(href) {
   const posterMarkup = `<img class="home-video-poster" src="${POSTER_PATH}?v=${POSTER_CACHE}" width="1280" height="720" alt="MagicOffice 影片封面" decoding="async" fetchpriority="high"/>`;
   html = html.replace(mountOpenPattern, `${posterMarkup}$1`);
 
-  const mobileNavPattern = /<(nav|div)\b([^>]*class=["'][^"']*\bmobile-bottom-bar\b[^"']*["'][^>]*)>[\s\S]*?<\/\1>/i;
+  const mobileNavPattern = /<(nav|div)\b([^>]*class=["'][^"']*\bmobile-(?:bottom-)?bar\b[^"']*["'][^>]*)>[\s\S]*?<\/\1>/i;
   if (!mobileNavPattern.test(html)) throw new Error('Could not locate mobile-bottom-bar');
   const mobileLinks = [
     ['姶仕名錄', destinations.hosts, false],
