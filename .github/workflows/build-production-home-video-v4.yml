@@ -1,4 +1,4 @@
-# Rebuild after encoded CSS fragment handling fix
+# Rebuild after autoplay and poster-layering fix
 name: Build and verify MagicOffice production home video v4
 
 on:
