@@ -1,0 +1,41 @@
+name: Patch MagicOffice production v4 CSS fragment handling
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-production-v4-css-fragment.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Ignore encoded SVG fragment URLs in CSS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          p=Path('scripts/build_production_home_video_v4.mjs')
+          s=p.read_text()
+          old="  const value=String(raw).trim().replace(/^['\"]|['\"]$/g,'');\n  if (!value || /^(?:data:|blob:|javascript:|mailto:|tel:|#)/i.test(value)) return null;"
+          new="  const value=String(raw).trim().replace(/^['\"]|['\"]$/g,'');\n  let decodedValue=value; try { decodedValue=decodeURIComponent(value); } catch {}\n  if (!value || /^(?:data:|blob:|javascript:|mailto:|tel:|#)/i.test(value) || decodedValue.startsWith('#')) return null;"
+          if old not in s: raise SystemExit('fragment patch marker missing')
+          p.write_text(s.replace(old,new,1))
+          PY
+          node --check scripts/build_production_home_video_v4.mjs
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Production Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add scripts/build_production_home_video_v4.mjs
+          git commit -m 'Ignore encoded SVG fragment URLs in production v4 builder'
+          git push origin HEAD:main
