@@ -1,0 +1,40 @@
+name: Patch safe homepage builder validation
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-safe-home-v2-actions.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Remove unrelated LINE wording from candidate gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('scripts/build_safe_home_v2.py')
+          text = path.read_text()
+          old = "'actions': all(label in html for label in ('立即訂位', '本週出勤', 'LINE 官方'))"
+          new = "'actions': all(label in html for label in ('立即訂位', '本週出勤'))"
+          if old not in text:
+              raise SystemExit('Expected validation expression not found')
+          path.write_text(text.replace(old, new, 1))
+          PY
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Safe Production Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add scripts/build_safe_home_v2.py
+          git commit -m 'Fix safe home candidate validation'
+          git push origin HEAD:main
