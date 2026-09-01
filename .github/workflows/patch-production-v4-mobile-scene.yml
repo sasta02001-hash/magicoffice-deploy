@@ -1,0 +1,47 @@
+name: Patch MagicOffice production v4 mobile clean scene
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-production-v4-mobile-scene.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Replace truncated clean-scene chunk with the complete chunk
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          p=Path('scripts/build_production_home_video_v4.mjs')
+          s=p.read_text()
+          old="'part-06a.txt'"
+          new="'part-06.txt'"
+          if old not in s: raise SystemExit('mobile clean-scene chunk marker missing')
+          s=s.replace(old,new,1)
+          old_check="  const dim=webpDimensions(buffer);\n  if (!dim || dim.width !== 1000 || dim.height !== 1333) throw new Error(`Mobile clean-scene dimensions invalid ${JSON.stringify(dim)}`);"
+          new_check="  const dim=webpDimensions(buffer);\n  const declared=buffer.length>=8?buffer.readUInt32LE(4)+8:0;\n  if (!dim || dim.width !== 1000 || dim.height !== 1333 || declared !== buffer.length) throw new Error(`Mobile clean-scene invalid dimensions=${JSON.stringify(dim)} bytes=${buffer.length} declared=${declared}`);"
+          if old_check not in s: raise SystemExit('mobile clean-scene validation marker missing')
+          s=s.replace(old_check,new_check,1)
+          p.write_text(s)
+          PY
+          node --check scripts/build_production_home_video_v4.mjs
+      - name: Commit complete mobile scene payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Production Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add scripts/build_production_home_video_v4.mjs
+          git commit -m 'Use complete mobile clean-scene payload'
+          git push origin HEAD:main
