@@ -225,6 +225,14 @@ async function main() {
 </style>`;
   html=html.replace('</head>',`${css}</head>`,1);
 
+  html=html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi,(full,attrs,body)=>{
+    const type=(attrs.match(/\btype=["\']([^"\']+)["\']/i)||[])[1]?.toLowerCase()||"";
+    if(!body.trim()||/\bsrc=/.test(attrs)||["application/ld+json","application/json","application/octet-stream","importmap"].includes(type)||type==="module")return full;
+    if(/\bdata-inline-isolated=/.test(attrs))return full;
+    if(!/\b(?:const|let)\s+\$\s*=/.test(body))return full;
+    return `<script${attrs} data-inline-isolated="dollar-helper">(function(){\n${body}\n}).call(window);<\/script>`;
+  });
+
   const controller=`<script id="magicoffice-home-video-controller-v4">
 (function(){
  function init(){
