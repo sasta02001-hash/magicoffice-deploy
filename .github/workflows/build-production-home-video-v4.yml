@@ -1,0 +1,125 @@
+name: Build and verify MagicOffice production home video v4
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build-production-home-video-v4.yml'
+      - 'scripts/build_production_home_video_v4.mjs'
+      - 'scripts/test_production_home_video_v4.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: magicoffice-production-home-video-v4
+  cancel-in-progress: false
+
+jobs:
+  build-test-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract checksum-preserved v2.0.7.2 site assets from Git history
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/mo-v207
+          mkdir -p /tmp/mo-v207
+          git archive daa5e1aa480c0c717b91f1701a3f99c7293b5047 v207-site | tar -x -C /tmp/mo-v207
+          test -s /tmp/mo-v207/v207-site/assets/css/site-v2.0.6.css
+          test -s /tmp/mo-v207/v207-site/assets/js/magic-core-js.js
+          find /tmp/mo-v207/v207-site/assets -type f | wc -l
+
+      - name: Syntax-check builder and verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check scripts/build_production_home_video_v4.mjs
+          node --check scripts/test_production_home_video_v4.mjs
+
+      - name: Build self-contained production candidate
+        shell: bash
+        env:
+          LEGACY_ROOT: /tmp/mo-v207/v207-site
+        run: |
+          set -euo pipefail
+          node scripts/build_production_home_video_v4.mjs
+          test -s assets/production-home-video-v4/MagicOffice_home_video_v4.html
+          test -s assets/production-home-video-v4/manifest.json
+
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+
+      - name: Browser-test desktop, mobile, playback, fallback, images, navigation and content
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-audit --no-fund puppeteer-core@24.16.0 >/dev/null
+          python3 -m http.server 4174 --directory assets/production-home-video-v4 >/tmp/magicoffice-v4-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:4174/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/test_production_home_video_v4.mjs
+
+      - name: Record immutable build summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          root=Path('assets/production-home-video-v4')
+          html=root/'MagicOffice_home_video_v4.html'
+          manifest=json.loads((root/'manifest.json').read_text())
+          report=json.loads((root/'browser-report.json').read_text())
+          summary={
+            'release':manifest['release'],
+            'htmlBytes':html.stat().st_size,
+            'htmlSha256':hashlib.sha256(html.read_bytes()).hexdigest(),
+            'browserFailures':report.get('failures',[]),
+            'screenshots':['desktop-1440x900.png','mobile-390x844.png','fallback-390x844.png'],
+            'deploymentSource':'self-contained HTML; no prior Vercel deployment asset dependency',
+          }
+          if summary['browserFailures']:
+            raise SystemExit('Browser failures remain')
+          (root/'BUILD_OK.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2))
+          print('MAGICOFFICE_PRODUCTION_V4_BUILD_OK',json.dumps(summary,ensure_ascii=False))
+          PY
+
+      - name: Commit verified production bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Production Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/production-home-video-v4/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Build verified self-contained MagicOffice home video v4'
+            git push origin HEAD:main
+          fi
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_production_home_video_v4_evidence
+          path: |
+            assets/production-home-video-v4/manifest.json
+            assets/production-home-video-v4/browser-report.json
+            assets/production-home-video-v4/BUILD_OK.json
+            assets/production-home-video-v4/desktop-1440x900.png
+            assets/production-home-video-v4/mobile-390x844.png
+            assets/production-home-video-v4/fallback-390x844.png
+            /tmp/magicoffice-v4-http.log
+          if-no-files-found: warn
+          retention-days: 14
