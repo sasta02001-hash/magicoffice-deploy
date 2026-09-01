@@ -1,0 +1,592 @@
+name: MagicOffice nameplate-free final render
+
+on:
+  push:
+    branches: [magicoffice-nameplate-clean-20260901]
+    paths: ['.github/workflows/magicoffice-nameplate-free-render.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: magicoffice-nameplate-clean-20260901
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install media tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg unzip
+          python -m pip install --quiet gdown opencv-python-headless numpy
+
+      - name: Download reference, locked replacements, and Runway originals
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p work/zips work/sources output/parts output/tools
+          python - <<'PY'
+          import subprocess
+          files = {
+            'reference.mp4':'1UkzDJTameTu4XIRKRscEpV1j61Xe8Psq',
+            'CURRENT_GATE.mp4':'1ZnuuxgQ7dnNringwGy8g2lZIs0EL_-oT',
+            'CURRENT_ENDING.mp4':'1IUy-JxsT7JT9VDiCiJT9xUICaALYKhng',
+            'OPENING.zip':'1wTDnK3hcoLrUb2A-e7mYX5vkfkQSpTfA',
+            'CITY.zip':'1nmfiax6cke7PMY_T6dksy_wha3uKrZEf',
+            'PALACE.zip':'18_sEn4AvsA0qQGZ9Qw93WCMPFD8GbM6A',
+            'YOSHINO.zip':'1Cd35m0NKuvLv2owbLoiN2RSU6O6Jbt3-',
+            'SAKURI.zip':'14z6GOwKhCfkuDWEefPy_qZYxg19i5-hI',
+            'TSUKUYOMI.zip':'1MtVaX6Y4JB7EIbkdWR5rOHXrejUMECuK',
+            'MOMIJI.zip':'1p9r2YN5H5EkkYzHWKArZQp0xU1gFaKdc',
+            'SETSUKA.zip':'1dA0a6ADp5EvNEFkkbAaRDraHFWi28Kwr',
+            'MAGIC.zip':'1gnx8jFiMaiJdGWBzRaaGshjWs74AcBD6',
+          }
+          for name,fid in files.items():
+            out='work/'+name if name.endswith('.mp4') else 'work/zips/'+name
+            print('download',name,flush=True)
+            subprocess.run(['gdown',fid,'-O',out],check=True)
+          PY
+          for z in work/zips/*.zip; do
+            b="$(basename "$z" .zip)"
+            mkdir -p "work/sources/$b"
+            unzip -q -o "$z" -d "work/sources/$b"
+          done
+
+      - name: Rebuild clean 1080p master from source frames
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/render_clean.py <<'PY'
+          import csv, json, math, os, subprocess, sys
+          from collections import Counter
+          from pathlib import Path
+          import cv2
+          import numpy as np
+
+          FPS=24
+          W,H=1920,1080
+          PREFIX_FRAMES=214*FPS
+          ENDING_FRAMES=341
+          TOTAL_FRAMES=PREFIX_FRAMES+ENDING_FRAMES
+          ROOT=Path('work')
+          SRC=ROOT/'sources'
+          OUT=Path('output')
+          OUT.mkdir(exist_ok=True)
+
+          GROUP_DIR={
+            'OPENING':SRC/'OPENING', 'CITY':SRC/'CITY', 'PALACE':SRC/'PALACE',
+            'YOSHINO':SRC/'YOSHINO', 'SAKURI':SRC/'SAKURI',
+            'TSUKUYOMI':SRC/'TSUKUYOMI', 'MOMIJI':SRC/'MOMIJI',
+            'SETSUKA':SRC/'SETSUKA', 'MAGIC':SRC/'MAGIC',
+          }
+          BOUNDS={
+            'YOSHINO':(582,996),
+            'SAKURI':(996,1836),
+            'TSUKUYOMI':(1836,2496),
+            'MOMIJI':(2496,3510),
+            'SETSUKA':(3510,4585),
+            'MAGIC':(4585,PREFIX_FRAMES),
+          }
+
+          def crop169(frame):
+            h,w=frame.shape[:2]; target=16/9
+            if w/h > target:
+              nw=int(round(h*target)); x=max(0,(w-nw)//2); frame=frame[:,x:x+nw]
+            elif w/h < target:
+              nh=int(round(w/target)); y=max(0,(h-nh)//2); frame=frame[y:y+nh,:]
+            return frame
+
+          def norm_frame(frame, small=False):
+            frame=crop169(frame)
+            size=(96,54) if small else (W,H)
+            inter=cv2.INTER_AREA if frame.shape[1]>size[0] else cv2.INTER_LANCZOS4
+            return cv2.resize(frame,size,interpolation=inter)
+
+          def feature(frame):
+            f=norm_frame(frame,small=True)
+            h,w=f.shape[:2]
+            f=f[int(h*.04):int(h*.96),int(w*.20):int(w*.80)]
+            f=cv2.resize(f,(96,54),interpolation=cv2.INTER_AREA)
+            lab=cv2.cvtColor(f,cv2.COLOR_BGR2LAB)
+            gray=lab[:,:,0].astype(np.float32)/255.0
+            gray=(gray-gray.mean())/(gray.std()+1e-5)
+            d=cv2.dct(gray)[:12,:18].reshape(-1)[1:]
+            d=d/(np.linalg.norm(d)+1e-8)
+            gx=cv2.Sobel(gray,cv2.CV_32F,1,0,ksize=3)
+            gy=cv2.Sobel(gray,cv2.CV_32F,0,1,ksize=3)
+            e=np.sqrt(gx*gx+gy*gy)
+            e=cv2.resize(e,(48,27),interpolation=cv2.INTER_AREA)
+            e=(e-e.mean())/(e.std()+1e-5)
+            ed=cv2.dct(e)[:8,:12].reshape(-1)[1:]
+            ed=ed/(np.linalg.norm(ed)+1e-8)
+            hsv=cv2.cvtColor(f,cv2.COLOR_BGR2HSV)
+            hist=cv2.calcHist([hsv],[0,1,2],None,[12,4,4],[0,180,0,256,0,256]).reshape(-1).astype(np.float32)
+            hist=np.sqrt(hist/(hist.sum()+1e-8)); hist=hist/(np.linalg.norm(hist)+1e-8)
+            v=np.concatenate([np.sqrt(.58)*d,np.sqrt(.27)*ed,np.sqrt(.15)*hist]).astype(np.float32)
+            return v/(np.linalg.norm(v)+1e-8)
+
+          def locate(group, name):
+            hits=list(GROUP_DIR[group].rglob(name))
+            if not hits:
+              # Unicode/case-safe fallback by basename.
+              hits=[p for p in GROUP_DIR[group].rglob('*.mp4') if p.name==name]
+            if not hits:
+              raise FileNotFoundError(f'{group}: {name}')
+            return hits[0]
+
+          def read_features(path):
+            path=Path(path)
+            cap=cv2.VideoCapture(str(path)); fps=float(cap.get(cv2.CAP_PROP_FPS) or FPS)
+            feats=[]; count=0
+            while True:
+              ok,fr=cap.read()
+              if not ok: break
+              feats.append(feature(fr)); count+=1
+            cap.release()
+            if not feats: raise RuntimeError(f'No frames: {path}')
+            return np.asarray(feats,np.float32),fps,count
+
+          # Reference frame features at exact decoded frame indices.
+          ref_cap=cv2.VideoCapture(str(ROOT/'reference.mp4'))
+          ref_features=[]
+          for i in range(PREFIX_FRAMES):
+            ok,fr=ref_cap.read()
+            if not ok: raise RuntimeError(f'reference ended at frame {i}')
+            ref_features.append(feature(fr))
+          ref_cap.release()
+          ref_features=np.asarray(ref_features,np.float32)
+          print('reference features',ref_features.shape,flush=True)
+
+          feat_cache={}
+          meta_cache={}
+          def source_data(path):
+            key=str(path)
+            if key not in feat_cache:
+              f,fps,n=read_features(path); feat_cache[key]=f; meta_cache[key]=(fps,n)
+              print('source features',Path(path).name,f.shape,fps,flush=True)
+            return feat_cache[key],meta_cache[key]
+
+          # Selection items are (path, source_frame_index, mode).
+          selection=[None]*PREFIX_FRAMES
+          plan=[]
+
+          # Locked no-text opening derivative, preserved as a finished segment.
+          opening=locate('OPENING','MagicOffice_Opening_NO_TEXT_4K.mp4')
+          of,(_,on)=source_data(opening)
+          if on<132: raise RuntimeError('opening source is shorter than 132 frames')
+          for i in range(132): selection[i]=(str(opening),i,'direct')
+          plan.append({'group':'OPENING','start_frame':0,'end_frame':132,'file_name':opening.name,'mode':'direct'})
+
+          # Four-frame continuity bridge into the exact 4K gate.
+          gate=ROOT/'CURRENT_GATE.mp4'
+          gf,(_,gn)=source_data(gate)
+          if gn<60: raise RuntimeError('gate source is shorter than 60 frames')
+          for i in range(132,136): selection[i]=(str(gate),0,f'bridge:{i-131}/5')
+          for i in range(136,196): selection[i]=(str(gate),i-136,'direct')
+          plan.append({'group':'GATE','start_frame':132,'end_frame':196,'file_name':gate.name,'mode':'locked_4k'})
+
+          # Pre-character remainder: find original OPENING/CITY/PALACE source clips against the reference.
+          pre_paths=[]
+          for g in ('OPENING','CITY','PALACE'):
+            for p in sorted(GROUP_DIR[g].rglob('*.mp4')):
+              if p.name=='MagicOffice_Opening_NO_TEXT_4K.mp4': continue
+              pre_paths.append((g,p))
+          pre_start,pre_end=196,BOUNDS['YOSHINO'][0]
+          sample_idx=np.arange(pre_start,pre_end,6,dtype=int)
+          labels=[]; scores=[]; source_hints=[]
+          for ri in sample_idx:
+            best=(-9,None,None,None)
+            rv=ref_features[ri]
+            for g,p in pre_paths:
+              sf,(sfps,sn)=source_data(p)
+              vals=sf@rv; j=int(np.argmax(vals)); v=float(vals[j])
+              if v>best[0]: best=(v,g,p,j)
+            scores.append(best[0]); labels.append(str(best[2])); source_hints.append(best[3])
+          # Majority smoothing and short-run suppression.
+          sm=[]
+          for i in range(len(labels)):
+            win=labels[max(0,i-2):min(len(labels),i+3)]
+            sm.append(Counter(win).most_common(1)[0][0])
+          pre_runs=[]; a=0
+          for i in range(1,len(sm)+1):
+            if i==len(sm) or sm[i]!=sm[a]:
+              p=Path(sm[a]); g=next(g for gg,pp in pre_paths if str(pp)==sm[a] for g in [gg])
+              rs=int(sample_idx[a]); re=int(sample_idx[i]) if i<len(sample_idx) else pre_end
+              h=source_hints[a:i]; sc=scores[a:i]
+              pre_runs.append({'group':g,'path':p,'start':rs,'end':re,'start_hint':float(np.median(h[:max(1,len(h)//3)])),'end_hint':float(np.median(h[-max(1,len(h)//3):])),'score':float(np.mean(sc))})
+              a=i
+          # Merge tiny pre-runs into a neighbour.
+          changed=True
+          while changed and len(pre_runs)>1:
+            changed=False
+            for i,r in enumerate(pre_runs):
+              if r['end']-r['start']<12:
+                if i==0: pre_runs[i+1]['start']=r['start']; pre_runs.pop(i)
+                elif i==len(pre_runs)-1: pre_runs[i-1]['end']=r['end']; pre_runs.pop(i)
+                elif pre_runs[i-1]['score']>=pre_runs[i+1]['score']:
+                  pre_runs[i-1]['end']=r['end']; pre_runs.pop(i)
+                else:
+                  pre_runs[i+1]['start']=r['start']; pre_runs.pop(i)
+                changed=True; break
+          plan.extend([{'group':r['group'],'start_frame':r['start'],'end_frame':r['end'],'file_name':r['path'].name,'mode':'dtw_pre','mean_score':r['score'],'start_hint_frame':r['start_hint'],'end_hint_frame':r['end_hint']} for r in pre_runs])
+
+          # Character source runs from the high-confidence alignment pass.
+          raw=[]
+          with open('alignment/top1_runs.csv',encoding='utf-8-sig',newline='') as f:
+            for r in csv.DictReader(f):
+              r={**r,
+                 'ref_start':float(r['ref_start']),'ref_end':float(r['ref_end']),
+                 'source_start_median':float(r['source_start_median']),
+                 'source_end_median':float(r['source_end_median']),
+                 'mean_score':float(r['mean_score']),'duration':float(r['duration'])}
+              raw.append(r)
+
+          char_runs=[]
+          for group,(bs,be) in BOUNDS.items():
+            st,et=bs/FPS,be/FPS
+            rows=[]
+            for r in raw:
+              if r['group']!=group or r['ref_end']<=st or r['ref_start']>=et: continue
+              s=max(bs,int(round(r['ref_start']*FPS))); e=min(be,int(round(r['ref_end']*FPS)))
+              if e<=s: continue
+              p=locate(group,r['file_name'])
+              sfps,_=source_data(p)[1]
+              rows.append({'group':group,'path':p,'start':s,'end':e,
+                           'start_hint':r['source_start_median']*sfps,
+                           'end_hint':r['source_end_median']*sfps,
+                           'score':r['mean_score']})
+            rows.sort(key=lambda x:x['start'])
+            if not rows: raise RuntimeError(f'No alignment rows for {group}')
+            # Fill all gaps and force exact block boundaries.
+            rows[0]['start']=bs; rows[-1]['end']=be
+            for i in range(len(rows)-1):
+              mid=int(round((rows[i]['end']+rows[i+1]['start'])/2))
+              rows[i]['end']=mid; rows[i+1]['start']=mid
+            # Remove very short/weak segments; preserve actual source bridges >= 0.5s.
+            changed=True
+            while changed and len(rows)>1:
+              changed=False
+              for i,r in enumerate(rows):
+                n=r['end']-r['start']
+                weak=(n<10) or (n<30 and r['score']<0.40)
+                if weak:
+                  if i==0:
+                    rows[i+1]['start']=r['start']; rows.pop(i)
+                  elif i==len(rows)-1:
+                    rows[i-1]['end']=r['end']; rows.pop(i)
+                  elif rows[i-1]['score']>=rows[i+1]['score']:
+                    rows[i-1]['end']=r['end']; rows.pop(i)
+                  else:
+                    rows[i+1]['start']=r['start']; rows.pop(i)
+                  changed=True; break
+            # Merge immediately adjacent repetitions of the same source.
+            merged=[]
+            for r in rows:
+              if merged and str(merged[-1]['path'])==str(r['path']):
+                merged[-1]['end']=r['end']; merged[-1]['end_hint']=r['end_hint']; merged[-1]['score']=max(merged[-1]['score'],r['score'])
+              else: merged.append(r)
+            char_runs.extend(merged)
+            plan.extend([{'group':group,'start_frame':r['start'],'end_frame':r['end'],'file_name':r['path'].name,'mode':'dtw','mean_score':r['score'],'start_hint_frame':r['start_hint'],'end_hint_frame':r['end_hint']} for r in merged])
+
+          def dtw_path(ref_slice, src_features, start_hint=None, end_hint=None, src_fps=24.0):
+            n,m=len(ref_slice),len(src_features)
+            sim=ref_slice@src_features.T
+            neg=-1e9
+            dp=np.full((n,m),neg,np.float32); back=np.full((n,m),-1,np.int8)
+            sh=float(start_hint) if start_hint is not None and np.isfinite(start_hint) else None
+            eh=float(end_hint) if end_hint is not None and np.isfinite(end_hint) else None
+            init=sim[0].copy()
+            if sh is not None: init-=0.006*np.abs(np.arange(m)-np.clip(sh,0,m-1))
+            dp[0]=init
+            maxstep=5 if src_fps>35 else 3
+            expected=max(0.0,min(float(maxstep),(np.clip(eh,0,m-1)-np.clip(sh,0,m-1))/max(1,n-1))) if sh is not None and eh is not None else min(maxstep,m/max(1,n))
+            for i in range(1,n):
+              for j in range(m):
+                best=neg; bd=0
+                for d in range(maxstep+1):
+                  pj=j-d
+                  if pj<0: break
+                  penalty=0.025*abs(d-expected)+(0.012 if d==0 else 0.0)
+                  v=dp[i-1,pj]-penalty
+                  if v>best: best=v; bd=d
+                dp[i,j]=sim[i,j]+best; back[i,j]=bd
+            end_scores=dp[-1].copy()
+            if eh is not None: end_scores-=0.006*np.abs(np.arange(m)-np.clip(eh,0,m-1))
+            j=int(np.argmax(end_scores)); path=np.empty(n,np.int32)
+            for i in range(n-1,-1,-1):
+              path[i]=j
+              if i>0: j=max(0,j-int(back[i,j]))
+            return path,float(np.mean(sim[np.arange(n),path])),float(np.min(sim[np.arange(n),path]))
+
+          # Align each pre/character run at full 24-fps precision.
+          all_runs=pre_runs+char_runs
+          align_report=[]
+          for r in all_runs:
+            s,e=r['start'],r['end']; sf,(sfps,sn)=source_data(r['path'])
+            path,mean_sim,min_sim=dtw_path(ref_features[s:e],sf,r.get('start_hint'),r.get('end_hint'),sfps)
+            for k,j in enumerate(path): selection[s+k]=(str(r['path']),int(j),'dtw')
+            align_report.append({'group':r['group'],'start_frame':s,'end_frame':e,'start_time':s/FPS,'end_time':e/FPS,'file_name':r['path'].name,'source_fps':sfps,'source_first_frame':int(path[0]),'source_last_frame':int(path[-1]),'mean_similarity':mean_sim,'min_similarity':min_sim})
+
+          missing=[i for i,x in enumerate(selection) if x is None]
+          if missing: raise RuntimeError(f'{len(missing)} unassigned prefix frames, first={missing[:10]}')
+          (OUT/'edit_plan.json').write_text(json.dumps(sorted(plan,key=lambda x:x['start_frame']),ensure_ascii=False,indent=2),encoding='utf-8')
+          (OUT/'alignment_validation.json').write_text(json.dumps(align_report,ensure_ascii=False,indent=2),encoding='utf-8')
+
+          # A sequential decoder that efficiently serves monotonic source-frame selections.
+          class Provider:
+            def __init__(self): self.path=None; self.cap=None; self.pos=0; self.last=None
+            def close(self):
+              if self.cap is not None: self.cap.release()
+              self.path=None; self.cap=None; self.pos=0; self.last=None
+            def get(self,path,index):
+              if self.path!=path or self.cap is None or index<self.pos:
+                self.close(); self.path=path; self.cap=cv2.VideoCapture(path); self.pos=0
+              while self.pos<=index:
+                ok,fr=self.cap.read()
+                if not ok: raise RuntimeError(f'decode failed {path} at {self.pos}, need {index}')
+                self.last=fr; self.pos+=1
+              return norm_frame(self.last,small=False)
+
+          outpath=OUT/'MagicOffice_NAMEPLATE_FREE_FINAL.mp4'
+          cmd=['ffmpeg','-hide_banner','-loglevel','error','-y','-f','rawvideo','-pix_fmt','bgr24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-an','-c:v','libx264','-preset','slow','-crf','12','-tune','film','-pix_fmt','yuv420p','-movflags','+faststart','-color_primaries','bt709','-color_trc','bt709','-colorspace','bt709','-color_range','tv',str(outpath)]
+          enc=subprocess.Popen(cmd,stdin=subprocess.PIPE)
+          provider=Provider(); previous=None
+          gate0=provider.get(str(gate),0).copy(); provider.close()
+          open_last=provider.get(str(opening),131).copy(); provider.close()
+          for i,item in enumerate(selection):
+            path,idx,mode=item
+            if mode.startswith('bridge:'):
+              alpha=float(mode.split(':')[1]); fr=cv2.addWeighted(open_last,1-alpha,gate0,alpha,0)
+            else:
+              fr=provider.get(path,idx)
+            try: enc.stdin.write(fr.tobytes())
+            except BrokenPipeError: raise RuntimeError('ffmpeg encoder pipe closed')
+            if i%240==0: print('encoded prefix',i,'/',PREFIX_FRAMES,flush=True)
+          provider.close()
+
+          # Exact new ending, all 341 frames, begins at 214.000 s.
+          endcap=cv2.VideoCapture(str(ROOT/'CURRENT_ENDING.mp4'))
+          for i in range(ENDING_FRAMES):
+            ok,fr=endcap.read()
+            if not ok: raise RuntimeError(f'ending ended at frame {i}')
+            fr=norm_frame(fr,small=False); enc.stdin.write(fr.tobytes())
+          endcap.release(); enc.stdin.close(); rc=enc.wait()
+          if rc!=0: raise RuntimeError(f'ffmpeg encoder failed: {rc}')
+
+          summary={
+            'file_name':outpath.name,'width':W,'height':H,'fps':FPS,
+            'prefix_frames':PREFIX_FRAMES,'ending_frames':ENDING_FRAMES,
+            'total_frames':TOTAL_FRAMES,'duration_seconds':TOTAL_FRAMES/FPS,
+            'nameplate_removal_method':'original Runway source-frame reconform; no mask, inpaint, or generative edit',
+            'runway_generation_credits_used':0,
+            'locked_gate_start_frame':136,'locked_gate_end_frame_exclusive':196,
+            'locked_ending_start_frame':PREFIX_FRAMES,
+            'mean_alignment_similarity':float(np.mean([r['mean_similarity'] for r in align_report])),
+            'minimum_run_mean_similarity':float(np.min([r['mean_similarity'] for r in align_report])),
+          }
+          (OUT/'render_summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(summary,ensure_ascii=False,indent=2),flush=True)
+          PY
+          python /tmp/render_clean.py
+
+      - name: Validate, hash, and split exact final file
+        shell: bash
+        run: |
+          set -euo pipefail
+          FINAL='output/MagicOffice_NAMEPLATE_FREE_FINAL.mp4'
+          ffprobe -v error -show_entries format=duration,size,bit_rate:stream=codec_name,width,height,r_frame_rate,avg_frame_rate,nb_frames,pix_fmt,color_space,color_transfer,color_primaries,color_range -of json "$FINAL" > output/ffprobe.json
+          ffmpeg -v error -i "$FINAL" -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$FINAL")" = '1920'
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$FINAL")" = '1080'
+          FRAMES="$(ffprobe -v error -select_streams v:0 -count_frames -show_entries stream=nb_read_frames -of csv=p=0 "$FINAL")"
+          test "$FRAMES" = '5477'
+          sha256sum "$FINAL" > output/SHA256_FULL.txt
+          split -b 55M -d -a 3 "$FINAL" output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part
+          (cd output/parts && sha256sum * > ../SHA256_PARTS.txt)
+          COUNT="$(find output/parts -type f | wc -l)"
+          test "$COUNT" -le 32
+          printf '%s\n' "$COUNT" > output/PART_COUNT.txt
+
+          cat > output/tools/MERGE_WINDOWS.bat <<'BAT'
+          @echo off
+          setlocal EnableExtensions EnableDelayedExpansion
+          cd /d "%~dp0"
+          for %%Z in (MagicOffice_NAMEPLATE_FREE_part*.zip) do powershell -NoProfile -Command "Expand-Archive -LiteralPath '%%Z' -DestinationPath . -Force"
+          copy /b MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part* MagicOffice_NAMEPLATE_FREE_FINAL.mp4 >nul
+          echo.
+          echo Completed: MagicOffice_NAMEPLATE_FREE_FINAL.mp4
+          echo Please compare its SHA-256 with SHA256_FULL.txt.
+          pause
+          BAT
+          cat > output/tools/merge_macos_linux.sh <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          cd "$(dirname "$0")"
+          for z in MagicOffice_NAMEPLATE_FREE_part*.zip; do unzip -o "$z"; done
+          cat MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part* > MagicOffice_NAMEPLATE_FREE_FINAL.mp4
+          echo 'Completed: MagicOffice_NAMEPLATE_FREE_FINAL.mp4'
+          sha256sum MagicOffice_NAMEPLATE_FREE_FINAL.mp4 2>/dev/null || shasum -a 256 MagicOffice_NAMEPLATE_FREE_FINAL.mp4
+          SH
+          chmod +x output/tools/merge_macos_linux.sh
+          cp output/SHA256_FULL.txt output/SHA256_PARTS.txt output/PART_COUNT.txt output/ffprobe.json output/render_summary.json output/edit_plan.json output/alignment_validation.json output/tools/
+          cat > output/tools/README_繁中.txt <<'TXT'
+          MagicOffice｜無名牌最終版
+
+          1. 將「合併工具」與所有 MagicOffice_NAMEPLATE_FREE_partXXX.zip 下載到同一資料夾。
+          2. Windows：雙擊 MERGE_WINDOWS.bat。
+          3. macOS／Linux：在終端機執行 bash merge_macos_linux.sh。
+          4. 完成檔名：MagicOffice_NAMEPLATE_FREE_FINAL.mp4。
+          5. SHA256_FULL.txt 可用來確認重組內容完全一致。
+
+          本版以 Google Drive 內的 Runway 原始畫格重建人物段；沒有遮罩硬蓋、AI 擦除或重新生成，Runway 點數消耗為 0。
+          TXT
+          (cd output/tools && zip -q -9 ../MagicOffice_NAMEPLATE_FREE_merge_tools.zip *)
+          ls -lh output output/parts
+
+      - name: Upload merge tools and reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_NAMEPLATE_FREE_merge_tools
+          path: output/MagicOffice_NAMEPLATE_FREE_merge_tools.zip
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Upload part 000
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part000') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part000, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part000, compression-level: 0, retention-days: 1}
+      - name: Upload part 001
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part001') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part001, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part001, compression-level: 0, retention-days: 1}
+      - name: Upload part 002
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part002') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part002, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part002, compression-level: 0, retention-days: 1}
+      - name: Upload part 003
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part003') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part003, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part003, compression-level: 0, retention-days: 1}
+      - name: Upload part 004
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part004') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part004, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part004, compression-level: 0, retention-days: 1}
+      - name: Upload part 005
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part005') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part005, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part005, compression-level: 0, retention-days: 1}
+      - name: Upload part 006
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part006') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part006, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part006, compression-level: 0, retention-days: 1}
+      - name: Upload part 007
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part007') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part007, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part007, compression-level: 0, retention-days: 1}
+      - name: Upload part 008
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part008') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part008, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part008, compression-level: 0, retention-days: 1}
+      - name: Upload part 009
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part009') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part009, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part009, compression-level: 0, retention-days: 1}
+      - name: Upload part 010
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part010') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part010, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part010, compression-level: 0, retention-days: 1}
+      - name: Upload part 011
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part011') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part011, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part011, compression-level: 0, retention-days: 1}
+      - name: Upload part 012
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part012') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part012, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part012, compression-level: 0, retention-days: 1}
+      - name: Upload part 013
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part013') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part013, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part013, compression-level: 0, retention-days: 1}
+      - name: Upload part 014
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part014') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part014, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part014, compression-level: 0, retention-days: 1}
+      - name: Upload part 015
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part015') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part015, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part015, compression-level: 0, retention-days: 1}
+      - name: Upload part 016
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part016') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part016, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part016, compression-level: 0, retention-days: 1}
+      - name: Upload part 017
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part017') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part017, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part017, compression-level: 0, retention-days: 1}
+      - name: Upload part 018
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part018') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part018, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part018, compression-level: 0, retention-days: 1}
+      - name: Upload part 019
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part019') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part019, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part019, compression-level: 0, retention-days: 1}
+      - name: Upload part 020
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part020') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part020, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part020, compression-level: 0, retention-days: 1}
+      - name: Upload part 021
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part021') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part021, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part021, compression-level: 0, retention-days: 1}
+      - name: Upload part 022
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part022') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part022, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part022, compression-level: 0, retention-days: 1}
+      - name: Upload part 023
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part023') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part023, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part023, compression-level: 0, retention-days: 1}
+      - name: Upload part 024
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part024') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part024, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part024, compression-level: 0, retention-days: 1}
+      - name: Upload part 025
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part025') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part025, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part025, compression-level: 0, retention-days: 1}
+      - name: Upload part 026
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part026') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part026, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part026, compression-level: 0, retention-days: 1}
+      - name: Upload part 027
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part027') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part027, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part027, compression-level: 0, retention-days: 1}
+      - name: Upload part 028
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part028') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part028, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part028, compression-level: 0, retention-days: 1}
+      - name: Upload part 029
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part029') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part029, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part029, compression-level: 0, retention-days: 1}
+      - name: Upload part 030
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part030') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part030, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part030, compression-level: 0, retention-days: 1}
+      - name: Upload part 031
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part031') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part031, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part031, compression-level: 0, retention-days: 1}
