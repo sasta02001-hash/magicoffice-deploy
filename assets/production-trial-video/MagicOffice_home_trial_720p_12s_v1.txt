@@ -1,0 +1,7 @@
+file=MagicOffice_home_trial_720p_12s_v1.mp4
+width=1280
+height=720
+fps=24
+duration=12.000000
+bytes=3016896
+sha256=2251aa3eb1d386a4d3a889ab147f7a212838e7f1c56bcac018e92fb44bc5f7b1
