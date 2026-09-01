@@ -1,0 +1,32 @@
+[
+  {
+    "selection": [
+      "00:direct",
+      "01:subparts",
+      "02:direct",
+      "03:direct",
+      "04:direct",
+      "05:direct",
+      "06:subparts",
+      "07:direct",
+      "08:direct",
+      "09:direct"
+    ],
+    "files": [
+      "part-00.txt",
+      "part-01a.txt",
+      "part-01b.txt",
+      "part-02.txt",
+      "part-03.txt",
+      "part-04.txt",
+      "part-05.txt",
+      "part-06a.txt",
+      "part-07.txt",
+      "part-08.txt",
+      "part-09.txt"
+    ],
+    "bytes": 76712,
+    "sha256": "dbe981d7d4896ae4e00556a128791bfef405785fe782fc9b93d4c365527fc8f3",
+    "head": "52494646343d01005745425056503820"
+  }
+]
