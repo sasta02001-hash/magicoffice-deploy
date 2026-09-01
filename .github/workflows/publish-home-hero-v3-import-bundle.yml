@@ -1,0 +1,81 @@
+name: Build public MagicOffice home hero v3 preview bundle
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-home-hero-v3-import-bundle.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-preview-bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build verified hero preview from current Production
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat assets/home-hero-patch-v1/part-00.txt assets/home-hero-patch-v1/part-01.txt > /tmp/bootstrap.js
+          node --check /tmp/bootstrap.js
+          rm -rf dist
+          node /tmp/bootstrap.js
+
+      - name: Create public import bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/home-hero-preview-v3
+          cp dist/assets/media/magicoffice-home-video-poster-v1.webp assets/home-hero-preview-v3/magicoffice-home-video-poster-v1.webp
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          html = Path('dist/index.html').read_text()
+          official = 'https://magicoffice.vercel.app'
+          poster = 'https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/home-hero-preview-v3/magicoffice-home-video-poster-v1.webp'
+          desktop = 'https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/home-clean-scene-desktop-v1/magicoffice-home-clean-scene-desktop-v1.webp'
+
+          html = re.sub(r'/assets/media/magicoffice-home-video-poster-v1\.webp\?v=[^"\'<> )]+', poster, html)
+          html = re.sub(r'/assets/media/magicoffice-home-clean-scene-desktop-v1\.webp\?v=[^"\'<> )]+', desktop, html)
+
+          # Everything else points to the currently live, public Production asset,
+          # while anchors (#section) remain inside this preview document.
+          html = html.replace('"/assets/', f'"{official}/assets/')
+          html = html.replace("'/assets/", f"'{official}/assets/")
+          html = html.replace('url(/assets/', f'url({official}/assets/')
+          html = html.replace('url("/assets/', f'url("{official}/assets/')
+          html = html.replace("url('/assets/", f"url('{official}/assets/")
+          html = html.replace('href="/site.webmanifest"', f'href="{official}/site.webmanifest"')
+          html = html.replace('src="/site.webmanifest"', f'src="{official}/site.webmanifest"')
+
+          # Mark as preview without changing the visible production composition.
+          html = html.replace('</head>', '<meta name="robots" content="noindex,nofollow"><meta name="x-magicoffice-preview-release" content="home-hero-v3-desktop-bg-2026-09-01"></head>', 1)
+
+          if '/assets/media/magicoffice-home-video-poster-v1.webp' in html:
+              raise SystemExit('Poster still has local path')
+          if '/assets/media/magicoffice-home-clean-scene-desktop-v1.webp' in html:
+              raise SystemExit('Desktop background still has local path')
+          required = ['desktop-clean-scene-2026-09-01-v1','data-home-mobile-nav="four-core-links"','36fr','64fr','home-video-poster']
+          missing = [x for x in required if x not in html]
+          if missing: raise SystemExit('Missing preview markers: '+','.join(missing))
+
+          Path('assets/home-hero-preview-v3/preview.html').write_text(html)
+          PY
+
+      - name: Commit preview bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Preview Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-preview-v3/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add public home hero v3 preview import bundle'
+            git push origin HEAD:main
+          fi
