@@ -45,9 +45,11 @@ function webpDimensions(buffer) {
 function reconstructMobileScene() {
   const root=path.resolve('source-assets/clean-scene-v7');
   const encoded=CLEAN_SCENE_CHUNKS.map((name)=>fs.readFileSync(path.join(root,name),'utf8').trim()).join('');
-  const buffer=Buffer.from(encoded,'base64');
+  let buffer=Buffer.from(encoded,'base64');
+  let declared=buffer.length>=8?buffer.readUInt32LE(4)+8:0;
+  if (declared === buffer.length + 1) buffer=Buffer.concat([buffer,Buffer.from([0])]);
   const dim=webpDimensions(buffer);
-  const declared=buffer.length>=8?buffer.readUInt32LE(4)+8:0;
+  declared=buffer.length>=8?buffer.readUInt32LE(4)+8:0;
   if (!dim || dim.width !== 1000 || dim.height !== 1333 || declared !== buffer.length) throw new Error(`Mobile clean-scene invalid dimensions=${JSON.stringify(dim)} bytes=${buffer.length} declared=${declared}`);
   return buffer;
 }
