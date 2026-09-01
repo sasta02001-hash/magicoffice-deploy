@@ -1,0 +1,140 @@
+name: Build MagicOffice production HTML with approved wordmark and trial video v1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build-home-wordmark-trial-production-html-v1.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: magicoffice-home-wordmark-trial-production-html-v1
+  cancel-in-progress: false
+
+env:
+  IMMUTABLE_ASSET_ORIGIN: https://magicoffice-l0ovo899x-magicoffice.vercel.app
+  OFFICIAL_ORIGIN: https://magicoffice.vercel.app
+  VIDEO_URL: https://github.com/sasta02001-hash/magicoffice-deploy/releases/download/magicoffice-home-trial-v1/magicoffice-home-trial-720p-v1.mp4
+  RELEASE_MARKER: home-hero-wordmark-trial-video-2026-09-01-v1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Produce production-safe HTML from the approved v3 preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/home-hero-production-v1
+          python <<'PY'
+          from pathlib import Path
+          import os, re, json, hashlib
+
+          src = Path('assets/home-hero-preview-v3/preview.html')
+          out = Path('assets/home-hero-production-v1/index.html')
+          html = src.read_text(encoding='utf-8')
+          immutable = os.environ['IMMUTABLE_ASSET_ORIGIN'].rstrip('/')
+          official = os.environ['OFFICIAL_ORIGIN'].rstrip('/')
+          video = os.environ['VIDEO_URL']
+          release = os.environ['RELEASE_MARKER']
+
+          required_preview = [
+              'x-magicoffice-home-video-wordmark',
+              'data-wordmark="MAGICOFFICE"',
+              'desktop-clean-scene-2026-09-01-v1',
+              'data-home-mobile-nav="four-core-links"',
+              'home-video-poster',
+          ]
+          missing = [x for x in required_preview if x not in html]
+          if missing:
+              raise SystemExit('Approved preview markers missing: ' + ', '.join(missing))
+
+          # Production must not inherit preview noindex markers.
+          html = re.sub(r'<meta\s+name=["\']robots["\']\s+content=["\']noindex,nofollow["\']\s*/?>', '', html, flags=re.I)
+          html = re.sub(r'<meta\s+name=["\']x-magicoffice-preview-release["\'][^>]*>', '', html, flags=re.I)
+          html = re.sub(r'<meta\s+name=["\']x-magicoffice-production-hero-trial["\'][^>]*>', '', html, flags=re.I)
+
+          # Pin every inherited production asset to the prior immutable deployment.
+          html = html.replace(f'{official}/assets/', f'{immutable}/assets/')
+          html = html.replace(f'{official}/site.webmanifest', f'{immutable}/site.webmanifest')
+          html = html.replace(f'{official}/favicon.png', f'{immutable}/favicon.png')
+          html = html.replace(f'{official}/apple-touch-icon.png', f'{immutable}/apple-touch-icon.png')
+
+          # Keep canonical identity on the official domain.
+          html = re.sub(r'(<link\s+href=["\'])[^"\']+(["\']\s+rel=["\']canonical["\'])', rf'\1{official}/\2', html, flags=re.I)
+          html = re.sub(r'(<meta\s+content=["\'])[^"\']+(["\']\s+property=["\']og:url["\'])', rf'\1{official}/\2', html, flags=re.I)
+
+          # Replace any prior trial video while preserving the approved poster and wordmark.
+          html = re.sub(r'<video\b[^>]*class=["\'][^"\']*\bhome-trial-video\b[^"\']*["\'][^>]*>[\s\S]*?</video>', '', html, flags=re.I)
+          mount_pattern = re.compile(r'<(?P<tag>div|section)(?P<attrs>[^>]*\bdata-home-video-mount\b[^>]*)>\s*</(?P=tag)>', re.I)
+          match = mount_pattern.search(html)
+          if not match:
+              raise SystemExit('Empty homepage video mount not found')
+          attrs = re.sub(r'\saria-hidden\s*=\s*(["\']).*?\1', '', match.group('attrs'), flags=re.I)
+          tag = match.group('tag')
+          player = (
+              f'<{tag}{attrs} data-home-trial-video="{release}" aria-hidden="false">'
+              f'<video class="home-trial-video" muted autoplay loop playsinline webkit-playsinline '
+              f'preload="metadata" disablepictureinpicture poster="https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/home-hero-preview-v3/magicoffice-home-video-poster-v1.webp">'
+              f'<source src="{video}" type="video/mp4"/>'
+              f'</video></{tag}>'
+          )
+          html = html[:match.start()] + player + html[match.end():]
+
+          production_meta = (
+              f'<meta name="x-magicoffice-production-hero-trial" content="{release}"/>'
+              f'<link rel="preconnect" href="https://github.com" crossorigin/>'
+              f'<link rel="preconnect" href="https://objects.githubusercontent.com" crossorigin/>'
+          )
+          if '</head>' not in html:
+              raise SystemExit('Missing </head>')
+          html = html.replace('</head>', production_meta + '</head>', 1)
+
+          checks = {
+              'release': release in html,
+              'videoOnce': html.count('class="home-trial-video"') == 1,
+              'videoUrl': video in html,
+              'wordmarkOnce': html.count('class="home-video-wordmark"') == 1,
+              'poster': 'magicoffice-home-video-poster-v1.webp' in html,
+              'immutableAssets': f'{immutable}/assets/' in html,
+              'noOfficialAssetLoop': f'{official}/assets/' not in html,
+              'noPreviewNoindex': 'noindex,nofollow' not in html,
+              'canonical': f'href="{official}/" rel="canonical"' in html,
+              'sections': all(x in html for x in ['id="roster"','id="schedule"','id="event-hub"','id="menu"','id="location"']),
+          }
+          failed = [k for k,v in checks.items() if not v]
+          if failed:
+              raise SystemExit('Production HTML checks failed: ' + ', '.join(failed))
+
+          out.write_text(html, encoding='utf-8')
+          data = html.encode('utf-8')
+          manifest = {
+              'release': release,
+              'bytes': len(data),
+              'sha256': hashlib.sha256(data).hexdigest(),
+              'immutableAssetOrigin': immutable,
+              'officialOrigin': official,
+              'videoUrl': video,
+              'checks': checks,
+          }
+          Path('assets/home-hero-production-v1/manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          print('MAGICOFFICE_PRODUCTION_HTML_V1_OK', json.dumps(manifest, ensure_ascii=False))
+          PY
+
+      - name: Commit production runtime source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Production Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-production-v1/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Build approved homepage wordmark and trial video runtime'
+            git push origin HEAD:main
+          fi
