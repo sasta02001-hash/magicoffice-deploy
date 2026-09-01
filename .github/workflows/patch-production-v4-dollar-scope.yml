@@ -27,15 +27,15 @@ jobs:
           p=Path('scripts/build_production_home_video_v4.mjs')
           s=p.read_text()
           marker='  const controller=`<script id="magicoffice-home-video-controller-v4">'
-          patch=r'''  html=html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi,(full,attrs,body)=>{
-    const type=(attrs.match(/\btype=["']([^"']+)["']/i)||[])[1]?.toLowerCase()||'';
-    if(!body.trim()||/\bsrc=/.test(attrs)||['application/ld+json','application/json','application/octet-stream','importmap'].includes(type)||type==='module')return full;
-    if(/\bdata-inline-isolated=/.test(attrs))return full;
-    if(!/\b(?:const|let)\s+\$\s*=/.test(body))return full;
-    return `<script${attrs} data-inline-isolated="dollar-helper">(function(){\n${body}\n}).call(window);<\/script>`;
-  });
-
-'''
+          patch=(
+            '  html=html.replace(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi,(full,attrs,body)=>{\n'
+            '    const type=(attrs.match(/\\btype=["\\\']([^"\\\']+)["\\\']/i)||[])[1]?.toLowerCase()||"";\n'
+            '    if(!body.trim()||/\\bsrc=/.test(attrs)||["application/ld+json","application/json","application/octet-stream","importmap"].includes(type)||type==="module")return full;\n'
+            '    if(/\\bdata-inline-isolated=/.test(attrs))return full;\n'
+            '    if(!/\\b(?:const|let)\\s+\\$\\s*=/.test(body))return full;\n'
+            '    return `<script${attrs} data-inline-isolated="dollar-helper">(function(){\\n${body}\\n}).call(window);<\\/script>`;\n'
+            '  });\n\n'
+          )
           if marker not in s: raise SystemExit('controller insertion marker missing')
           if 'data-inline-isolated="dollar-helper"' in s: raise SystemExit('patch already applied')
           p.write_text(s.replace(marker,patch+marker,1))
