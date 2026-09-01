@@ -85,7 +85,8 @@ function transparentSvg() {
 function cleanAssetPath(raw, basePath='/') {
   if (!raw) return null;
   const value=String(raw).trim().replace(/^['"]|['"]$/g,'');
-  if (!value || /^(?:data:|blob:|javascript:|mailto:|tel:|#)/i.test(value)) return null;
+  let decodedValue=value; try { decodedValue=decodeURIComponent(value); } catch {}
+  if (!value || /^(?:data:|blob:|javascript:|mailto:|tel:|#)/i.test(value) || decodedValue.startsWith('#')) return null;
   let url;
   try { url=new URL(value, `${ORIGIN}${basePath.startsWith('/')?basePath:`/${basePath}`}`); } catch { return null; }
   if (url.host !== new URL(ORIGIN).host) return null;
