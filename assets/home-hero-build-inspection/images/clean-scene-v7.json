@@ -1,0 +1,17 @@
+{
+  "bytes": 76712,
+  "sha256": "dbe981d7d4896ae4e00556a128791bfef405785fe782fc9b93d4c365527fc8f3",
+  "files": [
+    "part-00.txt",
+    "part-01a.txt",
+    "part-01b.txt",
+    "part-02.txt",
+    "part-03.txt",
+    "part-04.txt",
+    "part-05.txt",
+    "part-06a.txt",
+    "part-07.txt",
+    "part-08.txt",
+    "part-09.txt"
+  ]
+}
