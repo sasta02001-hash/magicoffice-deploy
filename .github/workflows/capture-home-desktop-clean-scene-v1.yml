@@ -1,0 +1,59 @@
+name: Capture MagicOffice desktop clean-scene derivative v1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/capture-home-desktop-clean-scene-v1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Canva 2560x1440 derivative
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p source-assets
+          URL='https://s3.amazonaws.com/document-export.canva.com/qKGuc/DAHT7PqKGuc/1/thumbnail/0001.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH4GDRW44L%2F20260831%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260831T060222Z&X-Amz-Expires=84595&X-Amz-Signature=6b27e1b2700037589f52721d551341aca59c04bf9227dbdd059edff87fae0f59&X-Amz-SignedHeaders=host&response-expires=Tue%2C%2001%20Sep%202026%2005%3A32%3A17%20GMT'
+          curl --fail --location --silent --show-error --max-time 90 "$URL" -o source-assets/magicoffice-home-clean-scene-desktop-v1.png
+
+      - name: Verify exact desktop dimensions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, struct, json
+          p=Path('source-assets/magicoffice-home-clean-scene-desktop-v1.png')
+          b=p.read_bytes()
+          if b[:8] != b'\x89PNG\r\n\x1a\n':
+              raise SystemExit('Not a PNG')
+          w,h=struct.unpack('>II', b[16:24])
+          if (w,h)!=(2560,1440):
+              raise SystemExit(f'Wrong dimensions: {w}x{h}')
+          if len(b) < 100000:
+              raise SystemExit(f'Asset unexpectedly small: {len(b)} bytes')
+          meta={'width':w,'height':h,'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'sourceCanvaDesign':'DAHT7PqKGuc','sourceApprovedCleanScene':'DAHT4owTCm8'}
+          Path('source-assets/magicoffice-home-clean-scene-desktop-v1.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2)+'\n')
+          print('DESKTOP_CLEAN_SCENE_VERIFIED', json.dumps(meta))
+          PY
+
+      - name: Commit durable asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Asset Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add source-assets/magicoffice-home-clean-scene-desktop-v1.png source-assets/magicoffice-home-clean-scene-desktop-v1.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Store 2560x1440 desktop clean-scene derivative'
+            git push origin HEAD:main
+          fi
