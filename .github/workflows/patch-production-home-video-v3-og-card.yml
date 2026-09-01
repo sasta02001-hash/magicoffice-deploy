@@ -1,0 +1,46 @@
+name: Patch MagicOffice production v3 OG card fallback
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-production-home-video-v3-og-card.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Use approved poster when legacy OG card path is absent
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          p=Path('scripts/build_production_home_video_v3.mjs')
+          s=p.read_text()
+          old="""    const record = await fetchAsset(url);
+    records.set(key, record);"""
+          new="""    const record = url.pathname === '/assets/og-card.jpg'
+      ? { url, finalUrl: url, buffer: poster, mime: 'image/webp' }
+      : await fetchAsset(url);
+    records.set(key, record);"""
+          if old not in s:
+              raise SystemExit('OG card patch marker missing')
+          p.write_text(s.replace(old,new,1))
+          PY
+          node --check scripts/build_production_home_video_v3.mjs
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Production Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add scripts/build_production_home_video_v3.mjs
+          git commit -m 'Use approved poster as OG card fallback in production v3 builder'
+          git push origin HEAD:main
