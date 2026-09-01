@@ -1,0 +1,351 @@
+name: Publish approved MagicOffice hero wordmark and trial video v1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/publish-home-trial-video-wordmark-production-v1.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: magicoffice-production-home-trial-video-v1
+  cancel-in-progress: false
+
+env:
+  OFFICIAL_URL: https://magicoffice.vercel.app/
+  VERCEL_ORG_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+  VERCEL_PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+  VERCEL_SCOPE: magicoffice
+  RELEASE_MARKER: home-hero-wordmark-trial-video-2026-09-01-v1
+  VIDEO_DRIVE_ID: 1UkzDJTameTu4XIRKRscEpV1j61Xe8Psq
+  VIDEO_PATH: /assets/media/magicoffice-home-trial-720p-v1.mp4
+  VIDEO_BYTES: '67334731'
+  VIDEO_SHA256: b65929fe53cd056a00281562bcee3ca58268f4cfef476eb4c1bef3cd6ea6a958
+  VIDEO_CACHE_KEY: 20260901-home-trial-v1
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Confirm locked production credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN:-}" || { echo 'VERCEL_TOKEN is missing' >&2; exit 78; }
+
+      - name: Rebuild the approved v3 hero from current Production
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat assets/home-hero-patch-v1/part-00.txt assets/home-hero-patch-v1/part-01.txt > /tmp/home-hero-builder.js
+          node --check /tmp/home-hero-builder.js
+          rm -rf dist
+          node /tmp/home-hero-builder.js
+          test -f dist/index.html
+          test -f dist/health.json
+          test -f assets/home-hero-preview-v3/preview.html
+
+      - name: Download and checksum-lock the uploaded trial video
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "dist$(dirname "$VIDEO_PATH")"
+          target="dist${VIDEO_PATH}"
+          rm -f "$target" /tmp/mo-trial-video.mp4
+
+          urls=(
+            "https://drive.usercontent.google.com/download?id=${VIDEO_DRIVE_ID}&export=download&confirm=t"
+            "https://drive.google.com/uc?export=download&id=${VIDEO_DRIVE_ID}&confirm=t"
+          )
+          ready=false
+          for url in "${urls[@]}"; do
+            rm -f /tmp/mo-trial-video.mp4
+            if curl --fail --location --silent --show-error --retry 3 --retry-all-errors --max-time 420 "$url" -o /tmp/mo-trial-video.mp4; then
+              bytes="$(stat -c%s /tmp/mo-trial-video.mp4)"
+              sha="$(sha256sum /tmp/mo-trial-video.mp4 | cut -d' ' -f1)"
+              if [ "$bytes" = "$VIDEO_BYTES" ] && [ "$sha" = "$VIDEO_SHA256" ]; then
+                ready=true
+                break
+              fi
+              echo "Candidate mismatch bytes=${bytes} sha=${sha}" >&2
+            fi
+          done
+
+          if [ "$ready" != true ]; then
+            python -m pip install --quiet gdown
+            rm -f /tmp/mo-trial-video.mp4
+            gdown "https://drive.google.com/uc?id=${VIDEO_DRIVE_ID}" -O /tmp/mo-trial-video.mp4
+          fi
+
+          test "$(stat -c%s /tmp/mo-trial-video.mp4)" = "$VIDEO_BYTES"
+          test "$(sha256sum /tmp/mo-trial-video.mp4 | cut -d' ' -f1)" = "$VIDEO_SHA256"
+          mv /tmp/mo-trial-video.mp4 "$target"
+          echo "TRIAL_VIDEO_LOCKED bytes=${VIDEO_BYTES} sha256=${VIDEO_SHA256}"
+
+      - name: Apply the approved decorated wordmark and mount the trial video
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          import json, os, re
+
+          release = os.environ['RELEASE_MARKER']
+          video_path = os.environ['VIDEO_PATH']
+          cache_key = os.environ['VIDEO_CACHE_KEY']
+          video_bytes = int(os.environ['VIDEO_BYTES'])
+          video_sha = os.environ['VIDEO_SHA256']
+
+          html_path = Path('dist/index.html')
+          preview_path = Path('assets/home-hero-preview-v3/preview.html')
+          html = html_path.read_text(encoding='utf-8')
+          approved = preview_path.read_text(encoding='utf-8')
+
+          def require(pattern, source, label, flags=re.I | re.S):
+              match = re.search(pattern, source, flags)
+              if not match:
+                  raise SystemExit(f'Missing approved {label}')
+              return match.group(0)
+
+          wordmark_meta = require(r'<meta\s+name=["\']x-magicoffice-home-video-wordmark["\'][^>]*>', approved, 'wordmark meta')
+          wordmark_style = require(r'<style\s+id=["\']magicoffice-home-video-wordmark-v1["\']>[\s\S]*?</style>', approved, 'wordmark style')
+          wordmark_overlay = require(r'<div\s+class=["\']home-video-wordmark["\'][^>]*>[\s\S]*?</div>', approved, 'wordmark overlay')
+
+          # Remove only prior instances of this approved overlay, if present.
+          html = re.sub(r'<meta\s+name=["\']x-magicoffice-home-video-wordmark["\'][^>]*>', '', html, flags=re.I)
+          html = re.sub(r'<style\s+id=["\']magicoffice-home-video-wordmark-v1["\']>[\s\S]*?</style>', '', html, flags=re.I)
+          html = re.sub(r'<div\s+class=["\']home-video-wordmark["\'][^>]*>[\s\S]*?</div>', '', html, flags=re.I)
+          html = re.sub(r'<meta\s+name=["\']x-magicoffice-home-production-release["\'][^>]*>', '', html, flags=re.I)
+
+          production_meta = f'<meta name="x-magicoffice-home-production-release" content="{release}"/>'
+          if '</head>' not in html:
+              raise SystemExit('Missing </head>')
+          html = html.replace('</head>', production_meta + wordmark_meta + wordmark_style + '</head>', 1)
+
+          poster_pattern = re.compile(r'(<img\b[^>]*class=["\'][^"\']*\bhome-video-poster\b[^"\']*["\'][^>]*>)', re.I)
+          poster_match = poster_pattern.search(html)
+          if not poster_match:
+              raise SystemExit('Approved v3 poster element not found')
+          html = html[:poster_match.end()] + wordmark_overlay + html[poster_match.end():]
+
+          mount_pattern = re.compile(r'<(?P<tag>div|section)(?P<attrs>[^>]*\bdata-home-video-mount\b[^>]*)>\s*</(?P=tag)>', re.I | re.S)
+          mount_match = mount_pattern.search(html)
+          if not mount_match:
+              raise SystemExit('Empty home video mount not found')
+          tag = mount_match.group('tag')
+          attrs = mount_match.group('attrs')
+          attrs = re.sub(r'\saria-hidden\s*=\s*(["\']).*?\1', '', attrs, flags=re.I)
+          attrs = re.sub(r'\sdata-home-trial-video\s*=\s*(["\']).*?\1', '', attrs, flags=re.I)
+          video = (
+              f'<video class="home-trial-video" muted autoplay loop playsinline '
+              f'webkit-playsinline preload="metadata" disablepictureinpicture '
+              f'poster="/assets/media/magicoffice-home-video-poster-v1.webp?v=20260901-home-hero-poster-v1">'
+              f'<source src="{video_path}?v={cache_key}" type="video/mp4"/>'
+              f'</video>'
+          )
+          replacement = f'<{tag}{attrs} data-home-trial-video="{release}" aria-hidden="false">{video}</{tag}>'
+          html = html[:mount_match.start()] + replacement + html[mount_match.end():]
+
+          checks = {
+              'release': release in html,
+              'singleWordmark': html.count('class="home-video-wordmark"') == 1,
+              'approvedWordmark': 'data-wordmark="MAGICOFFICE"' in html,
+              'trialVideo': html.count(f'{video_path}?v={cache_key}') == 1,
+              'posterPreserved': 'magicoffice-home-video-poster-v1.webp' in html,
+              'desktopBackground': 'desktop-clean-scene-2026-09-01-v1' in html,
+              'ratio': '36fr' in html and '64fr' in html,
+              'mobileNav': 'data-home-mobile-nav="four-core-links"' in html,
+              'petals': html.count('class="mo-home-petal"') >= 6,
+              'sections': all(marker in html for marker in ['id="roster"','id="schedule"','id="event-hub"','id="menu"','id="location"']),
+          }
+          failed = [name for name, ok in checks.items() if not ok]
+          if failed:
+              raise SystemExit('Production HTML checks failed: ' + ', '.join(failed))
+          html_path.write_text(html, encoding='utf-8')
+
+          health_path = Path('dist/health.json')
+          health = json.loads(health_path.read_text(encoding='utf-8'))
+          health['ok'] = True
+          health['release'] = release
+          health['wordmark'] = {
+              'text': 'MAGICOFFICE',
+              'source': 'approved v3 decorated inline SVG overlay',
+              'behavior': 'visible with poster; fades when the trial video is playable'
+          }
+          health['trialVideo'] = {
+              'path': video_path,
+              'width': 1280,
+              'height': 720,
+              'fps': 24,
+              'durationSeconds': 229.166667,
+              'bytes': video_bytes,
+              'sha256': video_sha,
+              'source': 'user-uploaded full_composite_video(1).mp4 web derivative',
+              'behavior': 'muted autoplay loop, playsinline, poster fallback on absence or error'
+          }
+          health['verification'] = checks
+          health_path.write_text(json.dumps(health, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          print('MAGICOFFICE_PRODUCTION_TRIAL_VIDEO_PATCH_OK', json.dumps(checks))
+          PY
+
+      - name: Verify exact deploy bundle before Production write
+        shell: bash
+        run: |
+          set -euo pipefail
+          video="dist${VIDEO_PATH}"
+          test -f "$video"
+          test "$(stat -c%s "$video")" = "$VIDEO_BYTES"
+          test "$(sha256sum "$video" | cut -d' ' -f1)" = "$VIDEO_SHA256"
+          grep -q "$RELEASE_MARKER" dist/index.html
+          grep -q 'data-wordmark="MAGICOFFICE"' dist/index.html
+          grep -q "${VIDEO_PATH}?v=${VIDEO_CACHE_KEY}" dist/index.html
+          grep -q 'data-home-mobile-nav="four-core-links"' dist/index.html
+          grep -q 'desktop-clean-scene-2026-09-01-v1' dist/index.html
+          grep -q 'id="schedule"' dist/index.html
+          grep -q 'id="event-hub"' dist/index.html
+          grep -q 'id="menu"' dist/index.html
+
+          mkdir -p dist/.vercel
+          printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > dist/.vercel/project.json
+          cat > dist/vercel.json <<JSON
+          {
+            "framework": null,
+            "cleanUrls": true,
+            "trailingSlash": false,
+            "headers": [
+              {
+                "source": "${VIDEO_PATH}",
+                "headers": [
+                  { "key": "Content-Type", "value": "video/mp4" },
+                  { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+                ]
+              },
+              {
+                "source": "/assets/media/(.*)",
+                "headers": [
+                  { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+                ]
+              },
+              {
+                "source": "/(.*)",
+                "headers": [
+                  { "key": "X-Content-Type-Options", "value": "nosniff" },
+                  { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+                ]
+              }
+            ]
+          }
+          JSON
+
+      - name: Capture current Production for automatic rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, urllib.parse, urllib.request
+          query = urllib.parse.urlencode({
+              'projectId': os.environ['VERCEL_PROJECT_ID'],
+              'teamId': os.environ['VERCEL_ORG_ID'],
+              'target': 'production',
+              'limit': 1,
+          })
+          request = urllib.request.Request(
+              'https://api.vercel.com/v6/deployments?' + query,
+              headers={'Authorization': 'Bearer ' + os.environ['VERCEL_TOKEN']},
+          )
+          with urllib.request.urlopen(request, timeout=60) as response:
+              payload = json.load(response)
+          deployment = payload['deployments'][0]
+          Path = __import__('pathlib').Path
+          Path('previous-production.json').write_text(json.dumps({
+              'id': deployment['uid'],
+              'url': deployment['url'],
+          }, indent=2) + '\n')
+          print('ROLLBACK_CAPTURED', deployment['uid'], deployment['url'])
+          PY
+
+      - name: Deploy verified bundle to locked MagicOffice Production
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEPLOY_OUTPUT="$(npx --yes vercel@latest deploy dist --prod --yes --archive=tgz --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" 2>&1 | tee deploy-output.log)"
+          DEPLOY_URL="$(printf '%s\n' "$DEPLOY_OUTPUT" | grep -Eo 'https://[^ ]+\.vercel\.app' | tail -1)"
+          test -n "$DEPLOY_URL" || { echo 'Could not determine deployment URL' >&2; exit 1; }
+          printf '%s\n' "$DEPLOY_URL" > deployed-url.txt
+          echo "DEPLOYED_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
+          echo "PRODUCTION_DEPLOYMENT_CREATED $DEPLOY_URL"
+
+      - name: Verify official page, poster fallback, wordmark, and video bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          rollback() {
+            PREVIOUS_URL="$(python -c 'import json; print(json.load(open("previous-production.json"))["url"])')"
+            echo "Verification failed; rolling back to ${PREVIOUS_URL}" >&2
+            npx --yes vercel@latest rollback "https://${PREVIOUS_URL}" --yes --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" || true
+          }
+          trap 'rollback' ERR
+
+          ready=false
+          for i in $(seq 1 60); do
+            stamp="${i}-$(date +%s)"
+            if curl -fsSL --max-time 45 "${OFFICIAL_URL}?trial-video=${stamp}" -o official.html && \
+               curl -fsSL --max-time 45 "${OFFICIAL_URL}health.json?trial-video=${stamp}" -o official-health.json; then
+              if grep -q "$RELEASE_MARKER" official.html && grep -q "$RELEASE_MARKER" official-health.json; then
+                ready=true
+                break
+              fi
+            fi
+            sleep 4
+          done
+          test "$ready" = true
+
+          grep -q 'data-wordmark="MAGICOFFICE"' official.html
+          grep -q "${VIDEO_PATH}?v=${VIDEO_CACHE_KEY}" official.html
+          grep -q 'home-video-poster' official.html
+          grep -q 'data-home-mobile-nav="four-core-links"' official.html
+          grep -q 'desktop-clean-scene-2026-09-01-v1' official.html
+          grep -q 'id="roster"' official.html
+          grep -q 'id="schedule"' official.html
+          grep -q 'id="event-hub"' official.html
+          grep -q 'id="menu"' official.html
+          grep -q 'id="location"' official.html
+
+          curl -fsSL --retry 3 --retry-all-errors --max-time 600 "${OFFICIAL_URL}${VIDEO_PATH#/}?v=${VIDEO_CACHE_KEY}" -o official-video.mp4
+          test "$(stat -c%s official-video.mp4)" = "$VIDEO_BYTES"
+          test "$(sha256sum official-video.mp4 | cut -d' ' -f1)" = "$VIDEO_SHA256"
+          curl -fsSI --max-time 60 "${OFFICIAL_URL}${VIDEO_PATH#/}?v=${VIDEO_CACHE_KEY}" > official-video-headers.txt
+          grep -qi '^content-type: video/mp4' official-video-headers.txt
+
+          trap - ERR
+          echo "MAGICOFFICE_OFFICIAL_TRIAL_VIDEO_VERIFIED deployment=${DEPLOYED_URL}"
+
+      - name: Upload deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_home_trial_video_wordmark_production_v1_evidence
+          path: |
+            dist/health.json
+            previous-production.json
+            deployed-url.txt
+            deploy-output.log
+            official.html
+            official-health.json
+            official-video-headers.txt
+          if-no-files-found: warn
+          retention-days: 14
