@@ -100,6 +100,10 @@ async function main() {
   fs.rmSync(OUTPUT_DIR,{recursive:true,force:true}); fs.mkdirSync(OUTPUT_DIR,{recursive:true});
 
   let html=fs.readFileSync(SOURCE_HTML,'utf8');
+  for (const inlineId of ['magic-domain-runtime','magic-asset-diagnostic']) {
+    const pattern=new RegExp(`<script\\b([^>]*\\bid=[\"']${inlineId}[\"'][^>]*)>([\\s\\S]*?)<\\/script>`,'i');
+    html=html.replace(pattern,(_full,attrs,body)=>`<script${attrs}>(function(){\n${body}\n})();</script>`);
+  }
   const poster=fs.readFileSync(POSTER_FILE);
   const desktopBg=fs.readFileSync(DESKTOP_BG_FILE);
   const video=fs.readFileSync(VIDEO_FILE);
@@ -185,10 +189,10 @@ async function main() {
     html=html.split(raw).join(dataUri(asset.buffer,asset.mime));
   }
 
-  const videoUri=dataUri(video,'video/mp4');
+  const videoBase64=video.toString('base64');
   const mountPattern=/(<([a-z0-9]+)\b[^>]*\bdata-home-video-mount\b[^>]*>)[\s\S]*?(<\/\2>)/i;
   if (!mountPattern.test(html)) throw new Error('Missing data-home-video-mount');
-  html=html.replace(mountPattern,`$1<video class="home-hero-trial-video" muted autoplay loop playsinline webkit-playsinline preload="auto" aria-label="MagicOffice 試播影片" src="${videoUri}"></video>$3`);
+  html=html.replace(mountPattern,`$1<video class="home-hero-trial-video" muted autoplay loop playsinline webkit-playsinline preload="auto" aria-label="MagicOffice 試播影片"></video><script id="magicoffice-home-trial-video-v4-source" type="application/octet-stream">${videoBase64}</script>$3`);
 
   const stagePattern=/<([a-z0-9]+)\b([^>]*\bclass=["'][^"']*\bhomepage-cinema-stage\b[^"']*["'][^>]*)>/i;
   const stage=html.match(stagePattern); if (!stage) throw new Error('Missing homepage cinema stage');
@@ -223,11 +227,12 @@ async function main() {
  function init(){
   var stage=document.querySelector('.homepage-cinema-stage.home-hero-stage,.homepage-cinema-stage'); if(!stage)return;
   var mount=stage.querySelector('[data-home-video-mount]'),video=mount&&mount.querySelector('video'),fullscreen=stage.querySelector('.cinema-fullscreen-button');
-  var fallback=new URLSearchParams(location.search).get('moFallback')==='1';
+  var fallback=new URLSearchParams(location.search).get('moFallback')==='1';var sourceNode=document.getElementById('magicoffice-home-trial-video-v4-source'),objectUrl='';
   function state(ready,playable,error){stage.dataset.videoReady=ready?'true':'false';stage.dataset.videoPlayable=playable?'true':'false';stage.dataset.videoError=error?'true':'false';if(mount)mount.setAttribute('aria-hidden',ready?'false':'true');}
   state(false,false,false);
   if(video){
    video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
+   if(!fallback&&sourceNode){try{var binary=atob(sourceNode.textContent.trim()),chunks=[],chunkSize=524288;for(var offset=0;offset<binary.length;offset+=chunkSize){var end=Math.min(offset+chunkSize,binary.length),bytes=new Uint8Array(end-offset);for(var i=offset;i<end;i++)bytes[i-offset]=binary.charCodeAt(i);chunks.push(bytes)}objectUrl=URL.createObjectURL(new Blob(chunks,{type:'video/mp4'}));video.src=objectUrl;video.load();addEventListener('pagehide',function(){if(objectUrl)URL.revokeObjectURL(objectUrl)},{once:true})}catch(e){state(false,false,true)}}
    function playable(){state(false,true,false)} function playing(){state(true,true,false)} function failed(){try{video.pause()}catch(e){}state(false,false,true)}
    ['loadedmetadata','loadeddata','canplay'].forEach(function(n){video.addEventListener(n,playable,{passive:true})});video.addEventListener('playing',playing,{passive:true});video.addEventListener('error',failed,{passive:true});video.addEventListener('abort',failed,{passive:true});
    function attempt(){if(fallback)return;var p=video.play();if(p&&p.catch)p.catch(function(){state(false,video.readyState>=2,false)})}
@@ -247,7 +252,7 @@ async function main() {
   const checks={
     release:html.includes(RELEASE),selfContained:html.includes('data-build-format="self-contained-production"'),
     poster:(html.match(/class="home-video-poster"/g)||[]).length===1,wordmark:html.includes('data-wordmark="MAGICOFFICE"'),
-    video:(html.match(/class="home-hero-trial-video"/g)||[]).length===1&&html.includes('data:video/mp4;base64,'),playingGuard:html.includes("video.addEventListener('playing',playing"),
+    video:(html.match(/class="home-hero-trial-video"/g)||[]).length===1&&html.includes('magicoffice-home-trial-video-v4-source'),playingGuard:html.includes("video.addEventListener('playing',playing"),
     fallback:html.includes("video.addEventListener('error',failed")&&html.includes('data-video-ready="false"'),
     noExternalStyles:!/<link\b[^>]*\brel=["']stylesheet["']/i.test(html),noExternalScripts:!/<script\b[^>]*\bsrc=["']/i.test(html),
     noOfficialAssets:unresolved.length===0,noRawGitHub:!/raw\.githubusercontent\.com\/sasta02001-hash\/magicoffice-deploy\/main\/assets\//i.test(html),

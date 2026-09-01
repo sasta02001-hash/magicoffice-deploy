@@ -37,7 +37,7 @@ async function run(name,viewport,{mobile=false,fallback=false}={}){
   const missing=ids.filter(id=>!document.getElementById(id));
   const mobileBar=document.querySelector('.mobile-bar,.mobile-bottom-bar');
   const booking=[...document.querySelectorAll('a')].filter(a=>/立即訂位/.test(a.textContent||'')).map(a=>a.href);
-  const menuTabs=[...document.querySelectorAll('[data-menu-tab],.menu-tab')].length;
+  const menuTabs=[...document.querySelectorAll('.menu-tabs button,[role="tablist"] button,[data-pane]')].length;
   const rosterButtons=[...document.querySelectorAll('#roster button,#roster [role="button"],#roster a')].length;
   return {fallback,mobile,ready:stage?.dataset.videoReady,playable:stage?.dataset.videoPlayable,error:stage?.dataset.videoError,videoReadyState:video?.readyState,currentTime:video?.currentTime,paused:video?.paused,muted:video?.muted,posterOpacity:+(cs(poster)?.opacity||0),posterVisibility:cs(poster)?.visibility,wordmarkOpacity:+(cs(wordmark)?.opacity||0),wordmarkVisibility:cs(wordmark)?.visibility,mountOpacity:+(cs(mount)?.opacity||0),mountVisibility:cs(mount)?.visibility,ratio:r?r.width/r.height:null,brandShare:brand&&media?brand.width/(brand.width+media.width):null,horizontalOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,broken,missing,mobileLinks:mobileBar?.querySelectorAll('.mobile-bottom-link').length||0,menuExpanded:document.querySelector('.menu-toggle')?.getAttribute('aria-expanded'),booking,menuTabs,rosterButtons,heartbeatImage:document.querySelector('#heartbeat-support img')?.naturalWidth||0,marker:document.querySelector('meta[name="x-magicoffice-production-release"]')?.content||''};
  },{fallback,mobile});
