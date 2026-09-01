@@ -41,6 +41,14 @@ jobs:
               if poster_write not in a: raise SystemExit('poster write marker missing')
               a = a.replace(poster_write, desktop_fetch, 1)
 
+          # Production currently uses .mobile-bar; older snapshots used .mobile-bottom-bar.
+          # Make the builder accept either without changing the live page outside the preview.
+          old_pattern = r'\bmobile-bottom-bar\b'
+          new_pattern = r'\bmobile-(?:bottom-)?bar\b'
+          if old_pattern in a:
+              a = a.replace(old_pattern, new_pattern, 1)
+          b = b.replace('.mobile-bottom-bar', ':is(.mobile-bottom-bar,.mobile-bar)')
+
           head_start = 'const headPatch = `<meta name="x-magicoffice-home-hero-patch" content="${RELEASE}"/><link id="magicoffice-home-video-poster-preload" rel="preload" as="image" href="${POSTER_PATH}?v=${POSTER_CACHE}" fetchpriority="high"/><style id="magicoffice-home-hero-patch-v1">'
           head_v2 = 'const headPatch = `<meta name="x-magicoffice-home-hero-patch" content="${RELEASE}"/><meta name="x-magicoffice-home-desktop-background" content="desktop-clean-scene-2026-09-01-v1"/><link id="magicoffice-home-video-poster-preload" rel="preload" as="image" href="${POSTER_PATH}?v=${POSTER_CACHE}" fetchpriority="high"/><link id="magicoffice-home-desktop-bg-preload" rel="preload" as="image" media="(min-width:961px)" href="${DESKTOP_BG_PATH}?v=${DESKTOP_BG_CACHE}"/><style id="magicoffice-home-hero-patch-v1">'
           if 'x-magicoffice-home-desktop-background' not in b:
@@ -98,6 +106,7 @@ jobs:
             mobileSourcePreserved: html.includes('magicoffice-home-clean-scene-v5.webp'),
             desktopMarker: html.includes('x-magicoffice-home-desktop-background'),
             petals: (html.match(/class="mo-home-petal"/g)||[]).length >= 6,
+            currentMobileClassHandled: html.includes('data-home-mobile-nav="four-core-links"'),
             noRegressionSections: ['id="roster"','id="schedule"','id="event-hub"','id="menu"','id="location"'].every(x=>html.includes(x))
           };
           const failed = Object.entries(checks).filter(([,v])=>!v);
