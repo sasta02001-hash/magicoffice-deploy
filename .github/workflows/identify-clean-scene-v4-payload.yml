@@ -1,0 +1,66 @@
+name: Identify clean scene v4 payload
+
+on:
+  push:
+    paths:
+      - '.github/workflows/identify-clean-scene-v4-payload.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  identify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Try valid chunk combinations and identify WebP payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          import base64,hashlib,itertools,json,re
+          root=Path('source-assets/clean-scene-v4')
+          files=sorted(root.iterdir())
+          groups={}
+          for p in files:
+            if not p.is_file(): continue
+            m=re.search(r'(\d\d)([a-z]?)',p.stem)
+            if not m: continue
+            groups.setdefault(m.group(1),{})[m.group(2) or 'direct']=p
+          options=[]
+          for idx in sorted(groups):
+            g=groups[idx]
+            choices=[]
+            if 'direct' in g: choices.append(('direct',[g['direct']]))
+            subs=[g[k] for k in sorted(g) if k!='direct']
+            if subs: choices.append(('subparts',subs))
+            options.append((idx,choices))
+          results=[]
+          for selection in itertools.product(*[x[1] for x in options]):
+            labels=[]; selected=[]
+            for (idx,_),(label,paths) in zip(options,selection): labels.append(f'{idx}:{label}'); selected.extend(paths)
+            text=''.join(p.read_text().strip() for p in selected)
+            try: raw=base64.b64decode(text,validate=True)
+            except Exception: continue
+            if not (len(raw)>24 and raw[:4]==b'RIFF' and raw[8:12]==b'WEBP'): continue
+            results.append({'selection':labels,'files':[p.name for p in selected],'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()})
+          out=Path('assets/home-hero-build-inspection'); out.mkdir(exist_ok=True)
+          (out/'clean-scene-v4-payload-candidates.json').write_text(json.dumps(results,indent=2))
+          print(json.dumps({'files':[p.name for p in files if p.is_file()],'groups':{k:list(v) for k,v in groups.items()},'validWebPCandidates':results},indent=2))
+          PY
+      - name: Commit candidate report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-build-inspection/clean-scene-v4-payload-candidates.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Identify clean scene v4 repository payload'
+            git push origin HEAD:main
+          fi
