@@ -1,0 +1,135 @@
+name: Map approved v3 assets to Git history
+
+on:
+  push:
+    paths:
+      - '.github/workflows/map-v3-assets-to-history.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build exact asset history map
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --all --tags --prune
+          python <<'PY'
+          from pathlib import Path
+          import json,re,subprocess,collections,os
+
+          html=Path('assets/home-hero-preview-v3/preview.html').read_text(errors='replace')
+          urls=[]
+          patterns=[
+            r'https://magicoffice\.vercel\.app/([^\"\'<> )]+)',
+            r'(?:src|href|poster)=[\"\'](/(?:assets/|site\.webmanifest)[^\"\']+)',
+            r'url\(\s*[\"\']?(/assets/[^\"\')]+)',
+          ]
+          for pat in patterns:
+            for m in re.finditer(pat,html,re.I):
+              raw=m.group(1)
+              raw=raw.split('#',1)[0]
+              path=raw.split('?',1)[0]
+              if path.startswith('/'):
+                path=path[1:]
+              urls.append({'raw':raw,'path':path,'basename':Path(path).name})
+          by_path={x['path']:x for x in urls}
+          required=list(by_path.values())
+
+          objects=subprocess.check_output(['git','rev-list','--all','--objects'],text=True,errors='replace').splitlines()
+          path_to_sha={}
+          basename_to=[]
+          candidates=collections.defaultdict(list)
+          for line in objects:
+            if ' ' not in line: continue
+            sha,p=line.split(' ',1)
+            path_to_sha[p]=sha
+            candidates[Path(p).name].append({'sha':sha,'path':p})
+
+          selected_commits=[
+            '6a202337fb1d6d9eac746c863f0f2e8f6e05a5bd',
+            'daa5e1aa480c0c717b91f1701a3f99c7293b5047',
+            '1765d2b3c0f2f27492b34c6e919d48b9d7627c0a',
+            '258bfb4d00000000000000000000000000000000',
+          ]
+          refs=subprocess.check_output(['git','for-each-ref','--format=%(objectname) %(refname)','refs/heads','refs/remotes','refs/tags'],text=True).splitlines()
+          known_commits=[]
+          for line in refs:
+            if not line.strip(): continue
+            sha,ref=line.split(' ',1)
+            known_commits.append({'sha':sha,'ref':ref})
+          # Include commits with heartbeat/clean-scene messages.
+          log=subprocess.check_output(['git','log','--all','--format=%H\t%s'],text=True,errors='replace').splitlines()
+          for line in log:
+            if '\t' not in line: continue
+            sha,msg=line.split('\t',1)
+            if re.search(r'(heartbeat|clean.?scene|v2\.0\.7|hero)',msg,re.I):
+              known_commits.append({'sha':sha,'ref':'commit:'+msg})
+
+          def commit_has(commit,path):
+            r=subprocess.run(['git','cat-file','-e',f'{commit}:{path}'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+            return r.returncode==0
+
+          result=[]
+          for item in required:
+            exact=[]
+            # exact path and v207-site prefixed path first
+            for p in [item['path'],f"v207-site/{item['path']}",f"dist/{item['path']}"]:
+              if p in path_to_sha:
+                exact.append({'path':p,'blob':path_to_sha[p]})
+            basename_matches=candidates.get(item['basename'],[])
+            commit_hits=[]
+            seen=set()
+            for ref in known_commits:
+              commit=ref['sha']
+              for p in [item['path'],f"v207-site/{item['path']}",f"dist/{item['path']}",f"assets/media/{item['basename']}",f"source-assets/{item['basename']}"]:
+                key=(commit,p)
+                if key in seen: continue
+                seen.add(key)
+                if commit_has(commit,p):
+                  try:
+                    blob=subprocess.check_output(['git','rev-parse',f'{commit}:{p}'],text=True).strip()
+                    size=int(subprocess.check_output(['git','cat-file','-s',blob],text=True).strip())
+                  except Exception:
+                    blob='';size=-1
+                  commit_hits.append({'commit':commit,'ref':ref['ref'],'path':p,'blob':blob,'size':size})
+              if len(commit_hits)>=12:
+                break
+            result.append({**item,'exactObjectMatches':exact[:20],'basenameMatches':basename_matches[:40],'commitHits':commit_hits[:20]})
+
+          out=Path('assets/home-hero-build-inspection')
+          out.mkdir(exist_ok=True)
+          (out/'v3-asset-history-map.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
+          missing=[x for x in result if not x['exactObjectMatches'] and not x['basenameMatches'] and not x['commitHits']]
+          summary={
+            'requiredCount':len(result),
+            'mappedCount':len(result)-len(missing),
+            'missingCount':len(missing),
+            'missing':missing,
+            'mapped':[
+              {'path':x['path'],'best':(x['commitHits'] or x['exactObjectMatches'] or x['basenameMatches'])[:3]}
+              for x in result if x not in missing
+            ],
+          }
+          (out/'v3-asset-history-summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2))
+          print(json.dumps(summary,ensure_ascii=False,indent=2))
+          PY
+      - name: Commit mapping reports
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-build-inspection/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Map approved v3 asset URLs to Git history'
+            git push origin HEAD:main
+          fi
