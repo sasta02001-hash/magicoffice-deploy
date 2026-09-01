@@ -1,0 +1,33 @@
+name: Export current MagicOffice home video poster
+
+on:
+  push:
+    paths:
+      - '.github/workflows/export-home-video-poster-artifact.yml'
+
+permissions:
+  contents: read
+
+actions:
+
+jobs:
+  export-poster:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact current v3 poster
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE='assets/home-hero-preview-v3/magicoffice-home-video-poster-v1.webp'
+          test -f "$FILE"
+          test "$(stat -c%s "$FILE")" = "70654"
+          test "$(sha256sum "$FILE" | cut -d' ' -f1)" = "f69fb516d01861fe28486ce14c536c5e2109846a0fcd757cbcdc1a0d04ec9d94"
+      - name: Upload exact current poster
+        uses: actions/upload-artifact@v4
+        with:
+          name: magicoffice-current-home-video-poster-v1
+          path: assets/home-hero-preview-v3/magicoffice-home-video-poster-v1.webp
+          if-no-files-found: error
+          retention-days: 1
