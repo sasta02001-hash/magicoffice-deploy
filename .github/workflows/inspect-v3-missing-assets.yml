@@ -1,0 +1,53 @@
+name: Inspect approved v3 missing asset sources
+
+on:
+  push:
+    paths:
+      - '.github/workflows/inspect-v3-missing-assets.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Search every branch, tag and Git object for required asset names
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --all --tags --prune
+          mkdir -p /tmp/v3-asset-inspection
+          {
+            echo '===== REFS ====='
+            git for-each-ref --format='%(refname) %(objectname)' refs/heads refs/remotes refs/tags
+            echo
+            echo '===== PATH MATCHES ====='
+            git rev-list --all --objects | grep -Eai '(site-v2\.0\.6\.css|magic-menu-cms-v1\.0\.4\.css|magic-core-js\.js|magic-schedule-js-v2\.0\.6\.js|magic-mibao-override-js\.js|magic-channel-v2-script\.js|magicoffice-v202-editorial-js\.js|magicoffice-v203-event-system-js\.js|mo-v206-build-marker-v2\.0\.6\.js|heartbeat-support-v7\.png|magicoffice-home-clean-scene-v5\.webp|homepage-cinema-frame-final-v2\.webp|assets/media/[0-9a-f]{16}\.)' || true
+            echo
+            echo '===== COMMIT NAME MATCHES ====='
+            git log --all --name-only --pretty='format:COMMIT %H %s' -- | grep -Eai '(^COMMIT|site-v2\.0\.6\.css|magic-menu-cms-v1\.0\.4\.css|magic-core-js\.js|magic-schedule-js-v2\.0\.6\.js|magic-mibao-override-js\.js|magic-channel-v2-script\.js|magicoffice-v202-editorial-js\.js|magicoffice-v203-event-system-js\.js|mo-v206-build-marker-v2\.0\.6\.js|heartbeat-support-v7\.png|magicoffice-home-clean-scene-v5\.webp|homepage-cinema-frame-final-v2\.webp)' || true
+          } | tee /tmp/v3-asset-inspection/history.txt
+
+          python <<'PY'
+          from pathlib import Path
+          import re,json
+          html=Path('assets/home-hero-preview-v3/preview.html').read_text(errors='replace')
+          names=[]
+          for m in re.finditer(r'https://magicoffice\.vercel\.app/([^\"\'<> )]+)',html,re.I):
+              names.append(m.group(1))
+          names=sorted(set(names))
+          Path('/tmp/v3-asset-inspection/required-assets.json').write_text(json.dumps(names,ensure_ascii=False,indent=2))
+          print('REQUIRED_ASSET_COUNT',len(names))
+          print('\n'.join(names))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v3_asset_history_inspection
+          path: /tmp/v3-asset-inspection/
+          retention-days: 7
