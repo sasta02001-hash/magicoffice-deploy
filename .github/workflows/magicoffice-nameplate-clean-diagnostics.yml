@@ -1,0 +1,234 @@
+name: MagicOffice nameplate-clean diagnostics
+
+on:
+  push:
+    branches:
+      - magicoffice-nameplate-clean-20260901
+    paths:
+      - '.github/workflows/magicoffice-nameplate-clean-diagnostics.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: magicoffice-nameplate-clean-20260901
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install media tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg unzip fonts-dejavu-core
+          python -m pip install --quiet gdown pillow reportlab opencv-python-headless numpy
+
+      - name: Download reference and Runway source archives
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p inputs/zips inputs/sources diagnostics
+          python - <<'PY'
+          import subprocess
+          files = {
+              'reference_720p.mp4': '1UkzDJTameTu4XIRKRscEpV1j61Xe8Psq',
+              'YOSHINO.zip': '1Cd35m0NKuvLv2owbLoiN2RSU6O6Jbt3-',
+              'SAKURI.zip': '14z6GOwKhCfkuDWEefPy_qZYxg19i5-hI',
+              'TSUKUYOMI.zip': '1MtVaX6Y4JB7EIbkdWR5rOHXrejUMECuK',
+              'MOMIJI.zip': '1p9r2YN5H5EkkYzHWKArZQp0xU1gFaKdc',
+              'SETSUKA.zip': '1dA0a6ADp5EvNEFkkbAaRDraHFWi28Kwr',
+              'MAGIC.zip': '1gnx8jFiMaiJdGWBzRaaGshjWs74AcBD6',
+              'OPENING.zip': '1wTDnK3hcoLrUb2A-e7mYX5vkfkQSpTfA',
+              'CITY.zip': '1nmfiax6cke7PMY_T6dksy_wha3uKrZEf',
+              'PALACE.zip': '18_sEn4AvsA0qQGZ9Qw93WCMPFD8GbM6A',
+              'CURRENT_GATE.mp4': '1ZnuuxgQ7dnNringwGy8g2lZIs0EL_-oT',
+              'CURRENT_ENDING.mp4': '1IUy-JxsT7JT9VDiCiJT9xUICaALYKhng',
+          }
+          for name, fid in files.items():
+              out = f'inputs/{name}' if name.endswith('.mp4') else f'inputs/zips/{name}'
+              print('downloading', name)
+              subprocess.run(['gdown', '--id', fid, '-O', out], check=True)
+          PY
+          for z in inputs/zips/*.zip; do
+            base="$(basename "$z" .zip)"
+            mkdir -p "inputs/sources/$base"
+            unzip -q -o "$z" -d "inputs/sources/$base"
+          done
+          find inputs/sources -type f | sort > diagnostics/source_tree.txt
+          du -ah inputs | sort -h > diagnostics/input_sizes.txt
+
+      - name: Probe sources and build contact-sheet PDFs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, json, math, os, subprocess, textwrap
+          from pathlib import Path
+          import cv2
+          import numpy as np
+          from PIL import Image, ImageDraw, ImageFont
+          from reportlab.pdfgen import canvas
+          from reportlab.lib.pagesizes import A4, landscape
+          from reportlab.lib.utils import ImageReader
+
+          ROOT = Path('inputs')
+          OUT = Path('diagnostics')
+          OUT.mkdir(exist_ok=True)
+          FONT_PATH = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+          font_small = ImageFont.truetype(FONT_PATH, 15)
+          font_tiny = ImageFont.truetype(FONT_PATH, 11)
+
+          def probe(path):
+              cmd = ['ffprobe','-v','error','-show_entries',
+                     'format=duration,size,bit_rate:stream=index,codec_type,codec_name,width,height,r_frame_rate,avg_frame_rate,nb_frames,pix_fmt,color_space,color_transfer,color_primaries,color_range',
+                     '-of','json',str(path)]
+              p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+              data = json.loads(p.stdout)
+              v = next((s for s in data.get('streams',[]) if s.get('codec_type')=='video'), {})
+              f = data.get('format',{})
+              return {
+                  'path': str(path),
+                  'file_name': path.name,
+                  'group': path.parts[2] if len(path.parts) > 2 and path.parts[1]=='sources' else path.parent.name,
+                  'duration': float(f.get('duration') or 0),
+                  'size': int(f.get('size') or path.stat().st_size),
+                  'bit_rate': int(f.get('bit_rate') or 0),
+                  'codec': v.get('codec_name',''),
+                  'width': int(v.get('width') or 0),
+                  'height': int(v.get('height') or 0),
+                  'r_frame_rate': v.get('r_frame_rate',''),
+                  'avg_frame_rate': v.get('avg_frame_rate',''),
+                  'nb_frames': v.get('nb_frames',''),
+                  'pix_fmt': v.get('pix_fmt',''),
+                  'color_space': v.get('color_space',''),
+                  'color_transfer': v.get('color_transfer',''),
+                  'color_primaries': v.get('color_primaries',''),
+                  'color_range': v.get('color_range',''),
+              }
+
+          vids = sorted(ROOT.glob('sources/**/*.mp4')) + sorted(ROOT.glob('*.mp4'))
+          rows=[]
+          for i,p in enumerate(vids,1):
+              try:
+                  r=probe(p); r['id']=i; rows.append(r)
+              except Exception as e:
+                  rows.append({'id':i,'path':str(p),'file_name':p.name,'group':'ERROR','error':repr(e)})
+          (OUT/'source_manifest.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding='utf-8')
+          keys=['id','group','file_name','path','duration','size','bit_rate','codec','width','height','r_frame_rate','avg_frame_rate','nb_frames','pix_fmt','color_space','color_transfer','color_primaries','color_range','error']
+          with (OUT/'source_manifest.csv').open('w',newline='',encoding='utf-8-sig') as f:
+              w=csv.DictWriter(f,fieldnames=keys,extrasaction='ignore'); w.writeheader(); w.writerows(rows)
+
+          def read_frame(cap, sec):
+              cap.set(cv2.CAP_PROP_POS_MSEC, max(0.0,sec)*1000)
+              ok, frame=cap.read()
+              if not ok: return None
+              frame=cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+              return Image.fromarray(frame)
+
+          def thumb(im, size=(320,180)):
+              if im is None:
+                  im=Image.new('RGB',size,'black')
+              im=im.copy(); im.thumbnail(size,Image.Resampling.LANCZOS)
+              bg=Image.new('RGB',size,'black')
+              bg.paste(im,((size[0]-im.width)//2,(size[1]-im.height)//2))
+              return bg
+
+          def page_to_png(cells, title, out_path, cols=4, rows_n=4):
+              cw,ch=360,225
+              margin=20; top=50
+              page=Image.new('RGB',(margin*2+cw*cols, top+margin+ch*rows_n),(245,245,245))
+              d=ImageDraw.Draw(page)
+              d.text((margin,12),title,fill='black',font=font_small)
+              for idx,(im,label) in enumerate(cells[:cols*rows_n]):
+                  x=margin+(idx%cols)*cw; y=top+(idx//cols)*ch
+                  t=thumb(im,(320,180)); page.paste(t,(x+20,y))
+                  wrapped=textwrap.wrap(label,width=45)[:3]
+                  yy=y+184
+                  for line in wrapped:
+                      d.text((x+10,yy),line,fill='black',font=font_tiny); yy+=13
+              page.save(out_path,quality=88,optimize=True)
+
+          def images_to_pdf(image_paths, pdf_path):
+              pw,ph=landscape(A4)
+              c=canvas.Canvas(str(pdf_path),pagesize=(pw,ph))
+              for p in image_paths:
+                  im=Image.open(p)
+                  iw,ih=im.size
+                  scale=min(pw/iw,ph/ih)
+                  w,h=iw*scale,ih*scale
+                  c.drawImage(ImageReader(im),(pw-w)/2,(ph-h)/2,w,h)
+                  c.showPage()
+              c.save()
+
+          # Reference timeline every 2 seconds.
+          ref=ROOT/'reference_720p.mp4'
+          refrow=probe(ref); refdur=refrow['duration']
+          cap=cv2.VideoCapture(str(ref))
+          cells=[]
+          for sec in np.arange(0,refdur,2.0):
+              cells.append((read_frame(cap,float(sec)),f't={sec:06.2f}s'))
+          cap.release()
+          pages=[]
+          for pidx in range(math.ceil(len(cells)/16)):
+              pp=OUT/f'reference_page_{pidx+1:02d}.jpg'
+              page_to_png(cells[pidx*16:(pidx+1)*16],f'MagicOffice 720p reference timeline — page {pidx+1}',pp)
+              pages.append(pp)
+          images_to_pdf(pages,OUT/'reference_contact.pdf')
+
+          # Three frames per source clip, grouped into 16 clips (48 frames) across 3 PDF pages each block.
+          source_pages=[]
+          clip_cells=[]
+          for r in rows:
+              if 'error' in r or r['path'].endswith('reference_720p.mp4'): continue
+              p=Path(r['path']); dur=max(0.01,r.get('duration',0.01)); cap=cv2.VideoCapture(str(p))
+              for tag,sec in [('A',min(0.10,dur*0.05)),('M',dur*0.50),('Z',max(0,dur-0.12))]:
+                  label=f"#{r['id']:03d} {r['group']} {tag} {sec:.2f}/{dur:.2f}s | {r['file_name']}"
+                  clip_cells.append((read_frame(cap,sec),label))
+              cap.release()
+          per_page=12
+          for pidx in range(math.ceil(len(clip_cells)/per_page)):
+              pp=OUT/f'sources_page_{pidx+1:03d}.jpg'
+              page_to_png(clip_cells[pidx*per_page:(pidx+1)*per_page],f'Runway source samples — page {pidx+1}',pp,cols=4,rows_n=3)
+              source_pages.append(pp)
+          images_to_pdf(source_pages,OUT/'sources_contact.pdf')
+
+          summary={
+              'reference':refrow,
+              'video_count':len(rows),
+              'groups':{},
+          }
+          for r in rows:
+              summary['groups'].setdefault(r.get('group','?'),0); summary['groups'][r.get('group','?')]+=1
+          (OUT/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(summary,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Commit diagnostics to task branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f diagnostics/reference_page_*.jpg diagnostics/sources_page_*.jpg
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add diagnostics
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add MagicOffice nameplate-clean source diagnostics'
+            git push origin HEAD:magicoffice-nameplate-clean-20260901
+          fi
+
+      - name: Upload diagnostic artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_nameplate_clean_diagnostics
+          path: diagnostics/
+          retention-days: 7
+          if-no-files-found: error
