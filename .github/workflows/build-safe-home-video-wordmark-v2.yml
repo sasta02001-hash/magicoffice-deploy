@@ -20,6 +20,7 @@ env:
   RELEASE: home-video-wordmark-safe-2026-09-01-v2
   POSTER_URL: https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/home-hero-preview-v3/magicoffice-home-video-poster-v1.webp
   DESKTOP_BG_URL: https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/home-clean-scene-desktop-v1/magicoffice-home-clean-scene-desktop-v1.webp
+  MOBILE_BG_URL: https://magicoffice-l0ovo899x-magicoffice.vercel.app/assets/media/magicoffice-home-clean-scene-v5.webp?v=20260901-clean-scene-v5
   VIDEO_URL: https://github.com/sasta02001-hash/magicoffice-deploy/releases/download/magicoffice-home-trial-v1/magicoffice-home-trial-720p-v1.mp4
   VIDEO_BYTES: '67334731'
   VIDEO_SHA256: b65929fe53cd056a00281562bcee3ca58268f4cfef476eb4c1bef3cd6ea6a958
@@ -48,7 +49,7 @@ jobs:
             'size':p.stat().st_size>20000,
             'html':'<html' in s.lower(),
             'brand':'MagicOffice' in s,
-            'stage':'homepage-cinema-stage home-hero-stage' in s,
+            'hero':'<section class="hero" id="top">' in s,
             'mobileBar':'手機版便捷選單' in s,
           }
           print('SOURCE_CHECKS',checks)
