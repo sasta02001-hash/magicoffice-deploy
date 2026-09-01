@@ -1,0 +1,192 @@
+name: MagicOffice nameplate-free final render v2
+
+on:
+  push:
+    branches: [magicoffice-nameplate-clean-20260901]
+    paths: ['.github/workflows/magicoffice-nameplate-free-render-v2.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: magicoffice-nameplate-clean-20260901
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Load and run the corrected renderer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          src=Path('.github/workflows/magicoffice-nameplate-free-render.yml')
+          data=yaml.safe_load(src.read_text())
+          wanted={
+            'Install media tools':'01_install.sh',
+            'Download reference, locked replacements, and Runway originals':'02_download.sh',
+            'Rebuild clean 1080p master from source frames':'03_render.sh',
+            'Validate, hash, and split exact final file':'04_validate.sh',
+          }
+          found={}
+          for step in data['jobs']['render']['steps']:
+            name=step.get('name')
+            if name in wanted and 'run' in step:
+              text=step['run']
+              if name=='Rebuild clean 1080p master from source frames':
+                text=text.replace("f'bridge:{i-131}/5'", "f'bridge:{(i-131)/5.0}'")
+              Path(wanted[name]).write_text(text)
+              found[name]=True
+          missing=set(wanted)-set(found)
+          if missing: raise SystemExit(f'missing embedded steps: {missing}')
+          PY
+          for s in 01_install.sh 02_download.sh 03_render.sh 04_validate.sh; do
+            echo "===== RUN $s ====="
+            bash "$s"
+          done
+
+      - name: Upload merge tools and reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_NAMEPLATE_FREE_merge_tools
+          path: output/MagicOffice_NAMEPLATE_FREE_merge_tools.zip
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Upload part 000
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part000') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part000, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part000, compression-level: 0, retention-days: 1}
+      - name: Upload part 001
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part001') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part001, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part001, compression-level: 0, retention-days: 1}
+      - name: Upload part 002
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part002') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part002, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part002, compression-level: 0, retention-days: 1}
+      - name: Upload part 003
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part003') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part003, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part003, compression-level: 0, retention-days: 1}
+      - name: Upload part 004
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part004') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part004, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part004, compression-level: 0, retention-days: 1}
+      - name: Upload part 005
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part005') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part005, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part005, compression-level: 0, retention-days: 1}
+      - name: Upload part 006
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part006') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part006, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part006, compression-level: 0, retention-days: 1}
+      - name: Upload part 007
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part007') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part007, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part007, compression-level: 0, retention-days: 1}
+      - name: Upload part 008
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part008') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part008, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part008, compression-level: 0, retention-days: 1}
+      - name: Upload part 009
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part009') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part009, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part009, compression-level: 0, retention-days: 1}
+      - name: Upload part 010
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part010') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part010, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part010, compression-level: 0, retention-days: 1}
+      - name: Upload part 011
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part011') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part011, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part011, compression-level: 0, retention-days: 1}
+      - name: Upload part 012
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part012') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part012, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part012, compression-level: 0, retention-days: 1}
+      - name: Upload part 013
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part013') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part013, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part013, compression-level: 0, retention-days: 1}
+      - name: Upload part 014
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part014') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part014, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part014, compression-level: 0, retention-days: 1}
+      - name: Upload part 015
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part015') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part015, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part015, compression-level: 0, retention-days: 1}
+      - name: Upload part 016
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part016') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part016, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part016, compression-level: 0, retention-days: 1}
+      - name: Upload part 017
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part017') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part017, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part017, compression-level: 0, retention-days: 1}
+      - name: Upload part 018
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part018') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part018, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part018, compression-level: 0, retention-days: 1}
+      - name: Upload part 019
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part019') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part019, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part019, compression-level: 0, retention-days: 1}
+      - name: Upload part 020
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part020') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part020, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part020, compression-level: 0, retention-days: 1}
+      - name: Upload part 021
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part021') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part021, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part021, compression-level: 0, retention-days: 1}
+      - name: Upload part 022
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part022') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part022, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part022, compression-level: 0, retention-days: 1}
+      - name: Upload part 023
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part023') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part023, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part023, compression-level: 0, retention-days: 1}
+      - name: Upload part 024
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part024') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part024, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part024, compression-level: 0, retention-days: 1}
+      - name: Upload part 025
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part025') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part025, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part025, compression-level: 0, retention-days: 1}
+      - name: Upload part 026
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part026') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part026, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part026, compression-level: 0, retention-days: 1}
+      - name: Upload part 027
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part027') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part027, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part027, compression-level: 0, retention-days: 1}
+      - name: Upload part 028
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part028') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part028, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part028, compression-level: 0, retention-days: 1}
+      - name: Upload part 029
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part029') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part029, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part029, compression-level: 0, retention-days: 1}
+      - name: Upload part 030
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part030') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part030, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part030, compression-level: 0, retention-days: 1}
+      - name: Upload part 031
+        if: ${{ hashFiles('output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part031') != '' }}
+        uses: actions/upload-artifact@v4
+        with: {name: MagicOffice_NAMEPLATE_FREE_part031, path: output/parts/MagicOffice_NAMEPLATE_FREE_FINAL.mp4.part031, compression-level: 0, retention-days: 1}
