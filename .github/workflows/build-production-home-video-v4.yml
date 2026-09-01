@@ -1,4 +1,4 @@
-# Rebuild after runtime isolation, Blob video source, and complete mobile scene fixes
+# Final rebuild after runtime isolation, Blob video source, complete mobile scene, and RIFF padding repair
 name: Build and verify MagicOffice production home video v4
 
 on:
