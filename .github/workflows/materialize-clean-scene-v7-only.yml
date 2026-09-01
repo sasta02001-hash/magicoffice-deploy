@@ -1,0 +1,49 @@
+name: Materialize clean scene v7 only
+
+on:
+  push:
+    paths:
+      - '.github/workflows/materialize-clean-scene-v7-only.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reconstruct valid clean-scene v7 WebP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/home-hero-build-inspection/images
+          python <<'PY'
+          from pathlib import Path
+          import base64,hashlib,json
+          files=['part-00.txt','part-01a.txt','part-01b.txt','part-02.txt','part-03.txt','part-04.txt','part-05.txt','part-06a.txt','part-07.txt','part-08.txt','part-09.txt']
+          root=Path('source-assets/clean-scene-v7')
+          raw=base64.b64decode(''.join((root/f).read_text().strip() for f in files),validate=True)
+          if raw[:4]!=b'RIFF' or raw[8:12]!=b'WEBP': raise SystemExit('invalid WebP')
+          out=Path('assets/home-hero-build-inspection/images'); out.mkdir(exist_ok=True)
+          (out/'clean-scene-v7.webp').write_bytes(raw)
+          report={'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'files':files}
+          (out/'clean-scene-v7.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          PY
+          file assets/home-hero-build-inspection/images/clean-scene-v7.webp
+      - name: Commit binary candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-build-inspection/images/clean-scene-v7.webp assets/home-hero-build-inspection/images/clean-scene-v7.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Materialize clean scene v7 candidate'
+            git push origin HEAD:main
+          fi
