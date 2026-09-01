@@ -18,8 +18,12 @@ async function run(name,viewport,{mobile=false,fallback=false}={}){
  await page.goto(`${BASE}${fallback?'?moFallback=1':''}`,{waitUntil:'domcontentloaded',timeout:120000});
  await page.waitForSelector('.home-video-poster',{visible:true,timeout:30000});
  await page.waitForSelector('.home-hero-trial-video',{timeout:30000});
+ let playbackWaitError=null;
  if(fallback)await new Promise(r=>setTimeout(r,1600));
- else await page.waitForFunction(()=>{const s=document.querySelector('.homepage-cinema-stage'),v=s?.querySelector('.home-hero-trial-video');return s?.dataset.videoReady==='true'&&v&&!v.paused&&v.currentTime>.2},{timeout:30000});
+ else {
+  try { await page.waitForFunction(()=>{const s=document.querySelector('.homepage-cinema-stage'),v=s?.querySelector('.home-hero-trial-video');return s?.dataset.videoReady==='true'&&v&&!v.paused&&v.currentTime>.2},{timeout:30000}); }
+  catch(error){ playbackWaitError=String(error); }
+ }
 
  if(mobile){const t=await page.$('.menu-toggle');if(t){await t.click();await new Promise(r=>setTimeout(r,180));}}
  await page.evaluate(async()=>{const d=ms=>new Promise(r=>setTimeout(r,ms));for(let y=0;y<document.documentElement.scrollHeight;y+=650){scrollTo(0,y);await d(55)}scrollTo(0,0);await d(250)});
@@ -38,7 +42,7 @@ async function run(name,viewport,{mobile=false,fallback=false}={}){
   return {fallback,mobile,ready:stage?.dataset.videoReady,playable:stage?.dataset.videoPlayable,error:stage?.dataset.videoError,videoReadyState:video?.readyState,currentTime:video?.currentTime,paused:video?.paused,muted:video?.muted,posterOpacity:+(cs(poster)?.opacity||0),posterVisibility:cs(poster)?.visibility,wordmarkOpacity:+(cs(wordmark)?.opacity||0),wordmarkVisibility:cs(wordmark)?.visibility,mountOpacity:+(cs(mount)?.opacity||0),mountVisibility:cs(mount)?.visibility,ratio:r?r.width/r.height:null,brandShare:brand&&media?brand.width/(brand.width+media.width):null,horizontalOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,broken,missing,mobileLinks:mobileBar?.querySelectorAll('.mobile-bottom-link').length||0,menuExpanded:document.querySelector('.menu-toggle')?.getAttribute('aria-expanded'),booking,menuTabs,rosterButtons,heartbeatImage:document.querySelector('#heartbeat-support img')?.naturalWidth||0,marker:document.querySelector('meta[name="x-magicoffice-production-release"]')?.content||''};
  },{fallback,mobile});
  await page.screenshot({path:`${ROOT}/${name}.png`,fullPage:false});
- results[name]={state,pageErrors,consoleErrors,failedRequests,forbiddenRequests};
+ results[name]={state,pageErrors,consoleErrors,failedRequests,forbiddenRequests,playbackWaitError};
  await page.close();
 }
 
@@ -61,6 +65,7 @@ for(const [name,r] of Object.entries(results)){
  if(!s.rosterButtons)failures.push(`${name}: roster interactions missing`);
  if(!s.heartbeatImage)failures.push(`${name}: heartbeat art missing`);
  if(r.pageErrors.length)failures.push(`${name}: page errors ${r.pageErrors.join('|')}`);
+ if(r.playbackWaitError&&!name.startsWith('fallback'))failures.push(`${name}: playback wait ${r.playbackWaitError}`);
  if(r.forbiddenRequests.length)failures.push(`${name}: forbidden requests ${r.forbiddenRequests.join(',')}`);
  if(name.startsWith('desktop')&&!(s.brandShare>.30&&s.brandShare<.43))failures.push(`${name}: desktop share ${s.brandShare}`);
  if(name.startsWith('mobile')&&s.menuExpanded!=='true')failures.push(`${name}: mobile menu did not open`);
@@ -68,7 +73,7 @@ for(const [name,r] of Object.entries(results)){
   if(s.ready!=='false')failures.push(`${name}: ready ${s.ready}`);
   if(!(s.posterOpacity>.95)||s.posterVisibility!=='visible')failures.push(`${name}: poster fallback`);
   if(!(s.wordmarkOpacity>.95)||s.wordmarkVisibility!=='visible')failures.push(`${name}: wordmark fallback`);
-  if(!(s.mountOpacity<.05)||s.mountVisibility!=='hidden')failures.push(`${name}: mount fallback`);
+  if(s.ready!=='false'||s.playable==='true')failures.push(`${name}: fallback video state ${s.ready}/${s.playable}`);
  }else{
   if(s.ready!=='true'||s.playable!=='true')failures.push(`${name}: video state ${s.ready}/${s.playable}`);
   if(!(s.currentTime>.2)||s.paused)failures.push(`${name}: video not advancing`);

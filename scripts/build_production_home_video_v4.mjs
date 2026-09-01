@@ -188,7 +188,7 @@ async function main() {
   const videoUri=dataUri(video,'video/mp4');
   const mountPattern=/(<([a-z0-9]+)\b[^>]*\bdata-home-video-mount\b[^>]*>)[\s\S]*?(<\/\2>)/i;
   if (!mountPattern.test(html)) throw new Error('Missing data-home-video-mount');
-  html=html.replace(mountPattern,`$1<video class="home-hero-trial-video" muted loop playsinline webkit-playsinline preload="auto" aria-label="MagicOffice 試播影片" src="${videoUri}"></video>$3`);
+  html=html.replace(mountPattern,`$1<video class="home-hero-trial-video" muted autoplay loop playsinline webkit-playsinline preload="auto" aria-label="MagicOffice 試播影片" src="${videoUri}"></video>$3`);
 
   const stagePattern=/<([a-z0-9]+)\b([^>]*\bclass=["'][^"']*\bhomepage-cinema-stage\b[^"']*["'][^>]*)>/i;
   const stage=html.match(stagePattern); if (!stage) throw new Error('Missing homepage cinema stage');
@@ -205,12 +205,12 @@ async function main() {
   const css=`<style id="magicoffice-home-video-production-v4-css">
 .homepage-cinema-stage.home-hero-stage{background:#170b10!important;isolation:isolate!important}
 .homepage-cinema-stage .home-video-poster{z-index:1!important;opacity:1!important;visibility:visible!important;background:#170b10!important;transition:opacity .32s ease,visibility .32s ease!important}
-.homepage-cinema-stage [data-home-video-mount]{z-index:2!important;opacity:0!important;visibility:hidden!important;background:transparent!important;transition:opacity .32s ease,visibility .32s ease!important}
+.homepage-cinema-stage [data-home-video-mount]{z-index:0!important;opacity:1!important;visibility:visible!important;background:transparent!important;transition:opacity .32s ease,visibility .32s ease!important}
 .homepage-cinema-stage [data-home-video-mount] video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;object-position:center!important;background:transparent!important}
 .homepage-cinema-stage .home-video-wordmark{z-index:3!important}
 .homepage-cinema-stage[data-video-ready="true"] .home-video-poster,.homepage-cinema-stage[data-video-ready="true"] .home-video-wordmark{opacity:0!important;visibility:hidden!important}
-.homepage-cinema-stage[data-video-ready="true"] [data-home-video-mount]{opacity:1!important;visibility:visible!important}
-.homepage-cinema-stage[data-video-ready="false"] [data-home-video-mount]{opacity:0!important;visibility:hidden!important}
+.homepage-cinema-stage[data-video-ready="true"] [data-home-video-mount]{z-index:2!important;opacity:1!important;visibility:visible!important}
+.homepage-cinema-stage[data-video-ready="false"] [data-home-video-mount]{z-index:0!important;opacity:1!important;visibility:visible!important}
 .homepage-cinema-stage[data-video-playable="true"] .cinema-fullscreen-button{display:grid!important;opacity:.88!important;pointer-events:auto!important}
 .homepage-cinema-stage[data-video-playable="false"] .cinema-fullscreen-button{display:none!important}
 .heartbeat-support-poster img{background:#ffe2ef!important}
@@ -227,7 +227,7 @@ async function main() {
   function state(ready,playable,error){stage.dataset.videoReady=ready?'true':'false';stage.dataset.videoPlayable=playable?'true':'false';stage.dataset.videoError=error?'true':'false';if(mount)mount.setAttribute('aria-hidden',ready?'false':'true');}
   state(false,false,false);
   if(video){
-   video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
+   video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
    function playable(){state(false,true,false)} function playing(){state(true,true,false)} function failed(){try{video.pause()}catch(e){}state(false,false,true)}
    ['loadedmetadata','loadeddata','canplay'].forEach(function(n){video.addEventListener(n,playable,{passive:true})});video.addEventListener('playing',playing,{passive:true});video.addEventListener('error',failed,{passive:true});video.addEventListener('abort',failed,{passive:true});
    function attempt(){if(fallback)return;var p=video.play();if(p&&p.catch)p.catch(function(){state(false,video.readyState>=2,false)})}
