@@ -1,0 +1,16 @@
+{
+  "width": 2560,
+  "height": 1440,
+  "bytes": 198942,
+  "sha256": "bd41188ff12ed9f4755d96f3309fee6019d7608b39cf30853a83af33baf65bab",
+  "source": "official production clean-scene v5",
+  "sourceDimensions": {
+    "width": 1000,
+    "height": 1333
+  },
+  "scenePlacedDimensions": {
+    "width": 1080,
+    "height": 1440
+  },
+  "method": "approved scene at near-native size on left 36%; clean dark wine-black extension on right 64%; feathered transition; no new objects"
+}
