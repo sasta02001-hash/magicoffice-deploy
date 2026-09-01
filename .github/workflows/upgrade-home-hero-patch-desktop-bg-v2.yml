@@ -1,0 +1,118 @@
+name: Upgrade MagicOffice home hero patch with desktop background v2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/upgrade-home-hero-patch-desktop-bg-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch hero builder chunks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+
+          p0 = Path('assets/home-hero-patch-v1/part-00.txt')
+          p1 = Path('assets/home-hero-patch-v1/part-01.txt')
+          a = p0.read_text()
+          b = p1.read_text()
+
+          marker = "const POSTER_BASE = 'https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/homepage-poster-v3';"
+          insert = marker + "\nconst DESKTOP_BG_PATH = '/assets/media/magicoffice-home-clean-scene-desktop-v1.webp';\nconst DESKTOP_BG_CACHE = '20260901-desktop-clean-scene-v1';\nconst DESKTOP_BG_BYTES = 198942;\nconst DESKTOP_BG_SHA256 = 'bd41188ff12ed9f4755d96f3309fee6019d7608b39cf30853a83af33baf65bab';\nconst DESKTOP_BG_URL = 'https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/home-clean-scene-desktop-v1/magicoffice-home-clean-scene-desktop-v1.webp';"
+          if 'DESKTOP_BG_PATH' not in a:
+              if marker not in a: raise SystemExit('poster marker missing')
+              a = a.replace(marker, insert, 1)
+
+          poster_write = '  writeAsset(POSTER_PATH, poster);'
+          desktop_fetch = poster_write + "\n\n  // Checksum-lock and mirror the 2560x1440 desktop-only background.\n  const desktopResult = await fetchBytes(`${DESKTOP_BG_URL}?v=${DESKTOP_BG_CACHE}`);\n  const desktopBg = desktopResult.data;\n  const desktopSha = crypto.createHash('sha256').update(desktopBg).digest('hex');\n  if (desktopBg.length !== DESKTOP_BG_BYTES || desktopSha !== DESKTOP_BG_SHA256) {\n    throw new Error(`Desktop background verification failed bytes=${desktopBg.length} sha256=${desktopSha}`);\n  }\n  writeAsset(DESKTOP_BG_PATH, desktopBg);"
+          if 'const desktopResult = await fetchBytes' not in a:
+              if poster_write not in a: raise SystemExit('poster write marker missing')
+              a = a.replace(poster_write, desktop_fetch, 1)
+
+          head_start = 'const headPatch = `<meta name="x-magicoffice-home-hero-patch" content="${RELEASE}"/><link id="magicoffice-home-video-poster-preload" rel="preload" as="image" href="${POSTER_PATH}?v=${POSTER_CACHE}" fetchpriority="high"/><style id="magicoffice-home-hero-patch-v1">'
+          head_v2 = 'const headPatch = `<meta name="x-magicoffice-home-hero-patch" content="${RELEASE}"/><meta name="x-magicoffice-home-desktop-background" content="desktop-clean-scene-2026-09-01-v1"/><link id="magicoffice-home-video-poster-preload" rel="preload" as="image" href="${POSTER_PATH}?v=${POSTER_CACHE}" fetchpriority="high"/><link id="magicoffice-home-desktop-bg-preload" rel="preload" as="image" media="(min-width:961px)" href="${DESKTOP_BG_PATH}?v=${DESKTOP_BG_CACHE}"/><style id="magicoffice-home-hero-patch-v1">'
+          if 'x-magicoffice-home-desktop-background' not in b:
+              if head_start not in b: raise SystemExit('head patch marker missing')
+              b = b.replace(head_start, head_v2, 1)
+
+          media = '  @media(max-width:960px){\n'
+          desktop_css = '  .mo-home-static-bg{background-image:url("${DESKTOP_BG_PATH}?v=${DESKTOP_BG_CACHE}")!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important}\n  .mo-home-static-bg>.mo-home-static-bg-image{opacity:0!important;visibility:hidden!important}\n'
+          mobile_css = media + '    .mo-home-static-bg{background-image:none!important}\n    .mo-home-static-bg>.mo-home-static-bg-image{opacity:1!important;visibility:visible!important}\n'
+          if 'background-image:url("${DESKTOP_BG_PATH}' not in b:
+              if media not in b: raise SystemExit('mobile media marker missing')
+              b = b.replace(media, desktop_css + mobile_css, 1)
+
+          check = "    backgroundPreserved: html.includes('magicoffice-home-clean-scene-v5.webp'),"
+          check_v2 = check + "\n    desktopBackground: html.includes(`${DESKTOP_BG_PATH}?v=${DESKTOP_BG_CACHE}`),"
+          if 'desktopBackground: html.includes' not in b:
+              if check not in b: raise SystemExit('final check marker missing')
+              b = b.replace(check, check_v2, 1)
+
+          health_marker = "      repeatedEyebrow: 'hidden',\n    },"
+          health_v2 = "      repeatedEyebrow: 'hidden',\n      desktopBackground: { path: DESKTOP_BG_PATH, width: 2560, height: 1440, bytes: desktopBg.length, sha256: desktopSha, behavior: 'desktop only; mobile keeps approved clean-scene v5 portrait' },\n    },"
+          if "behavior: 'desktop only; mobile keeps approved clean-scene v5 portrait'" not in b:
+              if health_marker not in b: raise SystemExit('health marker missing')
+              b = b.replace(health_marker, health_v2, 1)
+
+          p0.write_text(a)
+          p1.write_text(b)
+          PY
+
+      - name: Reassemble and syntax-check builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat assets/home-hero-patch-v1/part-00.txt assets/home-hero-patch-v1/part-01.txt > /tmp/bootstrap.js
+          node --check /tmp/bootstrap.js
+
+      - name: Full dry-run against current Production
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          node /tmp/bootstrap.js
+          node <<'NODE'
+          const fs = require('node:fs');
+          const h = JSON.parse(fs.readFileSync('dist/health.json','utf8'));
+          const html = fs.readFileSync('dist/index.html','utf8');
+          const checks = {
+            ok: h.ok === true,
+            desktop2560: h.layout?.desktopBackground?.width === 2560 && h.layout?.desktopBackground?.height === 1440,
+            desktopAsset: fs.existsSync('dist/assets/media/magicoffice-home-clean-scene-desktop-v1.webp'),
+            poster: fs.existsSync('dist/assets/media/magicoffice-home-video-poster-v1.webp'),
+            ratio: h.layout?.desktopColumns === '36fr 64fr',
+            nav4: h.mobileNavigation?.count === 4,
+            ornaments: h.layout?.ornaments === 'hidden',
+            mobileSourcePreserved: html.includes('magicoffice-home-clean-scene-v5.webp'),
+            desktopMarker: html.includes('x-magicoffice-home-desktop-background'),
+            petals: (html.match(/class="mo-home-petal"/g)||[]).length >= 6,
+            noRegressionSections: ['id="roster"','id="schedule"','id="event-hub"','id="menu"','id="location"'].every(x=>html.includes(x))
+          };
+          const failed = Object.entries(checks).filter(([,v])=>!v);
+          if (failed.length) throw new Error('Dry-run checks failed: '+failed.map(([k])=>k).join(', '));
+          console.log('MAGICOFFICE_HOME_HERO_DESKTOP_BG_V2_DRYRUN_OK', JSON.stringify(checks));
+          NODE
+
+      - name: Commit verified builder source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Preview Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-patch-v1/part-00.txt assets/home-hero-patch-v1/part-01.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Use desktop-only 2560x1440 clean-scene in hero patch'
+            git push origin HEAD:main
+          fi
