@@ -1,0 +1,53 @@
+name: Diagnose approved v3 inline images
+
+on:
+  push:
+    paths:
+      - '.github/workflows/diagnose-v3-inline-images.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate every pre-existing inline image payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          import re,base64,hashlib,json,struct
+          s=Path('assets/home-hero-preview-v3/preview.html').read_text(errors='replace')
+          results=[]
+          for i,m in enumerate(re.finditer(r'data:(image/[^;,]+);base64,([A-Za-z0-9+/=]+)',s,re.I)):
+            mime=m.group(1).lower(); enc=m.group(2)
+            try: raw=base64.b64decode(enc,validate=True); decode=True
+            except Exception as e: raw=b''; decode=False
+            riff_declared=None
+            if raw[:4]==b'RIFF' and len(raw)>=12:
+              riff_declared=struct.unpack('<I',raw[4:8])[0]+8
+            before=s[max(0,m.start()-420):m.start()]
+            alt=re.findall(r'alt=["\']([^"\']*)',before,re.I)
+            results.append({'index':i,'mime':mime,'encodedChars':len(enc),'bytes':len(raw),'decode':decode,'sha256':hashlib.sha256(raw).hexdigest() if raw else None,'head':raw[:16].hex(),'riffDeclared':riff_declared,'riffMatches':riff_declared==len(raw) if riff_declared is not None else None,'nearestAlt':alt[-1] if alt else None,'context':before[-180:]})
+          out=Path('assets/home-hero-build-inspection');out.mkdir(exist_ok=True)
+          (out/'v3-inline-images-diagnosis.json').write_text(json.dumps(results,ensure_ascii=False,indent=2))
+          print(json.dumps(results,ensure_ascii=False,indent=2))
+          PY
+      - name: Commit diagnosis
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-build-inspection/v3-inline-images-diagnosis.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record approved v3 inline image diagnosis'
+            git push origin HEAD:main
+          fi
