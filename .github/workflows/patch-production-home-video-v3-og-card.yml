@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '.github/workflows/patch-production-home-video-v3-og-card.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -24,12 +25,8 @@ jobs:
           from pathlib import Path
           p=Path('scripts/build_production_home_video_v3.mjs')
           s=p.read_text()
-          old="""    const record = await fetchAsset(url);
-    records.set(key, record);"""
-          new="""    const record = url.pathname === '/assets/og-card.jpg'
-      ? { url, finalUrl: url, buffer: poster, mime: 'image/webp' }
-      : await fetchAsset(url);
-    records.set(key, record);"""
+          old="    const record = await fetchAsset(url);\n    records.set(key, record);"
+          new="    const record = url.pathname === '/assets/og-card.jpg'\n      ? { url, finalUrl: url, buffer: poster, mime: 'image/webp' }\n      : await fetchAsset(url);\n    records.set(key, record);"
           if old not in s:
               raise SystemExit('OG card patch marker missing')
           p.write_text(s.replace(old,new,1))
