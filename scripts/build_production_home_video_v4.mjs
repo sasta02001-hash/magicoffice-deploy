@@ -13,7 +13,7 @@ const OUTPUT_INDEX = path.join(OUTPUT_DIR, 'index.html');
 const ORIGIN = 'https://magicoffice.vercel.app';
 const RELEASE = 'home-video-wordmark-12s-2026-09-01-v4';
 const EXPECTED_VIDEO = { bytes: 3016896, sha256: '2251aa3eb1d386a4d3a889ab147f7a212838e7f1c56bcac018e92fb44bc5f7b1' };
-const CLEAN_SCENE_CHUNKS = ['part-00.txt','part-01a.txt','part-01b.txt','part-02.txt','part-03.txt','part-04.txt','part-05.txt','part-06a.txt','part-07.txt','part-08.txt','part-09.txt'];
+const CLEAN_SCENE_CHUNKS = ['part-00.txt','part-01a.txt','part-01b.txt','part-02.txt','part-03.txt','part-04.txt','part-05.txt','part-06.txt','part-07.txt','part-08.txt','part-09.txt'];
 
 const MIME = {
   '.css':'text/css','.js':'text/javascript','.json':'application/json','.webmanifest':'application/manifest+json',
@@ -47,7 +47,8 @@ function reconstructMobileScene() {
   const encoded=CLEAN_SCENE_CHUNKS.map((name)=>fs.readFileSync(path.join(root,name),'utf8').trim()).join('');
   const buffer=Buffer.from(encoded,'base64');
   const dim=webpDimensions(buffer);
-  if (!dim || dim.width !== 1000 || dim.height !== 1333) throw new Error(`Mobile clean-scene dimensions invalid ${JSON.stringify(dim)}`);
+  const declared=buffer.length>=8?buffer.readUInt32LE(4)+8:0;
+  if (!dim || dim.width !== 1000 || dim.height !== 1333 || declared !== buffer.length) throw new Error(`Mobile clean-scene invalid dimensions=${JSON.stringify(dim)} bytes=${buffer.length} declared=${declared}`);
   return buffer;
 }
 
