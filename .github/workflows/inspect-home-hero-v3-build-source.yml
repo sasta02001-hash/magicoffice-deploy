@@ -1,0 +1,65 @@
+name: Inspect approved MagicOffice home hero v3 source
+
+on:
+  push:
+    paths:
+      - '.github/workflows/inspect-home-hero-v3-build-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract build-relevant source details
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          import re, json
+          p=Path('assets/home-hero-preview-v3/preview.html')
+          s=p.read_text(errors='replace')
+          def snip(pos, before=500, after=2500):
+              if pos < 0: return 'NOT FOUND'
+              return s[max(0,pos-before):min(len(s),pos+after)]
+          urls=sorted(set(re.findall(r'https://[^\"\'<> )]+',s)))
+          paths=sorted(set(re.findall(r'(?:src|href|poster)=[\"\']([^\"\']+)',s,re.I)))
+          css_urls=sorted(set(re.findall(r'url\(\s*[\"\']?([^\"\')]+)',s,re.I)))
+          data={
+            'bytes':p.stat().st_size,
+            'markers':{k:s.find(k) for k in [
+              'homepage-hero-v2','home-hero-stage','data-home-video-mount','home-video-poster',
+              'home-video-wordmark','mobile-bar','id="roster"','id="schedule"','id="event-hub"',
+              'id="heartbeat-support"','id="menu"','id="location"'
+            ]},
+            'externalUrls':urls,
+            'attributePaths':paths,
+            'cssUrls':css_urls,
+          }
+          out=Path('assets/home-hero-build-inspection')
+          out.mkdir(parents=True,exist_ok=True)
+          (out/'report.json').write_text(json.dumps(data,ensure_ascii=False,indent=2))
+          snippets=[]
+          for name,needle in [('hero','homepage-hero-v2'),('stage','home-hero-stage'),('videoMount','data-home-video-mount'),('wordmark','home-video-wordmark'),('mobile','mobile-bar')]:
+              snippets.append(f'\n\n===== {name} =====\n'+snip(s.find(needle)))
+          (out/'snippets.txt').write_text(''.join(snippets))
+          print(json.dumps(data,ensure_ascii=False,indent=2))
+          PY
+      - name: Commit inspection report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-build-inspection/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record approved hero v3 production build inspection'
+            git push origin HEAD:main
+          fi
