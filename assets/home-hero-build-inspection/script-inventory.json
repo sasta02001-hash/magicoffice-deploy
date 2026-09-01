@@ -1,0 +1,100 @@
+[
+  {
+    "index": 0,
+    "id": "magic-event-registry",
+    "src": null,
+    "bytes": 1917,
+    "videoRelated": false
+  },
+  {
+    "index": 1,
+    "id": "magic-structured-data",
+    "src": null,
+    "bytes": 2550,
+    "videoRelated": false
+  },
+  {
+    "index": 2,
+    "id": "magic-domain-runtime",
+    "src": null,
+    "bytes": 451,
+    "videoRelated": false
+  },
+  {
+    "index": 3,
+    "id": "magic-asset-diagnostic",
+    "src": null,
+    "bytes": 340,
+    "videoRelated": false
+  },
+  {
+    "index": 4,
+    "id": "magic-core-js",
+    "src": "https://magicoffice.vercel.app/assets/js/magic-core-js.js?v=103",
+    "bytes": 0,
+    "videoRelated": false
+  },
+  {
+    "index": 5,
+    "id": "magic-schedule-js",
+    "src": "https://magicoffice.vercel.app/assets/js/magic-schedule-js-v2.0.6.js",
+    "bytes": 0,
+    "videoRelated": false
+  },
+  {
+    "index": 6,
+    "id": "magic-mibao-override-js",
+    "src": "https://magicoffice.vercel.app/assets/js/magic-mibao-override-js.js",
+    "bytes": 0,
+    "videoRelated": false
+  },
+  {
+    "index": 7,
+    "id": "magic-channel-v2-script",
+    "src": "https://magicoffice.vercel.app/assets/js/magic-channel-v2-script.js",
+    "bytes": 0,
+    "videoRelated": false
+  },
+  {
+    "index": 8,
+    "id": "magicoffice-v202-editorial-js",
+    "src": "https://magicoffice.vercel.app/assets/js/magicoffice-v202-editorial-js.js",
+    "bytes": 0,
+    "videoRelated": false
+  },
+  {
+    "index": 9,
+    "id": "magicoffice-v203-event-system-js",
+    "src": "https://magicoffice.vercel.app/assets/js/magicoffice-v203-event-system-js.js",
+    "bytes": 0,
+    "videoRelated": false
+  },
+  {
+    "index": 10,
+    "id": "mo-v206-build-marker",
+    "src": "https://magicoffice.vercel.app/assets/js/mo-v206-build-marker-v2.0.6.js?v=103",
+    "bytes": 0,
+    "videoRelated": false
+  },
+  {
+    "index": 11,
+    "id": "homepage-integrated-hero-v1-js",
+    "src": null,
+    "bytes": 1413,
+    "videoRelated": true
+  },
+  {
+    "index": 12,
+    "id": "magicoffice-home-hero-refine-v1-js",
+    "src": null,
+    "bytes": 1287,
+    "videoRelated": true
+  },
+  {
+    "index": 13,
+    "id": "magicoffice-home-hero-patch-script-v1",
+    "src": null,
+    "bytes": 2283,
+    "videoRelated": true
+  }
+]
