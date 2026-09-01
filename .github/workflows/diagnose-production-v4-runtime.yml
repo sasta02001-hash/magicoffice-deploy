@@ -1,0 +1,60 @@
+name: Diagnose MagicOffice production v4 runtime
+
+on:
+  push:
+    paths:
+      - '.github/workflows/diagnose-production-v4-runtime.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Inspect exact 81212-byte asset, menu selectors, and script declarations
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/mo-v207
+          mkdir -p /tmp/mo-v207
+          git archive daa5e1aa480c0c717b91f1701a3f99c7293b5047 v207-site | tar -x -C /tmp/mo-v207
+          python <<'PY'
+          from pathlib import Path
+          import re,json,hashlib
+          root=Path('/tmp/mo-v207/v207-site')
+          size_matches=[]
+          for p in root.rglob('*'):
+            if p.is_file() and p.stat().st_size in [81212,81204,81220]:
+              size_matches.append({'path':str(p.relative_to(root)),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'head':p.read_bytes()[:16].hex()})
+          preview=Path('assets/home-hero-preview-v3/preview.html').read_text(errors='replace')
+          menu_tokens=sorted(set(re.findall(r'(?:class|data-[\w-]+)=["\'][^"\']*(?:menu|price)[^"\']*["\']',preview,re.I)))
+          menu_snips=[]
+          for needle in ['id="menu"','menu-tabs','menu-tab','data-menu','cafe-menu','bar-menu','special-menu']:
+            pos=preview.find(needle)
+            menu_snips.append({'needle':needle,'pos':pos,'snippet':preview[max(0,pos-350):pos+900] if pos>=0 else ''})
+          scripts=[]
+          for p in (root/'assets/js').glob('*.js'):
+            text=p.read_text(errors='replace')
+            scripts.append({'path':str(p.relative_to(root)),'bytes':p.stat().st_size,'constDollar':len(re.findall(r'\b(?:const|let)\s+\$',text)),'starts':text[:180]})
+          out=Path('assets/home-hero-build-inspection');out.mkdir(exist_ok=True)
+          report={'sizeMatches':size_matches,'menuTokens':menu_tokens[:100],'menuSnippets':menu_snips,'scripts':scripts}
+          (out/'production-v4-runtime-diagnosis.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Commit diagnosis
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-build-inspection/production-v4-runtime-diagnosis.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record production v4 runtime diagnosis'
+            git push origin HEAD:main
+          fi
