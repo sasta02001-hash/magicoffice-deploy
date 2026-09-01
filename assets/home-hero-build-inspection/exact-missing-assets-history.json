@@ -1,0 +1,16 @@
+{
+  "assets/media/44049d5f46ae6a12.webp": [
+    {
+      "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+      "path": "v207-site/assets/media/44049d5f46ae6a12.webp",
+      "blob": "355d80d7c7c185aba7249ec000dbe319fc1fb5b6",
+      "size": 5748,
+      "message": "Fix heartbeat hero with local v5 static image"
+    }
+  ],
+  "assets/media/magicoffice-home-clean-scene-v5.webp": [],
+  "assets/media/heartbeat-support-v7.png": [],
+  "assets/css/magic-menu-cms-v1.0.4.css": [],
+  "assets/media/homepage-cinema-frame-final-v2.webp": [],
+  "assets/media/magicoffice-home-video-poster-v1.png": []
+}
