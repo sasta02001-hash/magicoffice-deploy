@@ -1,0 +1,17 @@
+name: Check Vercel deployment credential availability
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/zz-vercel-token-probe.yml'
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check token presence without exposing it
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -n "${VERCEL_TOKEN:-}" ]; then echo 'VERCEL_TOKEN_PRESENT=true'; else echo 'VERCEL_TOKEN_PRESENT=false'; exit 78; fi
