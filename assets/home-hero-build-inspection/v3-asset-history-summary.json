@@ -1,0 +1,1479 @@
+{
+  "requiredCount": 60,
+  "mappedCount": 55,
+  "missingCount": 5,
+  "missing": [
+    {
+      "raw": "assets/css/magic-menu-cms-v1.0.4.css?v=104",
+      "path": "assets/css/magic-menu-cms-v1.0.4.css",
+      "basename": "magic-menu-cms-v1.0.4.css",
+      "exactObjectMatches": [],
+      "basenameMatches": [],
+      "commitHits": []
+    },
+    {
+      "raw": "assets/media/homepage-cinema-frame-final-v2.webp?v=20260830-v3",
+      "path": "assets/media/homepage-cinema-frame-final-v2.webp",
+      "basename": "homepage-cinema-frame-final-v2.webp",
+      "exactObjectMatches": [],
+      "basenameMatches": [],
+      "commitHits": []
+    },
+    {
+      "raw": "assets/media/magicoffice-home-clean-scene-v5.webp?v=20260901-clean-scene-v5",
+      "path": "assets/media/magicoffice-home-clean-scene-v5.webp",
+      "basename": "magicoffice-home-clean-scene-v5.webp",
+      "exactObjectMatches": [],
+      "basenameMatches": [],
+      "commitHits": []
+    },
+    {
+      "raw": "assets/media/magicoffice-home-video-poster-v1.png?v=20260901-poster-v1",
+      "path": "assets/media/magicoffice-home-video-poster-v1.png",
+      "basename": "magicoffice-home-video-poster-v1.png",
+      "exactObjectMatches": [],
+      "basenameMatches": [],
+      "commitHits": []
+    },
+    {
+      "raw": "assets/media/heartbeat-support-v7.png?v=20260830-v7",
+      "path": "assets/media/heartbeat-support-v7.png",
+      "basename": "heartbeat-support-v7.png",
+      "exactObjectMatches": [],
+      "basenameMatches": [],
+      "commitHits": []
+    }
+  ],
+  "mapped": [
+    {
+      "path": "assets/og-card.jpg",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/og-card.jpg",
+          "blob": "f2eb711f15619b92f86823ac634e48d3c670edbb",
+          "size": 17617
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/og-card.jpg",
+          "blob": "f2eb711f15619b92f86823ac634e48d3c670edbb",
+          "size": 17617
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/og-card.jpg",
+          "blob": "f2eb711f15619b92f86823ac634e48d3c670edbb",
+          "size": 17617
+        }
+      ]
+    },
+    {
+      "path": "assets/css/site-v2.0.6.css",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/css/site-v2.0.6.css",
+          "blob": "fc6d94a47e0da7066e1e496ac3fbf147877000a5",
+          "size": 103773
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/css/site-v2.0.6.css",
+          "blob": "fc6d94a47e0da7066e1e496ac3fbf147877000a5",
+          "size": 103773
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/css/site-v2.0.6.css",
+          "blob": "fc6d94a47e0da7066e1e496ac3fbf147877000a5",
+          "size": 103773
+        }
+      ]
+    },
+    {
+      "path": "assets/icons/favicon-64.png",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/icons/favicon-64.png",
+          "blob": "b2ab17b258f165bec48b0daf76affc20e710592d",
+          "size": 2935
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/icons/favicon-64.png",
+          "blob": "b2ab17b258f165bec48b0daf76affc20e710592d",
+          "size": 2935
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/icons/favicon-64.png",
+          "blob": "b2ab17b258f165bec48b0daf76affc20e710592d",
+          "size": 2935
+        }
+      ]
+    },
+    {
+      "path": "assets/icons/apple-touch-icon.png",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/icons/apple-touch-icon.png",
+          "blob": "abdf006d5124a8cbb655eb3abb229d3fe1e15a55",
+          "size": 12595
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/icons/apple-touch-icon.png",
+          "blob": "abdf006d5124a8cbb655eb3abb229d3fe1e15a55",
+          "size": 12595
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/icons/apple-touch-icon.png",
+          "blob": "abdf006d5124a8cbb655eb3abb229d3fe1e15a55",
+          "size": 12595
+        }
+      ]
+    },
+    {
+      "path": "site.webmanifest",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/site.webmanifest",
+          "blob": "ae4a947272016249e974eebb6766e31f0bfe77dc",
+          "size": 462
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/site.webmanifest",
+          "blob": "ae4a947272016249e974eebb6766e31f0bfe77dc",
+          "size": 462
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/site.webmanifest",
+          "blob": "ae4a947272016249e974eebb6766e31f0bfe77dc",
+          "size": 462
+        }
+      ]
+    },
+    {
+      "path": "assets/media/da930bd7fba6ff56.png",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/da930bd7fba6ff56.png",
+          "blob": "39b93d50f8fc0828dc076615cf4d74161ec7474e",
+          "size": 36952
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/da930bd7fba6ff56.png",
+          "blob": "39b93d50f8fc0828dc076615cf4d74161ec7474e",
+          "size": 36952
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/da930bd7fba6ff56.png",
+          "blob": "39b93d50f8fc0828dc076615cf4d74161ec7474e",
+          "size": 36952
+        }
+      ]
+    },
+    {
+      "path": "assets/media/44049d5f46ae6a12.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/44049d5f46ae6a12.webp",
+          "blob": "355d80d7c7c185aba7249ec000dbe319fc1fb5b6",
+          "size": 5748
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/44049d5f46ae6a12.webp",
+          "blob": "355d80d7c7c185aba7249ec000dbe319fc1fb5b6",
+          "size": 5748
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/44049d5f46ae6a12.webp",
+          "blob": "355d80d7c7c185aba7249ec000dbe319fc1fb5b6",
+          "size": 5748
+        }
+      ]
+    },
+    {
+      "path": "assets/media/05f19666ed49f368.png",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/05f19666ed49f368.png",
+          "blob": "df4fd4cdac2c6ed3341a5d1eb462d68255a6a112",
+          "size": 39333
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/05f19666ed49f368.png",
+          "blob": "df4fd4cdac2c6ed3341a5d1eb462d68255a6a112",
+          "size": 39333
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/05f19666ed49f368.png",
+          "blob": "df4fd4cdac2c6ed3341a5d1eb462d68255a6a112",
+          "size": 39333
+        }
+      ]
+    },
+    {
+      "path": "assets/media/46a75e190baad8e8.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/46a75e190baad8e8.webp",
+          "blob": "03a1648710631bed2e2f6319f5381f5eba14b622",
+          "size": 105470
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/46a75e190baad8e8.webp",
+          "blob": "03a1648710631bed2e2f6319f5381f5eba14b622",
+          "size": 105470
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/46a75e190baad8e8.webp",
+          "blob": "03a1648710631bed2e2f6319f5381f5eba14b622",
+          "size": 105470
+        }
+      ]
+    },
+    {
+      "path": "assets/media/e22350b8ec2d748a.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/e22350b8ec2d748a.webp",
+          "blob": "6b6c627673fb38a2765372e15596158ad2a966fb",
+          "size": 6746
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/e22350b8ec2d748a.webp",
+          "blob": "6b6c627673fb38a2765372e15596158ad2a966fb",
+          "size": 6746
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/e22350b8ec2d748a.webp",
+          "blob": "6b6c627673fb38a2765372e15596158ad2a966fb",
+          "size": 6746
+        }
+      ]
+    },
+    {
+      "path": "assets/media/9cf5f3c7c8e43450.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/9cf5f3c7c8e43450.webp",
+          "blob": "a8f6a59473076b0c45872458254a8523c6b010eb",
+          "size": 6508
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/9cf5f3c7c8e43450.webp",
+          "blob": "a8f6a59473076b0c45872458254a8523c6b010eb",
+          "size": 6508
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/9cf5f3c7c8e43450.webp",
+          "blob": "a8f6a59473076b0c45872458254a8523c6b010eb",
+          "size": 6508
+        }
+      ]
+    },
+    {
+      "path": "assets/media/815c2fdfd2a254ce.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/815c2fdfd2a254ce.webp",
+          "blob": "8802438c85e6c10aa383b9d1c11ef8b54f2788e5",
+          "size": 6964
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/815c2fdfd2a254ce.webp",
+          "blob": "8802438c85e6c10aa383b9d1c11ef8b54f2788e5",
+          "size": 6964
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/815c2fdfd2a254ce.webp",
+          "blob": "8802438c85e6c10aa383b9d1c11ef8b54f2788e5",
+          "size": 6964
+        }
+      ]
+    },
+    {
+      "path": "assets/media/1d6e303714642bf6.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/1d6e303714642bf6.webp",
+          "blob": "482aaeb68b90cea6029dc99c9d13b167ac2ad969",
+          "size": 6680
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/1d6e303714642bf6.webp",
+          "blob": "482aaeb68b90cea6029dc99c9d13b167ac2ad969",
+          "size": 6680
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/1d6e303714642bf6.webp",
+          "blob": "482aaeb68b90cea6029dc99c9d13b167ac2ad969",
+          "size": 6680
+        }
+      ]
+    },
+    {
+      "path": "assets/media/6abf49f3aab3c507.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/6abf49f3aab3c507.webp",
+          "blob": "d85bb6ec909179378b29c71feecbddde0d208bff",
+          "size": 6308
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/6abf49f3aab3c507.webp",
+          "blob": "d85bb6ec909179378b29c71feecbddde0d208bff",
+          "size": 6308
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/6abf49f3aab3c507.webp",
+          "blob": "d85bb6ec909179378b29c71feecbddde0d208bff",
+          "size": 6308
+        }
+      ]
+    },
+    {
+      "path": "assets/media/3241306c93000ad3.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/3241306c93000ad3.webp",
+          "blob": "83d6bfc46caa3fd959260fbee0e3100ad2b8f058",
+          "size": 7236
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/3241306c93000ad3.webp",
+          "blob": "83d6bfc46caa3fd959260fbee0e3100ad2b8f058",
+          "size": 7236
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/3241306c93000ad3.webp",
+          "blob": "83d6bfc46caa3fd959260fbee0e3100ad2b8f058",
+          "size": 7236
+        }
+      ]
+    },
+    {
+      "path": "assets/media/8f1e2635714effb9.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/8f1e2635714effb9.webp",
+          "blob": "050524308dfeddbf89418d9d871a64b9b6a8c050",
+          "size": 7456
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/8f1e2635714effb9.webp",
+          "blob": "050524308dfeddbf89418d9d871a64b9b6a8c050",
+          "size": 7456
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/8f1e2635714effb9.webp",
+          "blob": "050524308dfeddbf89418d9d871a64b9b6a8c050",
+          "size": 7456
+        }
+      ]
+    },
+    {
+      "path": "assets/media/617f58b1207050e6.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/617f58b1207050e6.webp",
+          "blob": "4909a0537b6e45fabadfeea75d9e5b24283e4f0f",
+          "size": 6836
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/617f58b1207050e6.webp",
+          "blob": "4909a0537b6e45fabadfeea75d9e5b24283e4f0f",
+          "size": 6836
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/617f58b1207050e6.webp",
+          "blob": "4909a0537b6e45fabadfeea75d9e5b24283e4f0f",
+          "size": 6836
+        }
+      ]
+    },
+    {
+      "path": "assets/media/2d5ed350d26c050b.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/2d5ed350d26c050b.webp",
+          "blob": "96e6287f724928db8ed5947b97286539f9678733",
+          "size": 6450
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/2d5ed350d26c050b.webp",
+          "blob": "96e6287f724928db8ed5947b97286539f9678733",
+          "size": 6450
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/2d5ed350d26c050b.webp",
+          "blob": "96e6287f724928db8ed5947b97286539f9678733",
+          "size": 6450
+        }
+      ]
+    },
+    {
+      "path": "assets/media/4fd4c223e064c15d.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/4fd4c223e064c15d.webp",
+          "blob": "c306dbe12fd616797d20298a151ac6ff1bdf9859",
+          "size": 6702
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/4fd4c223e064c15d.webp",
+          "blob": "c306dbe12fd616797d20298a151ac6ff1bdf9859",
+          "size": 6702
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/4fd4c223e064c15d.webp",
+          "blob": "c306dbe12fd616797d20298a151ac6ff1bdf9859",
+          "size": 6702
+        }
+      ]
+    },
+    {
+      "path": "assets/media/f2097a926bdf48b3.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/f2097a926bdf48b3.webp",
+          "blob": "9e9ce80bb4b3d3844d677252c6f717d72dd2a7a6",
+          "size": 7140
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/f2097a926bdf48b3.webp",
+          "blob": "9e9ce80bb4b3d3844d677252c6f717d72dd2a7a6",
+          "size": 7140
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/f2097a926bdf48b3.webp",
+          "blob": "9e9ce80bb4b3d3844d677252c6f717d72dd2a7a6",
+          "size": 7140
+        }
+      ]
+    },
+    {
+      "path": "assets/media/e404ebb20f7273f8.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/e404ebb20f7273f8.webp",
+          "blob": "f87536b243652a95af829c827964b395d0c3f237",
+          "size": 7128
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/e404ebb20f7273f8.webp",
+          "blob": "f87536b243652a95af829c827964b395d0c3f237",
+          "size": 7128
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/e404ebb20f7273f8.webp",
+          "blob": "f87536b243652a95af829c827964b395d0c3f237",
+          "size": 7128
+        }
+      ]
+    },
+    {
+      "path": "assets/media/59f9acb8861a6595.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/59f9acb8861a6595.webp",
+          "blob": "cc417b11aa13dad75470210c59bf51bdec4b76d3",
+          "size": 7346
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/59f9acb8861a6595.webp",
+          "blob": "cc417b11aa13dad75470210c59bf51bdec4b76d3",
+          "size": 7346
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/59f9acb8861a6595.webp",
+          "blob": "cc417b11aa13dad75470210c59bf51bdec4b76d3",
+          "size": 7346
+        }
+      ]
+    },
+    {
+      "path": "assets/media/4bf65583e3739d3f.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/4bf65583e3739d3f.webp",
+          "blob": "1d5284421d6630a8c75a3635c20de60453eea5ac",
+          "size": 6368
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/4bf65583e3739d3f.webp",
+          "blob": "1d5284421d6630a8c75a3635c20de60453eea5ac",
+          "size": 6368
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/4bf65583e3739d3f.webp",
+          "blob": "1d5284421d6630a8c75a3635c20de60453eea5ac",
+          "size": 6368
+        }
+      ]
+    },
+    {
+      "path": "assets/media/d9800fa21c1b6e2e.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/d9800fa21c1b6e2e.webp",
+          "blob": "96c08e6000d29211bbdf8172f1dd19abf8062d2f",
+          "size": 7516
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/d9800fa21c1b6e2e.webp",
+          "blob": "96c08e6000d29211bbdf8172f1dd19abf8062d2f",
+          "size": 7516
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/d9800fa21c1b6e2e.webp",
+          "blob": "96c08e6000d29211bbdf8172f1dd19abf8062d2f",
+          "size": 7516
+        }
+      ]
+    },
+    {
+      "path": "assets/media/38f7487b4a48705b.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/38f7487b4a48705b.webp",
+          "blob": "05a1f68952c5e56831e8b3f518e153c166738797",
+          "size": 16930
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/38f7487b4a48705b.webp",
+          "blob": "05a1f68952c5e56831e8b3f518e153c166738797",
+          "size": 16930
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/38f7487b4a48705b.webp",
+          "blob": "05a1f68952c5e56831e8b3f518e153c166738797",
+          "size": 16930
+        }
+      ]
+    },
+    {
+      "path": "assets/media/aa7f2899b9a883f5.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/aa7f2899b9a883f5.webp",
+          "blob": "0c8306189bfc15613ffe0c3c77befb1a943e47c6",
+          "size": 331348
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/aa7f2899b9a883f5.webp",
+          "blob": "0c8306189bfc15613ffe0c3c77befb1a943e47c6",
+          "size": 331348
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/aa7f2899b9a883f5.webp",
+          "blob": "0c8306189bfc15613ffe0c3c77befb1a943e47c6",
+          "size": 331348
+        }
+      ]
+    },
+    {
+      "path": "assets/media/a1b97912e03ddf75.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/a1b97912e03ddf75.webp",
+          "blob": "4034fb0435d3af1957b14998a5d384db4392f200",
+          "size": 190820
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/a1b97912e03ddf75.webp",
+          "blob": "4034fb0435d3af1957b14998a5d384db4392f200",
+          "size": 190820
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/a1b97912e03ddf75.webp",
+          "blob": "4034fb0435d3af1957b14998a5d384db4392f200",
+          "size": 190820
+        }
+      ]
+    },
+    {
+      "path": "assets/media/4538292ff5eca3cf.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/4538292ff5eca3cf.webp",
+          "blob": "d4f0fc4e087d4d16ad80fd1efeef41be7f3e1e6e",
+          "size": 11126
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/4538292ff5eca3cf.webp",
+          "blob": "d4f0fc4e087d4d16ad80fd1efeef41be7f3e1e6e",
+          "size": 11126
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/4538292ff5eca3cf.webp",
+          "blob": "d4f0fc4e087d4d16ad80fd1efeef41be7f3e1e6e",
+          "size": 11126
+        }
+      ]
+    },
+    {
+      "path": "assets/media/aa59a517161edaeb.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/aa59a517161edaeb.webp",
+          "blob": "e58843c66b5090a3aeefd3104ce43c0a6ba008d3",
+          "size": 22672
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/aa59a517161edaeb.webp",
+          "blob": "e58843c66b5090a3aeefd3104ce43c0a6ba008d3",
+          "size": 22672
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/aa59a517161edaeb.webp",
+          "blob": "e58843c66b5090a3aeefd3104ce43c0a6ba008d3",
+          "size": 22672
+        }
+      ]
+    },
+    {
+      "path": "assets/media/065cb975e20e85a9.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/065cb975e20e85a9.webp",
+          "blob": "c13a8f5ca36966c843475d95eb2d42db38d23b96",
+          "size": 26774
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/065cb975e20e85a9.webp",
+          "blob": "c13a8f5ca36966c843475d95eb2d42db38d23b96",
+          "size": 26774
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/065cb975e20e85a9.webp",
+          "blob": "c13a8f5ca36966c843475d95eb2d42db38d23b96",
+          "size": 26774
+        }
+      ]
+    },
+    {
+      "path": "assets/media/40b77f0c5b9cab43.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/40b77f0c5b9cab43.webp",
+          "blob": "d729da20388eaaef7d0da85f5782903e615eeb5e",
+          "size": 32786
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/40b77f0c5b9cab43.webp",
+          "blob": "d729da20388eaaef7d0da85f5782903e615eeb5e",
+          "size": 32786
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/40b77f0c5b9cab43.webp",
+          "blob": "d729da20388eaaef7d0da85f5782903e615eeb5e",
+          "size": 32786
+        }
+      ]
+    },
+    {
+      "path": "assets/media/b1e7d92e49e334d4.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/b1e7d92e49e334d4.webp",
+          "blob": "c98f496a1d827e4a8e7f849e64b25b0c090e8255",
+          "size": 15490
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/b1e7d92e49e334d4.webp",
+          "blob": "c98f496a1d827e4a8e7f849e64b25b0c090e8255",
+          "size": 15490
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/b1e7d92e49e334d4.webp",
+          "blob": "c98f496a1d827e4a8e7f849e64b25b0c090e8255",
+          "size": 15490
+        }
+      ]
+    },
+    {
+      "path": "assets/media/b27ac3e14ebc9fa7.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/b27ac3e14ebc9fa7.webp",
+          "blob": "a142ca260874ba5e6639fcdfacc8d646a30bff92",
+          "size": 24582
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/b27ac3e14ebc9fa7.webp",
+          "blob": "a142ca260874ba5e6639fcdfacc8d646a30bff92",
+          "size": 24582
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/b27ac3e14ebc9fa7.webp",
+          "blob": "a142ca260874ba5e6639fcdfacc8d646a30bff92",
+          "size": 24582
+        }
+      ]
+    },
+    {
+      "path": "assets/media/be1b96881d52ce48.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/be1b96881d52ce48.webp",
+          "blob": "43dadbb4bb7c728302001004cf042ebab59bef7a",
+          "size": 26302
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/be1b96881d52ce48.webp",
+          "blob": "43dadbb4bb7c728302001004cf042ebab59bef7a",
+          "size": 26302
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/be1b96881d52ce48.webp",
+          "blob": "43dadbb4bb7c728302001004cf042ebab59bef7a",
+          "size": 26302
+        }
+      ]
+    },
+    {
+      "path": "assets/media/4213a5bd8175d801.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/4213a5bd8175d801.webp",
+          "blob": "e2b9776499ef9455a879012b148a517f6e62107d",
+          "size": 40854
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/4213a5bd8175d801.webp",
+          "blob": "e2b9776499ef9455a879012b148a517f6e62107d",
+          "size": 40854
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/4213a5bd8175d801.webp",
+          "blob": "e2b9776499ef9455a879012b148a517f6e62107d",
+          "size": 40854
+        }
+      ]
+    },
+    {
+      "path": "assets/media/e284222013366784.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/e284222013366784.webp",
+          "blob": "f8a7e4b0545adf898b7ddc0be7598d37476d5663",
+          "size": 29216
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/e284222013366784.webp",
+          "blob": "f8a7e4b0545adf898b7ddc0be7598d37476d5663",
+          "size": 29216
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/e284222013366784.webp",
+          "blob": "f8a7e4b0545adf898b7ddc0be7598d37476d5663",
+          "size": 29216
+        }
+      ]
+    },
+    {
+      "path": "assets/media/ac868759ec08626e.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/ac868759ec08626e.webp",
+          "blob": "23178266d87b519e54e6bef79ecc51f28ea94ec9",
+          "size": 29570
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/ac868759ec08626e.webp",
+          "blob": "23178266d87b519e54e6bef79ecc51f28ea94ec9",
+          "size": 29570
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/ac868759ec08626e.webp",
+          "blob": "23178266d87b519e54e6bef79ecc51f28ea94ec9",
+          "size": 29570
+        }
+      ]
+    },
+    {
+      "path": "assets/media/82d07bafb9d31903.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/82d07bafb9d31903.webp",
+          "blob": "e06d5255d19044021d1a4f9d0cc86f218a4ddcf8",
+          "size": 27628
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/82d07bafb9d31903.webp",
+          "blob": "e06d5255d19044021d1a4f9d0cc86f218a4ddcf8",
+          "size": 27628
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/82d07bafb9d31903.webp",
+          "blob": "e06d5255d19044021d1a4f9d0cc86f218a4ddcf8",
+          "size": 27628
+        }
+      ]
+    },
+    {
+      "path": "assets/media/183eaf19e84ad365.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/183eaf19e84ad365.webp",
+          "blob": "4cd37e6c7822e1c7c7446a5566b10e3365373d2e",
+          "size": 7098
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/183eaf19e84ad365.webp",
+          "blob": "4cd37e6c7822e1c7c7446a5566b10e3365373d2e",
+          "size": 7098
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/183eaf19e84ad365.webp",
+          "blob": "4cd37e6c7822e1c7c7446a5566b10e3365373d2e",
+          "size": 7098
+        }
+      ]
+    },
+    {
+      "path": "assets/media/0f2282fd5b53948f.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/0f2282fd5b53948f.webp",
+          "blob": "938bb99018e2b3b7666ba7d3378025930767224e",
+          "size": 7960
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/0f2282fd5b53948f.webp",
+          "blob": "938bb99018e2b3b7666ba7d3378025930767224e",
+          "size": 7960
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/0f2282fd5b53948f.webp",
+          "blob": "938bb99018e2b3b7666ba7d3378025930767224e",
+          "size": 7960
+        }
+      ]
+    },
+    {
+      "path": "assets/media/6577d53b1cb3b2d1.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/6577d53b1cb3b2d1.webp",
+          "blob": "7348a97c366c4b4aa380155b2407643e865c7f87",
+          "size": 16494
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/6577d53b1cb3b2d1.webp",
+          "blob": "7348a97c366c4b4aa380155b2407643e865c7f87",
+          "size": 16494
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/6577d53b1cb3b2d1.webp",
+          "blob": "7348a97c366c4b4aa380155b2407643e865c7f87",
+          "size": 16494
+        }
+      ]
+    },
+    {
+      "path": "assets/media/3760e1f1d1df1182.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/3760e1f1d1df1182.webp",
+          "blob": "e7b6b4afde5263cf0e79d776a073ccceb5d8dcae",
+          "size": 11850
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/3760e1f1d1df1182.webp",
+          "blob": "e7b6b4afde5263cf0e79d776a073ccceb5d8dcae",
+          "size": 11850
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/3760e1f1d1df1182.webp",
+          "blob": "e7b6b4afde5263cf0e79d776a073ccceb5d8dcae",
+          "size": 11850
+        }
+      ]
+    },
+    {
+      "path": "assets/media/441b778dda048206.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/441b778dda048206.webp",
+          "blob": "73b1dedf49b05ca4b00e67177eb4974cc2efb9f7",
+          "size": 11316
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/441b778dda048206.webp",
+          "blob": "73b1dedf49b05ca4b00e67177eb4974cc2efb9f7",
+          "size": 11316
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/441b778dda048206.webp",
+          "blob": "73b1dedf49b05ca4b00e67177eb4974cc2efb9f7",
+          "size": 11316
+        }
+      ]
+    },
+    {
+      "path": "assets/media/f12cf40a97634cc9.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/f12cf40a97634cc9.webp",
+          "blob": "376929854c5150b522335c9c024425ef82dc09a0",
+          "size": 13646
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/f12cf40a97634cc9.webp",
+          "blob": "376929854c5150b522335c9c024425ef82dc09a0",
+          "size": 13646
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/f12cf40a97634cc9.webp",
+          "blob": "376929854c5150b522335c9c024425ef82dc09a0",
+          "size": 13646
+        }
+      ]
+    },
+    {
+      "path": "assets/media/d9961b8b48fdb587.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/d9961b8b48fdb587.webp",
+          "blob": "1da3b649622e0d4bf185f3b727fe1dec88076143",
+          "size": 15058
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/d9961b8b48fdb587.webp",
+          "blob": "1da3b649622e0d4bf185f3b727fe1dec88076143",
+          "size": 15058
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/d9961b8b48fdb587.webp",
+          "blob": "1da3b649622e0d4bf185f3b727fe1dec88076143",
+          "size": 15058
+        }
+      ]
+    },
+    {
+      "path": "assets/media/d878f9472706fdbe.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/d878f9472706fdbe.webp",
+          "blob": "14aa32581101a03c73fc8d2a52a44bdb56c47460",
+          "size": 14518
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/d878f9472706fdbe.webp",
+          "blob": "14aa32581101a03c73fc8d2a52a44bdb56c47460",
+          "size": 14518
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/d878f9472706fdbe.webp",
+          "blob": "14aa32581101a03c73fc8d2a52a44bdb56c47460",
+          "size": 14518
+        }
+      ]
+    },
+    {
+      "path": "assets/media/49acafbeb1e4b6bb.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/49acafbeb1e4b6bb.webp",
+          "blob": "73b1dedf49b05ca4b00e67177eb4974cc2efb9f7",
+          "size": 11316
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/49acafbeb1e4b6bb.webp",
+          "blob": "73b1dedf49b05ca4b00e67177eb4974cc2efb9f7",
+          "size": 11316
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/49acafbeb1e4b6bb.webp",
+          "blob": "73b1dedf49b05ca4b00e67177eb4974cc2efb9f7",
+          "size": 11316
+        }
+      ]
+    },
+    {
+      "path": "assets/media/4739c5c2017c4c0e.webp",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/media/4739c5c2017c4c0e.webp",
+          "blob": "376929854c5150b522335c9c024425ef82dc09a0",
+          "size": 13646
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/media/4739c5c2017c4c0e.webp",
+          "blob": "376929854c5150b522335c9c024425ef82dc09a0",
+          "size": 13646
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/media/4739c5c2017c4c0e.webp",
+          "blob": "376929854c5150b522335c9c024425ef82dc09a0",
+          "size": 13646
+        }
+      ]
+    },
+    {
+      "path": "assets/js/magic-core-js.js",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/js/magic-core-js.js",
+          "blob": "f5fc19cfa118ca5c68bcf7a4a04bfc86188f5543",
+          "size": 12492
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/js/magic-core-js.js",
+          "blob": "f5fc19cfa118ca5c68bcf7a4a04bfc86188f5543",
+          "size": 12492
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/js/magic-core-js.js",
+          "blob": "f5fc19cfa118ca5c68bcf7a4a04bfc86188f5543",
+          "size": 12492
+        }
+      ]
+    },
+    {
+      "path": "assets/js/magic-schedule-js-v2.0.6.js",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/js/magic-schedule-js-v2.0.6.js",
+          "blob": "f6a7a19cfe17739afa1dec2ab2d85fbf460209a8",
+          "size": 83598
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/js/magic-schedule-js-v2.0.6.js",
+          "blob": "f6a7a19cfe17739afa1dec2ab2d85fbf460209a8",
+          "size": 83598
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/js/magic-schedule-js-v2.0.6.js",
+          "blob": "f6a7a19cfe17739afa1dec2ab2d85fbf460209a8",
+          "size": 83598
+        }
+      ]
+    },
+    {
+      "path": "assets/js/magic-mibao-override-js.js",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/js/magic-mibao-override-js.js",
+          "blob": "74270e49138708a90bd6da92cf362c350266d8bf",
+          "size": 487
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/js/magic-mibao-override-js.js",
+          "blob": "74270e49138708a90bd6da92cf362c350266d8bf",
+          "size": 487
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/js/magic-mibao-override-js.js",
+          "blob": "74270e49138708a90bd6da92cf362c350266d8bf",
+          "size": 487
+        }
+      ]
+    },
+    {
+      "path": "assets/js/magic-channel-v2-script.js",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/js/magic-channel-v2-script.js",
+          "blob": "fb81e01468706efa42fef762b16f1ab6e1256690",
+          "size": 1606
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/js/magic-channel-v2-script.js",
+          "blob": "fb81e01468706efa42fef762b16f1ab6e1256690",
+          "size": 1606
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/js/magic-channel-v2-script.js",
+          "blob": "fb81e01468706efa42fef762b16f1ab6e1256690",
+          "size": 1606
+        }
+      ]
+    },
+    {
+      "path": "assets/js/magicoffice-v202-editorial-js.js",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/js/magicoffice-v202-editorial-js.js",
+          "blob": "f39bdbbaed6484018a3be6544775964ce5a6751e",
+          "size": 1237
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/js/magicoffice-v202-editorial-js.js",
+          "blob": "f39bdbbaed6484018a3be6544775964ce5a6751e",
+          "size": 1237
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/js/magicoffice-v202-editorial-js.js",
+          "blob": "f39bdbbaed6484018a3be6544775964ce5a6751e",
+          "size": 1237
+        }
+      ]
+    },
+    {
+      "path": "assets/js/magicoffice-v203-event-system-js.js",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/js/magicoffice-v203-event-system-js.js",
+          "blob": "5390b7088ede13e8f70f87039a41699fd7926953",
+          "size": 6327
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/js/magicoffice-v203-event-system-js.js",
+          "blob": "5390b7088ede13e8f70f87039a41699fd7926953",
+          "size": 6327
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/js/magicoffice-v203-event-system-js.js",
+          "blob": "5390b7088ede13e8f70f87039a41699fd7926953",
+          "size": 6327
+        }
+      ]
+    },
+    {
+      "path": "assets/js/mo-v206-build-marker-v2.0.6.js",
+      "best": [
+        {
+          "commit": "9179b163e12a213725b28d58181fc4950b6736e4",
+          "ref": "refs/remotes/origin/new-domain-v1.0.3-release",
+          "path": "v207-site/assets/js/mo-v206-build-marker-v2.0.6.js",
+          "blob": "249402064513800fcf653458242d084f60be18a0",
+          "size": 336
+        },
+        {
+          "commit": "daa5e1aa480c0c717b91f1701a3f99c7293b5047",
+          "ref": "refs/remotes/origin/new-domain-v1.0.4-menu-cms",
+          "path": "v207-site/assets/js/mo-v206-build-marker-v2.0.6.js",
+          "blob": "249402064513800fcf653458242d084f60be18a0",
+          "size": 336
+        },
+        {
+          "commit": "15cd5fcf59af11f08d95ae0f09435d00d3cdbd0c",
+          "ref": "refs/remotes/origin/new-domain-v1.1.0-menu-cms-release",
+          "path": "v207-site/assets/js/mo-v206-build-marker-v2.0.6.js",
+          "blob": "249402064513800fcf653458242d084f60be18a0",
+          "size": 336
+        }
+      ]
+    }
+  ]
+}
