@@ -22,7 +22,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p source-assets
-          URL='https://s3.amazonaws.com/document-export.canva.com/qKGuc/DAHT7PqKGuc/1/thumbnail/0001.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH4GDRW44L%2F20260831%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260831T060222Z&X-Amz-Expires=84595&X-Amz-Signature=6b27e1b2700037589f52721d551341aca59c04bf9227dbdd059edff87fae0f59&X-Amz-SignedHeaders=host&response-expires=Tue%2C%2001%20Sep%202026%2005%3A32%3A17%20GMT'
+          URL='https://export-download.canva.com/cfcf483b-524d-4183-8998-7d21884b3d89/0/0001-8930026648809588215.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH5AO7UJ26%2F20260831%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260831T224302Z&X-Amz-Expires=26563&X-Amz-Signature=a11a2d001af95700f87db519949fc11eebe96159803cf9843d1db4e977fde521&X-Amz-SignedHeaders=host%3Bx-amz-expected-bucket-owner&response-expires=Tue%2C%2001%20Sep%202026%2006%3A05%3A45%20GMT'
           curl --fail --location --silent --show-error --max-time 90 "$URL" -o source-assets/magicoffice-home-clean-scene-desktop-v1.png
 
       - name: Verify exact desktop dimensions
@@ -39,9 +39,9 @@ jobs:
           w,h=struct.unpack('>II', b[16:24])
           if (w,h)!=(2560,1440):
               raise SystemExit(f'Wrong dimensions: {w}x{h}')
-          if len(b) < 100000:
+          if len(b) < 250000:
               raise SystemExit(f'Asset unexpectedly small: {len(b)} bytes')
-          meta={'width':w,'height':h,'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'sourceCanvaDesign':'DAHT7PqKGuc','sourceApprovedCleanScene':'DAHT4owTCm8'}
+          meta={'width':w,'height':h,'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'sourceCanvaDesign':'DAHT7PqKGuc','sourceApprovedCleanScene':'DAHT4owTCm8','composition':'desktop-left-brand-scene-right-clean-video-space'}
           Path('source-assets/magicoffice-home-clean-scene-desktop-v1.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2)+'\n')
           print('DESKTOP_CLEAN_SCENE_VERIFIED', json.dumps(meta))
           PY
