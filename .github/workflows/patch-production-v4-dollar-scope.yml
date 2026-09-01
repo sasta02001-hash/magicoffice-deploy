@@ -1,0 +1,53 @@
+name: Patch MagicOffice production v4 dollar helper scope
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-production-v4-dollar-scope.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Wrap executable scripts that declare a dollar helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          p=Path('scripts/build_production_home_video_v4.mjs')
+          s=p.read_text()
+          marker='  const controller=`<script id="magicoffice-home-video-controller-v4">'
+          patch=r'''  html=html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi,(full,attrs,body)=>{
+    const type=(attrs.match(/\btype=["']([^"']+)["']/i)||[])[1]?.toLowerCase()||'';
+    if(!body.trim()||/\bsrc=/.test(attrs)||['application/ld+json','application/json','application/octet-stream','importmap'].includes(type)||type==='module')return full;
+    if(/\bdata-inline-isolated=/.test(attrs))return full;
+    if(!/\b(?:const|let)\s+\$\s*=/.test(body))return full;
+    return `<script${attrs} data-inline-isolated="dollar-helper">(function(){\n${body}\n}).call(window);<\/script>`;
+  });
+
+'''
+          if marker not in s: raise SystemExit('controller insertion marker missing')
+          if 'data-inline-isolated="dollar-helper"' in s: raise SystemExit('patch already applied')
+          p.write_text(s.replace(marker,patch+marker,1))
+          PY
+          node --check scripts/build_production_home_video_v4.mjs
+
+      - name: Commit script-scope repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Production Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add scripts/build_production_home_video_v4.mjs
+          git commit -m 'Isolate conflicting dollar helpers in generated page scripts'
+          git push origin HEAD:main
