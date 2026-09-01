@@ -1,0 +1,20 @@
+{
+  "release": "home-hero-wordmark-trial-video-2026-09-01-v1",
+  "bytes": 142882,
+  "sha256": "2d2e4fe4cc0f1b91c6184b491ca7e1e8a28c7b49c0bcd4bad9f8ee2b83422b8f",
+  "immutableAssetOrigin": "https://magicoffice-l0ovo899x-magicoffice.vercel.app",
+  "officialOrigin": "https://magicoffice.vercel.app",
+  "videoUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/releases/download/magicoffice-home-trial-v1/magicoffice-home-trial-720p-v1.mp4",
+  "checks": {
+    "release": true,
+    "videoOnce": true,
+    "videoUrl": true,
+    "wordmarkOnce": true,
+    "poster": true,
+    "immutableAssets": true,
+    "noOfficialAssetLoop": true,
+    "noPreviewNoindex": true,
+    "canonical": true,
+    "sections": true
+  }
+}
