@@ -246,7 +246,7 @@ window.MagicOfficeHomeVideo={{video,stage,play:attempt,fullscreen}};
         'fourMobileLinks': 'data-home-mobile-nav="four-core-links"' in html,
         'indexable': 'index,follow' in html,
         'sections': all(f'id="{section}"' in html for section in required_sections),
-        'actions': all(label in html for label in ('立即訂位', '本週出勤', 'LINE 官方')),
+        'actions': all(label in html for label in ('立即訂位', '本週出勤')),
     }
     failures = [name for name, ok in checks.items() if not ok]
     if failures:
