@@ -1,0 +1,107 @@
+{
+  "sizeMatches": [],
+  "menuTokens": [
+    "class=\"menu-atmosphere\"",
+    "class=\"menu-cms-item\"",
+    "class=\"menu-cms-item-copy\"",
+    "class=\"menu-cms-item-name\"",
+    "class=\"menu-grid\"",
+    "class=\"menu-group\"",
+    "class=\"menu-note\"",
+    "class=\"menu-pane active themed-pane cafe-ukiyo wave-pane\"",
+    "class=\"menu-pane themed-pane snow-pane bar-ukiyo\"",
+    "class=\"menu-pane themed-pane wave-pane idol-ukiyo\"",
+    "class=\"menu-scene\"",
+    "class=\"menu-scene-copy\"",
+    "class=\"menu-scene-visual\"",
+    "class=\"menu-tabs\"",
+    "class=\"menu-toggle\"",
+    "class=\"section menu-section\"",
+    "data-menu-jump=\"bar-menu\"",
+    "data-menu-jump=\"cafe-menu\"",
+    "data-pane=\"bar-menu\"",
+    "data-pane=\"cafe-menu\"",
+    "data-pane=\"special-menu\""
+  ],
+  "menuSnippets": [
+    {
+      "needle": "id=\"menu\"",
+      "pos": 91922,
+      "snippet": "。</li><li><strong>競標時間</strong>｜8 月 22 日（六）00:00–00:15（8 月 21 日深夜場）。</li><li><strong>起標價</strong>｜NT$1,000。</li><li><strong>增額</strong>｜NT$100 或其倍數。</li><li><strong>得標掛軸</strong>｜可以簽名＋客人署名。</li></ul><p class=\"event-note\">如結標前最後 10 分鐘有人尾刀，結標時間往後延 10 分鐘，直至無人尾刀。</p></div></article></div></details></div></section>\n<section class=\"section menu-section\" id=\"menu\">\n<div class=\"section-inner\">\n<div class=\"section-heading\"><p class=\"eyebrow\">SERVICE &amp; MENU</p><h2>午後咖啡與魔幻夜晚</h2><p>午後以咖啡、甜點與餐點迎接相遇；夜晚則由調酒、酒品與燈影延續故事。</p></div>\n<div class=\"menu-atmosphere\">\n<article class=\"theme-shot wave\">\n<img alt=\"午後咖啡浪花氛圍場景\" decoding=\"async\" height=\"563\" loading=\"lazy\" src=\"https://magicoffice.vercel.app/assets/media/441b778dda048206.webp?v=2072\" width=\"1000\"/>\n<div class=\"theme-copy\"><small>CAFE · UKIYO-E WAVES</small><h3>午後浪花</h3><p>咖啡廳從場景、底紋到資訊卡都以浮世繪浪花統一設計。</p></div>\n</article>\n<article class=\"theme-shot snow\">\n<img alt=\"夜間酒吧夜雪氛圍場景圖\" decoding=\"async\" height=\"563\" loading=\"lazy\" src=\"https://magicoffice.vercel.app/assets/media/f12cf40a97634cc9.webp?v=2072\" width=\"1000\"/>\n<div class=\"theme-copy\"><small>BAR · NIGHT SNOW</small><h3>夜雪酒吧</h3><p>夜雪粒子、深色酒架與燈影構成魔幻夜間的完整設計。</p></div>\n</article>\n<article class=\"theme-shot wave\">\n<img alt=\"品牌主題場景圖\" decoding=\"asy"
+    },
+    {
+      "needle": "menu-tabs",
+      "pos": 93080,
+      "snippet": "整設計。</p></div>\n</article>\n<article class=\"theme-shot wave\">\n<img alt=\"品牌主題場景圖\" decoding=\"async\" height=\"563\" loading=\"lazy\" src=\"https://magicoffice.vercel.app/assets/media/d9961b8b48fdb587.webp?v=2072\" width=\"1000\"/>\n<div class=\"theme-copy\"><small>SIGNATURE SPACE</small><h3>櫻花留影</h3><p>拍立得、收藏與主題互動，留下只屬於當日的篇章。</p></div>\n</article></div><div class=\"menu-tabs\" role=\"tablist\"><button aria-controls=\"cafe-menu\" aria-selected=\"true\" class=\"active\" data-pane=\"cafe-menu\" type=\"button\">午後咖啡</button><button aria-controls=\"bar-menu\" aria-selected=\"false\" data-pane=\"bar-menu\" type=\"button\">魔幻夜晚</button><button aria-controls=\"special-menu\" aria-selected=\"false\" data-pane=\"special-menu\" type=\"button\">浮世繪／周邊</button></div>\n<section class=\"menu-pane active themed-pane cafe-ukiyo wave-pane\" id=\"cafe-menu\" role=\"tabpanel\" data-menu-cms-source=\"embedded-sheet-snapshot\"><div class=\"menu-scene\"><div class=\"menu-scene-visual\"><img alt=\"午後咖啡場景\" decoding=\"async\" height=\"563\" loading=\"lazy\" src=\"https://magicoffice.vercel.app/assets/media/441b778dda048206.webp?v=2072\" width=\"1000\"/></div><div class=\"menu-scene-copy\"><small>CAFE SCENE</small><h3>浮世繪浪花・午後咖啡</h3><p>咖啡廳區塊以浮世繪浪花作為整體設計語彙，從背景、分隔線到場景光影都統一為午後的流動感。</p></div></div><div class=\"service-summary\"><div><"
+    },
+    {
+      "needle": "menu-tab",
+      "pos": 93080,
+      "snippet": "整設計。</p></div>\n</article>\n<article class=\"theme-shot wave\">\n<img alt=\"品牌主題場景圖\" decoding=\"async\" height=\"563\" loading=\"lazy\" src=\"https://magicoffice.vercel.app/assets/media/d9961b8b48fdb587.webp?v=2072\" width=\"1000\"/>\n<div class=\"theme-copy\"><small>SIGNATURE SPACE</small><h3>櫻花留影</h3><p>拍立得、收藏與主題互動，留下只屬於當日的篇章。</p></div>\n</article></div><div class=\"menu-tabs\" role=\"tablist\"><button aria-controls=\"cafe-menu\" aria-selected=\"true\" class=\"active\" data-pane=\"cafe-menu\" type=\"button\">午後咖啡</button><button aria-controls=\"bar-menu\" aria-selected=\"false\" data-pane=\"bar-menu\" type=\"button\">魔幻夜晚</button><button aria-controls=\"special-menu\" aria-selected=\"false\" data-pane=\"special-menu\" type=\"button\">浮世繪／周邊</button></div>\n<section class=\"menu-pane active themed-pane cafe-ukiyo wave-pane\" id=\"cafe-menu\" role=\"tabpanel\" data-menu-cms-source=\"embedded-sheet-snapshot\"><div class=\"menu-scene\"><div class=\"menu-scene-visual\"><img alt=\"午後咖啡場景\" decoding=\"async\" height=\"563\" loading=\"lazy\" src=\"https://magicoffice.vercel.app/assets/media/441b778dda048206.webp?v=2072\" width=\"1000\"/></div><div class=\"menu-scene-copy\"><small>CAFE SCENE</small><h3>浮世繪浪花・午後咖啡</h3><p>咖啡廳區塊以浮世繪浪花作為整體設計語彙，從背景、分隔線到場景光影都統一為午後的流動感。</p></div></div><div class=\"service-summary\"><div><"
+    },
+    {
+      "needle": "data-menu",
+      "pos": 53511,
+      "snippet": "content\"><small>2026.09.19 · 柚子生誕</small><h3>Magic Office<em>(偶像及活動)</em></h3><p>玫瑰之夜、限定周邊與遠端開瓶，點擊查看完整活動內容。</p><a href=\"#yuzu-birthday\">查看柚子生誕活動</a></div></article>\n<article class=\"world-card night\"><div class=\"world-media\"></div><div class=\"world-content\"><small>浮世繪夜雪</small><h3>Magic Off Ice<em>(酒吧及活動)</em></h3><p>20:00 之後，冰、酒與燈影喚醒魔幻的夜間狀態。</p><a data-menu-jump=\"bar-menu\" href=\"#menu\">查看夜間服務</a></div></article>\n<article class=\"world-card day\"><div class=\"world-media\"></div><div class=\"world-content\"><small>浮世繪浪花</small><h3>MagiCoffice<em>(咖啡廳及活動)</em></h3><p>14:00 起，以咖啡、甜點與較安靜的節奏迎接相遇。</p><a data-menu-jump=\"cafe-menu\" href=\"#menu\">查看午後服務</a></div></article>\n</div>\n</div>\n</section>\n<section class=\"section roster ukiyo-idol\" id=\"roster\">\n<div class=\"section-inner\">\n<div class=\"section-heading left\"><p class=\"eyebrow\">ASHI ROSTER</p><h2>姶仕名錄</h2><p>點選人物卡，認識姶仕的個性、喜好與出沒時段。</p></div>\n<div aria-label=\"人物分類\" class=\"filters\" role=\"group\"><button class=\"active\" data-filter=\"全部\" type=\"button\">全部</button><button data-filter=\"管理職\" type=\"button\">管理職</button><button data-filter=\"姶仕\" type=\"button\">姶仕</button></div>\n<div class=\"cast-grid\">\n<button aria-controls=\"profile-dialog\" aria-haspopup=\"dialog\" aria-label=\"查看 咪寶 人物資料\" class=\"cast-card\" data"
+    },
+    {
+      "needle": "cafe-menu",
+      "pos": 53776,
+      "snippet": "世繪夜雪</small><h3>Magic Off Ice<em>(酒吧及活動)</em></h3><p>20:00 之後，冰、酒與燈影喚醒魔幻的夜間狀態。</p><a data-menu-jump=\"bar-menu\" href=\"#menu\">查看夜間服務</a></div></article>\n<article class=\"world-card day\"><div class=\"world-media\"></div><div class=\"world-content\"><small>浮世繪浪花</small><h3>MagiCoffice<em>(咖啡廳及活動)</em></h3><p>14:00 起，以咖啡、甜點與較安靜的節奏迎接相遇。</p><a data-menu-jump=\"cafe-menu\" href=\"#menu\">查看午後服務</a></div></article>\n</div>\n</div>\n</section>\n<section class=\"section roster ukiyo-idol\" id=\"roster\">\n<div class=\"section-inner\">\n<div class=\"section-heading left\"><p class=\"eyebrow\">ASHI ROSTER</p><h2>姶仕名錄</h2><p>點選人物卡，認識姶仕的個性、喜好與出沒時段。</p></div>\n<div aria-label=\"人物分類\" class=\"filters\" role=\"group\"><button class=\"active\" data-filter=\"全部\" type=\"button\">全部</button><button data-filter=\"管理職\" type=\"button\">管理職</button><button data-filter=\"姶仕\" type=\"button\">姶仕</button></div>\n<div class=\"cast-grid\">\n<button aria-controls=\"profile-dialog\" aria-haspopup=\"dialog\" aria-label=\"查看 咪寶 人物資料\" class=\"cast-card\" data-profile=\"mibao\" data-role=\"管理職\" type=\"button\">\n<span class=\"cast-image\"><img alt=\"咪寶 正式人物卡\" decoding=\"async\" height=\"800\" loading=\"lazy\" src=\"https://magicoffice.vercel.app/assets/media/46a75e190baad8e8.webp?v=2072\" width=\"600\"/></span>\n<span class=\"cast-caption\">"
+    },
+    {
+      "needle": "bar-menu",
+      "pos": 53527,
+      "snippet": "2026.09.19 · 柚子生誕</small><h3>Magic Office<em>(偶像及活動)</em></h3><p>玫瑰之夜、限定周邊與遠端開瓶，點擊查看完整活動內容。</p><a href=\"#yuzu-birthday\">查看柚子生誕活動</a></div></article>\n<article class=\"world-card night\"><div class=\"world-media\"></div><div class=\"world-content\"><small>浮世繪夜雪</small><h3>Magic Off Ice<em>(酒吧及活動)</em></h3><p>20:00 之後，冰、酒與燈影喚醒魔幻的夜間狀態。</p><a data-menu-jump=\"bar-menu\" href=\"#menu\">查看夜間服務</a></div></article>\n<article class=\"world-card day\"><div class=\"world-media\"></div><div class=\"world-content\"><small>浮世繪浪花</small><h3>MagiCoffice<em>(咖啡廳及活動)</em></h3><p>14:00 起，以咖啡、甜點與較安靜的節奏迎接相遇。</p><a data-menu-jump=\"cafe-menu\" href=\"#menu\">查看午後服務</a></div></article>\n</div>\n</div>\n</section>\n<section class=\"section roster ukiyo-idol\" id=\"roster\">\n<div class=\"section-inner\">\n<div class=\"section-heading left\"><p class=\"eyebrow\">ASHI ROSTER</p><h2>姶仕名錄</h2><p>點選人物卡，認識姶仕的個性、喜好與出沒時段。</p></div>\n<div aria-label=\"人物分類\" class=\"filters\" role=\"group\"><button class=\"active\" data-filter=\"全部\" type=\"button\">全部</button><button data-filter=\"管理職\" type=\"button\">管理職</button><button data-filter=\"姶仕\" type=\"button\">姶仕</button></div>\n<div class=\"cast-grid\">\n<button aria-controls=\"profile-dialog\" aria-haspopup=\"dialog\" aria-label=\"查看 咪寶 人物資料\" class=\"cast-card\" data-profile=\"mibao\""
+    },
+    {
+      "needle": "special-menu",
+      "pos": 93351,
+      "snippet": "><h3>櫻花留影</h3><p>拍立得、收藏與主題互動，留下只屬於當日的篇章。</p></div>\n</article></div><div class=\"menu-tabs\" role=\"tablist\"><button aria-controls=\"cafe-menu\" aria-selected=\"true\" class=\"active\" data-pane=\"cafe-menu\" type=\"button\">午後咖啡</button><button aria-controls=\"bar-menu\" aria-selected=\"false\" data-pane=\"bar-menu\" type=\"button\">魔幻夜晚</button><button aria-controls=\"special-menu\" aria-selected=\"false\" data-pane=\"special-menu\" type=\"button\">浮世繪／周邊</button></div>\n<section class=\"menu-pane active themed-pane cafe-ukiyo wave-pane\" id=\"cafe-menu\" role=\"tabpanel\" data-menu-cms-source=\"embedded-sheet-snapshot\"><div class=\"menu-scene\"><div class=\"menu-scene-visual\"><img alt=\"午後咖啡場景\" decoding=\"async\" height=\"563\" loading=\"lazy\" src=\"https://magicoffice.vercel.app/assets/media/441b778dda048206.webp?v=2072\" width=\"1000\"/></div><div class=\"menu-scene-copy\"><small>CAFE SCENE</small><h3>浮世繪浪花・午後咖啡</h3><p>咖啡廳區塊以浮世繪浪花作為整體設計語彙，從背景、分隔線到場景光影都統一為午後的流動感。</p></div></div><div class=\"service-summary\"><div><small>營業時間</small><strong>14:00–20:00</strong></div><div><small>低消</small><strong>NT$350／90 分鐘</strong></div><div><small>服務費</small><strong>10%</strong></div><div><small>主餐供應</small><strong>至 20:00</strong></div></div><div class=\"menu-grid\"><article class=\"menu-group\" da"
+    }
+  ],
+  "scripts": [
+    {
+      "path": "assets/js/magicoffice-v202-editorial-js.js",
+      "bytes": 1237,
+      "constDollar": 0,
+      "starts": "\n(() => {\n  const yuzuItems = [...document.querySelectorAll('#yuzu-birthday details.yuzu-accordion')];\n  const openExclusive = item => {\n    if (!item) return;\n    yuzuItems.forEac"
+    },
+    {
+      "path": "assets/js/magic-core-js.js",
+      "bytes": 12492,
+      "constDollar": 2,
+      "starts": "(() => {\n  \"use strict\";\n  const profiles = {\"mibao\":{\"name\":\"咪寶\",\"role\":\"管理職\",\"image\":\"/assets/media/46a75e190baad8e8.webp\",\"birthday\":\"\",\"interest\":\"音樂、設計、商業\",\"hours\":\"小機率隨機\",\"li"
+    },
+    {
+      "path": "assets/js/magic-channel-v2-script.js",
+      "bytes": 1606,
+      "constDollar": 0,
+      "starts": "\n(function(){\n  'use strict';\n  var schedulePhrases=[\n    ['臨時異動以官方 Instagram 公告為準','本頁公告為出勤資訊唯一正式版本'],\n    ['臨時異動以官方 IG 公告為準','本頁公告為出勤資訊唯一正式版本'],\n    ['以官方 Instagram 公告為準','以本頁最新公"
+    },
+    {
+      "path": "assets/js/magic-schedule-js-v2.0.6.js",
+      "bytes": 83598,
+      "constDollar": 0,
+      "starts": "(() => {\n  'use strict';\n  const CONFIG = Object.freeze({\n    spreadsheetId:'103Jzoi2Oqcy86O5OjCHjEno6hE27QGErZaXSWpv2iVA',\n    timeZone:'Asia/Taipei',\n    refreshMs:5*60*1000,\n   "
+    },
+    {
+      "path": "assets/js/magicoffice-v203-event-system-js.js",
+      "bytes": 6327,
+      "constDollar": 0,
+      "starts": "\n(() => {\n  const registryNode = document.getElementById('magic-event-registry');\n  if (!registryNode) return;\n  let registry;\n  try { registry = JSON.parse(registryNode.textConten"
+    },
+    {
+      "path": "assets/js/magic-mibao-override-js.js",
+      "bytes": 487,
+      "constDollar": 0,
+      "starts": "(()=>{const p='/assets/media/46a75e190baad8e8.webp';const f=()=>{const h=document.querySelector('#profile-content h2'),i=document.querySelector('#profile-content img');if(h&&i&&h.t"
+    },
+    {
+      "path": "assets/js/mo-v206-build-marker-v2.0.6.js",
+      "bytes": 336,
+      "constDollar": 0,
+      "starts": "window.MagicOfficeBuild=Object.freeze({version:\"2.0.6\",channel:\"production-readiness\",builtAt:\"2026-08-27T05:45:00+08:00\",attendanceAuthority:\"website\",attendancePrimary:\"existing-"
+    }
+  ]
+}
