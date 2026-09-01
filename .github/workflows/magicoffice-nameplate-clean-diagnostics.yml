@@ -55,8 +55,8 @@ jobs:
           }
           for name, fid in files.items():
               out = f'inputs/{name}' if name.endswith('.mp4') else f'inputs/zips/{name}'
-              print('downloading', name)
-              subprocess.run(['gdown', '--id', fid, '-O', out], check=True)
+              print('downloading', name, flush=True)
+              subprocess.run(['gdown', fid, '-O', out], check=True)
           PY
           for z in inputs/zips/*.zip; do
             base="$(basename "$z" .zip)"
@@ -169,7 +169,6 @@ jobs:
                   c.showPage()
               c.save()
 
-          # Reference timeline every 2 seconds.
           ref=ROOT/'reference_720p.mp4'
           refrow=probe(ref); refdur=refrow['duration']
           cap=cv2.VideoCapture(str(ref))
@@ -184,7 +183,6 @@ jobs:
               pages.append(pp)
           images_to_pdf(pages,OUT/'reference_contact.pdf')
 
-          # Three frames per source clip, grouped into 16 clips (48 frames) across 3 PDF pages each block.
           source_pages=[]
           clip_cells=[]
           for r in rows:
