@@ -1,0 +1,243 @@
+name: MagicOffice auto-align Runway originals
+
+on:
+  push:
+    branches: [magicoffice-nameplate-clean-20260901]
+    paths: ['.github/workflows/magicoffice-auto-align.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  align:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: magicoffice-nameplate-clean-20260901
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg unzip
+          python -m pip install --quiet gdown opencv-python-headless numpy
+
+      - name: Download proxy and character originals
+        run: |
+          set -euo pipefail
+          mkdir -p work/zips work/sources alignment
+          python - <<'PY'
+          import subprocess
+          files = {
+            'reference.mp4':'1UkzDJTameTu4XIRKRscEpV1j61Xe8Psq',
+            'YOSHINO.zip':'1Cd35m0NKuvLv2owbLoiN2RSU6O6Jbt3-',
+            'SAKURI.zip':'14z6GOwKhCfkuDWEefPy_qZYxg19i5-hI',
+            'TSUKUYOMI.zip':'1MtVaX6Y4JB7EIbkdWR5rOHXrejUMECuK',
+            'MOMIJI.zip':'1p9r2YN5H5EkkYzHWKArZQp0xU1gFaKdc',
+            'SETSUKA.zip':'1dA0a6ADp5EvNEFkkbAaRDraHFWi28Kwr',
+            'MAGIC.zip':'1gnx8jFiMaiJdGWBzRaaGshjWs74AcBD6',
+          }
+          for name,fid in files.items():
+            out='work/'+name if name.endswith('.mp4') else 'work/zips/'+name
+            subprocess.run(['gdown',fid,'-O',out],check=True)
+          PY
+          for z in work/zips/*.zip; do
+            b="$(basename "$z" .zip)"
+            mkdir -p "work/sources/$b"
+            unzip -q -o "$z" -d "work/sources/$b"
+          done
+
+      - name: Match proxy frames to Runway originals
+        run: |
+          set -euo pipefail
+          cat > /tmp/align.py <<'PY'
+          import csv, json, math, os
+          from collections import Counter, defaultdict
+          from pathlib import Path
+          import cv2
+          import numpy as np
+
+          SAMPLE_FPS=4.0
+          ROOT=Path('work')
+          OUT=Path('alignment'); OUT.mkdir(exist_ok=True)
+          GROUP_ORDER=['YOSHINO','SAKURI','TSUKUYOMI','MOMIJI','SETSUKA','MAGIC']
+
+          def crop16(frame):
+            h,w=frame.shape[:2]
+            target=16/9
+            if w/h > target:
+              nw=int(round(h*target)); x=(w-nw)//2; frame=frame[:,x:x+nw]
+            elif w/h < target:
+              nh=int(round(w/target)); y=(h-nh)//2; frame=frame[y:y+nh,:]
+            return frame
+
+          def feature(frame):
+            f=crop16(frame)
+            h,w=f.shape[:2]
+            # Aggressive centre crop avoids nearly all left/right nameplate pixels.
+            f=f[int(h*.05):int(h*.95), int(w*.22):int(w*.78)]
+            f=cv2.resize(f,(96,54),interpolation=cv2.INTER_AREA)
+            lab=cv2.cvtColor(f,cv2.COLOR_BGR2LAB)
+            gray=lab[:,:,0].astype(np.float32)/255.0
+            gray=(gray-gray.mean())/(gray.std()+1e-5)
+            d=cv2.dct(gray)
+            d=d[:12,:18].reshape(-1); d=d[1:]
+            d=d/(np.linalg.norm(d)+1e-8)
+            gx=cv2.Sobel(gray,cv2.CV_32F,1,0,ksize=3)
+            gy=cv2.Sobel(gray,cv2.CV_32F,0,1,ksize=3)
+            e=np.sqrt(gx*gx+gy*gy)
+            e=cv2.resize(e,(48,27),interpolation=cv2.INTER_AREA)
+            e=(e-e.mean())/(e.std()+1e-5)
+            ed=cv2.dct(e)[:8,:12].reshape(-1); ed=ed[1:]
+            ed=ed/(np.linalg.norm(ed)+1e-8)
+            hsv=cv2.cvtColor(f,cv2.COLOR_BGR2HSV)
+            hist=cv2.calcHist([hsv],[0,1,2],None,[12,4,4],[0,180,0,256,0,256]).reshape(-1).astype(np.float32)
+            hist=np.sqrt(hist/(hist.sum()+1e-8)); hist=hist/(np.linalg.norm(hist)+1e-8)
+            v=np.concatenate([np.sqrt(.58)*d,np.sqrt(.27)*ed,np.sqrt(.15)*hist]).astype(np.float32)
+            return v/(np.linalg.norm(v)+1e-8)
+
+          def sample_video(path, sample_fps=SAMPLE_FPS):
+            cap=cv2.VideoCapture(str(path))
+            fps=cap.get(cv2.CAP_PROP_FPS) or 24.0
+            step=max(1,int(round(fps/sample_fps)))
+            feats=[]; times=[]; frame_idx=0
+            while True:
+              ok,fr=cap.read()
+              if not ok: break
+              if frame_idx%step==0:
+                feats.append(feature(fr)); times.append(frame_idx/fps)
+              frame_idx+=1
+            cap.release()
+            return np.asarray(feats,np.float32),np.asarray(times,np.float32),float(fps),frame_idx
+
+          ref_f,ref_t,ref_fps,ref_frames=sample_video(ROOT/'reference.mp4')
+          clips=[]; source_features=[]; source_meta=[]
+          for group in GROUP_ORDER:
+            for p in sorted((ROOT/'sources'/group).rglob('*.mp4')):
+              f,t,fps,n=sample_video(p)
+              if len(f)==0: continue
+              clip_index=len(clips)
+              clips.append({'clip_index':clip_index,'group':group,'path':str(p),'file_name':p.name,'samples':len(f),'fps':fps,'frames':n,'duration':n/fps})
+              for j,(vv,tt) in enumerate(zip(f,t)):
+                source_features.append(vv)
+                source_meta.append((clip_index,j,float(tt)))
+          src=np.asarray(source_features,np.float32)
+          # Cosine similarity because every feature is normalized.
+          sim=ref_f @ src.T
+          top_k=min(12,sim.shape[1])
+          top=np.argpartition(sim,-top_k,axis=1)[:,-top_k:]
+          top=top[np.arange(len(top))[:,None],np.argsort(sim[np.arange(len(top))[:,None],top],axis=1)[:,::-1]]
+
+          # Per-group best score for monotonic character-block segmentation.
+          group_cols={g:[] for g in GROUP_ORDER}
+          for si,(ci,j,tt) in enumerate(source_meta): group_cols[clips[ci]['group']].append(si)
+          group_score=np.stack([sim[:,group_cols[g]].max(axis=1) for g in GROUP_ORDER],axis=1)
+
+          # A monotonic DP permits pre-roll, the six characters in order, and post-roll.
+          # State 0=pre, 1..6=characters, 7=post. Advancing costs a little so isolated false positives do not split blocks.
+          T=len(ref_t); S=8
+          dp=np.full((T,S),-1e9,np.float32); prev=np.full((T,S),-1,np.int16)
+          dp[0,0]=0.40
+          for s in range(1,7): dp[0,s]=group_score[0,s-1]-0.25*s
+          dp[0,7]=0.10
+          for i in range(1,T):
+            emissions=np.empty(S,np.float32)
+            emissions[0]=0.40
+            emissions[1:7]=group_score[i]
+            emissions[7]=0.40
+            for s in range(S):
+              best=dp[i-1,s]; bp=s
+              if s>0:
+                cand=dp[i-1,s-1]-0.08
+                if cand>best: best,bp=cand,s-1
+              # Allow skipping only weak/missing blocks with a strong penalty.
+              if s>1:
+                cand=dp[i-1,s-2]-0.70
+                if cand>best: best,bp=cand,s-2
+              dp[i,s]=best+emissions[s]; prev[i,s]=bp
+          states=np.zeros(T,np.int16); states[-1]=int(np.argmax(dp[-1]))
+          for i in range(T-1,0,-1): states[i-1]=prev[i,states[i]]
+
+          # Independent best matches and alternatives.
+          rows=[]
+          hit_count=Counter(); hit_scores=defaultdict(list)
+          for i,t in enumerate(ref_t):
+            inds=top[i]
+            choices=[]
+            for rank,si in enumerate(inds[:5],1):
+              ci,sj,st=source_meta[int(si)]; c=clips[ci]
+              choices.append({'rank':rank,'clip_index':ci,'group':c['group'],'file_name':c['file_name'],'source_time':st,'score':float(sim[i,si])})
+            b=choices[0]; hit_count[b['clip_index']]+=1; hit_scores[b['clip_index']].append(b['score'])
+            state=int(states[i]); dp_group='PRE' if state==0 else ('POST' if state==7 else GROUP_ORDER[state-1])
+            row={'ref_sample':i,'ref_time':float(t),'dp_group':dp_group}
+            for c in choices:
+              r=c['rank']; row.update({f'top{r}_group':c['group'],f'top{r}_clip':c['file_name'],f'top{r}_source_time':c['source_time'],f'top{r}_score':c['score']})
+            for gi,g in enumerate(GROUP_ORDER): row[f'score_{g}']=float(group_score[i,gi])
+            rows.append(row)
+
+          with (OUT/'ref_matches.csv').open('w',newline='',encoding='utf-8-sig') as f:
+            w=csv.DictWriter(f,fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
+
+          # DP group intervals.
+          intervals=[]; a=0
+          for i in range(1,T+1):
+            if i==T or states[i]!=states[a]:
+              s=int(states[a]); label='PRE' if s==0 else ('POST' if s==7 else GROUP_ORDER[s-1])
+              intervals.append({'state':s,'group':label,'start_sample':a,'end_sample_exclusive':i,'start_time':float(ref_t[a]),'end_time':float(ref_t[min(i-1,T-1)]+1/SAMPLE_FPS),'samples':i-a,'mean_group_score':None if label in ('PRE','POST') else float(group_score[a:i,s-1].mean()),'min_group_score':None if label in ('PRE','POST') else float(group_score[a:i,s-1].min())})
+              a=i
+          (OUT/'group_intervals.json').write_text(json.dumps(intervals,ensure_ascii=False,indent=2),encoding='utf-8')
+
+          # Contiguous runs of independent top-1 clip, after a 5-sample majority smoother.
+          raw=[source_meta[int(top[i,0])][0] for i in range(T)]
+          smooth=[]
+          for i in range(T):
+            win=raw[max(0,i-2):min(T,i+3)]
+            smooth.append(Counter(win).most_common(1)[0][0])
+          runs=[]; a=0
+          for i in range(1,T+1):
+            if i==T or smooth[i]!=smooth[a]:
+              ci=smooth[a]; c=clips[ci]
+              vals=[]; sts=[]
+              for k in range(a,i):
+                # Best match restricted to this clip.
+                inds=[si for si,(cci,_,_) in enumerate(source_meta) if cci==ci]
+                local=np.asarray(inds,dtype=int)
+                jj=int(local[np.argmax(sim[k,local])]); vals.append(float(sim[k,jj])); sts.append(source_meta[jj][2])
+              runs.append({'group':c['group'],'clip_index':ci,'file_name':c['file_name'],'ref_start':float(ref_t[a]),'ref_end':float(ref_t[min(i-1,T-1)]+1/SAMPLE_FPS),'duration':(i-a)/SAMPLE_FPS,'source_start_median':float(np.median(sts[:max(1,len(sts)//4)])),'source_end_median':float(np.median(sts[-max(1,len(sts)//4):])),'mean_score':float(np.mean(vals)),'min_score':float(np.min(vals)),'samples':i-a})
+              a=i
+          with (OUT/'top1_runs.csv').open('w',newline='',encoding='utf-8-sig') as f:
+            w=csv.DictWriter(f,fieldnames=list(runs[0].keys())); w.writeheader(); w.writerows(runs)
+
+          summaries=[]
+          for c in clips:
+            ci=c['clip_index']; ss=hit_scores.get(ci,[])
+            summaries.append({**c,'top1_hits':hit_count.get(ci,0),'top1_seconds':hit_count.get(ci,0)/SAMPLE_FPS,'mean_top1_score':float(np.mean(ss)) if ss else None,'max_top1_score':float(np.max(ss)) if ss else None})
+          with (OUT/'clip_usage.csv').open('w',newline='',encoding='utf-8-sig') as f:
+            w=csv.DictWriter(f,fieldnames=list(summaries[0].keys())); w.writeheader(); w.writerows(summaries)
+          (OUT/'clip_manifest.json').write_text(json.dumps(clips,ensure_ascii=False,indent=2),encoding='utf-8')
+          (OUT/'align_summary.json').write_text(json.dumps({'sample_fps':SAMPLE_FPS,'reference_duration':float(ref_t[-1]+1/SAMPLE_FPS),'reference_samples':T,'source_samples':len(src),'clip_count':len(clips),'group_intervals':intervals},ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(intervals,ensure_ascii=False,indent=2))
+          PY
+          python /tmp/align.py
+
+      - name: Commit alignment reports
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add alignment
+          git commit -m 'Add automatic Runway source alignment reports'
+          git push origin HEAD:magicoffice-nameplate-clean-20260901
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_auto_alignment
+          path: alignment/
+          retention-days: 1
