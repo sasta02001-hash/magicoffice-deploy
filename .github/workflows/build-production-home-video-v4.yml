@@ -1,4 +1,4 @@
-# Rebuild after autoplay and poster-layering fix
+# Rebuild after runtime isolation, Blob video source, and complete mobile scene fixes
 name: Build and verify MagicOffice production home video v4
 
 on:
