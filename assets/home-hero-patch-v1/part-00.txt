@@ -1,0 +1,223 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+
+const SOURCE = 'https://magicoffice.vercel.app/';
+const SOURCE_HOST = new URL(SOURCE).host;
+const DIST = path.resolve('dist');
+const RELEASE = 'home-hero-poster-layout-2026-09-01-v1';
+const POSTER_PATH = '/assets/media/magicoffice-home-video-poster-v1.webp';
+const POSTER_CACHE = '20260901-home-hero-poster-v1';
+const POSTER_BYTES = 70654;
+const POSTER_SHA256 = 'f69fb516d01861fe28486ce14c536c5e2109846a0fcd757cbcdc1a0d04ec9d94';
+const POSTER_BASE = 'https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main/assets/homepage-poster-v3';
+
+fs.rmSync(DIST, { recursive: true, force: true });
+fs.mkdirSync(DIST, { recursive: true });
+
+const requestHeaders = {
+  'user-agent': 'Mozilla/5.0 (compatible; MagicOffice-Homepage-Hero-Patch/1.0)',
+  'cache-control': 'no-cache',
+  pragma: 'no-cache',
+};
+
+async function fetchBytes(url, retries = 5) {
+  let lastError;
+  for (let attempt = 1; attempt <= retries; attempt += 1) {
+    try {
+      const response = await fetch(url, { headers: requestHeaders, redirect: 'follow' });
+      if (!response.ok) throw new Error(`HTTP ${response.status} ${url}`);
+      return {
+        data: Buffer.from(await response.arrayBuffer()),
+        type: (response.headers.get('content-type') || '').split(';')[0].toLowerCase(),
+        finalUrl: response.url,
+      };
+    } catch (error) {
+      lastError = error;
+      if (attempt < retries) await new Promise(resolve => setTimeout(resolve, 900 * attempt));
+    }
+  }
+  throw lastError;
+}
+
+function localFile(urlPath) {
+  const clean = decodeURIComponent(urlPath).replace(/^\/+/, '');
+  if (!clean || clean.includes('..')) throw new Error(`Unsafe path: ${urlPath}`);
+  return path.join(DIST, clean);
+}
+
+function writeAsset(urlPath, data) {
+  const file = localFile(urlPath);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, data);
+}
+
+function normalizeAsset(raw, baseUrl = SOURCE) {
+  if (!raw) return null;
+  const value = raw.trim();
+  if (!value || /^(?:#|data:|blob:|javascript:|mailto:|tel:)/i.test(value)) return null;
+  let url;
+  try { url = new URL(value, baseUrl); } catch { return null; }
+  if (url.host !== SOURCE_HOST || url.pathname === '/' || url.pathname.endsWith('/')) return null;
+  url.hash = '';
+  return url;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
+}
+
+function stripTags(value) {
+  return value
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function findHrefByText(html, text) {
+  const anchorPattern = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
+  for (const match of html.matchAll(anchorPattern)) {
+    const label = stripTags(match[2]);
+    if (!label.includes(text)) continue;
+    const hrefMatch = match[1].match(/\bhref\s*=\s*(["'])(.*?)\1/i);
+    if (hrefMatch?.[2]) return hrefMatch[2];
+  }
+  return null;
+}
+
+function externalAttrs(href) {
+  return /^https?:\/\//i.test(href) ? ' target="_blank" rel="noopener"' : '';
+}
+
+(async () => {
+  const sourceResult = await fetchBytes(`${SOURCE}?hero-patch-source=${Date.now()}`);
+  let html = sourceResult.data.toString('utf8');
+  for (const marker of ['MagicOffice', 'homepage-hero-v2', 'home-hero-stage', 'data-home-video-mount', '立即訂位', '本週出勤']) {
+    if (!html.includes(marker)) throw new Error(`Source homepage is missing required marker: ${marker}`);
+  }
+
+  // Mirror the exact current Production site so this patch cannot regress unrelated sections.
+  const queue = [];
+  const seen = new Set();
+  const mirrored = [];
+  const skipped = [];
+
+  function enqueue(raw, base = SOURCE) {
+    const url = normalizeAsset(raw, base);
+    if (url && !seen.has(url.pathname)) queue.push(url);
+  }
+
+  for (const match of html.matchAll(/(?:src|href|poster)\s*=\s*["']([^"']+)["']/gi)) enqueue(match[1]);
+  for (const match of html.matchAll(/srcset\s*=\s*["']([^"']+)["']/gi)) {
+    for (const candidate of match[1].split(',')) enqueue(candidate.trim().split(/\s+/)[0]);
+  }
+  for (const required of ['/site.webmanifest', '/assets/css/site-v2.0.6.css', '/assets/js/magic-core-js.js']) enqueue(required);
+
+  while (queue.length) {
+    const url = queue.shift();
+    if (!url || seen.has(url.pathname)) continue;
+    seen.add(url.pathname);
+    try {
+      const result = await fetchBytes(url.href);
+      const ext = path.extname(url.pathname).toLowerCase();
+      const binaryExts = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico', '.woff', '.woff2', '.mp4', '.webm']);
+      const head = result.data.subarray(0, 96).toString('utf8').trimStart().toLowerCase();
+      if (binaryExts.has(ext) && (head.startsWith('<!doctype html') || head.startsWith('<html'))) {
+        if (url.pathname === '/assets/og-card.jpg') {
+          skipped.push(url.pathname);
+          continue;
+        }
+        throw new Error('Binary asset resolved to HTML');
+      }
+      writeAsset(url.pathname, result.data);
+      mirrored.push({
+        path: url.pathname,
+        bytes: result.data.length,
+        sha256: crypto.createHash('sha256').update(result.data).digest('hex'),
+      });
+
+      let text = null;
+      if (result.type.startsWith('text/') || ['.css', '.js', '.json', '.webmanifest', '.svg'].includes(ext)) {
+        text = result.data.toString('utf8');
+      }
+      if (text && ext === '.css') {
+        for (const match of text.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/gi)) enqueue(match[1], result.finalUrl);
+        for (const match of text.matchAll(/@import\s+(?:url\()?\s*["']([^"']+)["']/gi)) enqueue(match[1], result.finalUrl);
+      } else if (text && ext === '.js') {
+        for (const match of text.matchAll(/["']((?:\/assets\/|\/site\.webmanifest|\/favicon\.png|\/apple-touch-icon\.png)[^"']*)["']/g)) enqueue(match[1], result.finalUrl);
+      } else if (text && (ext === '.json' || ext === '.webmanifest')) {
+        try {
+          const payload = JSON.parse(text);
+          for (const icon of payload?.icons || []) if (icon?.src) enqueue(icon.src, result.finalUrl);
+        } catch {}
+      }
+    } catch (error) {
+      throw new Error(`Mirror failed for ${url.href}: ${error.message}`);
+    }
+  }
+  if (mirrored.length < 50) throw new Error(`Only ${mirrored.length} current-site assets were mirrored`);
+
+  // Reconstruct the approved 1280×720 WebP poster from checksum-locked chunks.
+  const chunks = [];
+  for (let index = 0; index < 10; index += 1) {
+    const name = `part-${String(index).padStart(2, '0')}.txt`;
+    const result = await fetchBytes(`${POSTER_BASE}/${name}?v=${Date.now()}-${index}`);
+    const text = result.data.toString('utf8').trim();
+    const expectedLength = index === 9 ? 4208 : 10000;
+    if (text.length !== expectedLength) throw new Error(`${name} length ${text.length}; expected ${expectedLength}`);
+    chunks.push(text);
+  }
+  const poster = Buffer.from(chunks.join(''), 'base64');
+  const posterSha = crypto.createHash('sha256').update(poster).digest('hex');
+  if (poster.length !== POSTER_BYTES || posterSha !== POSTER_SHA256) {
+    throw new Error(`Poster verification failed bytes=${poster.length} sha256=${posterSha}`);
+  }
+  writeAsset(POSTER_PATH, poster);
+
+  // Required existing destinations are read from the live page; no booking URL is guessed.
+  const destinations = {
+    hosts: findHrefByText(html, '姶仕名錄'),
+    attendance: findHrefByText(html, '本週出勤'),
+    events: findHrefByText(html, '活動快報'),
+    booking: findHrefByText(html, '立即訂位'),
+  };
+  const missingDestinations = Object.entries(destinations).filter(([, href]) => !href).map(([name]) => name);
+  if (missingDestinations.length) throw new Error(`Could not recover existing navigation destinations: ${missingDestinations.join(', ')}`);
+
+  // Remove only this patch's prior output so repeated deployments remain idempotent.
+  html = html
+    .replace(/<meta\s+[^>]*name=["']x-magicoffice-home-hero-patch["'][^>]*>/gi, '')
+    .replace(/<link\s+[^>]*id=["']magicoffice-home-video-poster-preload["'][^>]*>/gi, '')
+    .replace(/<style\s+id=["']magicoffice-home-hero-patch-v\d+["']>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script\s+id=["']magicoffice-home-hero-patch-script-v\d+["'][^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<img\b[^>]*class=["'][^"']*\bhome-video-poster\b[^"']*["'][^>]*>/gi, '');
+
+  // Force the stage to begin in safe poster mode.
+  const stageOpenPattern = /<div\b([^>]*class=["'][^"']*\bhomepage-cinema-stage\b[^"']*["'][^>]*)>/i;
+  const stageMatch = html.match(stageOpenPattern);
+  if (!stageMatch) throw new Error('Could not locate homepage cinema stage');
+  let stageAttributes = stageMatch[1]
+    .replace(/\sdata-video-ready\s*=\s*(["']).*?\1/i, '')
+    .replace(/\sdata-home-poster-patched\s*=\s*(["']).*?\1/i, '');
+  html = html.replace(stageOpenPattern, `<div${stageAttributes} data-video-ready="false" data-home-poster-patched="true">`);
+
+  const mountOpenPattern = /(<(?:div|section)\b[^>]*\bdata-home-video-mount\b[^>]*>)/i;
+  if (!mountOpenPattern.test(html)) throw new Error('Could not locate data-home-video-mount');
+  const posterMarkup = `<img class="home-video-poster" src="${POSTER_PATH}?v=${POSTER_CACHE}" width="1280" height="720" alt="MagicOffice 影片封面" decoding="async" fetchpriority="high"/>`;
+  html = html.replace(mountOpenPattern, `${posterMarkup}$1`);
+
+  const mobileNavPattern = /<(nav|div)\b([^>]*class=["'][^"']*\bmobile-bottom-bar\b[^"']*["'][^>]*)>[\s\S]*?<\/\1>/i;
+  if (!mobileNavPattern.test(html)) throw new Error('Could not locate mobile-bottom-bar');
+  const mobileLinks = [
+    ['姶仕名錄', destinations.hosts, false],
+    ['本週出勤', destinations.attendance, false],
+    ['活動快報', destina
