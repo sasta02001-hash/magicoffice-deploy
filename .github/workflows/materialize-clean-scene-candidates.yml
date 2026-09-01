@@ -1,0 +1,76 @@
+name: Materialize clean scene candidates for visual verification
+
+on:
+  push:
+    paths:
+      - '.github/workflows/materialize-clean-scene-candidates.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Materialize repository clean-scene payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --all --tags --prune
+          mkdir -p assets/home-hero-build-inspection/images
+          git show daa5e1aa480c0c717b91f1701a3f99c7293b5047:v207-site/assets/media/44049d5f46ae6a12.webp > assets/home-hero-build-inspection/images/historical-44049-v5.webp
+          python <<'PY'
+          from pathlib import Path
+          import base64,itertools,re,hashlib,json
+          out=Path('assets/home-hero-build-inspection/images')
+          report={}
+          for version in ['v4','v7']:
+            root=Path(f'source-assets/clean-scene-{version}')
+            groups={}
+            for p in sorted(root.iterdir()):
+              if not p.is_file(): continue
+              m=re.search(r'(\d\d)([a-z]?)',p.stem)
+              if not m: continue
+              groups.setdefault(m.group(1),{})[m.group(2) or 'direct']=p
+            options=[]
+            for idx in sorted(groups):
+              g=groups[idx]; choices=[]
+              if 'direct' in g: choices.append(('direct',[g['direct']]))
+              subs=[g[k] for k in sorted(g) if k!='direct']
+              if subs: choices.append(('subparts',subs))
+              options.append((idx,choices))
+            valids=[]
+            for selection in itertools.product(*[x[1] for x in options]):
+              selected=[]; labels=[]
+              for (idx,_),(label,paths) in zip(options,selection): labels.append(f'{idx}:{label}'); selected.extend(paths)
+              try: raw=base64.b64decode(''.join(p.read_text().strip() for p in selected),validate=True)
+              except Exception: continue
+              if not (len(raw)>24 and raw[:4]==b'RIFF' and raw[8:12]==b'WEBP'): continue
+              valids.append((raw,labels,[p.name for p in selected]))
+            if not valids: raise SystemExit(f'No valid WebP for {version}')
+            raw,labels,files=max(valids,key=lambda x:len(x[0]))
+            target=out/f'clean-scene-{version}.webp'
+            target.write_bytes(raw)
+            report[version]={'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'selection':labels,'files':files}
+          hist=(out/'historical-44049-v5.webp').read_bytes()
+          report['historical']={'bytes':len(hist),'sha256':hashlib.sha256(hist).hexdigest()}
+          (out/'report.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          PY
+          file assets/home-hero-build-inspection/images/*.webp
+      - name: Commit materialized images
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/home-hero-build-inspection/images/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Materialize clean scene candidates for visual verification'
+            git push origin HEAD:main
+          fi
