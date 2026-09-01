@@ -1,0 +1,34 @@
+{
+  "reference": {
+    "path": "inputs/reference_720p.mp4",
+    "file_name": "reference_720p.mp4",
+    "group": "inputs",
+    "duration": 229.166667,
+    "size": 67334731,
+    "bit_rate": 2350594,
+    "codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "r_frame_rate": "24/1",
+    "avg_frame_rate": "32994/1375",
+    "nb_frames": "5499",
+    "pix_fmt": "yuv420p",
+    "color_space": "",
+    "color_transfer": "",
+    "color_primaries": "",
+    "color_range": ""
+  },
+  "video_count": 105,
+  "groups": {
+    "CITY": 6,
+    "MAGIC": 12,
+    "MOMIJI": 22,
+    "OPENING": 6,
+    "PALACE": 4,
+    "SAKURI": 22,
+    "SETSUKA": 15,
+    "TSUKUYOMI": 8,
+    "YOSHINO": 7,
+    "inputs": 3
+  }
+}
