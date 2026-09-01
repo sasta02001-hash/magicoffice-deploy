@@ -1,0 +1,88 @@
+name: Patch MagicOffice production v4 runtime isolation and video source
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-production-v4-runtime-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Isolate legacy inline scripts and load trial video from an in-page Blob
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+
+          p=Path('scripts/build_production_home_video_v4.mjs')
+          s=p.read_text()
+
+          source_marker="  let html=fs.readFileSync(SOURCE_HTML,'utf8');"
+          isolation="""  let html=fs.readFileSync(SOURCE_HTML,'utf8');
+  for (const inlineId of ['magic-domain-runtime','magic-asset-diagnostic']) {
+    const pattern=new RegExp(`<script\\\\b([^>]*\\\\bid=[\"']${inlineId}[\"'][^>]*)>([\\\\s\\\\S]*?)<\\\\/script>`,'i');
+    html=html.replace(pattern,(_full,attrs,body)=>`<script${attrs}>(function(){\\n${body}\\n})();</script>`);
+  }"""
+          if source_marker not in s: raise SystemExit('inline isolation marker missing')
+          s=s.replace(source_marker,isolation,1)
+
+          old_video="  const videoUri=dataUri(video,'video/mp4');"
+          new_video="  const videoBase64=video.toString('base64');"
+          if old_video not in s: raise SystemExit('video URI marker missing')
+          s=s.replace(old_video,new_video,1)
+
+          old_markup="html=html.replace(mountPattern,`$1<video class=\"home-hero-trial-video\" muted autoplay loop playsinline webkit-playsinline preload=\"auto\" aria-label=\"MagicOffice 試播影片\" src=\"${videoUri}\"></video>$3`);"
+          new_markup="html=html.replace(mountPattern,`$1<video class=\"home-hero-trial-video\" muted autoplay loop playsinline webkit-playsinline preload=\"auto\" aria-label=\"MagicOffice 試播影片\"></video><script id=\"magicoffice-home-trial-video-v4-source\" type=\"application/octet-stream\">${videoBase64}</script>$3`);"
+          if old_markup not in s: raise SystemExit('video markup marker missing')
+          s=s.replace(old_markup,new_markup,1)
+
+          old_fallback="  var fallback=new URLSearchParams(location.search).get('moFallback')==='1';"
+          new_fallback="  var fallback=new URLSearchParams(location.search).get('moFallback')==='1';var sourceNode=document.getElementById('magicoffice-home-trial-video-v4-source'),objectUrl='';"
+          if old_fallback not in s: raise SystemExit('fallback marker missing')
+          s=s.replace(old_fallback,new_fallback,1)
+
+          old_video_init="  if(video){\n   video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');"
+          new_video_init="""  if(video){
+   video.muted=true;video.defaultMuted=true;video.autoplay=true;video.loop=true;video.playsInline=true;video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
+   if(!fallback&&sourceNode){try{var binary=atob(sourceNode.textContent.trim()),chunks=[],chunkSize=524288;for(var offset=0;offset<binary.length;offset+=chunkSize){var end=Math.min(offset+chunkSize,binary.length),bytes=new Uint8Array(end-offset);for(var i=offset;i<end;i++)bytes[i-offset]=binary.charCodeAt(i);chunks.push(bytes)}objectUrl=URL.createObjectURL(new Blob(chunks,{type:'video/mp4'}));video.src=objectUrl;video.load();addEventListener('pagehide',function(){if(objectUrl)URL.revokeObjectURL(objectUrl)},{once:true})}catch(e){state(false,false,true)}}"""
+          if old_video_init not in s: raise SystemExit('video init marker missing')
+          s=s.replace(old_video_init,new_video_init,1)
+
+          old_check="video:(html.match(/class=\"home-hero-trial-video\"/g)||[]).length===1&&html.includes('data:video/mp4;base64,')"
+          new_check="video:(html.match(/class=\"home-hero-trial-video\"/g)||[]).length===1&&html.includes('magicoffice-home-trial-video-v4-source')"
+          if old_check not in s: raise SystemExit('video build check marker missing')
+          s=s.replace(old_check,new_check,1)
+          p.write_text(s)
+
+          t=Path('scripts/test_production_home_video_v4.mjs')
+          q=t.read_text()
+          old_tabs="const menuTabs=[...document.querySelectorAll('[data-menu-tab],.menu-tab')].length;"
+          new_tabs="const menuTabs=[...document.querySelectorAll('.menu-tabs button,[role=\"tablist\"] button,[data-pane]')].length;"
+          if old_tabs not in q: raise SystemExit('menu tab selector marker missing')
+          q=q.replace(old_tabs,new_tabs,1)
+          t.write_text(q)
+          PY
+
+          node --check scripts/build_production_home_video_v4.mjs
+          node --check scripts/test_production_home_video_v4.mjs
+
+      - name: Commit runtime patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Production Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add scripts/build_production_home_video_v4.mjs scripts/test_production_home_video_v4.mjs
+          git commit -m 'Isolate legacy runtime and load trial video from Blob'
+          git push origin HEAD:main
