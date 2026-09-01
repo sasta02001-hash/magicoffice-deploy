@@ -1,0 +1,31 @@
+name: MagicOffice extract contact JPG
+
+on:
+  push:
+    branches: [magicoffice-nameplate-clean-20260901]
+    paths: ['.github/workflows/magicoffice-extract-contact-jpg.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: magicoffice-nameplate-clean-20260901
+      - name: Extract compact contact pages
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+          mkdir -p diagnostics/contact_jpg
+          pdftoppm -jpeg -r 55 diagnostics/reference_contact.pdf diagnostics/contact_jpg/reference >/dev/null 2>&1
+          pdftoppm -jpeg -r 45 diagnostics/sources_contact.pdf diagnostics/contact_jpg/sources >/dev/null 2>&1
+          find diagnostics/contact_jpg -type f -size +900k -print -exec sh -c 'convert "$1" -resize 70% -quality 72 "$1"' sh {} \; || true
+          git config user.name 'MagicOffice Build Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add diagnostics/contact_jpg
+          git commit -m 'Add temporary compact contact JPGs'
+          git push origin HEAD:magicoffice-nameplate-clean-20260901
