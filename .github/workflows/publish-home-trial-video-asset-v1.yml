@@ -1,0 +1,50 @@
+name: Publish checksum-locked MagicOffice trial video asset v1
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-home-trial-video-asset-v1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download and verify approved 12-second 720p video
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/production-trial-video
+          python -m pip install --quiet gdown
+          gdown 'https://drive.google.com/uc?id=1N_fLCYLL-FPJp_bU7W33jPHHHL129H3K' -O assets/production-trial-video/MagicOffice_home_trial_720p_12s_v1.mp4
+          FILE='assets/production-trial-video/MagicOffice_home_trial_720p_12s_v1.mp4'
+          test "$(stat -c%s "$FILE")" = '3016896'
+          test "$(sha256sum "$FILE" | cut -d' ' -f1)" = '2251aa3eb1d386a4d3a889ab147f7a212838e7f1c56bcac018e92fb44bc5f7b1'
+          printf '%s\n' \
+            'file=MagicOffice_home_trial_720p_12s_v1.mp4' \
+            'width=1280' \
+            'height=720' \
+            'fps=24' \
+            'duration=12.000000' \
+            'bytes=3016896' \
+            'sha256=2251aa3eb1d386a4d3a889ab147f7a212838e7f1c56bcac018e92fb44bc5f7b1' \
+            > assets/production-trial-video/MagicOffice_home_trial_720p_12s_v1.txt
+
+      - name: Commit immutable trial video asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Asset Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add assets/production-trial-video/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add checksum-locked 12-second homepage trial video'
+            git push origin HEAD:main
+          fi
