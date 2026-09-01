@@ -1,0 +1,97 @@
+{
+  "sample_fps": 4.0,
+  "reference_duration": 229.29164123535156,
+  "reference_samples": 917,
+  "source_samples": 1763,
+  "clip_count": 86,
+  "group_intervals": [
+    {
+      "state": 0,
+      "group": "PRE",
+      "start_sample": 0,
+      "end_sample_exclusive": 97,
+      "start_time": 0.0,
+      "end_time": 24.254364013671875,
+      "samples": 97,
+      "mean_group_score": null,
+      "min_group_score": null
+    },
+    {
+      "state": 1,
+      "group": "YOSHINO",
+      "start_sample": 97,
+      "end_sample_exclusive": 166,
+      "start_time": 24.254409790039062,
+      "end_time": 41.50749969482422,
+      "samples": 69,
+      "mean_group_score": 0.9421375393867493,
+      "min_group_score": 0.43994826078414917
+    },
+    {
+      "state": 2,
+      "group": "SAKURI",
+      "start_sample": 166,
+      "end_sample_exclusive": 306,
+      "start_time": 41.507545471191406,
+      "end_time": 76.51386260986328,
+      "samples": 140,
+      "mean_group_score": 0.9521811604499817,
+      "min_group_score": 0.45386797189712524
+    },
+    {
+      "state": 3,
+      "group": "TSUKUYOMI",
+      "start_sample": 306,
+      "end_sample_exclusive": 416,
+      "start_time": 76.51390838623047,
+      "end_time": 104.01886749267578,
+      "samples": 110,
+      "mean_group_score": 0.9547278881072998,
+      "min_group_score": 0.4405595362186432
+    },
+    {
+      "state": 4,
+      "group": "MOMIJI",
+      "start_sample": 416,
+      "end_sample_exclusive": 585,
+      "start_time": 104.01891326904297,
+      "end_time": 146.27655029296875,
+      "samples": 169,
+      "mean_group_score": 0.8755300045013428,
+      "min_group_score": 0.25260305404663086
+    },
+    {
+      "state": 5,
+      "group": "SETSUKA",
+      "start_sample": 585,
+      "end_sample_exclusive": 764,
+      "start_time": 146.27659606933594,
+      "end_time": 191.03468322753906,
+      "samples": 179,
+      "mean_group_score": 0.9666985273361206,
+      "min_group_score": 0.6789000630378723
+    },
+    {
+      "state": 6,
+      "group": "MAGIC",
+      "start_sample": 764,
+      "end_sample_exclusive": 888,
+      "start_time": 191.03472900390625,
+      "end_time": 222.0403289794922,
+      "samples": 124,
+      "mean_group_score": 0.9342656135559082,
+      "min_group_score": 0.19439667463302612
+    },
+    {
+      "state": 7,
+      "group": "POST",
+      "start_sample": 888,
+      "end_sample_exclusive": 917,
+      "start_time": 222.04037475585938,
+      "end_time": 229.29164123535156,
+      "samples": 29,
+      "mean_group_score": null,
+      "min_group_score": null
+    }
+  ]
+}

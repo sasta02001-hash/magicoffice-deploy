@@ -1,0 +1,862 @@
+[
+  {
+    "clip_index": 0,
+    "group": "YOSHINO",
+    "path": "work/sources/YOSHINO/RUNWAY吉野/A single continuous cinematic shot connecting the exact star.mp4",
+    "file_name": "A single continuous cinematic shot connecting the exact star.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 1,
+    "group": "YOSHINO",
+    "path": "work/sources/YOSHINO/RUNWAY吉野/A single continuous cinematic transition connecting the exac.mp4",
+    "file_name": "A single continuous cinematic transition connecting the exac.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 2,
+    "group": "YOSHINO",
+    "path": "work/sources/YOSHINO/RUNWAY吉野/Direct continuation from the supplied last frame_ Same Yoshi.mp4",
+    "file_name": "Direct continuation from the supplied last frame_ Same Yoshi.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 3,
+    "group": "YOSHINO",
+    "path": "work/sources/YOSHINO/RUNWAY吉野/ONE continuous seamless cinematic shot_ never montage_ cross.mp4",
+    "file_name": "ONE continuous seamless cinematic shot_ never montage_ cross.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 4,
+    "group": "YOSHINO",
+    "path": "work/sources/YOSHINO/RUNWAY吉野/Preserve this exact 6A tail-extension shot_ character identi.mp4",
+    "file_name": "Preserve this exact 6A tail-extension shot_ character identi.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 5,
+    "group": "YOSHINO",
+    "path": "work/sources/YOSHINO/RUNWAY吉野/Single continuous 5s character-performance shot_ Same Yoshin.mp4",
+    "file_name": "Single continuous 5s character-performance shot_ Same Yoshin.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 6,
+    "group": "YOSHINO",
+    "path": "work/sources/YOSHINO/RUNWAY吉野/agent_generate_video_edit - Camera pushes forward while arcing toward the front-right of….mp4",
+    "file_name": "agent_generate_video_edit - Camera pushes forward while arcing toward the front-right of….mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 7,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/A1 _ one continuous four-second locked-camera interpolation.mp4",
+    "file_name": "A1 _ one continuous four-second locked-camera interpolation.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 8,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/A2 _ direct continuation from the exact extracted frame of t.mp4",
+    "file_name": "A2 _ direct continuation from the exact extracted frame of t.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 9,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/A3 _ direct continuation from the exact extracted near-final.mp4",
+    "file_name": "A3 _ direct continuation from the exact extracted near-final.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 10,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Bridge 1A_ One continuous four-second repair shot between th.mp4",
+    "file_name": "Bridge 1A_ One continuous four-second repair shot between th.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 11,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Bridge 1B_ One continuous four-second transition between the.mp4",
+    "file_name": "Bridge 1B_ One continuous four-second transition between the.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 12,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Bridge 2A_ Create one continuous four-second practical in-ca.mp4",
+    "file_name": "Bridge 2A_ Create one continuous four-second practical in-ca.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 13,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Bridge 2B_ One continuous four-second transition between the.mp4",
+    "file_name": "Bridge 2B_ One continuous four-second transition between the.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 14,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Bridge 3A_ One continuous four-second repair shot between th.mp4",
+    "file_name": "Bridge 3A_ One continuous four-second repair shot between th.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 15,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Bridge 3B_ One continuous four-second closing transition bet.mp4",
+    "file_name": "Bridge 3B_ One continuous four-second closing transition bet.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 16,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Create a single continuous four-second cinematic bridge from.mp4",
+    "file_name": "Create a single continuous four-second cinematic bridge from.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 17,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Create one continuous cinematic transition shot connecting t.mp4",
+    "file_name": "Create one continuous cinematic transition shot connecting t.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 18,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Create one continuous four-second in-camera transition betwe.mp4",
+    "file_name": "Create one continuous four-second in-camera transition betwe.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 19,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/One continuous four-second camera-continuity repair between.mp4",
+    "file_name": "One continuous four-second camera-continuity repair between.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 20,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/One continuous four-second conservative repair shot connecti.mp4",
+    "file_name": "One continuous four-second conservative repair shot connecti.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 21,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/One continuous four-second macro fabric repair shot connecti.mp4",
+    "file_name": "One continuous four-second macro fabric repair shot connecti.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 22,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/One continuous four-second repair shot between two adjacent.mp4",
+    "file_name": "One continuous four-second repair shot between two adjacent.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 23,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/SAKURI_NO_NAMEPLATE_SAFE_MASTER_1080P48.mp4",
+    "file_name": "SAKURI_NO_NAMEPLATE_SAFE_MASTER_1080P48.mp4",
+    "samples": 124,
+    "fps": 48.0,
+    "frames": 1479,
+    "duration": 30.8125
+  },
+  {
+    "clip_index": 24,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Single continuous 4-second closing take_ Begin exactly at th.mp4",
+    "file_name": "Single continuous 4-second closing take_ Begin exactly at th.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 25,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Single continuous 5-second take_ Begin exactly at the suppli (1).mp4",
+    "file_name": "Single continuous 5-second take_ Begin exactly at the suppli (1).mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 26,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Single continuous 5-second take_ Begin exactly at the suppli.mp4",
+    "file_name": "Single continuous 5-second take_ Begin exactly at the suppli.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 27,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Single continuous 6-second take_ Begin exactly at the suppli (1).mp4",
+    "file_name": "Single continuous 6-second take_ Begin exactly at the suppli (1).mp4",
+    "samples": 25,
+    "fps": 24.0,
+    "frames": 145,
+    "duration": 6.041666666666667
+  },
+  {
+    "clip_index": 28,
+    "group": "SAKURI",
+    "path": "work/sources/SAKURI/RUNWAY/Single continuous 6-second take_ Begin exactly at the suppli.mp4",
+    "file_name": "Single continuous 6-second take_ Begin exactly at the suppli.mp4",
+    "samples": 25,
+    "fps": 24.0,
+    "frames": 145,
+    "duration": 6.041666666666667
+  },
+  {
+    "clip_index": 29,
+    "group": "TSUKUYOMI",
+    "path": "work/sources/TSUKUYOMI/runway月詠/Create one continuous 4-second cinematic transition between.mp4",
+    "file_name": "Create one continuous 4-second cinematic transition between.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 30,
+    "group": "TSUKUYOMI",
+    "path": "work/sources/TSUKUYOMI/runway月詠/Create one continuous 4-second cinematic transition using th (1).mp4",
+    "file_name": "Create one continuous 4-second cinematic transition using th (1).mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 31,
+    "group": "TSUKUYOMI",
+    "path": "work/sources/TSUKUYOMI/runway月詠/Create one continuous 4-second cinematic transition using th.mp4",
+    "file_name": "Create one continuous 4-second cinematic transition using th.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 32,
+    "group": "TSUKUYOMI",
+    "path": "work/sources/TSUKUYOMI/runway月詠/Single continuous cinematic shot from the supplied start fra (1).mp4",
+    "file_name": "Single continuous cinematic shot from the supplied start fra (1).mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 33,
+    "group": "TSUKUYOMI",
+    "path": "work/sources/TSUKUYOMI/runway月詠/Single continuous cinematic shot from the supplied start fra.mp4",
+    "file_name": "Single continuous cinematic shot from the supplied start fra.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 34,
+    "group": "TSUKUYOMI",
+    "path": "work/sources/TSUKUYOMI/runway月詠/Single continuous cinematic shot of the exact same adult wom.mp4",
+    "file_name": "Single continuous cinematic shot of the exact same adult wom.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 35,
+    "group": "TSUKUYOMI",
+    "path": "work/sources/TSUKUYOMI/runway月詠/Single continuous cinematic shot_ continuing from the suppli.mp4",
+    "file_name": "Single continuous cinematic shot_ continuing from the suppli.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 36,
+    "group": "TSUKUYOMI",
+    "path": "work/sources/TSUKUYOMI/runway月詠/Single continuous cinematic transition from the exact suppli.mp4",
+    "file_name": "Single continuous cinematic transition from the exact suppli.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 37,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/A single continuous five-second shot from a fixed tripod_ Th.mp4",
+    "file_name": "A single continuous five-second shot from a fixed tripod_ Th.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 38,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/B1 _ one continuous four-second cinematic take from the exac.mp4",
+    "file_name": "B1 _ one continuous four-second cinematic take from the exac.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 39,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/C1 _ one continuous four-second intimate portrait take from.mp4",
+    "file_name": "C1 _ one continuous four-second intimate portrait take from.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 40,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/C2 _ one continuous four-second intimate take from the exact.mp4",
+    "file_name": "C2 _ one continuous four-second intimate take from the exact.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 41,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/Create a continuous four-second motion bridge between these.mp4",
+    "file_name": "Create a continuous four-second motion bridge between these.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 42,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/Create one continuous four-second continuity bridge that rep.mp4",
+    "file_name": "Create one continuous four-second continuity bridge that rep.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 43,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/D1 _ one continuous four-second full-body preparation take f.mp4",
+    "file_name": "D1 _ one continuous four-second full-body preparation take f.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 44,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/D2 _ one continuous five-second full-body turning take from.mp4",
+    "file_name": "D2 _ one continuous five-second full-body turning take from.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 45,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/D3 _ one continuous five-second full-body continuation from.mp4",
+    "file_name": "D3 _ one continuous five-second full-body continuation from.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 46,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/E _ one continuous four-second closing take from the exact s.mp4",
+    "file_name": "E _ one continuous four-second closing take from the exact s.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 47,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/END E _ one continuous four-second closing transition from t.mp4",
+    "file_name": "END E _ one continuous four-second closing transition from t.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 48,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/Edit this exact 9_5-second rotation shot while preserving th.mp4",
+    "file_name": "Edit this exact 9_5-second rotation shot while preserving th.mp4",
+    "samples": 37,
+    "fps": 24.0,
+    "frames": 217,
+    "duration": 9.041666666666666
+  },
+  {
+    "clip_index": 49,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/LOCKED-OFF SINGLE TAKE_ The camera is physically bolted to a.mp4",
+    "file_name": "LOCKED-OFF SINGLE TAKE_ The camera is physically bolted to a.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 50,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/Merge the two separate smoke bursts into one single continuo.mp4",
+    "file_name": "Merge the two separate smoke bursts into one single continuo.mp4",
+    "samples": 20,
+    "fps": 24.0,
+    "frames": 120,
+    "duration": 5.0
+  },
+  {
+    "clip_index": 51,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/One continuous five-second locked-tripod shot_ Keep the came.mp4",
+    "file_name": "One continuous five-second locked-tripod shot_ Keep the came.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 52,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/Repair only the causal arm-to-sleeve pose at this anchor fra.mp4",
+    "file_name": "Repair only the causal arm-to-sleeve pose at this anchor fra.mp4",
+    "samples": 14,
+    "fps": 24.0,
+    "frames": 80,
+    "duration": 3.3333333333333335
+  },
+  {
+    "clip_index": 53,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/Repair only the hand-to-fabric contact. At the anchor frame,.mp4",
+    "file_name": "Repair only the hand-to-fabric contact. At the anchor frame,.mp4",
+    "samples": 16,
+    "fps": 24.0,
+    "frames": 96,
+    "duration": 4.0
+  },
+  {
+    "clip_index": 54,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/Repair only the sleeve-sweep physics in this exact shot. At_.mp4",
+    "file_name": "Repair only the sleeve-sweep physics in this exact shot. At_.mp4",
+    "samples": 14,
+    "fps": 24.0,
+    "frames": 80,
+    "duration": 3.3333333333333335
+  },
+  {
+    "clip_index": 55,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/Repair only the smoking gesture. At the anchor frame, move t.mp4",
+    "file_name": "Repair only the smoking gesture. At the anchor frame, move t.mp4",
+    "samples": 20,
+    "fps": 24.0,
+    "frames": 120,
+    "duration": 5.0
+  },
+  {
+    "clip_index": 56,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/TURN D1 _ one continuous five-second full-body relay shot fr.mp4",
+    "file_name": "TURN D1 _ one continuous five-second full-body relay shot fr.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 57,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/TURN D2 _ one continuous five-second full-body continuation.mp4",
+    "file_name": "TURN D2 _ one continuous five-second full-body continuation.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 58,
+    "group": "MOMIJI",
+    "path": "work/sources/MOMIJI/runway紅葉/agent_generate_video - Cinematic single continuous take_ no cuts_ A woman in an orn_.mp4",
+    "file_name": "agent_generate_video - Cinematic single continuous take_ no cuts_ A woman in an orn_.mp4",
+    "samples": 33,
+    "fps": 24.0,
+    "frames": 193,
+    "duration": 8.041666666666666
+  },
+  {
+    "clip_index": 59,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Add elegant cinematic magic to the existing architectural tr.mp4",
+    "file_name": "Add elegant cinematic magic to the existing architectural tr.mp4",
+    "samples": 16,
+    "fps": 24.0,
+    "frames": 96,
+    "duration": 4.0
+  },
+  {
+    "clip_index": 60,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Animate the supplied start and end frames as one continuous.mp4",
+    "file_name": "Animate the supplied start and end frames as one continuous.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 61,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Create a seamless transition from the supplied moon-gate rea.mp4",
+    "file_name": "Create a seamless transition from the supplied moon-gate rea.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 62,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Create a seamless transition from the supplied snowy forest.mp4",
+    "file_name": "Create a seamless transition from the supplied snowy forest.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 63,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Create a seamless transition from the supplied snowy palace.mp4",
+    "file_name": "Create a seamless transition from the supplied snowy palace.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 64,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Create one continuous cinematic 4-second transition using th.mp4",
+    "file_name": "Create one continuous cinematic 4-second transition using th.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 65,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Create one continuous five-second continuity bridge between.mp4",
+    "file_name": "Create one continuous five-second continuity bridge between.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 66,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Create one continuous five-second continuity bridge from the.mp4",
+    "file_name": "Create one continuous five-second continuity bridge from the.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 67,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Create one continuous five-second continuity bridge_ Treat t.mp4",
+    "file_name": "Create one continuous five-second continuity bridge_ Treat t.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 68,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Create one continuous five-second motion between the supplie (1).mp4",
+    "file_name": "Create one continuous five-second motion between the supplie (1).mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 69,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Create one continuous five-second motion between the supplie.mp4",
+    "file_name": "Create one continuous five-second motion between the supplie.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 70,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Create one continuous five-second palace-approach motion bet.mp4",
+    "file_name": "Create one continuous five-second palace-approach motion bet.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 71,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Single continuous five-second opening shot using the supplie.mp4",
+    "file_name": "Single continuous five-second opening shot using the supplie.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 72,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Single continuous five-second shot using the supplied images.mp4",
+    "file_name": "Single continuous five-second shot using the supplied images.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 73,
+    "group": "SETSUKA",
+    "path": "work/sources/SETSUKA/runway雪華/Use the supplied source clip as the exact motion base and pr.mp4",
+    "file_name": "Use the supplied source clip as the exact motion base and pr.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 74,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/Create one continuous 4-second cinematic ending transition s.mp4",
+    "file_name": "Create one continuous 4-second cinematic ending transition s.mp4",
+    "samples": 17,
+    "fps": 24.0,
+    "frames": 97,
+    "duration": 4.041666666666667
+  },
+  {
+    "clip_index": 75,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/Create one continuous five-second repair bridge between the.mp4",
+    "file_name": "Create one continuous five-second repair bridge between the.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 76,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/Create one continuous five-second repair bridge for the midd.mp4",
+    "file_name": "Create one continuous five-second repair bridge for the midd.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 77,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/Create one continuous five-second repair shot for the look-b.mp4",
+    "file_name": "Create one continuous five-second repair shot for the look-b.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 78,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/Create one continuous five-second replacement bridge ONLY fo.mp4",
+    "file_name": "Create one continuous five-second replacement bridge ONLY fo.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 79,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/One continuous five-second invitation gesture from the suppl (1).mp4",
+    "file_name": "One continuous five-second invitation gesture from the suppl (1).mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 80,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/One continuous five-second invitation gesture from the suppl.mp4",
+    "file_name": "One continuous five-second invitation gesture from the suppl.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 81,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/One continuous five-second opening shot_ The camera is compl.mp4",
+    "file_name": "One continuous five-second opening shot_ The camera is compl.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 82,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/One continuous five-second portrait shot from the supplied m.mp4",
+    "file_name": "One continuous five-second portrait shot from the supplied m.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 83,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/One continuous five-second shot connecting the supplied wide.mp4",
+    "file_name": "One continuous five-second shot connecting the supplied wide.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 84,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/Regenerate this exact five-second invitation_reaching shot w.mp4",
+    "file_name": "Regenerate this exact five-second invitation_reaching shot w.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  },
+  {
+    "clip_index": 85,
+    "group": "MAGIC",
+    "path": "work/sources/MAGIC/runway魔幻/Single continuous five-second final architectural ending sho.mp4",
+    "file_name": "Single continuous five-second final architectural ending sho.mp4",
+    "samples": 21,
+    "fps": 24.0,
+    "frames": 121,
+    "duration": 5.041666666666667
+  }
+]
