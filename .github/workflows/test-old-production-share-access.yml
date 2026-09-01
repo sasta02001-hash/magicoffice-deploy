@@ -1,0 +1,42 @@
+name: Test temporary share access to previous MagicOffice deployment
+
+on:
+  push:
+    paths:
+      - '.github/workflows/test-old-production-share-access.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Establish temporary deployment share session and probe assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://magicoffice-l0ovo899x-magicoffice.vercel.app'
+          share='scymE7FINldPrJmHxtKpbfStD3iTvV53'
+          rm -f /tmp/cookies.txt
+          curl --fail --location --silent --show-error --max-time 90 \
+            --cookie-jar /tmp/cookies.txt --cookie /tmp/cookies.txt \
+            "${base}/?_vercel_share=${share}" -o /tmp/root.html
+          curl --fail --location --silent --show-error --max-time 90 \
+            --cookie-jar /tmp/cookies.txt --cookie /tmp/cookies.txt \
+            "${base}/assets/media/da930bd7fba6ff56.png?v=2072" -o /tmp/logo.png
+          echo "ROOT_BYTES=$(wc -c </tmp/root.html) ASSET_BYTES=$(wc -c </tmp/logo.png)"
+          file /tmp/root.html /tmp/logo.png || true
+          python - <<'PY'
+          from pathlib import Path
+          root=Path('/tmp/root.html').read_bytes()
+          logo=Path('/tmp/logo.png').read_bytes()
+          checks={
+            'rootHtml': root.lstrip().startswith((b'<!DOCTYPE html',b'<!doctype html',b'<html')),
+            'rootHero': b'homepage-hero-v2' in root,
+            'logoPng': logo.startswith(b'\x89PNG\r\n\x1a\n'),
+          }
+          print('SHARE_ACCESS_CHECKS',checks)
+          if not all(checks.values()): raise SystemExit('Temporary share session did not return previous deployment bytes')
+          PY
