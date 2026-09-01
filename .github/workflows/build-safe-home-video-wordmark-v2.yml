@@ -107,6 +107,7 @@ jobs:
             assets/home-hero-production-safe-v2/browser-report.json
             assets/home-hero-production-safe-v2/desktop-1440x900.png
             assets/home-hero-production-safe-v2/mobile-390x844.png
+            assets/home-hero-production-safe-v2/fallback-video-error.png
             /tmp/mo-safe-v2/current.html
           if-no-files-found: warn
           retention-days: 14
