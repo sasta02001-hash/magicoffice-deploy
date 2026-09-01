@@ -1,0 +1,42 @@
+name: Patch MagicOffice production v4 WebP padding
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-production-v4-webp-padding.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore the single missing RIFF padding byte
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          p=Path('scripts/build_production_home_video_v4.mjs')
+          s=p.read_text()
+          old="  const buffer=Buffer.from(encoded,'base64');\n  const dim=webpDimensions(buffer);\n  const declared=buffer.length>=8?buffer.readUInt32LE(4)+8:0;"
+          new="  let buffer=Buffer.from(encoded,'base64');\n  let declared=buffer.length>=8?buffer.readUInt32LE(4)+8:0;\n  if (declared === buffer.length + 1) buffer=Buffer.concat([buffer,Buffer.from([0])]);\n  const dim=webpDimensions(buffer);\n  declared=buffer.length>=8?buffer.readUInt32LE(4)+8:0;"
+          if old not in s: raise SystemExit('WebP padding patch marker missing')
+          p.write_text(s.replace(old,new,1))
+          PY
+          node --check scripts/build_production_home_video_v4.mjs
+      - name: Commit WebP padding repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Production Build Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add scripts/build_production_home_video_v4.mjs
+          git commit -m 'Restore mobile clean-scene RIFF padding byte'
+          git push origin HEAD:main
