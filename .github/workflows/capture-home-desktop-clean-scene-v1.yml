@@ -1,4 +1,4 @@
-name: Capture MagicOffice desktop clean-scene derivative v1
+name: Build MagicOffice desktop clean-scene composition v1
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  capture:
+  build-desktop-background:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -17,43 +17,116 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download Canva 2560x1440 derivative
+      - name: Install Sharp
+        run: npm install --ignore-scripts=false
+
+      - name: Fetch approved production clean-scene v5
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p source-assets
-          URL='https://export-download.canva.com/cfcf483b-524d-4183-8998-7d21884b3d89/0/0001-8930026648809588215.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH5AO7UJ26%2F20260831%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260831T224302Z&X-Amz-Expires=26563&X-Amz-Signature=a11a2d001af95700f87db519949fc11eebe96159803cf9843d1db4e977fde521&X-Amz-SignedHeaders=host%3Bx-amz-expected-bucket-owner&response-expires=Tue%2C%2001%20Sep%202026%2006%3A05%3A45%20GMT'
-          curl --fail --location --silent --show-error --max-time 90 "$URL" -o source-assets/magicoffice-home-clean-scene-desktop-v1.png
+          mkdir -p .tmp assets/home-clean-scene-desktop-v1
+          curl --fail --location --silent --show-error --max-time 90 \
+            'https://magicoffice.vercel.app/assets/media/magicoffice-home-clean-scene-v5.webp?v=20260901-clean-scene-v5' \
+            -o .tmp/mobile-approved-v5.webp
 
-      - name: Verify exact desktop dimensions
+      - name: Compose 2560x1440 desktop background
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          import hashlib, struct, json
-          p=Path('source-assets/magicoffice-home-clean-scene-desktop-v1.png')
-          b=p.read_bytes()
-          if b[:8] != b'\x89PNG\r\n\x1a\n':
-              raise SystemExit('Not a PNG')
-          w,h=struct.unpack('>II', b[16:24])
-          if (w,h)!=(2560,1440):
-              raise SystemExit(f'Wrong dimensions: {w}x{h}')
-          if len(b) < 250000:
-              raise SystemExit(f'Asset unexpectedly small: {len(b)} bytes')
-          meta={'width':w,'height':h,'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'sourceCanvaDesign':'DAHT7PqKGuc','sourceApprovedCleanScene':'DAHT4owTCm8','composition':'desktop-left-brand-scene-right-clean-video-space'}
-          Path('source-assets/magicoffice-home-clean-scene-desktop-v1.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2)+'\n')
-          print('DESKTOP_CLEAN_SCENE_VERIFIED', json.dumps(meta))
-          PY
+          node <<'NODE'
+          const fs = require('node:fs');
+          const crypto = require('node:crypto');
+          const sharp = require('sharp');
 
-      - name: Commit durable asset
+          const source = '.tmp/mobile-approved-v5.webp';
+          const out = 'assets/home-clean-scene-desktop-v1/magicoffice-home-clean-scene-desktop-v1.webp';
+          const metaOut = 'assets/home-clean-scene-desktop-v1/metadata.json';
+
+          (async()=>{
+            const input = await sharp(source).metadata();
+            if (input.width !== 1000 || input.height !== 1333) {
+              throw new Error(`Approved v5 source changed: ${input.width}x${input.height}`);
+            }
+
+            // Scale only enough to fill the 1440px desktop height: ~8% enlargement.
+            // The approved scene remains in the left 36% brand area; the right 64%
+            // is intentionally clean negative space because it is covered by the video stage.
+            const scene = await sharp(source)
+              .resize({height: 1440, fit: 'cover', withoutEnlargement: false})
+              .modulate({brightness: 1.00, saturation: 0.99})
+              .sharpen({sigma: 0.48})
+              .toBuffer();
+            const sceneMeta = await sharp(scene).metadata();
+
+            const baseSvg = Buffer.from(`<svg width="2560" height="1440" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="wine" cx="32%" cy="48%" r="78%">
+                  <stop offset="0%" stop-color="#241017"/>
+                  <stop offset="46%" stop-color="#12090d"/>
+                  <stop offset="100%" stop-color="#060506"/>
+                </radialGradient>
+                <linearGradient id="right" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#12090d"/>
+                  <stop offset="55%" stop-color="#0a0709"/>
+                  <stop offset="100%" stop-color="#050405"/>
+                </linearGradient>
+              </defs>
+              <rect width="2560" height="1440" fill="url(#wine)"/>
+              <rect x="850" width="1710" height="1440" fill="url(#right)"/>
+            </svg>`);
+
+            // Feather the approved portrait scene into the clean right-side stage area,
+            // so there is no hard crop line and no invented furniture/detail.
+            const featherSvg = Buffer.from(`<svg width="2560" height="1440" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#090609" stop-opacity="0"/>
+                  <stop offset="22%" stop-color="#090609" stop-opacity="0.06"/>
+                  <stop offset="52%" stop-color="#090609" stop-opacity="0.70"/>
+                  <stop offset="76%" stop-color="#090609" stop-opacity="0.96"/>
+                  <stop offset="100%" stop-color="#090609" stop-opacity="1"/>
+                </linearGradient>
+              </defs>
+              <rect x="650" y="0" width="1200" height="1440" fill="url(#fade)"/>
+            </svg>`);
+
+            await sharp(baseSvg)
+              .composite([
+                {input: scene, left: 0, top: 0},
+                {input: featherSvg, left: 0, top: 0}
+              ])
+              .webp({quality: 95, effort: 6, smartSubsample: true})
+              .toFile(out);
+
+            const result = await sharp(out).metadata();
+            if (result.width !== 2560 || result.height !== 1440) {
+              throw new Error(`Desktop output wrong size: ${result.width}x${result.height}`);
+            }
+            const bytes = fs.readFileSync(out);
+            if (bytes.length < 180000) throw new Error(`Desktop output unexpectedly small: ${bytes.length}`);
+            const meta = {
+              width: result.width,
+              height: result.height,
+              bytes: bytes.length,
+              sha256: crypto.createHash('sha256').update(bytes).digest('hex'),
+              source: 'official production clean-scene v5',
+              sourceDimensions: {width: input.width, height: input.height},
+              scenePlacedDimensions: {width: sceneMeta.width, height: sceneMeta.height},
+              method: 'approved scene at near-native size on left 36%; clean dark wine-black extension on right 64%; feathered transition; no new objects'
+            };
+            fs.writeFileSync(metaOut, JSON.stringify(meta, null, 2) + '\n');
+            console.log('DESKTOP_CLEAN_SCENE_V1_OK', JSON.stringify(meta));
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+
+      - name: Commit verified desktop asset
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'MagicOffice Asset Bot'
           git config user.email 'sasta02001@gmail.com'
-          git add source-assets/magicoffice-home-clean-scene-desktop-v1.png source-assets/magicoffice-home-clean-scene-desktop-v1.json
+          git add assets/home-clean-scene-desktop-v1/
           if ! git diff --cached --quiet; then
-            git commit -m 'Store 2560x1440 desktop clean-scene derivative'
+            git commit -m 'Add 2560x1440 desktop clean-scene composition v1'
             git push origin HEAD:main
           fi
