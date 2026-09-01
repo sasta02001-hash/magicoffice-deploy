@@ -1,0 +1,50 @@
+name: Inspect self-contained MagicOffice production source
+
+on:
+  push:
+    paths:
+      - '.github/workflows/inspect-full-standalone-source.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Inspect full standalone source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show origin/new-domain-v1.0.4-menu-cms:production-standalone/index.html > /tmp/full-standalone.html
+          python - <<'PY'
+          from pathlib import Path
+          import json,re
+          p=Path('/tmp/full-standalone.html')
+          s=p.read_text(errors='replace')
+          ids=re.findall(r'<(?:section|div|main|footer)\b[^>]*\bid=["\']([^"\']+)',s,re.I)
+          report={
+            'bytes':p.stat().st_size,
+            'inlineStyle':bool(re.search(r'<style\b',s,re.I)),
+            'inlineScript':bool(re.search(r'<script\b(?![^>]*\bsrc=)',s,re.I)),
+            'dataImages':len(re.findall(r'data:image/',s,re.I)),
+            'externalStyles':re.findall(r'<link\b[^>]*rel=["\']stylesheet["\'][^>]*href=["\']([^"\']+)',s,re.I),
+            'externalScripts':re.findall(r'<script\b[^>]*src=["\']([^"\']+)',s,re.I),
+            'sectionIds':ids,
+            'markers':{k:(f'id="{k}"' in s or f"id='{k}'" in s) for k in ['top','roster','schedule','event-hub','heartbeat-support','summer-navy','mid-autumn','yuzu-birthday','events','menu','first-visit','location','recruitment']},
+            'heroStandalone':'<section class="hero" id="top">' in s,
+            'mobileBar':'手機版便捷選單' in s,
+          }
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          Path('/tmp/full-standalone-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_full_standalone_source_inspection
+          path: |
+            /tmp/full-standalone-report.json
+            /tmp/full-standalone.html
+          retention-days: 3
