@@ -1,0 +1,33 @@
+name: Switch clean v4.3 deployment to builder v5
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-v43-deploy-to-v5.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Patch production workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE='.github/workflows/deploy-clean-v43-replacement-production-v3.yml'
+          sed -i 's/cancel-in-progress: false/cancel-in-progress: true/' "$FILE"
+          sed -i 's/build_site_v3.py rebuild-v43\/build_site_v4.py/build_site_v3.py rebuild-v43\/build_site_v4.py rebuild-v43\/build_site_v5.py/' "$FILE"
+          sed -i 's/python rebuild-v43\/build_site_v4.py/python rebuild-v43\/build_site_v5.py/' "$FILE"
+          grep -q 'build_site_v5.py' "$FILE"
+          git config user.name 'MagicOffice Deployment Bot'
+          git config user.email 'sasta02001@gmail.com'
+          git add "$FILE"
+          git commit -m 'Use tolerant builder v5 for clean v4.3 production replacement'
+          git push origin HEAD:main
