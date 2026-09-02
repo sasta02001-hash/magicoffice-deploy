@@ -1,0 +1,314 @@
+name: Deploy MagicOffice current events and person heartbeat v4.3.2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/deploy-current-events-person-heartbeat-v432.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: magicoffice-v432-current-events-production
+  cancel-in-progress: false
+
+env:
+  SITE_DIR: /tmp/magicoffice-v432-site
+  LOCAL_DIR: /tmp/magicoffice-v432-local
+  TEAM_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+  PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+  RELEASE: magicoffice-v4.3.2-current-events-person-heartbeat-2026-09-03
+  OLD_RELEASE: magicoffice-v4.3-clean-replacement-2026-09-03
+  OFFICIAL_URL: https://magicoffice.vercel.app
+  HEARTBEAT_DRIVE_ID: 1v929HjMPen1QBBW4YU26KXMxKc117UIM
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install image, browser, and deployment tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check --quiet requests pillow
+
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+
+      - name: Install Vercel CLI and Puppeteer
+        shell: bash
+        run: npm install --no-save --no-audit --no-fund puppeteer-core@24.16.0 vercel@latest >/dev/null
+
+      - name: Build v4.3 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile deploy-v43-final/build.py rebuild-v43/build_site_v3.py
+          SITE_DIR="${SITE_DIR}" python deploy-v43-final/build.py
+
+      - name: Remove expired events and restore original person heartbeat visual
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+          import hashlib
+          import io
+          import json
+          import os
+          from pathlib import Path
+          import requests
+          from PIL import Image
+
+          site = Path(os.environ['SITE_DIR'])
+          keep_ids = ['heartbeat-support', 'mid-autumn', 'yuzu-birthday']
+          events_path = site / 'content/events.json'
+          payload = json.loads(events_path.read_text(encoding='utf-8'))
+          by_id = {item['id']: item for item in payload.get('events', [])}
+          missing = [event_id for event_id in keep_ids if event_id not in by_id]
+          if missing:
+              raise RuntimeError(f'Missing current events: {missing}')
+          payload['events'] = [by_id[event_id] for event_id in keep_ids]
+          events_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          drive_id = os.environ['HEARTBEAT_DRIVE_ID']
+          urls = [
+              f'https://drive.usercontent.google.com/download?id={drive_id}&export=download&confirm=t',
+              f'https://drive.google.com/uc?export=download&id={drive_id}&confirm=t',
+          ]
+          session = requests.Session()
+          session.headers.update({'User-Agent':'Mozilla/5.0 (MagicOffice v4.3.2 asset restore)'})
+          errors = []
+          data = b''
+          source = ''
+          for url in urls:
+              try:
+                  response = session.get(url, timeout=120, allow_redirects=True)
+                  response.raise_for_status()
+                  candidate = response.content
+                  if len(candidate) < 300_000 or not candidate.startswith(b'RIFF') or candidate[8:12] != b'WEBP':
+                      raise ValueError(f'not expected WebP ({len(candidate)} bytes, {response.headers.get("content-type")})')
+                  data = candidate
+                  source = response.url
+                  break
+              except Exception as exc:
+                  errors.append(f'{url}: {exc}')
+          if not data:
+              raise RuntimeError('Unable to obtain approved person heartbeat visual: ' + ' | '.join(errors))
+
+          with Image.open(io.BytesIO(data)) as image:
+              image.load()
+              width, height = image.size
+              if (width, height) != (1672, 941):
+                  raise RuntimeError(f'Unexpected heartbeat dimensions: {(width, height)}')
+              destination = site / 'assets/images/events/heartbeat.webp'
+              destination.parent.mkdir(parents=True, exist_ok=True)
+              image.convert('RGB').save(destination, 'WEBP', quality=95, method=6)
+
+          for filename in ('summer.webp', 'jubi.webp'):
+              (site / 'assets/images/events' / filename).unlink(missing_ok=True)
+
+          for path in site.rglob('*'):
+              if not path.is_file() or path.suffix.lower() not in {'.html','.json','.js','.css','.xml','.txt'}:
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except UnicodeDecodeError:
+                  continue
+              if os.environ['OLD_RELEASE'] in text:
+                  path.write_text(text.replace(os.environ['OLD_RELEASE'], os.environ['RELEASE']), encoding='utf-8')
+
+          image_path = site / 'assets/images/events/heartbeat.webp'
+          with Image.open(image_path) as image:
+              image.load()
+              final_dim = image.size
+          final_events = json.loads(events_path.read_text(encoding='utf-8'))
+          final_ids = [item['id'] for item in final_events['events']]
+          section_count = sum(len(item.get('sections', [])) for item in final_events['events'])
+          report = {
+              'release': os.environ['RELEASE'],
+              'eventIds': final_ids,
+              'eventCount': len(final_ids),
+              'eventSectionCount': section_count,
+              'removed': ['summer-navy', 'jubi-birthday'],
+              'heartbeat': {
+                  'path': 'assets/images/events/heartbeat.webp',
+                  'source': source,
+                  'width': final_dim[0],
+                  'height': final_dim[1],
+                  'bytes': image_path.stat().st_size,
+                  'sha256': hashlib.sha256(image_path.read_bytes()).hexdigest(),
+                  'containsPerson': True,
+              },
+          }
+          assert final_ids == keep_ids
+          assert section_count == 13
+          assert final_dim == (1672, 941)
+          (site / 'v432-event-update.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Local browser verification
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          set -euo pipefail
+          rm -rf "${LOCAL_DIR}"
+          mkdir -p "${LOCAL_DIR}"
+          cp -a "${SITE_DIR}/." "${LOCAL_DIR}/"
+          mkdir -p "${LOCAL_DIR}/api/menu" "${LOCAL_DIR}/api/schedule"
+          cp "${LOCAL_DIR}/content/menu-snapshot.json" "${LOCAL_DIR}/api/menu/index.html"
+          cp "${LOCAL_DIR}/content/schedule-snapshot.json" "${LOCAL_DIR}/api/schedule/index.html"
+          python -m http.server 4173 --directory "${LOCAL_DIR}" >/tmp/magicoffice-v432-local-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do curl -fsS http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
+          mkdir -p /tmp/magicoffice-v432-local-evidence
+          node <<'NODE'
+          const fs = require('fs');
+          const puppeteer = require('puppeteer-core');
+          (async()=>{
+            const browser = await puppeteer.launch({headless:true,executablePath:process.env.CHROME_PATH,args:['--no-sandbox','--disable-dev-shm-usage']});
+            const page = await browser.newPage();
+            await page.setViewport({width:1440,height:900,deviceScaleFactor:1});
+            const errors=[];
+            page.on('pageerror',e=>errors.push(String(e)));
+            await page.goto('http://127.0.0.1:4173/',{waitUntil:'networkidle2',timeout:120000});
+            await page.waitForFunction(()=>document.documentElement.dataset.ready==='true',{timeout:45000});
+            await page.waitForSelector('#event-grid .event-card',{timeout:30000});
+            await page.evaluate(()=>document.querySelector('#event-hub')?.scrollIntoView());
+            await new Promise(r=>setTimeout(r,800));
+            const result=await page.evaluate(()=>{
+              const cards=[...document.querySelectorAll('#event-grid .event-card')];
+              const details=[...document.querySelectorAll('#event-details .event-section')];
+              const heartbeat=[...document.images].find(img=>img.currentSrc.includes('/assets/images/events/heartbeat.webp'));
+              return {
+                release:document.documentElement.dataset.release,
+                cardCount:cards.length,
+                detailCount:details.length,
+                rules:document.querySelectorAll('#event-details details').length,
+                titles:cards.map(card=>card.textContent.trim()),
+                heartbeat:heartbeat?{src:heartbeat.currentSrc,width:heartbeat.naturalWidth,height:heartbeat.naturalHeight}:null,
+                broken:[...document.images].filter(img=>img.complete&&img.naturalWidth===0).map(img=>img.currentSrc||img.src),
+                overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
+              };
+            });
+            await page.screenshot({path:'/tmp/magicoffice-v432-local-evidence/events.png',fullPage:false});
+            fs.writeFileSync('/tmp/magicoffice-v432-local-evidence/report.json',JSON.stringify({result,errors},null,2));
+            if(result.release!==process.env.RELEASE) throw new Error('release marker mismatch');
+            if(result.cardCount!==3||result.detailCount!==3||result.rules!==13) throw new Error(`events ${result.cardCount}/${result.detailCount}/${result.rules}`);
+            if(result.titles.some(v=>/夏日海軍|JUBI 生誕/.test(v))) throw new Error('expired event remains');
+            if(!result.heartbeat||result.heartbeat.width!==1672||result.heartbeat.height!==941) throw new Error('heartbeat visual mismatch');
+            if(result.broken.length||result.overflow>2||errors.length) throw new Error(JSON.stringify({broken:result.broken,overflow:result.overflow,errors}));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill "${SERVER_PID}" || true
+          trap - EXIT
+
+      - name: Preview, promote, and verify production
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -Eeuo pipefail
+          : "${VERCEL_TOKEN:?VERCEL_TOKEN is required}"
+          PREVIOUS_URL=""
+          PREVIEW_URL=""
+          PROMOTED=0
+          rollback_if_needed() {
+            code=$?
+            if [ "${PROMOTED}" = "1" ] && [ -n "${PREVIOUS_URL}" ]; then
+              (cd "${SITE_DIR}" && npx vercel rollback "${PREVIOUS_URL}" --yes --token "${VERCEL_TOKEN}" 2>&1 | tee /tmp/magicoffice-v432-rollback.log) || true
+            fi
+            exit "${code}"
+          }
+          trap rollback_if_needed ERR
+
+          mkdir -p "${SITE_DIR}/.vercel"
+          printf '%s\n' '{"orgId":"team_44tkvxP20I5s9SUmlxfUEQM1","projectId":"prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D"}' > "${SITE_DIR}/.vercel/project.json"
+
+          curl -fsS -H "Authorization: Bearer ${VERCEL_TOKEN}" "https://api.vercel.com/v6/deployments?projectId=${PROJECT_ID}&target=production&limit=1&teamId=${TEAM_ID}" -o /tmp/magicoffice-v432-previous.json
+          PREVIOUS_HOST="$(python -c 'import json; d=json.load(open("/tmp/magicoffice-v432-previous.json")); print(d["deployments"][0]["url"])')"
+          PREVIOUS_URL="https://${PREVIOUS_HOST}"
+
+          cd "${SITE_DIR}"
+          npx vercel deploy --yes --archive=tgz --token "${VERCEL_TOKEN}" 2>&1 | tee /tmp/magicoffice-v432-preview-deploy.log
+          PREVIEW_URL="$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/magicoffice-v432-preview-deploy.log | tail -1)"
+          test -n "${PREVIEW_URL}"
+          npx vercel curl / --deployment "${PREVIEW_URL}" --token "${VERCEL_TOKEN}" > /tmp/magicoffice-v432-preview-home.html
+          grep -q "${RELEASE}" /tmp/magicoffice-v432-preview-home.html
+          npx vercel curl /content/events.json --deployment "${PREVIEW_URL}" --token "${VERCEL_TOKEN}" > /tmp/magicoffice-v432-preview-events.json
+          npx vercel curl /assets/images/events/heartbeat.webp --deployment "${PREVIEW_URL}" --token "${VERCEL_TOKEN}" > /tmp/magicoffice-v432-preview-heartbeat.webp
+          python - <<'PY'
+          import json
+          from PIL import Image
+          events=json.load(open('/tmp/magicoffice-v432-preview-events.json',encoding='utf-8'))
+          assert [item['id'] for item in events['events']]==['heartbeat-support','mid-autumn','yuzu-birthday']
+          with Image.open('/tmp/magicoffice-v432-preview-heartbeat.webp') as image:
+              image.load(); assert image.size==(1672,941), image.size
+          PY
+
+          npx vercel promote "${PREVIEW_URL}" --yes --token "${VERCEL_TOKEN}" 2>&1 | tee /tmp/magicoffice-v432-promote.log
+          PROMOTED=1
+
+          READY=0
+          for i in $(seq 1 80); do
+            if curl -fsS --max-time 30 "${OFFICIAL_URL}/?release-check=${RELEASE}-$(date +%s)" | grep -q "${RELEASE}"; then READY=1; break; fi
+            sleep 3
+          done
+          test "${READY}" = "1"
+
+          curl -fsS "${OFFICIAL_URL}/content/events.json?release=${RELEASE}" -o /tmp/magicoffice-v432-production-events.json
+          curl -fsS "${OFFICIAL_URL}/assets/images/events/heartbeat.webp?release=${RELEASE}" -o /tmp/magicoffice-v432-production-heartbeat.webp
+          python - <<'PY'
+          import json, os
+          from PIL import Image
+          events=json.load(open('/tmp/magicoffice-v432-production-events.json',encoding='utf-8'))
+          ids=[item['id'] for item in events['events']]
+          assert ids==['heartbeat-support','mid-autumn','yuzu-birthday'], ids
+          with Image.open('/tmp/magicoffice-v432-production-heartbeat.webp') as image:
+              image.load(); assert image.size==(1672,941), image.size
+          json.dump({'release':os.environ['RELEASE'],'eventIds':ids,'heartbeatDimensions':[1672,941],'verified':True},open('/tmp/magicoffice-v432-production-receipt.json','w'),ensure_ascii=False,indent=2)
+          PY
+
+          mkdir -p /tmp/magicoffice-v432-production-evidence
+          cd "${GITHUB_WORKSPACE}"
+          BASE_URL="${OFFICIAL_URL}/?browser-check=${RELEASE}-$(date +%s)" node <<'NODE'
+          const fs=require('fs'); const puppeteer=require('puppeteer-core');
+          (async()=>{const browser=await puppeteer.launch({headless:true,executablePath:process.env.CHROME_PATH,args:['--no-sandbox','--disable-dev-shm-usage']}); const page=await browser.newPage(); await page.setViewport({width:1440,height:900}); await page.goto(process.env.BASE_URL,{waitUntil:'networkidle2',timeout:120000}); await page.waitForFunction(()=>document.documentElement.dataset.ready==='true',{timeout:45000}); await page.evaluate(()=>document.querySelector('#event-hub')?.scrollIntoView()); await new Promise(r=>setTimeout(r,800)); const s=await page.evaluate(()=>{const cards=[...document.querySelectorAll('#event-grid .event-card')]; const img=[...document.images].find(i=>i.currentSrc.includes('/assets/images/events/heartbeat.webp')); return {release:document.documentElement.dataset.release,count:cards.length,titles:cards.map(c=>c.textContent.trim()),img:img?{w:img.naturalWidth,h:img.naturalHeight}:null,broken:[...document.images].filter(i=>i.complete&&i.naturalWidth===0).length};}); await page.screenshot({path:'/tmp/magicoffice-v432-production-evidence/events.png'}); fs.writeFileSync('/tmp/magicoffice-v432-production-evidence/report.json',JSON.stringify(s,null,2)); if(s.release!==process.env.RELEASE||s.count!==3||s.titles.some(v=>/夏日海軍|JUBI 生誕/.test(v))||!s.img||s.img.w!==1672||s.img.h!==941||s.broken) throw new Error(JSON.stringify(s)); await browser.close();})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+
+          PROMOTED=0
+          trap - ERR
+
+      - name: Upload deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v432_current_events_person_heartbeat_evidence
+          path: |
+            /tmp/magicoffice-v432-site/v432-event-update.json
+            /tmp/magicoffice-v432-local-evidence/
+            /tmp/magicoffice-v432-production-evidence/
+            /tmp/magicoffice-v432-production-receipt.json
+            /tmp/magicoffice-v432-preview-deploy.log
+            /tmp/magicoffice-v432-promote.log
+            /tmp/magicoffice-v432-rollback.log
+          if-no-files-found: warn
+          retention-days: 14
