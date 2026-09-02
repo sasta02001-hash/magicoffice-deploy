@@ -1,0 +1,1 @@
+A direct production deployment was attempted from /mnt/data/magicoffice_v43_deploy to project prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D. Official-domain verification is required before completion.
