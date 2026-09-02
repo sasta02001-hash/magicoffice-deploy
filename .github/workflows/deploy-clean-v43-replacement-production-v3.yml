@@ -1,0 +1,236 @@
+name: Deploy clean MagicOffice v4.3 replacement to production
+
+on:
+  push:
+    paths:
+      - '.github/workflows/deploy-clean-v43-replacement-production-v3.yml'
+      - 'rebuild-v43/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: magicoffice-clean-v43-production-replacement
+  cancel-in-progress: false
+
+env:
+  SITE_DIR: /tmp/magicoffice-clean-v43-site
+  TEAM_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+  PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+  RELEASE: magicoffice-v4.3-clean-replacement-2026-09-03
+
+jobs:
+  build-verify-preview-promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install media and build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          python -m pip install --disable-pip-version-check --quiet requests pillow
+
+      - name: Check source syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile rebuild-v43/build_site_v3.py rebuild-v43/build_site_v4.py
+          node --check rebuild-v43/assets/app.js
+          node --check rebuild-v43/api/menu.js
+          node --check rebuild-v43/api/schedule.js
+          node --check rebuild-v43/test-v2.mjs
+          python -m json.tool rebuild-v43/content/menu-snapshot.json >/dev/null
+          python -m json.tool rebuild-v43/content/schedule-snapshot.json >/dev/null
+          python -m json.tool rebuild-v43/content/events.json >/dev/null
+          python -m json.tool rebuild-v43/content/roster.json >/dev/null
+
+      - name: Build the clean replacement site from verified repository assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          SITE_DIR="${SITE_DIR}" python rebuild-v43/build_site_v4.py
+          test -s "${SITE_DIR}/index.html"
+          test -s "${SITE_DIR}/assets/site.css"
+          test -s "${SITE_DIR}/assets/app.js"
+          test -s "${SITE_DIR}/assets/video/hero-trial-12s-with-audio.mp4"
+          grep -q "${RELEASE}" "${SITE_DIR}/index.html"
+          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height,r_frame_rate -of json "${SITE_DIR}/assets/video/hero-trial-12s-with-audio.mp4"
+          ffprobe -v error -select_streams a:0 -show_entries stream=codec_name,sample_rate,channels -of json "${SITE_DIR}/assets/video/hero-trial-12s-with-audio.mp4"
+
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+
+      - name: Install browser and deployment tools
+        shell: bash
+        run: npm install --no-save --no-audit --no-fund puppeteer-core@24.16.0 vercel@latest >/dev/null
+
+      - name: Run real local desktop and mobile browser tests
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          BASE_URL: http://127.0.0.1:4173/
+          SCREEN_DIR: /tmp/magicoffice-clean-v43-local
+          REQUIRE_LIVE_API: '0'
+        run: |
+          set -euo pipefail
+          python -m http.server 4173 --directory "${SITE_DIR}" >/tmp/magicoffice-clean-v43-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} || true' EXIT
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node rebuild-v43/test-v2.mjs
+
+      - name: Link the exact existing MagicOffice project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${SITE_DIR}/.vercel"
+          printf '%s\n' '{"orgId":"team_44tkvxP20I5s9SUmlxfUEQM1","projectId":"prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D"}' > "${SITE_DIR}/.vercel/project.json"
+
+      - name: Record the current production deployment for rollback
+        id: previous
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "${VERCEL_TOKEN}"
+          curl -fsS -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            "https://api.vercel.com/v6/deployments?projectId=${PROJECT_ID}&target=production&limit=1&teamId=${TEAM_ID}" \
+            -o /tmp/previous-production.json
+          PREVIOUS_HOST="$(python -c 'import json; d=json.load(open("/tmp/previous-production.json")); print(d["deployments"][0]["url"])')"
+          test -n "${PREVIOUS_HOST}"
+          echo "previous_url=https://${PREVIOUS_HOST}" >> "${GITHUB_OUTPUT}"
+          echo "PREVIOUS_PRODUCTION=https://${PREVIOUS_HOST}"
+
+      - name: Deploy the new clean site as a Preview
+        id: preview
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd "${SITE_DIR}"
+          npx vercel deploy --yes --archive=tgz --token "${VERCEL_TOKEN}" 2>&1 | tee /tmp/vercel-clean-v43-preview.log
+          PREVIEW_URL="$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/vercel-clean-v43-preview.log | tail -1)"
+          test -n "${PREVIEW_URL}"
+          echo "preview_url=${PREVIEW_URL}" >> "${GITHUB_OUTPUT}"
+          echo "PREVIEW_URL=${PREVIEW_URL}"
+
+      - name: Verify the protected Preview through Vercel CLI
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
+        run: |
+          set -euo pipefail
+          cd "${SITE_DIR}"
+          npx vercel inspect "${PREVIEW_URL}" --token "${VERCEL_TOKEN}" > /tmp/vercel-clean-v43-preview-inspect.txt
+          npx vercel curl / --deployment "${PREVIEW_URL}" --token "${VERCEL_TOKEN}" > /tmp/vercel-clean-v43-preview-home.html
+          grep -q "${RELEASE}" /tmp/vercel-clean-v43-preview-home.html
+          npx vercel curl /api/schedule --deployment "${PREVIEW_URL}" --token "${VERCEL_TOKEN}" > /tmp/vercel-clean-v43-preview-schedule.json || true
+          npx vercel curl /api/menu --deployment "${PREVIEW_URL}" --token "${VERCEL_TOKEN}" > /tmp/vercel-clean-v43-preview-menu.json || true
+
+      - name: Promote the verified Preview to the original production domain
+        id: promote
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
+        run: |
+          set -euo pipefail
+          cd "${SITE_DIR}"
+          npx vercel promote "${PREVIEW_URL}" --yes --token "${VERCEL_TOKEN}" 2>&1 | tee /tmp/vercel-clean-v43-promote.log
+
+      - name: Verify production and automatically rollback on failure
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          PREVIOUS_URL: ${{ steps.previous.outputs.previous_url }}
+          SCREEN_DIR: /tmp/magicoffice-clean-v43-production
+          REQUIRE_LIVE_API: '0'
+        run: |
+          set -uo pipefail
+          FAILED=0
+          READY=0
+          for i in $(seq 1 80); do
+            if curl -fsS --max-time 30 "https://magicoffice.vercel.app/?release-check=${RELEASE}-$(date +%s)" | grep -q "${RELEASE}"; then
+              READY=1
+              break
+            fi
+            sleep 3
+          done
+          if [ "${READY}" != '1' ]; then
+            echo 'Production release marker did not appear.' >&2
+            FAILED=1
+          fi
+
+          if [ "${FAILED}" = '0' ]; then
+            BASE_URL="https://magicoffice.vercel.app/?browser-check=${RELEASE}-$(date +%s)" node rebuild-v43/test-v2.mjs || FAILED=1
+          fi
+
+          if [ "${FAILED}" = '0' ]; then
+            curl -fsS -L -H 'Range: bytes=0-1023' -D /tmp/magicoffice-clean-v43-video-headers.txt \
+              "https://magicoffice.vercel.app/assets/video/hero-trial-12s-with-audio.mp4?range-check=${RELEASE}" \
+              -o /tmp/magicoffice-clean-v43-video-range.bin || FAILED=1
+          fi
+          if [ "${FAILED}" = '0' ]; then
+            grep -Eiq '^HTTP/.* (200|206)' /tmp/magicoffice-clean-v43-video-headers.txt || FAILED=1
+            grep -Eiq '^content-type: *video/mp4' /tmp/magicoffice-clean-v43-video-headers.txt || FAILED=1
+            python -c 'from pathlib import Path; data=Path("/tmp/magicoffice-clean-v43-video-range.bin").read_bytes(); assert b"ftyp" in data[:80]' || FAILED=1
+          fi
+
+          curl -sS "https://magicoffice.vercel.app/api/schedule?production-check=${RELEASE}" -o /tmp/magicoffice-clean-v43-production-schedule.json || true
+          curl -sS "https://magicoffice.vercel.app/api/menu?production-check=${RELEASE}" -o /tmp/magicoffice-clean-v43-production-menu.json || true
+
+          if [ "${FAILED}" != '0' ]; then
+            echo "Post-promotion verification failed. Rolling back to ${PREVIOUS_URL}." >&2
+            cd "${SITE_DIR}"
+            npx vercel rollback "${PREVIOUS_URL}" --yes --token "${VERCEL_TOKEN}" 2>&1 | tee /tmp/vercel-clean-v43-rollback.log
+            exit 1
+          fi
+
+          python -c 'import json,os,time; json.dump({"release":os.environ["RELEASE"],"officialUrl":"https://magicoffice.vercel.app/","previewUrl":os.environ.get("PREVIEW_URL", ""),"previousProduction":os.environ["PREVIOUS_URL"],"verified":True,"verifiedAt":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())},open("/tmp/magicoffice-clean-v43-production-receipt.json","w"),ensure_ascii=False,indent=2)'
+
+      - name: Upload build and verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_clean_v43_production_replacement_evidence
+          path: |
+            /tmp/magicoffice-clean-v43-site/build-manifest.json
+            /tmp/magicoffice-clean-v43-local/
+            /tmp/magicoffice-clean-v43-production/
+            /tmp/magicoffice-clean-v43-production-receipt.json
+            /tmp/magicoffice-clean-v43-production-schedule.json
+            /tmp/magicoffice-clean-v43-production-menu.json
+            /tmp/magicoffice-clean-v43-video-headers.txt
+            /tmp/vercel-clean-v43-preview.log
+            /tmp/vercel-clean-v43-preview-inspect.txt
+            /tmp/vercel-clean-v43-preview-home.html
+            /tmp/vercel-clean-v43-preview-schedule.json
+            /tmp/vercel-clean-v43-preview-menu.json
+            /tmp/vercel-clean-v43-promote.log
+            /tmp/vercel-clean-v43-rollback.log
+            /tmp/magicoffice-clean-v43-http.log
+          if-no-files-found: warn
+          retention-days: 14
