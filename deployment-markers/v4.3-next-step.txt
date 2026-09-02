@@ -1,0 +1,1 @@
+Next step: upload MagicOffice_VERCEL_PREVIEW_v4.3_DESIGN_LOCKED.zip and deploy to the existing Vercel project.
