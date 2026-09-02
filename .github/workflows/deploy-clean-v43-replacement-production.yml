@@ -1,0 +1,306 @@
+name: Deploy clean MagicOffice v4.3 replacement
+
+on:
+  push:
+    paths:
+      - '.github/workflows/deploy-clean-v43-replacement-production.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: magicoffice-clean-v43-production
+  cancel-in-progress: false
+
+env:
+  SITE_DIR: /tmp/magicoffice-v43-site
+  TEAM_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+  PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+  RELEASE: magicoffice-v4.3-clean-replacement-2026-09-03
+
+jobs:
+  build-test-preview-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check --quiet requests pillow
+          if ! command -v ffmpeg >/dev/null 2>&1; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
+
+      - name: Assemble entirely new v4.3 website
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "$SITE_DIR"
+          mkdir -p "$SITE_DIR"
+          cp -a rebuild-v43/. "$SITE_DIR/"
+          mkdir -p "$SITE_DIR/assets/images/logo" "$SITE_DIR/assets/images/hero" "$SITE_DIR/assets/images/events" "$SITE_DIR/assets/images/menu" "$SITE_DIR/assets/images/venue" "$SITE_DIR/assets/images/roster" "$SITE_DIR/assets/video"
+
+          python <<'PY'
+          from pathlib import Path
+          import requests, time, sys
+          from PIL import Image
+
+          site = Path('/tmp/magicoffice-v43-site')
+          official = 'https://magicoffice.vercel.app'
+          immutable = 'https://magicoffice-hwpboyvf0-magicoffice.vercel.app'
+          raw = 'https://raw.githubusercontent.com/sasta02001-hash/magicoffice-deploy/main'
+          session = requests.Session()
+          session.headers['User-Agent'] = 'MagicOffice-v4.3-clean-builder/1.0'
+
+          def get(urls, target, min_bytes=1000):
+              target = site / target
+              target.parent.mkdir(parents=True, exist_ok=True)
+              errors=[]
+              for url in urls:
+                  for attempt in range(4):
+                      try:
+                          response=session.get(url,timeout=50,allow_redirects=True)
+                          response.raise_for_status()
+                          data=response.content
+                          if len(data)<min_bytes or data.lstrip().lower().startswith(b'<!doctype html'):
+                              raise RuntimeError(f'invalid payload {len(data)}')
+                          target.write_bytes(data)
+                          print('DOWNLOADED', target.relative_to(site), len(data), url)
+                          return
+                      except Exception as exc:
+                          errors.append(f'{url}: {exc}')
+                          time.sleep(1+attempt)
+              raise RuntimeError('Download failed for '+str(target)+': '+' | '.join(errors[-5:]))
+
+          def old(path):
+              return [official+path, immutable+path]
+
+          get([raw+'/assets/home-hero-preview-v3/magicoffice-home-video-poster-v1.webp'], 'assets/images/hero/poster.webp', 40000)
+          get([raw+'/assets/home-clean-scene-desktop-v1/magicoffice-home-clean-scene-desktop-v1.webp'], 'assets/images/hero/background-desktop.webp', 100000)
+          get(old('/assets/media/magicoffice-home-clean-scene-v5.webp?v=20260901-clean-scene-v5'), 'assets/images/hero/background-mobile.webp', 50000)
+          get(old('/assets/media/05f19666ed49f368.png?v=2072'), 'assets/images/logo/logo-gold.png', 10000)
+          get([raw+'/assets/production-trial-video/MagicOffice_home_trial_720p_12s_v1.mp4'], 'assets/video/hero-silent.mp4', 2500000)
+
+          assets = {
+              'assets/images/events/heartbeat.webp':'/assets/media/heartbeat-support-v7.png?v=20260830-v7',
+              'assets/images/events/mid-autumn.webp':'/assets/media/aa7f2899b9a883f5.webp?v=2072',
+              'assets/images/events/yuzu.webp':'/assets/media/a1b97912e03ddf75.webp?v=2072',
+              'assets/images/events/summer.webp':'/assets/media/38f7487b4a48705b.webp?v=2072',
+              'assets/images/events/jubi.webp':'/assets/media/183eaf19e84ad365.webp?v=2072',
+              'assets/images/menu/cafe.webp':'/assets/media/441b778dda048206.webp?v=2072',
+              'assets/images/menu/bar.webp':'/assets/media/f12cf40a97634cc9.webp?v=2072',
+              'assets/images/menu/collection.webp':'/assets/media/d9961b8b48fdb587.webp?v=2072',
+              'assets/images/venue/sakura.webp':'/assets/media/d878f9472706fdbe.webp?v=2072',
+              'assets/images/venue/cafe.webp':'/assets/media/49acafbeb1e4b6bb.webp?v=2072',
+              'assets/images/venue/bar.webp':'/assets/media/4739c5c2017c4c0e.webp?v=2072',
+              'assets/images/roster/mibao.webp':'/assets/media/46a75e190baad8e8.webp?v=2072',
+              'assets/images/roster/yuzu.webp':'/assets/media/e22350b8ec2d748a.webp?v=2072',
+              'assets/images/roster/jubi.webp':'/assets/media/9cf5f3c7c8e43450.webp?v=2072',
+              'assets/images/roster/cc.webp':'/assets/media/815c2fdfd2a254ce.webp?v=2072',
+              'assets/images/roster/lele.webp':'/assets/media/1d6e303714642bf6.webp?v=2072',
+              'assets/images/roster/cara.webp':'/assets/media/6abf49f3aab3c507.webp?v=2072',
+              'assets/images/roster/medamayaki.webp':'/assets/media/3241306c93000ad3.webp?v=2072',
+              'assets/images/roster/sakuri.webp':'/assets/media/8f1e2635714effb9.webp?v=2072',
+              'assets/images/roster/hekiru.webp':'/assets/media/617f58b1207050e6.webp?v=2072',
+              'assets/images/roster/rumei.webp':'/assets/media/2d5ed350d26c050b.webp?v=2072',
+              'assets/images/roster/naya.webp':'/assets/media/4fd4c223e064c15d.webp?v=2072',
+              'assets/images/roster/sakuma.webp':'/assets/media/f2097a926bdf48b3.webp?v=2072',
+              'assets/images/roster/nana.webp':'/assets/media/e404ebb20f7273f8.webp?v=2072',
+              'assets/images/roster/mona.webp':'/assets/media/59f9acb8861a6595.webp?v=2072',
+              'assets/images/roster/kokoro.webp':'/assets/media/4bf65583e3739d3f.webp?v=2072',
+              'assets/images/roster/mika.webp':'/assets/media/d9800fa21c1b6e2e.webp?v=2072'
+          }
+          for target, path in assets.items():
+              temp = site / (target+'.source')
+              get(old(path), str(temp.relative_to(site)), 8000)
+              try:
+                  with Image.open(temp) as image:
+                      image.seek(0)
+                      if image.mode not in ('RGB','RGBA'): image=image.convert('RGBA' if 'A' in image.getbands() else 'RGB')
+                      image.thumbnail((1800,1800), Image.Resampling.LANCZOS)
+                      image.save(site/target, 'WEBP', quality=90, method=6)
+                  temp.unlink()
+              except Exception:
+                  temp.replace(site/target)
+
+          failures=[]
+          for path in (site/'assets/images').rglob('*'):
+              if not path.is_file(): continue
+              try:
+                  with Image.open(path) as image:
+                      image.verify()
+              except Exception as exc:
+                  failures.append(f'{path}: {exc}')
+          if failures: raise RuntimeError('Image verification failed: '+' | '.join(failures))
+          PY
+
+          ffmpeg -hide_banner -loglevel error -y \
+            -i "$SITE_DIR/assets/video/hero-silent.mp4" \
+            -f lavfi -i "sine=frequency=174.61:sample_rate=48000:duration=12" \
+            -f lavfi -i "sine=frequency=261.63:sample_rate=48000:duration=12" \
+            -filter_complex "[1:a]volume=0.12[a1];[2:a]volume=0.07[a2];[a1][a2]amix=inputs=2:normalize=0,lowpass=f=1350,afade=t=in:st=0:d=1.1,afade=t=out:st=10.2:d=1.8[a]" \
+            -map 0:v:0 -map "[a]" -c:v copy -c:a aac -b:a 128k -ar 48000 -ac 2 -shortest -movflags +faststart \
+            "$SITE_DIR/assets/video/hero-trial-12s-with-audio.mp4"
+          rm "$SITE_DIR/assets/video/hero-silent.mp4"
+
+          node --check "$SITE_DIR/assets/app.js"
+          node --check "$SITE_DIR/api/schedule.js"
+          node --check "$SITE_DIR/api/menu.js"
+          for json in "$SITE_DIR"/content/*.json "$SITE_DIR"/vercel.json "$SITE_DIR"/site.webmanifest; do python -m json.tool "$json" >/dev/null; done
+          grep -q "$RELEASE" "$SITE_DIR/index.html"
+          test "$(find "$SITE_DIR/assets/images/roster" -type f | wc -l)" -eq 16
+          test "$(find "$SITE_DIR/assets/images/events" -type f | wc -l)" -eq 5
+          test "$(find "$SITE_DIR/assets/images/menu" -type f | wc -l)" -eq 3
+          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height,r_frame_rate -of json "$SITE_DIR/assets/video/hero-trial-12s-with-audio.mp4" | tee /tmp/video-probe.json
+          ffprobe -v error -select_streams a:0 -show_entries stream=codec_name,sample_rate,channels -of json "$SITE_DIR/assets/video/hero-trial-12s-with-audio.mp4" | tee /tmp/audio-probe.json
+          grep -q 'aac' /tmp/audio-probe.json
+
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+
+      - name: Install browser and deployment tools
+        shell: bash
+        run: npm install --no-save --no-audit --no-fund puppeteer-core@24.16.0 vercel@latest >/dev/null
+
+      - name: Run real local desktop and mobile browser tests
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          BASE_URL: http://127.0.0.1:4173/
+          SCREEN_DIR: /tmp/v43-local-audit
+        run: |
+          set -euo pipefail
+          python -m http.server 4173 --directory "$SITE_DIR" >/tmp/v43-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
+          node rebuild-v43/test.mjs
+
+      - name: Link exact existing MagicOffice Vercel project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$SITE_DIR/.vercel"
+          printf '%s\n' '{"orgId":"team_44tkvxP20I5s9SUmlxfUEQM1","projectId":"prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D"}' > "$SITE_DIR/.vercel/project.json"
+
+      - name: Deploy verified candidate as Preview
+        id: preview
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$VERCEL_TOKEN"
+          cd "$SITE_DIR"
+          npx vercel deploy --yes --archive=tgz --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/v43-preview.log
+          PREVIEW_URL="$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/v43-preview.log | tail -1)"
+          test -n "$PREVIEW_URL"
+          echo "url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Verify Preview build and serverless routes with authenticated CLI
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+        run: |
+          set -euo pipefail
+          npx vercel inspect "$PREVIEW_URL" --wait --timeout 5m --token "$VERCEL_TOKEN" | tee /tmp/v43-preview-inspect.log
+          npx vercel curl "$PREVIEW_URL/" --token "$VERCEL_TOKEN" | grep -q "$RELEASE"
+          npx vercel curl "$PREVIEW_URL/content/menu-snapshot.json" --token "$VERCEL_TOKEN" | grep -q '88\|午後咖啡'
+
+      - name: Replace Production in the same project and keep the same URL
+        id: production
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd "$SITE_DIR"
+          npx vercel deploy --prod --yes --archive=tgz --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/v43-production.log
+          PRODUCTION_URL="$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/v43-production.log | tail -1)"
+          test -n "$PRODUCTION_URL"
+          echo "url=$PRODUCTION_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for unchanged official URL to serve the new replacement
+        shell: bash
+        run: |
+          set -euo pipefail
+          ready=0
+          for i in $(seq 1 80); do
+            if curl -fsSL --max-time 30 "https://magicoffice.vercel.app/?release=$RELEASE-$(date +%s)" | grep -q "$RELEASE"; then ready=1; break; fi
+            sleep 3
+          done
+          test "$ready" = 1
+
+      - name: Run real browser tests against live official URL
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          BASE_URL: https://magicoffice.vercel.app/
+          SCREEN_DIR: /tmp/v43-production-audit
+          REQUIRE_LIVE_API: '0'
+        run: node rebuild-v43/test.mjs
+
+      - name: Verify official media, API and byte-range behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://magicoffice.vercel.app'
+          curl -fsSL "$base/api/schedule" -o /tmp/live-schedule.json || true
+          curl -fsSL "$base/api/menu" -o /tmp/live-menu.json || true
+          curl -fsSL -H 'Range: bytes=0-1023' -D /tmp/live-video-headers.txt "$base/assets/video/hero-trial-12s-with-audio.mp4?range=$RELEASE" -o /tmp/live-video-range.bin
+          python <<'PY'
+          from pathlib import Path
+          headers=Path('/tmp/live-video-headers.txt').read_text(errors='replace').lower()
+          data=Path('/tmp/live-video-range.bin').read_bytes()
+          checks={'status':(' 206 ' in headers or ' 200 ' in headers),'type':'video/mp4' in headers,'signature':b'ftyp' in data[:64],'bytes':len(data)>=1024}
+          print('LIVE_MEDIA_CHECKS',checks)
+          if not all(checks.values()): raise SystemExit('Live media validation failed')
+          PY
+
+      - name: Write deployment receipt
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v43-receipt
+          cat > /tmp/v43-receipt/production-receipt.json <<JSON
+          {
+            "release":"$RELEASE",
+            "officialUrl":"https://magicoffice.vercel.app/",
+            "previewUrl":"${{ steps.preview.outputs.url }}",
+            "productionDeploymentUrl":"${{ steps.production.outputs.url }}",
+            "sameProject":"$PROJECT_ID",
+            "oldSitePatched":false,
+            "replacementType":"clean full-site replacement",
+            "verifiedAt":"$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+
+      - name: Upload deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v4.3_clean_replacement_evidence
+          path: |
+            /tmp/v43-local-audit/
+            /tmp/v43-production-audit/
+            /tmp/v43-receipt/
+            /tmp/v43-preview.log
+            /tmp/v43-preview-inspect.log
+            /tmp/v43-production.log
+            /tmp/live-video-headers.txt
+            /tmp/live-schedule.json
+            /tmp/live-menu.json
+            /tmp/video-probe.json
+            /tmp/audio-probe.json
+          if-no-files-found: warn
+          retention-days: 30
