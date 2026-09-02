@@ -1,0 +1,21 @@
+{
+  "updatedAt": "2026-09-03T00:00:00+08:00",
+  "people": [
+    {"id":"mibao","name":"咪寶","role":"管理職","image":"/assets/images/roster/mibao.webp","availability":"小機率隨機","birthday":"未公開","likes":"品牌企劃、空間氣氛、長期累積","message":"歡迎進入 MagicOffice 的世界。","active":true},
+    {"id":"yuzu","name":"柚子","role":"管理職","image":"/assets/images/roster/yuzu.webp","availability":"隨機","birthday":"09/19","likes":"玫瑰、收藏、主題活動","message":"把相遇留成值得收藏的一晚。","active":true},
+    {"id":"jubi","name":"JUBI","role":"管理職","image":"/assets/images/roster/jubi.webp","availability":"請查看本週出勤","birthday":"未公開","likes":"活動、遊戲、夜間氣氛","message":"今晚也一起留下難忘的回憶。","active":true},
+    {"id":"cc","name":"CC","role":"管理職","image":"/assets/images/roster/cc.webp","availability":"都會","birthday":"未公開","likes":"交流、現場節奏、夜間服務","message":"來店後就放心交給我們。","active":true},
+    {"id":"lele","name":"樂樂","role":"管理職","image":"/assets/images/roster/lele.webp","availability":"晚上（早上真的起不來）","birthday":"未公開","likes":"夜晚、音樂、聊天","message":"月亮升起後比較容易遇見我。","active":true},
+    {"id":"cara","name":"卡拉","role":"管理職","image":"/assets/images/roster/cara.webp","availability":"整天都在","birthday":"未公開","likes":"互動、照顧客人、熱鬧活動","message":"需要協助時可以直接找我。","active":true},
+    {"id":"medamayaki","name":"荷包蛋","role":"姶仕","image":"/assets/images/roster/medamayaki.webp","availability":"白天","birthday":"未公開","likes":"午後、咖啡、輕鬆聊天","message":"午後的安靜時光，我在這裡等你。","active":true},
+    {"id":"sakuri","name":"櫻璃","kana":"さくり","role":"姶仕","image":"/assets/images/roster/sakuri.webp","availability":"白天","birthday":"未公開","likes":"櫻花、和風、影像","message":"願每一次相遇都像落櫻一樣被記住。","active":true},
+    {"id":"hekiru","name":"碧瑠","kana":"へきる","role":"姶仕","image":"/assets/images/roster/hekiru.webp","availability":"都會","birthday":"未公開","likes":"咖啡、調酒、跨時段相遇","message":"白天與夜晚，都可能有不同的故事。","active":true},
+    {"id":"rumei","name":"Rumei","role":"姶仕","image":"/assets/images/roster/rumei.webp","availability":"白晝的時候會出現","birthday":"未公開","likes":"午後、照片、甜點","message":"在柔和的光裡慢慢認識彼此。","active":true},
+    {"id":"naya","name":"奈亞","role":"姶仕","image":"/assets/images/roster/naya.webp","availability":"請查看本週出勤","birthday":"未公開","likes":"主題服裝、交流、收藏","message":"下一次出勤見。","active":true},
+    {"id":"sakuma","name":"咲茉","role":"姶仕","image":"/assets/images/roster/sakuma.webp","availability":"白天限定出沒中","birthday":"未公開","likes":"午後、甜點、主題服裝","message":"白天的魔幻也很值得停留。","active":true},
+    {"id":"nana","name":"なな","role":"姶仕","image":"/assets/images/roster/nana.webp","availability":"白天、晚上都有可能出現","birthday":"未公開","likes":"月亮、夜間、輕鬆聊天","message":"我更愛月亮升起後的魔幻。","active":true},
+    {"id":"mona","name":"桃奈","role":"姶仕","image":"/assets/images/roster/mona.webp","availability":"請查看本週出勤","birthday":"未公開","likes":"夜間、調酒、拍攝","message":"期待在夜色裡和你相遇。","active":true},
+    {"id":"kokoro","name":"心葉","role":"姶仕","image":"/assets/images/roster/kokoro.webp","availability":"白天","birthday":"未公開","likes":"午後、咖啡、溫柔互動","message":"慢慢坐下來，今天也不用趕。","active":true},
+    {"id":"mika","name":"米菓","role":"姶仕","image":"/assets/images/roster/mika.webp","availability":"晚上","birthday":"未公開","likes":"酒吧、夜色、音樂","message":"夜晚見。","active":true}
+  ]
+}
