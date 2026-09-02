@@ -1,0 +1,3 @@
+release=v4.3-design-locked-clean-replacement-20260903
+official=https://magicoffice.vercel.app
+source_policy=clean-replacement
