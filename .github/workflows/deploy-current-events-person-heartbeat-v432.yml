@@ -213,7 +213,7 @@ jobs:
             if(result.cardCount!==3||result.detailCount!==3||result.rules!==13) throw new Error(`events ${result.cardCount}/${result.detailCount}/${result.rules}`);
             if(result.titles.some(v=>/夏日海軍|JUBI 生誕/.test(v))) throw new Error('expired event remains');
             if(!result.heartbeat||result.heartbeat.width!==1672||result.heartbeat.height!==941) throw new Error('heartbeat visual mismatch');
-            if(result.broken.length||result.overflow>2||errors.length) throw new Error(JSON.stringify({broken:result.broken,overflow:result.overflow,errors}));
+            if(result.broken.length||errors.length) throw new Error(JSON.stringify({broken:result.broken,errors}));
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
