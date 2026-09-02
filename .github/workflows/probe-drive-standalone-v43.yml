@@ -1,0 +1,44 @@
+name: Probe Drive standalone source for v4.3 assets
+
+on:
+  push:
+    paths:
+      - '.github/workflows/probe-drive-standalone-v43.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Download known full standalone candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          for item in \
+            'v1561 1WPwT5FgbWERcsot_TGinN0rOIWESwCKv' \
+            'v207 1IvJxaaGMiW3JyhMkKkOqPn44-Q1JAtaF' \
+            'registered 1Lk01n5ahDueixYDorsktgIgutA-ABVza'; do
+            set -- $item
+            name=$1
+            id=$2
+            url="https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t"
+            curl --fail --location --silent --show-error --max-time 180 "$url" -o "/tmp/${name}.html" || true
+            if test -f "/tmp/${name}.html"; then
+              bytes=$(wc -c < "/tmp/${name}.html" | tr -d ' ')
+              head=$(head -c 100 "/tmp/${name}.html" | tr '\n' ' ')
+              data_count=$(grep -o 'data:image/' "/tmp/${name}.html" | wc -l || true)
+              echo "RESULT name=${name} bytes=${bytes} data_images=${data_count} head=${head}"
+            fi
+          done
+
+      - name: Upload probe files
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_drive_standalone_probe
+          path: /tmp/*.html
+          if-no-files-found: warn
+          retention-days: 3
