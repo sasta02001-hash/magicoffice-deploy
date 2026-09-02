@@ -1,0 +1,4 @@
+MagicOffice v4.3 Design Locked full-site replacement authorized.
+Official project: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+Official URL: https://magicoffice.vercel.app
+Policy: replace old source, do not patch it; keep old deployment only as rollback.
