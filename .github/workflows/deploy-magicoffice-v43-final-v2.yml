@@ -1,0 +1,82 @@
+name: Deploy MagicOffice v4.3 final replacement v2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/deploy-magicoffice-v43-final-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: magicoffice-v43-final-production-v2
+  cancel-in-progress: false
+
+env:
+  SITE_DIR: /tmp/magicoffice-v43-final-site
+  LOCAL_DIR: /tmp/magicoffice-v43-final-local
+  TEAM_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+  PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+  RELEASE: magicoffice-v4.3-clean-replacement-2026-09-03
+  OFFICIAL_URL: https://magicoffice.vercel.app
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install media, browser, and deployment tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check --quiet requests pillow
+
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+
+      - name: Install Vercel CLI and Puppeteer
+        shell: bash
+        run: npm install --no-save --no-audit --no-fund puppeteer-core@24.16.0 vercel@latest >/dev/null
+
+      - name: Build, verify, preview, promote, and verify production
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: bash deploy-v43-final/run.sh
+
+      - name: Upload deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v43_final_production_evidence_v2
+          path: |
+            /tmp/magicoffice-v43-final-site/build-manifest.json
+            /tmp/magicoffice-v43-final-local-evidence/
+            /tmp/magicoffice-v43-final-production-evidence/
+            /tmp/magicoffice-v43-production-receipt.json
+            /tmp/magicoffice-v43-current-production.json
+            /tmp/magicoffice-v43-video-headers.txt
+            /tmp/magicoffice-v43-preview-deploy.log
+            /tmp/magicoffice-v43-preview-inspect.txt
+            /tmp/magicoffice-v43-preview-home.html
+            /tmp/magicoffice-v43-preview-roster.json
+            /tmp/magicoffice-v43-preview-events.json
+            /tmp/magicoffice-v43-preview-menu.json
+            /tmp/magicoffice-v43-promote.log
+            /tmp/magicoffice-v43-rollback.log
+            /tmp/magicoffice-v43-final-http.log
+          if-no-files-found: warn
+          retention-days: 14
