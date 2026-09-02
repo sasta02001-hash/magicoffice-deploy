@@ -1,0 +1,28 @@
+{
+  "release": "magicoffice-v4.3-clean-replacement-2026-09-03",
+  "brand": {
+    "name": "MagicOffice",
+    "zh": "魔幻姶仕社",
+    "tagline": "白天讓人安定，夜晚讓情緒流動。",
+    "description": "午後咖啡、Magic Off Ice 夜間酒吧、偶像與主題活動，在同一個世界裡切換狀態。"
+  },
+  "hours": {
+    "cafe": "14:00–20:00",
+    "bar": "20:00–02:00"
+  },
+  "address": "台北市松山區八德路二段375號",
+  "links": {
+    "booking": "https://gforms.app/r/71hSwQR",
+    "line": "https://lin.ee/NcCGG1P",
+    "instagram": "https://www.instagram.com/maid_magicoffice/",
+    "maps": "https://maps.app.goo.gl/udVL8zhpwbxjCEot9?g_st=ic",
+    "recruitment": "https://gforms.app/r/bEg7YnB",
+    "purchase": "https://docs.google.com/forms/d/e/1FAIpQLScUb7_kaJYbrWB0DB8mS-4VQkFHXv1xWsXghXdp5yTferWkQQ/viewform"
+  },
+  "sheets": {
+    "scheduleId": "15y3DL7_nUj5JLng9mKayhwDnAnZPQgPHg0zCrLdb0BQ",
+    "scheduleSheet": "公開班表",
+    "menuId": "1nYJJJNJTLU19mBNm3Sjwo_Ep54AZPQl-PCS6koLFe84",
+    "menuSheet": "菜單品項"
+  }
+}
