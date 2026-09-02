@@ -1,0 +1,1 @@
+Authorized by user: replace the official MagicOffice website with v4.3 Design Locked while keeping https://magicoffice.vercel.app unchanged.
