@@ -1,0 +1,70 @@
+name: Diagnose standalone embedded payload format for v4.3
+
+on:
+  push:
+    paths:
+      - '.github/workflows/diagnose-known-good-payloads-v43.yml'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Download complete standalone artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: MagicOffice_v1.5.6_FULL_STANDALONE_HTML
+          path: /tmp/known-good
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: sasta02001-hash/magicoffice-deploy
+          run-id: 32955866954
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Inspect representative data URI payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check --quiet beautifulsoup4
+          python <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          import base64, binascii, gzip, io, json, zlib
+
+          source=Path('/tmp/known-good/MagicOffice_v1.5.6_FULL_STANDALONE.html')
+          soup=BeautifulSoup(source.read_text(encoding='utf-8'),'html.parser')
+          images=soup.find_all('img')
+          for index in [6,7,9,10,25,26,38,39,43,44,45,49]:
+              img=images[index]
+              src=img.get('src') or ''
+              print('\nINDEX',index,'ALT',img.get('alt'),'HEADER',src[:80])
+              if not src.startswith('data:image/'):
+                  print('URL',src[:300]); continue
+              payload=src.split(',',1)[1]
+              raw=base64.b64decode(payload)
+              print('RAW_LEN',len(raw))
+              print('FIRST_96_HEX',raw[:96].hex())
+              print('FIRST_160_REPR',repr(raw[:160]))
+              print('LAST_64_REPR',repr(raw[-64:]))
+              print('SIGNATURES',{
+                  'riff':raw.startswith(b'RIFF') and raw[8:12]==b'WEBP',
+                  'png':raw.startswith(b'\x89PNG\r\n\x1a\n'),
+                  'jpeg':raw.startswith(b'\xff\xd8\xff'),
+                  'gzip':raw.startswith(b'\x1f\x8b'),
+                  'zip':raw.startswith(b'PK\x03\x04'),
+                  'base64ish':all(chr(c).isalnum() or chr(c) in '+/=\r\n' for c in raw[:256]),
+              })
+              for method in ['gzip','zlib']:
+                  try:
+                      decoded=gzip.decompress(raw) if method=='gzip' else zlib.decompress(raw)
+                      print(method,'decoded',len(decoded),repr(decoded[:64]))
+                  except Exception as exc:
+                      print(method,'error',str(exc)[:120])
+          PY
