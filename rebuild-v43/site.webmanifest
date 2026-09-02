@@ -1,0 +1,11 @@
+{
+  "name": "MagicOffice／魔幻姶仕社",
+  "short_name": "MagicOffice",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2a1020",
+  "theme_color": "#2a1020",
+  "icons": [
+    {"src":"/assets/images/logo/logo-gold.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
