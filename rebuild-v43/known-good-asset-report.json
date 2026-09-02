@@ -1,0 +1,2977 @@
+{
+  "sourceBytes": 30311743,
+  "sourceSha256": "5741555fb4fad4eb149715a78453ff6c84eea23e612e21616414e787e9b5f39d",
+  "sourceChecks": {
+    "sizeAbove10MB": true,
+    "html": true,
+    "brand": true,
+    "roster": true,
+    "schedule": true
+  },
+  "imgTagCount": 53,
+  "embeddedImgTagCount": 47,
+  "duplicatePayloadGroups": [
+    [
+      6,
+      8
+    ],
+    [
+      7,
+      52
+    ],
+    [
+      43,
+      46
+    ],
+    [
+      44,
+      47
+    ],
+    [
+      45,
+      48
+    ]
+  ],
+  "images": [
+    {
+      "index": 0,
+      "alt": "",
+      "class": [
+        "geist-hide-on-dark"
+      ],
+      "widthAttr": "20",
+      "heightAttr": "20",
+      "sourceKind": "url",
+      "sourcePreview": "/_next/static/immutable/media/logo-google-color-light.2x6g4y99zlarz.svg",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "mr-[3px]",
+            "min-w-5",
+            "shrink-0",
+            "flex",
+            "items-center",
+            "justify-center",
+            "[&_svg[data-slot=geist-icon]]:size-(--ds-control-decoration-size)"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "outline-none",
+            "m-0",
+            "p-0",
+            "border-0",
+            "align-baseline",
+            "no-underline",
+            "group/trigger",
+            "relative",
+            "cursor-pointer",
+            "select-none",
+            "transform",
+            "translate-z-0",
+            "flex",
+            "text-[var(--themed-fg,_var(--ds-background-100))]",
+            "bg-[var(--themed-bg,_var(--ds-gray-1000))]",
+            "font-medium",
+            "!px-(--geist-gap-half)",
+            "max-w-full",
+            "items-center",
+            "justify-center",
+            "transition-[border-color,",
+            "background,color,transform,box-shadow]",
+            "duration-[time:150ms]",
+            "ease-in-out",
+            "data-[focus]:shadow-[var(--ds-focus-ring)]",
+            "[&_svg]:shrink-0",
+            "disabled:cursor-not-allowed",
+            "aria-disabled:cursor-not-allowed",
+            "disabled:text-[var(--ds-gray-700)]",
+            "disabled:bg-[var(--ds-gray-100)]",
+            "aria-disabled:text-[var(--ds-gray-700)]",
+            "aria-disabled:bg-[var(--ds-gray-100)]",
+            "disabled:![--themed-border:_var(--ds-gray-400)]",
+            "[--x-padding:14px]",
+            "[--height:var(--ds-size-large)]",
+            "!pl-[var(--x-padding)]",
+            "!pr-[var(--x-padding)]",
+            "[--themed-bg:_var(--ds-background-100)]",
+            "shadow-[0_0_0_1px_var(--themed-border,_transparent)]",
+            "[--themed-hover-bg:_var(--ds-gray-alpha-200)]",
+            "[--themed-fg:_var(--ds-gray-1000)]",
+            "[--themed-border:_var(--ds-gray-400)]",
+            "data-[focus]:shadow-[0_0_0_1px_var(--themed-border,_transparent),0_0_0_2px_var(--ds-background-100),0_0_0_4px_var(--ds-focus-color)]",
+            "data-[focus]:transition-none",
+            "text-(length:--geist-form-large-font)",
+            "leading-[var(--geist-form-large-line-height)]",
+            "rounded-[8px]",
+            "h-[var(--height)]",
+            "data-hover:bg-[var(--ds-gray-100)]",
+            "dark-theme:data-hover:bg-[var(--ds-gray-200)]",
+            "data-hover:text-[var(--themed-fg)]",
+            "data-hover:disabled:bg-[var(--ds-gray-100)]"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "flex",
+            "flex-col",
+            "gap-4"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "w-80",
+            "flex",
+            "flex-col",
+            "gap-4",
+            "mx-auto"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "alt": "",
+      "class": [
+        "geist-hide-on-light"
+      ],
+      "widthAttr": "20",
+      "heightAttr": "20",
+      "sourceKind": "url",
+      "sourcePreview": "/_next/static/immutable/media/logo-google-color-dark.3nr_e0zdganvm.svg",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "mr-[3px]",
+            "min-w-5",
+            "shrink-0",
+            "flex",
+            "items-center",
+            "justify-center",
+            "[&_svg[data-slot=geist-icon]]:size-(--ds-control-decoration-size)"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "outline-none",
+            "m-0",
+            "p-0",
+            "border-0",
+            "align-baseline",
+            "no-underline",
+            "group/trigger",
+            "relative",
+            "cursor-pointer",
+            "select-none",
+            "transform",
+            "translate-z-0",
+            "flex",
+            "text-[var(--themed-fg,_var(--ds-background-100))]",
+            "bg-[var(--themed-bg,_var(--ds-gray-1000))]",
+            "font-medium",
+            "!px-(--geist-gap-half)",
+            "max-w-full",
+            "items-center",
+            "justify-center",
+            "transition-[border-color,",
+            "background,color,transform,box-shadow]",
+            "duration-[time:150ms]",
+            "ease-in-out",
+            "data-[focus]:shadow-[var(--ds-focus-ring)]",
+            "[&_svg]:shrink-0",
+            "disabled:cursor-not-allowed",
+            "aria-disabled:cursor-not-allowed",
+            "disabled:text-[var(--ds-gray-700)]",
+            "disabled:bg-[var(--ds-gray-100)]",
+            "aria-disabled:text-[var(--ds-gray-700)]",
+            "aria-disabled:bg-[var(--ds-gray-100)]",
+            "disabled:![--themed-border:_var(--ds-gray-400)]",
+            "[--x-padding:14px]",
+            "[--height:var(--ds-size-large)]",
+            "!pl-[var(--x-padding)]",
+            "!pr-[var(--x-padding)]",
+            "[--themed-bg:_var(--ds-background-100)]",
+            "shadow-[0_0_0_1px_var(--themed-border,_transparent)]",
+            "[--themed-hover-bg:_var(--ds-gray-alpha-200)]",
+            "[--themed-fg:_var(--ds-gray-1000)]",
+            "[--themed-border:_var(--ds-gray-400)]",
+            "data-[focus]:shadow-[0_0_0_1px_var(--themed-border,_transparent),0_0_0_2px_var(--ds-background-100),0_0_0_4px_var(--ds-focus-color)]",
+            "data-[focus]:transition-none",
+            "text-(length:--geist-form-large-font)",
+            "leading-[var(--geist-form-large-line-height)]",
+            "rounded-[8px]",
+            "h-[var(--height)]",
+            "data-hover:bg-[var(--ds-gray-100)]",
+            "dark-theme:data-hover:bg-[var(--ds-gray-200)]",
+            "data-hover:text-[var(--themed-fg)]",
+            "data-hover:disabled:bg-[var(--ds-gray-100)]"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "flex",
+            "flex-col",
+            "gap-4"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "w-80",
+            "flex",
+            "flex-col",
+            "gap-4",
+            "mx-auto"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "alt": "",
+      "class": [
+        "geist-hide-on-dark"
+      ],
+      "widthAttr": "20",
+      "heightAttr": "20",
+      "sourceKind": "url",
+      "sourcePreview": "/_next/static/immutable/media/logo-github-color-light.1184n6l5g07-6.svg",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "mr-[3px]",
+            "min-w-5",
+            "shrink-0",
+            "flex",
+            "items-center",
+            "justify-center",
+            "[&_svg[data-slot=geist-icon]]:size-(--ds-control-decoration-size)"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "outline-none",
+            "m-0",
+            "p-0",
+            "border-0",
+            "align-baseline",
+            "no-underline",
+            "group/trigger",
+            "relative",
+            "cursor-pointer",
+            "select-none",
+            "transform",
+            "translate-z-0",
+            "flex",
+            "text-[var(--themed-fg,_var(--ds-background-100))]",
+            "bg-[var(--themed-bg,_var(--ds-gray-1000))]",
+            "font-medium",
+            "!px-(--geist-gap-half)",
+            "max-w-full",
+            "items-center",
+            "justify-center",
+            "transition-[border-color,",
+            "background,color,transform,box-shadow]",
+            "duration-[time:150ms]",
+            "ease-in-out",
+            "data-[focus]:shadow-[var(--ds-focus-ring)]",
+            "[&_svg]:shrink-0",
+            "disabled:cursor-not-allowed",
+            "aria-disabled:cursor-not-allowed",
+            "disabled:text-[var(--ds-gray-700)]",
+            "disabled:bg-[var(--ds-gray-100)]",
+            "aria-disabled:text-[var(--ds-gray-700)]",
+            "aria-disabled:bg-[var(--ds-gray-100)]",
+            "disabled:![--themed-border:_var(--ds-gray-400)]",
+            "[--x-padding:14px]",
+            "[--height:var(--ds-size-large)]",
+            "!pl-[var(--x-padding)]",
+            "!pr-[var(--x-padding)]",
+            "[--themed-bg:_var(--ds-background-100)]",
+            "shadow-[0_0_0_1px_var(--themed-border,_transparent)]",
+            "[--themed-hover-bg:_var(--ds-gray-alpha-200)]",
+            "[--themed-fg:_var(--ds-gray-1000)]",
+            "[--themed-border:_var(--ds-gray-400)]",
+            "data-[focus]:shadow-[0_0_0_1px_var(--themed-border,_transparent),0_0_0_2px_var(--ds-background-100),0_0_0_4px_var(--ds-focus-color)]",
+            "data-[focus]:transition-none",
+            "text-(length:--geist-form-large-font)",
+            "leading-[var(--geist-form-large-line-height)]",
+            "rounded-[8px]",
+            "h-[var(--height)]",
+            "data-hover:bg-[var(--ds-gray-100)]",
+            "dark-theme:data-hover:bg-[var(--ds-gray-200)]",
+            "data-hover:text-[var(--themed-fg)]",
+            "data-hover:disabled:bg-[var(--ds-gray-100)]"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "flex",
+            "flex-col",
+            "gap-4"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "w-80",
+            "flex",
+            "flex-col",
+            "gap-4",
+            "mx-auto"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "alt": "",
+      "class": [
+        "geist-hide-on-light"
+      ],
+      "widthAttr": "20",
+      "heightAttr": "20",
+      "sourceKind": "url",
+      "sourcePreview": "/_next/static/immutable/media/logo-github-color-dark.1k-70sin_m3qn.svg",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "mr-[3px]",
+            "min-w-5",
+            "shrink-0",
+            "flex",
+            "items-center",
+            "justify-center",
+            "[&_svg[data-slot=geist-icon]]:size-(--ds-control-decoration-size)"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "outline-none",
+            "m-0",
+            "p-0",
+            "border-0",
+            "align-baseline",
+            "no-underline",
+            "group/trigger",
+            "relative",
+            "cursor-pointer",
+            "select-none",
+            "transform",
+            "translate-z-0",
+            "flex",
+            "text-[var(--themed-fg,_var(--ds-background-100))]",
+            "bg-[var(--themed-bg,_var(--ds-gray-1000))]",
+            "font-medium",
+            "!px-(--geist-gap-half)",
+            "max-w-full",
+            "items-center",
+            "justify-center",
+            "transition-[border-color,",
+            "background,color,transform,box-shadow]",
+            "duration-[time:150ms]",
+            "ease-in-out",
+            "data-[focus]:shadow-[var(--ds-focus-ring)]",
+            "[&_svg]:shrink-0",
+            "disabled:cursor-not-allowed",
+            "aria-disabled:cursor-not-allowed",
+            "disabled:text-[var(--ds-gray-700)]",
+            "disabled:bg-[var(--ds-gray-100)]",
+            "aria-disabled:text-[var(--ds-gray-700)]",
+            "aria-disabled:bg-[var(--ds-gray-100)]",
+            "disabled:![--themed-border:_var(--ds-gray-400)]",
+            "[--x-padding:14px]",
+            "[--height:var(--ds-size-large)]",
+            "!pl-[var(--x-padding)]",
+            "!pr-[var(--x-padding)]",
+            "[--themed-bg:_var(--ds-background-100)]",
+            "shadow-[0_0_0_1px_var(--themed-border,_transparent)]",
+            "[--themed-hover-bg:_var(--ds-gray-alpha-200)]",
+            "[--themed-fg:_var(--ds-gray-1000)]",
+            "[--themed-border:_var(--ds-gray-400)]",
+            "data-[focus]:shadow-[0_0_0_1px_var(--themed-border,_transparent),0_0_0_2px_var(--ds-background-100),0_0_0_4px_var(--ds-focus-color)]",
+            "data-[focus]:transition-none",
+            "text-(length:--geist-form-large-font)",
+            "leading-[var(--geist-form-large-line-height)]",
+            "rounded-[8px]",
+            "h-[var(--height)]",
+            "data-hover:bg-[var(--ds-gray-100)]",
+            "dark-theme:data-hover:bg-[var(--ds-gray-200)]",
+            "data-hover:text-[var(--themed-fg)]",
+            "data-hover:disabled:bg-[var(--ds-gray-100)]"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "flex",
+            "flex-col",
+            "gap-4"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "w-80",
+            "flex",
+            "flex-col",
+            "gap-4",
+            "mx-auto"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "alt": "",
+      "class": [
+        "geist-hide-on-dark"
+      ],
+      "widthAttr": "20",
+      "heightAttr": "20",
+      "sourceKind": "url",
+      "sourcePreview": "/_next/static/immutable/media/logo-open-ai-color-light.19_d6xia9t_gb.svg",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "mr-[3px]",
+            "min-w-5",
+            "shrink-0",
+            "flex",
+            "items-center",
+            "justify-center",
+            "[&_svg[data-slot=geist-icon]]:size-(--ds-control-decoration-size)"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "outline-none",
+            "m-0",
+            "p-0",
+            "border-0",
+            "align-baseline",
+            "no-underline",
+            "group/trigger",
+            "relative",
+            "cursor-pointer",
+            "select-none",
+            "transform",
+            "translate-z-0",
+            "flex",
+            "text-[var(--themed-fg,_var(--ds-background-100))]",
+            "bg-[var(--themed-bg,_var(--ds-gray-1000))]",
+            "font-medium",
+            "!px-(--geist-gap-half)",
+            "max-w-full",
+            "items-center",
+            "justify-center",
+            "transition-[border-color,",
+            "background,color,transform,box-shadow]",
+            "duration-[time:150ms]",
+            "ease-in-out",
+            "data-[focus]:shadow-[var(--ds-focus-ring)]",
+            "[&_svg]:shrink-0",
+            "disabled:cursor-not-allowed",
+            "aria-disabled:cursor-not-allowed",
+            "disabled:text-[var(--ds-gray-700)]",
+            "disabled:bg-[var(--ds-gray-100)]",
+            "aria-disabled:text-[var(--ds-gray-700)]",
+            "aria-disabled:bg-[var(--ds-gray-100)]",
+            "disabled:![--themed-border:_var(--ds-gray-400)]",
+            "[--x-padding:14px]",
+            "[--height:var(--ds-size-large)]",
+            "!pl-[var(--x-padding)]",
+            "!pr-[var(--x-padding)]",
+            "[--themed-bg:_var(--ds-background-100)]",
+            "shadow-[0_0_0_1px_var(--themed-border,_transparent)]",
+            "[--themed-hover-bg:_var(--ds-gray-alpha-200)]",
+            "[--themed-fg:_var(--ds-gray-1000)]",
+            "[--themed-border:_var(--ds-gray-400)]",
+            "data-[focus]:shadow-[0_0_0_1px_var(--themed-border,_transparent),0_0_0_2px_var(--ds-background-100),0_0_0_4px_var(--ds-focus-color)]",
+            "data-[focus]:transition-none",
+            "text-(length:--geist-form-large-font)",
+            "leading-[var(--geist-form-large-line-height)]",
+            "rounded-[8px]",
+            "h-[var(--height)]",
+            "data-hover:bg-[var(--ds-gray-100)]",
+            "dark-theme:data-hover:bg-[var(--ds-gray-200)]",
+            "data-hover:text-[var(--themed-fg)]",
+            "data-hover:disabled:bg-[var(--ds-gray-100)]"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "flex",
+            "flex-col",
+            "gap-4"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "w-80",
+            "flex",
+            "flex-col",
+            "gap-4",
+            "mx-auto"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "alt": "",
+      "class": [
+        "geist-hide-on-light"
+      ],
+      "widthAttr": "20",
+      "heightAttr": "20",
+      "sourceKind": "url",
+      "sourcePreview": "/_next/static/immutable/media/logo-open-ai-color-dark.2s69z6l-k1q-7.svg",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "mr-[3px]",
+            "min-w-5",
+            "shrink-0",
+            "flex",
+            "items-center",
+            "justify-center",
+            "[&_svg[data-slot=geist-icon]]:size-(--ds-control-decoration-size)"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "outline-none",
+            "m-0",
+            "p-0",
+            "border-0",
+            "align-baseline",
+            "no-underline",
+            "group/trigger",
+            "relative",
+            "cursor-pointer",
+            "select-none",
+            "transform",
+            "translate-z-0",
+            "flex",
+            "text-[var(--themed-fg,_var(--ds-background-100))]",
+            "bg-[var(--themed-bg,_var(--ds-gray-1000))]",
+            "font-medium",
+            "!px-(--geist-gap-half)",
+            "max-w-full",
+            "items-center",
+            "justify-center",
+            "transition-[border-color,",
+            "background,color,transform,box-shadow]",
+            "duration-[time:150ms]",
+            "ease-in-out",
+            "data-[focus]:shadow-[var(--ds-focus-ring)]",
+            "[&_svg]:shrink-0",
+            "disabled:cursor-not-allowed",
+            "aria-disabled:cursor-not-allowed",
+            "disabled:text-[var(--ds-gray-700)]",
+            "disabled:bg-[var(--ds-gray-100)]",
+            "aria-disabled:text-[var(--ds-gray-700)]",
+            "aria-disabled:bg-[var(--ds-gray-100)]",
+            "disabled:![--themed-border:_var(--ds-gray-400)]",
+            "[--x-padding:14px]",
+            "[--height:var(--ds-size-large)]",
+            "!pl-[var(--x-padding)]",
+            "!pr-[var(--x-padding)]",
+            "[--themed-bg:_var(--ds-background-100)]",
+            "shadow-[0_0_0_1px_var(--themed-border,_transparent)]",
+            "[--themed-hover-bg:_var(--ds-gray-alpha-200)]",
+            "[--themed-fg:_var(--ds-gray-1000)]",
+            "[--themed-border:_var(--ds-gray-400)]",
+            "data-[focus]:shadow-[0_0_0_1px_var(--themed-border,_transparent),0_0_0_2px_var(--ds-background-100),0_0_0_4px_var(--ds-focus-color)]",
+            "data-[focus]:transition-none",
+            "text-(length:--geist-form-large-font)",
+            "leading-[var(--geist-form-large-line-height)]",
+            "rounded-[8px]",
+            "h-[var(--height)]",
+            "data-hover:bg-[var(--ds-gray-100)]",
+            "dark-theme:data-hover:bg-[var(--ds-gray-200)]",
+            "data-hover:text-[var(--themed-fg)]",
+            "data-hover:disabled:bg-[var(--ds-gray-100)]"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "flex",
+            "flex-col",
+            "gap-4"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "w-80",
+            "flex",
+            "flex-col",
+            "gap-4",
+            "mx-auto"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "alt": "MagicOffice 正式金色商標",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/png;base64",
+      "mime": "image/png",
+      "bytes": 486643,
+      "sha256": "55e786e5547b862949521d4decac61eac2910fc6bf10b271a031eb4bc1ee8830",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "a",
+          "id": null,
+          "class": [
+            "brand"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "header-inner"
+          ]
+        },
+        {
+          "tag": "header",
+          "id": null,
+          "class": [
+            "site-header"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "alt": "MagicOffice 正式粉紅商標",
+      "class": [
+        "hero-logo"
+      ],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/png;base64",
+      "mime": "image/png",
+      "bytes": 486637,
+      "sha256": "b0ed87071fb2602887afb99b6f323534c1a327e56074e061709661966554e020",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "hero-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "top",
+          "class": [
+            "hero"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "alt": "",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/png;base64",
+      "mime": "image/png",
+      "bytes": 486643,
+      "sha256": "55e786e5547b862949521d4decac61eac2910fc6bf10b271a031eb4bc1ee8830",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "story-title"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner",
+            "story-grid"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": null,
+          "class": [
+            "section",
+            "story"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "alt": "咪寶 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 105470,
+      "sha256": "46a75e190baad8e8669b0662b8a07d9ede469f5ac106207a3c8311dfa3b96f20",
+      "actualWidth": 600,
+      "actualHeight": 800,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "alt": "柚子 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486618,
+      "sha256": "69df4c16605171fe11379d3f4a204fd41756734998c40a9ef60ce595007ad3f2",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "alt": "JUBI 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486622,
+      "sha256": "087a84ce4079889444659323b4aa7ed7adf66db69ffc593f5be0da12733f651d",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "alt": "CC 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486612,
+      "sha256": "38af205cb7edb12fbcdd67b8d08d6cfa7747e70847874e12da3e4b21524d4fda",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "alt": "樂樂 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486622,
+      "sha256": "a3f25ade62a32961662f5936caa29fe4e977c4329f707a8294662f78171e30ab",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "alt": "卡拉 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486620,
+      "sha256": "4f0e53270eceeda3f06f0f5b36213d1d0785516942b991f8e5283e0bc10026e0",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "alt": "荷包蛋 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486652,
+      "sha256": "e35629d25c02a7903f96ca41a5b12cbe6e393e5e45749977bb484c63ca34be44",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "alt": "櫻璃／さくり 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486628,
+      "sha256": "38cd0664b51768d1b23b46b3ccdedfa70564a3ca1e9d0d3fd31aeb2783bc5694",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "alt": "碧瑠／へきる 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486628,
+      "sha256": "234f74d2968e4fedb4426e15a799f62a4c5ebd54f65082d0fef934af31ac2eaa",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "alt": "Rumei 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486625,
+      "sha256": "604bbebd2a5676010797209dccf35fb356a21763ddd4f7cc641282f78fae8c8a",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "alt": "奈亞 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486618,
+      "sha256": "a53d0f13b226c5dac005eb6e2732e9f0d0e23a4f5c4ff0186942b1cdd3ee7f58",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "alt": "咲茉 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486628,
+      "sha256": "3f2662b03428ab3c41a9745216eb8bcafa7d54ab7b6e1cb72c667c09f9dce2f5",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "alt": "なな 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486618,
+      "sha256": "d91c22b1bb48beba94de992fedbd8283f64c2c85871803d565b496f6e5f93f2c",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "alt": "桃奈 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486618,
+      "sha256": "3f5d13e9be770709cace7821130348a4e873591e241cff6d1428adcc27e9e567",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "alt": "心葉 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486628,
+      "sha256": "8716e59b337ca997a91ca20d0f5f9b39fe9d0dcfe6b47521cea66b938be46e2a",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "alt": "米菓 正式人物卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486618,
+      "sha256": "d7932d64ed981dda955e956d70bbcda1828a6617c3483e7336d74844aa68501d",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "span",
+          "id": null,
+          "class": [
+            "cast-image"
+          ]
+        },
+        {
+          "tag": "button",
+          "id": null,
+          "class": [
+            "cast-card"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "cast-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "roster",
+          "class": [
+            "section",
+            "roster",
+            "ukiyo-idol"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "alt": "中秋月宴｜魔幻烤肉大會 IG 烤肉 A 版主視覺",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/png;base64",
+      "mime": "image/png",
+      "bytes": 1580511,
+      "sha256": "b9a778372386687bbf608b5b90bd77c8691cdc57e078c3bd4489e896c3931acd",
+      "actualWidth": 1080,
+      "actualHeight": 1350,
+      "format": "PNG",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "mid-autumn-poster"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "mid-autumn-hero"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "mid-autumn-shell"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "mid-autumn",
+          "class": [
+            "section",
+            "mid-autumn-section"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "alt": "柚子 9/19 生誕｜玫瑰之夜官方主視覺",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 190820,
+      "sha256": "a1b97912e03ddf75915ab97cc2680ad5d8582638d1e0a17f0f47b957254d48e7",
+      "actualWidth": 900,
+      "actualHeight": 1125,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "yuzu-cover"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-hero"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "yuzu-birthday",
+          "class": [
+            "section",
+            "yuzu-birthday-section"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "alt": "柚子限定打火機",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 11126,
+      "sha256": "4538292ff5eca3cf07614165630cde6bd81b91eee147b05294241e5eea78b503",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "yuzu-piece",
+            "lighter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-cabinet"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-merch-layout"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-merch",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "alt": "柚子限定悠遊卡指定照片",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 22672,
+      "sha256": "aa59a517161edaeb719fab4d36a6201983ac64594c3345ef07ee1f3d6582c912",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "yuzu-piece",
+            "easycard"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-cabinet"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-merch-layout"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-merch",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "alt": "冰箱貼 A 款指定圖樣",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 26774,
+      "sha256": "065cb975e20e85a9d8327a9b3574240e3051593fd19f5ff9b5cc00eb397e1f67",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "yuzu-piece",
+            "magnet"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-cabinet"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-merch-layout"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-merch",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "alt": "販售小卡 01",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 32786,
+      "sha256": "40b77f0c5b9cab430839197c9e647da1e4e9beeb9dad155fe1f72b46840b4902",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-card-fan"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-cabinet"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-merch-layout"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-merch",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "alt": "販售小卡 02",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 15490,
+      "sha256": "b1e7d92e49e334d4e0e4e85e83340593d2151f1019d15c2623f54347211359c3",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-card-fan"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-cabinet"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-merch-layout"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-merch",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "alt": "販售小卡 03",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 24582,
+      "sha256": "b27ac3e14ebc9fa7fbda3142d810a9801dbe2470bbf893e2b6425dbff996cf69",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-card-fan"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-cabinet"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-merch-layout"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-merch",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 33,
+      "alt": "柚子入店即贈生寫真指定照片",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 26302,
+      "sha256": "be1b96881d52ce48c20db9d2d6a02c57fcfbd44946921a0cb2ab8de2edd1ab03",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "article",
+          "id": null,
+          "class": [
+            "yuzu-benefit"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-benefits"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-benefits",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 34,
+      "alt": "柚子有獎徵答徽章",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 40854,
+      "sha256": "4213a5bd8175d8010379f6f8dcfb6f407f77cfe21625548ee9692615223482e9",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "article",
+          "id": null,
+          "class": [
+            "yuzu-benefit",
+            "badge"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-benefits"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-benefits",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 35,
+      "alt": "三杯賞酒或賞茶贈送小卡代表圖",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 29216,
+      "sha256": "e2842220133667845b1129b2c07bf1c7d90be1384b36dd023255375b9793fa27",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "article",
+          "id": null,
+          "class": [
+            "yuzu-benefit",
+            "tea"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-benefits"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-benefits",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "alt": "香檳限定生寫真",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 29570,
+      "sha256": "ac868759ec08626ee74cb38cd10be77f6f81b00c256f43cf5da2d08cea86e80b",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "yuzu-reward-visual"
+          ]
+        },
+        {
+          "tag": "article",
+          "id": null,
+          "class": [
+            "yuzu-reward-step"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-reward-ladder"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-champagne",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 37,
+      "alt": "香檳贈禮寵物悠遊卡",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 27628,
+      "sha256": "82d07bafb9d31903f214f6f772c6496c8ea664f7d3b5b0c7ae51e45e50b91644",
+      "actualWidth": 520,
+      "actualHeight": 520,
+      "format": "WEBP",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "yuzu-reward-visual",
+            "pet"
+          ]
+        },
+        {
+          "tag": "article",
+          "id": null,
+          "class": [
+            "yuzu-reward-step"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-reward-ladder"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": "yuzu-champagne",
+          "class": [
+            "yuzu-chapter"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "yuzu-shell"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 38,
+      "alt": "MagicOffice 夏日海軍活動主視覺，活動期間 2026 年 8 月 19 日至 8 月 31 日",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486678,
+      "sha256": "49a376dda006a56af39450481985e906619971c753ca28efa329863d175922dc",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "summer-navy-hero"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "summer-navy-shell"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "summer-navy",
+          "class": [
+            "section",
+            "summer-navy-section"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 39,
+      "alt": "Jubi 生誕祭主視覺",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486643,
+      "sha256": "e71d5e23b8638311ac01ae78544703c8b891965af66f0cbdaf63b5200be6ae58",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "official-poster",
+            "main"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "jubi-event-overview"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "jubi-event-shell"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "events",
+          "class": [
+            "section",
+            "jubi-event-section",
+            "ukiyo-idol"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 40,
+      "alt": "Jubi 生誕祭當天流程官方圖",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486663,
+      "sha256": "5eb6f89dac388afd761dcfab615199b8759052d85d9948d5b21e0300c32d3eb0",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "official-poster"
+          ]
+        },
+        {
+          "tag": "article",
+          "id": "event-schedule",
+          "class": [
+            "event-panel",
+            "active"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "jubi-event-shell"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "events",
+          "class": [
+            "section",
+            "jubi-event-section",
+            "ukiyo-idol"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 41,
+      "alt": "Jubi 生誕周邊",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486648,
+      "sha256": "4a2ec6b6eb782b49875ad62e5f42a9a1a682792c0d523ceba074ecb8b6f58f18",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "official-poster"
+          ]
+        },
+        {
+          "tag": "article",
+          "id": "event-merch",
+          "class": [
+            "event-panel"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "jubi-event-shell"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "events",
+          "class": [
+            "section",
+            "jubi-event-section",
+            "ukiyo-idol"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 42,
+      "alt": "Jubi 掛軸競標",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486658,
+      "sha256": "70f03326fc5f4eceb09b3f68a7ffb4e1f85ea929bc2aaa5ac7cd129824879883",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "figure",
+          "id": null,
+          "class": [
+            "official-poster"
+          ]
+        },
+        {
+          "tag": "article",
+          "id": "event-auction",
+          "class": [
+            "event-panel"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "jubi-event-shell"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "events",
+          "class": [
+            "section",
+            "jubi-event-section",
+            "ukiyo-idol"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 43,
+      "alt": "午後咖啡浪花氛圍場景",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486668,
+      "sha256": "2f92fe4cbad0c1dbafdf0e81e6c270b051853102078ce99b84b42204069a9bbd",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "article",
+          "id": null,
+          "class": [
+            "theme-shot",
+            "wave"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "menu-atmosphere"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "menu",
+          "class": [
+            "section",
+            "menu-section"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 44,
+      "alt": "夜間酒吧夜雪氛圍場景圖",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486672,
+      "sha256": "15b538295d554894dd585d0db5a5d09036cc2dc65fe4f69ed4a4709c8af2bdca",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "article",
+          "id": null,
+          "class": [
+            "theme-shot",
+            "snow"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "menu-atmosphere"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "menu",
+          "class": [
+            "section",
+            "menu-section"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 45,
+      "alt": "品牌主題場景圖",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486891,
+      "sha256": "d2278752d6bf22bab91bf3ea3df058605a63edec5339e61362d34278d929ca26",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "article",
+          "id": null,
+          "class": [
+            "theme-shot",
+            "wave"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "menu-atmosphere"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "menu",
+          "class": [
+            "section",
+            "menu-section"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 46,
+      "alt": "午後咖啡場景",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486668,
+      "sha256": "2f92fe4cbad0c1dbafdf0e81e6c270b051853102078ce99b84b42204069a9bbd",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "menu-scene-visual"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "menu-scene"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "cafe-menu",
+          "class": [
+            "menu-pane",
+            "active",
+            "themed-pane",
+            "cafe-ukiyo",
+            "wave-pane"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "menu",
+          "class": [
+            "section",
+            "menu-section"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 47,
+      "alt": "夜間酒吧場景",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486672,
+      "sha256": "15b538295d554894dd585d0db5a5d09036cc2dc65fe4f69ed4a4709c8af2bdca",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "menu-scene-visual"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "menu-scene"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "bar-menu",
+          "class": [
+            "menu-pane",
+            "themed-pane",
+            "snow-pane",
+            "bar-ukiyo"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "menu",
+          "class": [
+            "section",
+            "menu-section"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 48,
+      "alt": "浮世繪與收藏場景",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486891,
+      "sha256": "d2278752d6bf22bab91bf3ea3df058605a63edec5339e61362d34278d929ca26",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "menu-scene-visual"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "menu-scene"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "special-menu",
+          "class": [
+            "menu-pane",
+            "themed-pane",
+            "wave-pane",
+            "idol-ukiyo"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": "menu",
+          "class": [
+            "section",
+            "menu-section"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 49,
+      "alt": "櫻花王座場景",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486658,
+      "sha256": "35fc121e2e41073a843288f2355bd807f89f3e8208191fd161ea623fdcd49050",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "venue-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": null,
+          "class": [
+            "section",
+            "venue",
+            "venue-refined"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 50,
+      "alt": "午後咖啡座位",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486648,
+      "sha256": "95dab2ed239e74e682402b83bad7be8c5e82acc241f4aa4ac5da208674e39209",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "venue-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": null,
+          "class": [
+            "section",
+            "venue",
+            "venue-refined"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 51,
+      "alt": "魔窟夜間吧台",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/webp;base64",
+      "mime": "image/webp",
+      "bytes": 486638,
+      "sha256": "718a7a77bec21ff97b6f4c07580774067e36a4b01f8954c4a92dca4bb8a3090f",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "venue-grid"
+          ]
+        },
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "section-inner"
+          ]
+        },
+        {
+          "tag": "section",
+          "id": null,
+          "class": [
+            "section",
+            "venue",
+            "venue-refined"
+          ]
+        },
+        {
+          "tag": "main",
+          "id": "main",
+          "class": []
+        }
+      ]
+    },
+    {
+      "index": 52,
+      "alt": "MagicOffice 正式粉紅商標",
+      "class": [],
+      "widthAttr": null,
+      "heightAttr": null,
+      "sourceKind": "data",
+      "sourcePreview": "data:image/png;base64",
+      "mime": "image/png",
+      "bytes": 486637,
+      "sha256": "b0ed87071fb2602887afb99b6f323534c1a327e56074e061709661966554e020",
+      "imageError": "cannot identify image file <_io.BytesIO object at 0x7f39b79a6660>",
+      "ancestors": [
+        {
+          "tag": "div",
+          "id": null,
+          "class": [
+            "footer-grid"
+          ]
+        }
+      ]
+    }
+  ]
+}
