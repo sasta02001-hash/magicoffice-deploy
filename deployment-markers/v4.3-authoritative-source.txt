@@ -1,0 +1,3 @@
+authoritative_source=MagicOffice v4.3 Design Locked
+official_url=https://magicoffice.vercel.app
+old_source=rollback_only
