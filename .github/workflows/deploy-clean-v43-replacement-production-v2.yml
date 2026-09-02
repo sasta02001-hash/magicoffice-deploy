@@ -1,0 +1,227 @@
+name: Deploy clean MagicOffice v4.3 replacement v2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/deploy-clean-v43-replacement-production-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: magicoffice-clean-v43-production
+  cancel-in-progress: false
+
+env:
+  SITE_DIR: /tmp/magicoffice-v43-site
+  TEAM_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+  PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+  RELEASE: magicoffice-v4.3-clean-replacement-2026-09-03
+
+jobs:
+  build-test-promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install builder dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check --quiet requests pillow
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+
+      - name: Build the entirely new v4.3 site
+        shell: bash
+        run: |
+          set -euo pipefail
+          python rebuild-v43/build_site.py
+          node --check "$SITE_DIR/assets/app.js"
+          node --check "$SITE_DIR/api/schedule.js"
+          node --check "$SITE_DIR/api/menu.js"
+          for json in "$SITE_DIR"/content/*.json "$SITE_DIR"/vercel.json "$SITE_DIR"/site.webmanifest "$SITE_DIR"/build-manifest.json; do
+            python -m json.tool "$json" >/dev/null
+          done
+          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height,r_frame_rate -of json "$SITE_DIR/assets/video/hero-trial-12s-with-audio.mp4" | tee /tmp/video-probe.json
+          ffprobe -v error -select_streams a:0 -show_entries stream=codec_name,sample_rate,channels -of json "$SITE_DIR/assets/video/hero-trial-12s-with-audio.mp4" | tee /tmp/audio-probe.json
+          grep -q 'aac' /tmp/audio-probe.json
+
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+
+      - name: Install real browser and Vercel CLI
+        shell: bash
+        run: npm install --no-save --no-audit --no-fund puppeteer-core@24.16.0 vercel@latest >/dev/null
+
+      - name: Run real local desktop and mobile browser tests
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          BASE_URL: http://127.0.0.1:4173/
+          SCREEN_DIR: /tmp/v43-local-audit
+        run: |
+          set -euo pipefail
+          python -m http.server 4173 --directory "$SITE_DIR" >/tmp/v43-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+          node rebuild-v43/test-v2.mjs
+
+      - name: Link the existing MagicOffice Vercel project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$SITE_DIR/.vercel"
+          printf '%s\n' '{"orgId":"team_44tkvxP20I5s9SUmlxfUEQM1","projectId":"prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D"}' > "$SITE_DIR/.vercel/project.json"
+
+      - name: Record current Production deployment for emergency rollback
+        id: previous
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$VERCEL_TOKEN"
+          curl -fsS -H "Authorization: Bearer $VERCEL_TOKEN" "https://api.vercel.com/v6/deployments?projectId=$PROJECT_ID&target=production&limit=1&teamId=$TEAM_ID" -o /tmp/previous-production.json
+          PREVIOUS_URL="$(python -c "import json; d=json.load(open('/tmp/previous-production.json')); print('https://'+d['deployments'][0]['url'])")"
+          test -n "$PREVIOUS_URL"
+          echo "url=$PREVIOUS_URL" >> "$GITHUB_OUTPUT"
+          echo "Previous Production: $PREVIOUS_URL"
+
+      - name: Deploy the clean replacement as Preview
+        id: preview
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd "$SITE_DIR"
+          npx vercel deploy --yes --archive=tgz --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/v43-preview.log
+          PREVIEW_URL="$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/v43-preview.log | tail -1)"
+          test -n "$PREVIEW_URL"
+          echo "url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
+          echo "Preview: $PREVIEW_URL"
+
+      - name: Inspect and exercise the protected Preview
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+        run: |
+          set -euo pipefail
+          npx vercel inspect "$PREVIEW_URL" --wait --timeout 5m --token "$VERCEL_TOKEN" | tee /tmp/v43-preview-inspect.log
+          npx vercel curl / --deployment "$PREVIEW_URL" --token "$VERCEL_TOKEN" > /tmp/preview-index.html
+          grep -q "$RELEASE" /tmp/preview-index.html
+          npx vercel curl /api/schedule --deployment "$PREVIEW_URL" --token "$VERCEL_TOKEN" > /tmp/preview-schedule.json
+          npx vercel curl /api/menu --deployment "$PREVIEW_URL" --token "$VERCEL_TOKEN" > /tmp/preview-menu.json
+          python -c "import json; d=json.load(open('/tmp/preview-schedule.json')); assert d.get('ok') is True and len(d.get('days',[]))==7"
+          python -c "import json; d=json.load(open('/tmp/preview-menu.json')); assert d.get('ok') is True and len(d.get('worlds',[]))==3 and sum(len(i) for w in d['worlds'] for c in w['categories'] for i in [c['items']])>=80"
+
+      - name: Promote the verified Preview to the unchanged official URL
+        id: promote
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+        run: |
+          set -euo pipefail
+          npx vercel promote "$PREVIEW_URL" --yes --timeout 5m --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/v43-promote.log
+          npx vercel promote status --token "$VERCEL_TOKEN" | tee /tmp/v43-promote-status.log || true
+
+      - name: Verify the unchanged official URL and roll back automatically on failure
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          BASE_URL: https://magicoffice.vercel.app/
+          SCREEN_DIR: /tmp/v43-production-audit
+          REQUIRE_LIVE_API: '1'
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          PREVIOUS_URL: ${{ steps.previous.outputs.url }}
+        run: |
+          set -euo pipefail
+          verify_live() {
+            ready=0
+            for i in $(seq 1 80); do
+              if curl -fsSL --max-time 30 "https://magicoffice.vercel.app/?release=$RELEASE-$(date +%s)" | grep -q "$RELEASE"; then
+                ready=1
+                break
+              fi
+              sleep 3
+            done
+            test "$ready" = 1
+            node rebuild-v43/test-v2.mjs
+            curl -fsSL https://magicoffice.vercel.app/api/schedule -o /tmp/live-schedule.json
+            curl -fsSL https://magicoffice.vercel.app/api/menu -o /tmp/live-menu.json
+            python -c "import json; d=json.load(open('/tmp/live-schedule.json')); assert d.get('ok') is True and len(d.get('days',[]))==7"
+            python -c "import json; d=json.load(open('/tmp/live-menu.json')); assert d.get('ok') is True and len(d.get('worlds',[]))==3"
+            curl -fsSL -H 'Range: bytes=0-1023' -D /tmp/live-video-headers.txt "https://magicoffice.vercel.app/assets/video/hero-trial-12s-with-audio.mp4?range=$RELEASE" -o /tmp/live-video-range.bin
+            python -c "from pathlib import Path; h=Path('/tmp/live-video-headers.txt').read_text(errors='replace').lower(); d=Path('/tmp/live-video-range.bin').read_bytes(); assert (' 206 ' in h or ' 200 ' in h) and 'video/mp4' in h and b'ftyp' in d[:64] and len(d)>=1024"
+          }
+          if ! verify_live; then
+            echo "Live verification failed; rolling back to $PREVIOUS_URL" >&2
+            npx vercel rollback "$PREVIOUS_URL" --yes --timeout 5m --token "$VERCEL_TOKEN" || true
+            exit 1
+          fi
+
+      - name: Write verified deployment receipt
+        if: always()
+        shell: bash
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+          PREVIOUS_URL: ${{ steps.previous.outputs.url }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v43-receipt
+          python - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          receipt = {
+            "release": os.environ.get("RELEASE"),
+            "officialUrl": "https://magicoffice.vercel.app/",
+            "previewUrl": os.environ.get("PREVIEW_URL"),
+            "previousProduction": os.environ.get("PREVIOUS_URL"),
+            "sameProject": os.environ.get("PROJECT_ID"),
+            "oldSitePatched": False,
+            "replacementType": "clean full-site replacement",
+            "verifiedAt": datetime.now(timezone.utc).isoformat(),
+          }
+          open('/tmp/v43-receipt/production-receipt.json','w').write(json.dumps(receipt,ensure_ascii=False,indent=2))
+          PY
+
+      - name: Upload complete deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v4.3_clean_replacement_v2_evidence
+          path: |
+            /tmp/v43-local-audit/
+            /tmp/v43-production-audit/
+            /tmp/v43-receipt/
+            /tmp/v43-preview.log
+            /tmp/v43-preview-inspect.log
+            /tmp/v43-promote.log
+            /tmp/v43-promote-status.log
+            /tmp/preview-schedule.json
+            /tmp/preview-menu.json
+            /tmp/live-schedule.json
+            /tmp/live-menu.json
+            /tmp/live-video-headers.txt
+            /tmp/video-probe.json
+            /tmp/audio-probe.json
+            /tmp/magicoffice-v43-site/build-manifest.json
+          if-no-files-found: warn
+          retention-days: 30
