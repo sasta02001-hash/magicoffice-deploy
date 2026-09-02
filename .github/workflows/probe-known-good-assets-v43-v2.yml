@@ -1,0 +1,170 @@
+name: Inspect current standalone assets for clean v4.3 replacement
+
+on:
+  push:
+    paths:
+      - '.github/workflows/probe-known-good-assets-v43-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  inspect-assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download latest complete standalone artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: MagicOffice_v1.5.6_FULL_STANDALONE_HTML
+          path: /tmp/known-good
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: sasta02001-hash/magicoffice-deploy
+          run-id: 32955866954
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install parser dependencies
+        run: python -m pip install --disable-pip-version-check --quiet beautifulsoup4 pillow
+
+      - name: Build embedded image inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from PIL import Image
+          import base64, hashlib, io, json, re
+
+          source = Path('/tmp/known-good/MagicOffice_v1.5.6_FULL_STANDALONE.html')
+          data = source.read_bytes()
+          digest = hashlib.sha256(data).hexdigest()
+          text = data.decode('utf-8', errors='strict')
+          source_checks = {
+              'sizeAbove10MB': len(data) > 10_000_000,
+              'html': '<html' in text.lower(),
+              'brand': 'MagicOffice' in text,
+              'roster': '姶仕名錄' in text,
+              'schedule': '本週出勤' in text,
+              'menu': '午後咖啡' in text and '魔幻夜晚' in text,
+          }
+          if not all(source_checks.values()):
+              raise SystemExit('Standalone source checks failed: ' + json.dumps(source_checks, ensure_ascii=False))
+
+          soup = BeautifulSoup(text, 'html.parser')
+          records = []
+          seen_payloads = {}
+          for index, img in enumerate(soup.find_all('img')):
+              src = img.get('src') or ''
+              record = {
+                  'index': index,
+                  'alt': img.get('alt') or '',
+                  'class': img.get('class') or [],
+                  'widthAttr': img.get('width'),
+                  'heightAttr': img.get('height'),
+                  'sourceKind': 'data' if src.startswith('data:image/') else 'url',
+                  'sourcePreview': src[:220] if not src.startswith('data:image/') else src.split(',',1)[0],
+              }
+              if src.startswith('data:image/'):
+                  header, payload = src.split(',', 1)
+                  mime = header.split(';', 1)[0].split(':', 1)[1]
+                  raw = base64.b64decode(payload)
+                  image_digest = hashlib.sha256(raw).hexdigest()
+                  record.update({'mime': mime, 'bytes': len(raw), 'sha256': image_digest})
+                  try:
+                      with Image.open(io.BytesIO(raw)) as image:
+                          record.update({'actualWidth': image.width, 'actualHeight': image.height, 'format': image.format})
+                  except Exception as exc:
+                      record['imageError'] = str(exc)
+                  seen_payloads.setdefault(image_digest, []).append(index)
+              parent = img.parent
+              for _ in range(5):
+                  if parent is None:
+                      break
+                  if getattr(parent, 'get', None):
+                      parent_id = parent.get('id')
+                      parent_class = parent.get('class') or []
+                      if parent_id or parent_class:
+                          record.setdefault('ancestors', []).append({'tag': parent.name, 'id': parent_id, 'class': parent_class})
+                  parent = parent.parent
+              records.append(record)
+
+          embedded_count = sum(1 for record in records if record['sourceKind'] == 'data')
+          if embedded_count < 10:
+              raise SystemExit(f'Not enough embedded img assets: {embedded_count}')
+
+          data_occurrences = []
+          for match_index, match in enumerate(re.finditer(r'data:image/([^;]+);base64,([A-Za-z0-9+/=]+)', text)):
+              raw = base64.b64decode(match.group(2))
+              item = {'index': match_index, 'mime': 'image/' + match.group(1), 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
+              try:
+                  with Image.open(io.BytesIO(raw)) as image:
+                      item.update({'actualWidth': image.width, 'actualHeight': image.height, 'format': image.format})
+              except Exception as exc:
+                  item['imageError'] = str(exc)
+              data_occurrences.append(item)
+
+          report = {
+              'source': source.name,
+              'sourceBytes': len(data),
+              'sourceSha256': digest,
+              'sourceChecks': source_checks,
+              'imgTagCount': len(records),
+              'embeddedImgTagCount': embedded_count,
+              'dataImageOccurrenceCount': len(data_occurrences),
+              'duplicateImgPayloadGroups': [indexes for indexes in seen_payloads.values() if len(indexes) > 1],
+              'images': records,
+              'allDataImageOccurrences': data_occurrences,
+          }
+          Path('rebuild-v43/known-good-asset-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+
+          lines = []
+          for record in records:
+              if record['sourceKind'] != 'data':
+                  continue
+              lines.append(
+                  f"{record['index']:03d}\t{record.get('actualWidth','?')}x{record.get('actualHeight','?')}\t"
+                  f"{record.get('bytes',0)}\t{record.get('sha256','')[:12]}\t"
+                  f"ALT={record.get('alt','')}\tCLASS={' '.join(record.get('class',[]))}\t"
+                  f"ANCESTORS={json.dumps(record.get('ancestors',[]), ensure_ascii=False)}"
+              )
+          Path('rebuild-v43/known-good-asset-report.txt').write_text('\n'.join(lines), encoding='utf-8')
+          print('\n'.join(lines))
+          print('KNOWN_GOOD_ASSET_REPORT_OK', json.dumps({
+              'sourceBytes': len(data),
+              'sourceSha256': digest,
+              'imgTagCount': len(records),
+              'embeddedImgTagCount': embedded_count,
+              'dataImageOccurrenceCount': len(data_occurrences),
+          }, ensure_ascii=False))
+          PY
+
+      - name: Commit inspection report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice Asset Inspector'
+          git config user.email 'sasta02001@gmail.com'
+          git add rebuild-v43/known-good-asset-report.json rebuild-v43/known-good-asset-report.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record current standalone asset inventory for v4.3 replacement'
+            git push origin HEAD:main
+          fi
+
+      - name: Upload report evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v4.3_known_good_asset_report_v2
+          path: |
+            rebuild-v43/known-good-asset-report.json
+            rebuild-v43/known-good-asset-report.txt
+          retention-days: 14
