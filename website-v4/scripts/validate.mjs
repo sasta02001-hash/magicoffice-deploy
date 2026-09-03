@@ -104,6 +104,13 @@ assert((html.match(/data-collection-period=/g)||[]).length === 2, '收藏品項�
 assert((html.match(/class=\"mo-overview-intro\"/g) || []).length === 1, '品牌故事與三種狀態必須合併為單一總覽');
 assert((html.match(/<section[^>]*id=\"worlds\"/g) || []).length === 1 && !html.includes('<section class=\"mo-section mo-section--paper\" id=\"brand-origin\">'), '第二、第三區仍被拆成兩個獨立頁面');
 assert(html.includes('id=\"brand-origin\"') && html.includes('mo-world-grid--overview'), '合併總覽缺少相容錨點或三種狀態卡片');
+const expectedHeroFilename = site.hero?.filename;
+const expectedHeroVideo = site.hero?.video;
+assert(expectedHeroFilename && expectedHeroVideo, 'site.hero filename/video 必填');
+assert(html.includes(`src=\"${expectedHeroVideo}\"`), '首頁影片未使用 site.hero.video');
+assert(html.includes(`data-source-filename=\"${expectedHeroFilename}\"`), '影片來源缺少 Google Drive 檔名標記');
+assert(html.includes('data-video-caption') && html.includes(`>${expectedHeroFilename}</p>`), '影片下方標註必須與 Google Drive 檔名完全相同');
+assert(!html.includes('home-trial-12s-with-audio.mp4') && !html.includes('MagicOffice 世界觀試播'), '舊試播影片或舊標註仍存在');
 
 assert(site.schedule?.spreadsheetId === '15y3DL7_nUj5JLng9mKayhwDnAnZPQgPHg0zCrLdb0BQ', '班表來源試算表 ID 不符');
 assert(site.menu?.spreadsheetId === '1nYJJJNJTLU19mBNm3Sjwo_Ep54AZPQl-PCS6koLFe84', '菜單 CMS 試算表 ID 不符');

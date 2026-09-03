@@ -1,0 +1,17 @@
+/* MagicOffice v4.3.5 — video filename caption policy. */
+.mo-cinema-caption{
+  width:100%;
+  max-width:100%;
+  margin:10px auto 0;
+  padding:0 8px;
+  color:rgba(255,238,228,.72);
+  font-size:clamp(.68rem,.82vw,.82rem);
+  line-height:1.45;
+  letter-spacing:.015em;
+  text-align:center;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+@media(max-width:960px){
+  .mo-cinema-caption{margin-top:8px;padding-inline:4px;font-size:.66rem;line-height:1.4}
+}

@@ -303,6 +303,10 @@ function main() {
   copyDir(CONTENT, path.join(DIST, 'content'));
 
   let html = fs.readFileSync(path.join(SRC, 'index.template.html'), 'utf8');
+const heroVideo = String(site.hero?.video || '');
+const heroFilename = String(site.hero?.filename || path.basename(heroVideo));
+if (!heroVideo || !heroFilename) throw new Error('content/site.json hero.video and hero.filename are required');
+html = html.replaceAll('{{HERO_VIDEO}}', esc(heroVideo)).replaceAll('{{HERO_FILENAME}}', esc(heroFilename));
   html = html
     .replaceAll('{{BUILD_VERSION}}', version)
     .replace('<!--SEO_JSONLD-->', buildJsonLd())

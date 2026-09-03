@@ -15,3 +15,7 @@ Source archive SHA256: `71c0e9c575d1b9708a059265b594e51f6b1cdf37f95928937c875e31
 ## v4.3.4 merged overview
 
 The former second and third homepage screens are one section: `#worlds` contains the Brand Origin copy and the three state cards. Keep the compatibility anchor `#brand-origin`, but do not recreate it as a separate section.
+## v4.3.5 homepage video filename caption
+
+The homepage video source is `assets/video/MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4`. Large MP4 bytes stay outside Git and are reconstructed from the SHA-verified parts in `content/hero-video-source.json` by `npm run media:fetch`. The visible caption immediately below the video must always be the exact Google Drive filename, including capitalization, underscores, and extension. `assets/js/app.js` derives the caption from `data-source-filename` or the video URL filename, so later replacements must update the hosted filename and `data-source-filename` together rather than writing a marketing caption.
+

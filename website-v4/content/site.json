@@ -1,11 +1,11 @@
 {
   "schemaVersion": "4.3",
-  "version": "production-v4.3.4-overview-merged",
+  "version": "production-v4.3.5-full-video-filename-caption",
   "timezone": "Asia/Taipei",
   "brandName": "MagicOffice／魔幻",
   "legalName": "魔幻姶仕社",
   "tagline": "白天讓人安定，夜晚讓情緒流動。",
-  "description": "MagicOffice v4.3：首頁商標無外框、品牌故事與三種狀態合併呈現、午後浪花與魔幻夜雪雙時段菜單、完整活動與線上訂位。",
+  "description": "MagicOffice v4.3：品牌故事與三種狀態合併呈現、完整人物誌影片、雙時段菜單、活動與線上訂位。",
   "address": "台北市松山區八德路二段375號",
   "links": {
     "booking": "https://gforms.app/r/71hSwQR",
@@ -38,16 +38,22 @@
   },
   "hero": {
     "poster": "assets/images/hero/hero-poster.webp",
-    "video": "assets/video/home-trial-12s-with-audio.mp4",
-    "durationLabel": "12 SEC · SOUND AVAILABLE",
-    "audio": "AAC-LC stereo 48kHz"
+    "video": "assets/video/MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4",
+    "durationLabel": "03:48 · SOUND AVAILABLE",
+    "audio": "AAC stereo 48kHz",
+    "filename": "MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4",
+    "caption": "MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4",
+    "captionPolicy": "exact-google-drive-filename",
+    "resolution": "1280×720",
+    "frameRate": "48fps",
+    "sha256": "c951db5697b28624d4394be2c151e28fc15cd17215ced51be97b31eef73b5e5f"
   },
   "contentManagement": {
     "roster": "content/roster.json",
     "events": "content/events.json",
     "schedule": "Google Sheets 即時同步＋快取＋內嵌快照",
     "menu": "Google Sheets 即時同步＋快取＋內嵌快照",
-    "hero": "content/site.json + assets/images/hero + assets/video"
+    "hero": "content/site.json + assets/images/hero + external large-media source; caption is always the exact Google Drive filename"
   },
   "designSystem": {
     "name": "MagicOffice v4.3 Design Locked",
@@ -60,7 +66,7 @@
     },
     "shapeLanguage": "soft rounded contours, floating borderless hero branding, visible woodblock-print menu worlds"
   },
-  "release": "magicoffice-v4.3.4-overview-merged-2026-09-03",
+  "release": "magicoffice-v4.3.5-full-video-filename-caption-2026-09-03",
   "updatedAt": "2026-09-03",
   "releaseStatus": "release-candidate",
   "quickLinks": [

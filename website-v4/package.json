@@ -1,15 +1,15 @@
 {
   "name": "magicoffice-design-locked",
-  "version": "4.3.4",
+  "version": "4.3.5",
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check scripts/build.mjs && node --check scripts/sync-content.mjs && node --check scripts/sync-snapshots.mjs && node --check scripts/validate.mjs && node --check scripts/build-standalone.mjs && node --check scripts/browser-test.mjs && node --check scripts/data-layer-test.mjs && node --check assets/js/app.js && node --check api/_shared.js && node --check api/schedule.js && node --check api/menu.js && node --check assets/js/menu-view.js && node --check assets/js/menu-view.js",
+    "check": "node --check scripts/build.mjs && node --check scripts/fetch-hero-video.mjs && node --check scripts/sync-content.mjs && node --check scripts/sync-snapshots.mjs && node --check scripts/validate.mjs && node --check scripts/build-standalone.mjs && node --check scripts/browser-test.mjs && node --check scripts/data-layer-test.mjs && node --check assets/js/app.js && node --check api/_shared.js && node --check api/schedule.js && node --check api/menu.js && node --check assets/js/menu-view.js && node --check assets/js/menu-view.js",
     "sync": "node scripts/sync-content.mjs",
     "sync:soft": "node scripts/sync-content.mjs --soft",
     "sync:snapshots": "node scripts/sync-snapshots.mjs",
-    "build": "node scripts/sync-snapshots.mjs && node scripts/build.mjs && node scripts/validate.mjs",
-    "build:offline": "node scripts/build.mjs && node scripts/validate.mjs",
+    "build": "node scripts/sync-snapshots.mjs && npm run media:fetch && node scripts/build.mjs && node scripts/validate.mjs",
+    "build:offline": "npm run media:fetch && node scripts/build.mjs && node scripts/validate.mjs",
     "deploy:build": "npm run build",
     "dev": "node scripts/build.mjs && node scripts/dev-server.mjs",
     "standalone": "node scripts/build-standalone.mjs",
@@ -18,7 +18,8 @@
     "test:data": "node scripts/data-layer-test.mjs",
     "test:browser:basic": "python scripts/browser-feedback-check.py",
     "check:publish": "node scripts/check-publish-ready.mjs",
-    "build:production": "npm run check:publish && npm run build"
+    "build:production": "npm run check:publish && npm run build",
+    "media:fetch": "node scripts/fetch-hero-video.mjs"
   },
   "engines": {
     "node": ">=20"

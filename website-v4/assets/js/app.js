@@ -147,7 +147,18 @@
     const fullscreen = $('[data-video-fullscreen]');
     const time = $('[data-video-time]');
     const status = $('[data-video-status]');
+    const caption = $('[data-video-caption]');
     if (!video) return;
+
+    const syncFilenameCaption = () => {
+      if (!caption) return;
+      let filename = video.dataset.sourceFilename || '';
+      if (!filename) {
+        try { filename = decodeURIComponent(new URL(video.currentSrc || video.src, location.href).pathname.split('/').filter(Boolean).pop() || ''); } catch {}
+      }
+      if (filename) caption.textContent = filename;
+    };
+    syncFilenameCaption();
 
     let hasPlayed = false;
     let loadFailed = false;
@@ -163,7 +174,7 @@
     };
     const syncTime = () => {
       if (!time) return;
-      const duration = Number.isFinite(video.duration) ? video.duration : 12;
+      const duration = Number.isFinite(video.duration) ? video.duration : 228;
       time.textContent = `${formatTime(video.currentTime)} / ${formatTime(duration)}`;
     };
     const syncControls = () => {
@@ -171,7 +182,7 @@
         const icon = $('span', toggle); const label = $('b', toggle);
         if (icon) icon.textContent = video.paused ? '▶' : 'Ⅱ';
         if (label) label.textContent = video.paused ? '播放' : '暫停';
-        toggle.setAttribute('aria-label', video.paused ? '播放試播影片' : '暫停試播影片');
+        toggle.setAttribute('aria-label', video.paused ? '播放影片' : '暫停影片');
       }
       if (sound) {
         const muted = video.muted || video.volume === 0;
@@ -196,12 +207,12 @@
         video.volume = Math.min(1, chosen);
         video.muted = false;
       }
-      setState('loading', audible ? '正在啟動有聲播放…' : '正在載入試播影片…');
+      setState('loading', audible ? '正在啟動有聲播放…' : '正在載入影片…');
       try {
         await video.play();
         return true;
       } catch (error) {
-        setState(hasPlayed ? 'paused' : 'idle', '瀏覽器阻擋自動播放，請按「播放試播影片」。');
+        setState(hasPlayed ? 'paused' : 'idle', '瀏覽器阻擋自動播放，請按「播放影片」。');
         syncControls();
         return false;
       }
@@ -214,7 +225,7 @@
     const savedVolume = Number(storageGet('magicoffice.hero.volume'));
     video.volume = Number.isFinite(savedVolume) && savedVolume > 0 ? Math.min(1, savedVolume) : 0.7;
 
-    video.addEventListener('loadedmetadata', () => { if (POSTER_ONLY) { video.pause(); setState('idle', '目前為封面備援檢查模式。'); syncControls(); return; } setState(hasPlayed ? cinema.dataset.state : 'ready', '影片已就緒，可直接播放並開啟聲音。'); syncControls(); }, { passive: true });
+    video.addEventListener('loadedmetadata', () => { syncFilenameCaption(); if (POSTER_ONLY) { video.pause(); setState('idle', '目前為封面備援檢查模式。'); syncControls(); return; } setState(hasPlayed ? cinema.dataset.state : 'ready', '影片已就緒，可直接播放並開啟聲音。'); syncControls(); }, { passive: true });
     video.addEventListener('canplay', () => { if (POSTER_ONLY) { video.pause(); setState('idle', '目前為封面備援檢查模式。'); return; } cinema.dataset.videoReady = 'true'; if (!hasPlayed && cinema.dataset.state === 'loading') setState('ready', '影片已就緒，可直接播放並開啟聲音。'); }, { passive: true });
     video.addEventListener('playing', () => { hasPlayed = true; loadFailed = false; setState('playing', video.muted ? '影片播放中；可按「開啟聲音」。' : '影片與聲音播放中。'); syncControls(); }, { passive: true });
     video.addEventListener('pause', () => { if (hasPlayed && !video.ended) setState('paused', '影片已暫停。'); syncControls(); }, { passive: true });

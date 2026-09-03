@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "filename": "MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4",
+  "mimeType": "video/mp4",
+  "bytes": 241646148,
+  "sha256": "c951db5697b28624d4394be2c151e28fc15cd17215ced51be97b31eef73b5e5f",
+  "sourceLabel": "Google Drive filename; the website caption must match this filename exactly",
+  "parts": [
+    {
+      "order": 0,
+      "id": "1h2FpKw1g1fvOTa51uiIw4GXVuj6djzpD",
+      "bytes": 67108864,
+      "sha256": "a06dd936e9efb94cddf3488b73a375b8d992acd1906d393e1ea80f4cdd15f57e"
+    },
+    {
+      "order": 1,
+      "id": "1j6BQrz05v0lHMMNwn2w0ivAr4z4SU4gc",
+      "bytes": 67108864,
+      "sha256": "9a0948275ac2efb112d8ae7b1b7ca8272d1cb655a0a0cc27c433d18dbf52d47d"
+    },
+    {
+      "order": 2,
+      "id": "1Z27CCubSZTlQ1DypElOzSZpE3mUhxedo",
+      "bytes": 67108864,
+      "sha256": "b787acaf341b05593e160e3cd5085e02c665b23690ffd60d9fe9675332bdb67b"
+    },
+    {
+      "order": 3,
+      "id": "1ba2AXGMpdLbuGKF-oitYLgEpGh0mEsSH",
+      "bytes": 40319556,
+      "sha256": "3541cd6a57025bfefebc0cd3260e2a02bc41e6268db1ebaa8116e3a6ee8e2ba8"
+    }
+  ]
+}
