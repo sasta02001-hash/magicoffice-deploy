@@ -8,54 +8,51 @@ permissions:
 jobs:
   source:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Prepare authenticated retrieval tools
-        run: |
-          npm install --no-save --no-audit --no-fund vercel@59.3.0
-          python -m pip install --quiet pillow requests
-      - name: Read original deployed image, without generating or substituting artwork
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      - name: Prepare source verification
+        run: python -m pip install --quiet pillow requests beautifulsoup4
+      - name: Fetch only the original campaign image or its exact named event element
         run: |
           mkdir -p original-heartbeat
           python - <<'PY'
           from pathlib import Path
-          import subprocess, os, json, hashlib, io
+          import json, hashlib, io, base64
+          from urllib.parse import urljoin
           import requests
           from PIL import Image
-          hosts = [
-            'magicoffice-hwpboyvf0-magicoffice.vercel.app',
-            'magicoffice-eoar23fic-magicoffice.vercel.app',
-            'magicoffice-la1g2z5nv-magicoffice.vercel.app',
-            'magicoffice-ckd9kqeh8-magicoffice.vercel.app',
+          from bs4 import BeautifulSoup
+          sources = [
+            'https://magicoffice-hwpboyvf0-magicoffice.vercel.app/assets/media/heartbeat-support-2026.jpg?_vercel_share=gNQ61ZLUXoS8j1wpqmhRldknLdrYfY64',
+            'https://magicoffice-ckd9kqeh8-magicoffice.vercel.app/release.json?_vercel_share=wq2WfbVqvr4Gq3jUvouN6RnlCs2OhUqX',
           ]
-          report = []
-          for index, host in enumerate(hosts):
-            path = '/assets/media/heartbeat-support-2026.jpg'
-            url = 'https://' + host + path
-            row = {'source': url}
+          report=[]
+          def save(data,source,name):
+            im=Image.open(io.BytesIO(data)); im.load()
+            if im.width<700 or im.height<350: raise ValueError('undersized')
+            fn=name+'.'+{'JPEG':'jpg','WEBP':'webp','PNG':'png'}[im.format]
+            Path('original-heartbeat',fn).write_bytes(data)
+            return {'source':source,'file':fn,'width':im.width,'height':im.height,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}
+          for i,share in enumerate(sources):
+            session=requests.Session()
             try:
-              r = requests.get(url, timeout=30)
-              data = r.content
+              r=session.get(share,timeout=40)
               try:
-                im = Image.open(io.BytesIO(data)); im.load()
-              except Exception:
-                if not os.environ.get('VERCEL_TOKEN'): raise RuntimeError('No authenticated retrieval token configured')
-                p = subprocess.run(['npx','vercel','curl',path,'--deployment','https://'+host,'--token',os.environ['VERCEL_TOKEN']],capture_output=True,timeout=50)
-                data = p.stdout
-                im = Image.open(io.BytesIO(data)); im.load()
-              if im.width < 700 or im.height < 350: raise RuntimeError('Image dimensions below campaign minimum')
-              name = f'original-heartbeat-{index}.jpg'
-              Path('original-heartbeat', name).write_bytes(data)
-              row.update(file=name,width=im.width,height=im.height,bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
-            except Exception as error:
-              row['error'] = type(error).__name__ + ': source unavailable or not a decodable image'
-            report.append(row)
+                report.append(save(r.content,share.split('?')[0],f'original-{i}'))
+                continue
+              except Exception: pass
+              root=urljoin(share,'/')
+              r=session.get(root,timeout=40)
+              soup=BeautifulSoup(r.content,'html.parser')
+              section=soup.select_one('section#heartbeat-support, section#event-heartbeat-support')
+              if not section: raise ValueError('Exact original Heartbeat section not available')
+              Path('original-heartbeat',f'event-element-{i}.html').write_text(str(section))
+              for j,image in enumerate(section.select('img')):
+                src=image.get('src','')
+                data=base64.b64decode(src.split(',',1)[1]) if src.startswith('data:image') else session.get(urljoin(root,src),timeout=40).content
+                report.append(save(data,src[:180],f'campaign-{i}-{j}'))
+            except Exception as e:
+              report.append({'source':share.split('?')[0],'error':str(e),'status':r.status_code if 'r' in locals() else 0})
           Path('original-heartbeat/source-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
           print(json.dumps(report,ensure_ascii=False,indent=2))
           PY
