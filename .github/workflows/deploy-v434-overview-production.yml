@@ -1,0 +1,105 @@
+name: Deploy v4.3.4 merged overview to production
+on:
+  push:
+    paths: ['.github/workflows/deploy-v434-overview-production.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      VERCEL_ORG_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+      VERCEL_PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+      RELEASE: magicoffice-v4.3.4-overview-merged-2026-09-03
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm the approved source and rebuild it offline
+        working-directory: website-v4
+        run: |
+          set -euo pipefail
+          test "$(node -p "require('./package.json').version")" = "4.3.4"
+          grep -q "$RELEASE" src/index.template.html
+          npm run check
+          npm run test:data
+          npm run build:offline
+          grep -q 'class="mo-overview-intro"' dist/index.html
+          test "$(grep -o 'class="mo-world-card"' dist/index.html | wc -l)" -eq 3
+          test "$(grep -o 'class="mo-cast-card"' dist/index.html | wc -l)" -eq 16
+      - name: Prepare the existing official Vercel project
+        working-directory: website-v4
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('vercel.json')
+          data=json.loads(path.read_text())
+          data['buildCommand']='npm run build:offline'
+          release='magicoffice-v4.3.4-overview-merged-2026-09-03'
+          for rule in data.get('headers',[]):
+              if rule.get('source')=='/(.*)':
+                  headers=rule.setdefault('headers',[])
+                  headers=[h for h in headers if h.get('key','').lower()!='x-magicoffice-release']
+                  headers.append({'key':'X-MagicOffice-Release','value':release})
+                  rule['headers']=headers
+          path.write_text(json.dumps(data,indent=2)+'\n')
+          PY
+          mkdir -p .vercel
+          printf '%s\n' '{"orgId":"team_44tkvxP20I5s9SUmlxfUEQM1","projectId":"prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D"}' > .vercel/project.json
+          npx --yes vercel@59.3.0 pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Build and promote to the unchanged production domain
+        id: deploy
+        working-directory: website-v4
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          npx --yes vercel@59.3.0 build --prod --token="$VERCEL_TOKEN"
+          URL="$(npx --yes vercel@59.3.0 deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$URL" > ../v434-production-url.txt
+      - name: Verify that the original URL now serves the merged section
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            curl -fsS "https://magicoffice.vercel.app/?verify=v434-${attempt}" -o /tmp/index.html || true
+            if grep -q "$RELEASE" /tmp/index.html 2>/dev/null; then break; fi
+            sleep 4
+          done
+          grep -q "$RELEASE" /tmp/index.html
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('/tmp/index.html').read_text()
+          checks={
+            'singleMergedOverview': html.count('class="mo-overview-intro"')==1,
+            'oneWorldsSection': html.count('id="worlds"')==1,
+            'noSeparateBrandSection': '<section class="mo-section mo-section--paper" id="brand-origin">' not in html,
+            'compatibilityAnchor': 'class="mo-anchor-target" id="brand-origin"' in html,
+            'threeWorldCards': html.count('class="mo-world-card"')==3,
+            'sixShortcuts': html.count('<nav aria-label="手機版六格快捷選單"')==1 and html.split('<nav aria-label="手機版六格快捷選單"',1)[1].split('</nav>',1)[0].count('<a ')+html.split('<nav aria-label="手機版六格快捷選單"',1)[1].split('</nav>',1)[0].count('<button ')==6,
+            'profiles': html.count('class="mo-cast-card"')==16,
+            'events': html.count('data-event-status="')==3,
+            'menuTabs': html.count(' role="tab" data-menu-tab=')==2,
+          }
+          print(checks)
+          failed=[name for name,ok in checks.items() if not ok]
+          if failed: raise SystemExit('Production checks failed: '+', '.join(failed))
+          PY
+          curl -fsSI 'https://magicoffice.vercel.app/assets/css/overview-v4.3.4.css' | grep -q '200'
+          printf 'release=%s\ndeployment=%s\nverified_at=%s\n' "$RELEASE" '${{ steps.deploy.outputs.url }}' "$(date -u +%FT%TZ)" > v434-production-receipt.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: MagicOffice_v434_PRODUCTION_receipt
+          path: |
+            v434-production-url.txt
+            v434-production-receipt.txt
+          if-no-files-found: warn
+          retention-days: 14
