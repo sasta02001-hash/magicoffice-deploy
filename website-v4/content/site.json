@@ -1,6 +1,6 @@
 {
   "schemaVersion": "4.3",
-  "version": "production-v4.3.11-audible-autoplay",
+  "version": "production-v4.3.12-muted-autoplay",
   "timezone": "Asia/Taipei",
   "brandName": "MagicOffice／魔幻",
   "legalName": "魔幻姶仕社",
@@ -53,12 +53,12 @@
     "driveDisplayName": "MagiCofficec魔幻世界人物誌",
     "displayTitle": "MagiCofficec魔幻世界人物誌",
     "autoplay": true,
-    "mutedAutoplay": false,
-    "defaultAudioState": "audible",
+    "mutedAutoplay": true,
+    "defaultAudioState": "muted",
     "defaultVolume": 0.7,
     "loop": false,
     "fallbackPoster": true,
-    "playbackPolicy": "進站後先嘗試有聲自動播放；若瀏覽器政策阻擋，不改成靜音播放，保留正式封面與原生控制列，使用者按下播放時聲音預設開啟。",
+    "playbackPolicy": "進站後以靜音、行內模式直接自動播放；瀏覽器阻擋或影音失敗時保留正式封面，播放操作使用影片原生控制列。",
     "captionPlacement": "label-and-video-title-centered-directly-below-video",
     "displayTitleUpdateRule": "每次置換影片時先讀取指定 Google Drive 檔案的顯示名稱；官網不顯示副檔名，名稱置中於影片正下方。"
   },
@@ -67,7 +67,7 @@
     "events": "content/events.json",
     "schedule": "Google Sheets 即時同步＋快取＋內嵌快照",
     "menu": "Google Sheets 即時同步＋快取＋內嵌快照",
-    "hero": "content/site.json + Google Drive 顯示名稱 + 分段影音來源；優先有聲自動播放，受阻時保留封面且不靜音降級"
+    "hero": "content/site.json + Google Drive 顯示名稱 + 分段影音來源；靜音自動播放，失敗時保留正式封面"
   },
   "designSystem": {
     "name": "MagicOffice v4.3 Design Locked",
@@ -80,7 +80,7 @@
     },
     "shapeLanguage": "soft rounded contours, floating borderless hero branding, visible woodblock-print menu worlds"
   },
-  "release": "magicoffice-v4.3.11-audible-autoplay-2026-09-03",
+  "release": "magicoffice-v4.3.12-muted-autoplay-2026-09-03",
   "updatedAt": "2026-09-03",
   "releaseStatus": "release-candidate",
   "quickLinks": [

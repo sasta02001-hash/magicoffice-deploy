@@ -22,3 +22,7 @@ The homepage video source is `assets/video/MagicOffice_FINAL_LARGE_SLOW_SUBTITLE
 ## v4.3.11 audible-first playback
 
 The hero video attempts autoplay with sound at volume 0.7. Do not add the HTML `muted` attribute and do not retry in muted mode. Browsers may block audible autoplay; in that case the official poster remains visible and the native controls start playback with sound after a user gesture.
+
+## v4.3.12 muted autoplay
+
+The hero video autoplays muted with native controls. Do not reintroduce a custom play overlay. Keep the poster visible when media playback fails.

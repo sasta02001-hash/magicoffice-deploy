@@ -194,7 +194,7 @@
       if (volume && document.activeElement !== volume) volume.value = String(video.volume || 0);
       syncTime();
     };
-    const safePlay = async ({ audible = true } = {}) => {
+    const safePlay = async ({ audible = false } = {}) => {
       if (POSTER_ONLY || loadFailed) {
         video.pause();
         setState(loadFailed ? 'error' : 'idle', loadFailed ? '影片暫時無法載入，已保留正式封面。' : '目前為封面檢查模式。');
@@ -211,21 +211,21 @@
         await video.play();
         return true;
       } catch (error) {
-        setState(hasPlayed ? 'paused' : 'idle', '瀏覽器阻擋有聲自動播放；封面會保留，使用影片原生控制列即可有聲播放。');
+        setState(hasPlayed ? 'paused' : 'idle', '瀏覽器阻擋自動播放；封面會保留，使用影片原生控制列即可播放。');
         syncControls();
         return false;
       }
     };
 
-    video.defaultMuted = false;
-    video.muted = false;
+    video.defaultMuted = true;
+    video.muted = true;
     video.loop = false;
     video.playsInline = true;
     const savedVolume = Number(storageGet('magicoffice.hero.volume'));
     video.volume = Number.isFinite(savedVolume) && savedVolume > 0 ? Math.min(1, savedVolume) : 0.7;
 
-    video.addEventListener('loadedmetadata', () => { syncFilenameCaption(); if (POSTER_ONLY) { video.pause(); setState('idle', '目前為封面備援檢查模式。'); syncControls(); return; } setState(hasPlayed ? cinema.dataset.state : 'ready', '影片已就緒，將優先以有聲模式播放。'); syncControls(); }, { passive: true });
-    video.addEventListener('canplay', () => { if (POSTER_ONLY) { video.pause(); setState('idle', '目前為封面備援檢查模式。'); return; } cinema.dataset.videoReady = 'true'; if (!hasPlayed && cinema.dataset.state === 'loading') setState('ready', '影片已就緒，將優先以有聲模式播放。'); }, { passive: true });
+    video.addEventListener('loadedmetadata', () => { syncFilenameCaption(); if (POSTER_ONLY) { video.pause(); setState('idle', '目前為封面備援檢查模式。'); syncControls(); return; } setState(hasPlayed ? cinema.dataset.state : 'ready', '影片已就緒，將以靜音模式自動播放。'); syncControls(); }, { passive: true });
+    video.addEventListener('canplay', () => { if (POSTER_ONLY) { video.pause(); setState('idle', '目前為封面備援檢查模式。'); return; } cinema.dataset.videoReady = 'true'; if (!hasPlayed && cinema.dataset.state === 'loading') setState('ready', '影片已就緒，將以靜音模式自動播放。'); }, { passive: true });
     video.addEventListener('playing', () => { hasPlayed = true; loadFailed = false; setState('playing', video.muted ? '影片播放中；可按「開啟聲音」。' : '影片與聲音播放中。'); syncControls(); }, { passive: true });
     video.addEventListener('pause', () => { if (hasPlayed && !video.ended) setState('paused', '影片已暫停。'); syncControls(); }, { passive: true });
     video.addEventListener('volumechange', syncControls, { passive: true });
@@ -266,7 +266,7 @@
       } catch {}
     });
 
-    setState('idle', '將嘗試有聲自動播放；若瀏覽器阻擋，會保留正式封面。');
+    setState('idle', '將以靜音模式自動播放；若瀏覽器阻擋，會保留正式封面。');
     syncControls();
     if (POSTER_ONLY) {
       video.removeAttribute('autoplay');
@@ -275,8 +275,8 @@
       setState('idle', '目前為封面備援檢查模式。');
       syncControls();
     } else {
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(() => safePlay({ audible: true }));
-      document.addEventListener('visibilitychange', () => { if (!document.hidden && !hasPlayed && !loadFailed) safePlay({ audible: true }); });
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(() => safePlay({ audible: false }));
+      document.addEventListener('visibilitychange', () => { if (!document.hidden && !hasPlayed && !loadFailed) safePlay({ audible: false }); });
     }
   }
 

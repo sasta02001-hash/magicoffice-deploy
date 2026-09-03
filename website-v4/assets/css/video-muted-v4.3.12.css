@@ -1,0 +1,3 @@
+/* v4.3.12 — unobstructed muted autoplay with native controls and poster fallback. */
+.mo-cinema video{display:block;width:100%}
+.mo-cinema-start,.mo-video-sound-overlay{display:none!important}
