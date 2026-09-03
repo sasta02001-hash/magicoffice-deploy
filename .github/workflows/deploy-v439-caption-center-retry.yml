@@ -24,7 +24,8 @@ jobs:
           mkdir site
           curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 180 \
             'https://drive.usercontent.google.com/download?id=1V2mtf_qaPZWBa4wELmZ0xtgySSnps5_f&export=download&confirm=t' -o /tmp/site.tgz
-          tar -tzf /tmp/site.tgz | grep -q 'src/index.template.html'
+          tar -tzf /tmp/site.tgz > /tmp/site.list
+          grep -q 'src/index.template.html' /tmp/site.list
           tar -xzf /tmp/site.tgz -C site
           mkdir -p site/assets/video
           curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 300 \
