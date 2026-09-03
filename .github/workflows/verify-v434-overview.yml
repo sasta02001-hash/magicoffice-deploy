@@ -14,14 +14,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install codec-enabled Chrome, WebKit and Chinese fonts
+      - name: Install Chrome, WebKit and Chinese fonts
         run: |
           python -m pip install --quiet playwright==1.55.0
           python -m playwright install --with-deps chrome webkit
           sudo apt-get install -y -qq fonts-noto-cjk
-      - name: Verify actual protected Preview
+      - name: Verify actual public review deployment
         env:
-          CHECK_URL: https://magicoffice-7suzudfxx-magicoffice.vercel.app/?_vercel_share=v7JmBOlmoJA9LePmt98PcXpmXsluQsxX
+          CHECK_URL: https://magicoffice-overview-review.vercel.app/
         run: python qa/v434-overview-check.py
       - name: Store screenshots and browser report
         if: always()
