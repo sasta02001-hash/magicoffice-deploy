@@ -101,6 +101,9 @@ assert(html.includes('<span class="mo-title-lock">魔幻姶仕社</span>'), '首
 assert(!html.includes('data-schedule-refresh') && !html.includes('data-menu-refresh') && !html.includes('mo-media-console') && !html.includes('data-menu-group-filter'), '顧客介面不應保留刷新與多層篩選或額外影片控制格');
 assert((html.match(/ role="tab" data-menu-tab=/g)||[]).length === 2, '菜單應為日夜兩頁');
 assert((html.match(/data-collection-period=/g)||[]).length === 2, '收藏品項應依時段合併');
+assert((html.match(/class=\"mo-overview-intro\"/g) || []).length === 1, '品牌故事與三種狀態必須合併為單一總覽');
+assert((html.match(/<section[^>]*id=\"worlds\"/g) || []).length === 1 && !html.includes('<section class=\"mo-section mo-section--paper\" id=\"brand-origin\">'), '第二、第三區仍被拆成兩個獨立頁面');
+assert(html.includes('id=\"brand-origin\"') && html.includes('mo-world-grid--overview'), '合併總覽缺少相容錨點或三種狀態卡片');
 
 assert(site.schedule?.spreadsheetId === '15y3DL7_nUj5JLng9mKayhwDnAnZPQgPHg0zCrLdb0BQ', '班表來源試算表 ID 不符');
 assert(site.menu?.spreadsheetId === '1nYJJJNJTLU19mBNm3Sjwo_Ep54AZPQl-PCS6koLFe84', '菜單 CMS 試算表 ID 不符');

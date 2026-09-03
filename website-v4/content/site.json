@@ -1,11 +1,11 @@
 {
   "schemaVersion": "4.3",
-  "version": "production-v4.3.3-responsive-feedback",
+  "version": "production-v4.3.4-overview-merged",
   "timezone": "Asia/Taipei",
   "brandName": "MagicOffice／魔幻",
   "legalName": "魔幻姶仕社",
   "tagline": "白天讓人安定，夜晚讓情緒流動。",
-  "description": "MagicOffice v4.3 Design Locked：首頁商標無外框、午後浪花、魔幻夜雪、櫻花收藏三套高辨識浮世繪菜單、完整活動與線上訂位。",
+  "description": "MagicOffice v4.3：首頁商標無外框、品牌故事與三種狀態合併呈現、午後浪花與魔幻夜雪雙時段菜單、完整活動與線上訂位。",
   "address": "台北市松山區八德路二段375號",
   "links": {
     "booking": "https://gforms.app/r/71hSwQR",
@@ -51,7 +51,7 @@
   },
   "designSystem": {
     "name": "MagicOffice v4.3 Design Locked",
-    "rhythm": "night → washi → sunrise → night → washi → sakura → event themes → three menu worlds",
+    "rhythm": "night → merged brand and three-state overview → night → washi → sakura → event themes → two time-period menu pages",
     "fonts": "serif for brand and headings; sans-serif for operation and long-form content",
     "menuThemes": {
       "CAFE": "青海波與浪花",
@@ -60,7 +60,7 @@
     },
     "shapeLanguage": "soft rounded contours, floating borderless hero branding, visible woodblock-print menu worlds"
   },
-  "release": "magicoffice-v4.3.3-responsive-feedback-2026-09-03",
+  "release": "magicoffice-v4.3.4-overview-merged-2026-09-03",
   "updatedAt": "2026-09-03",
   "releaseStatus": "release-candidate",
   "quickLinks": [

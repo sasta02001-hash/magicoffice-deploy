@@ -11,3 +11,7 @@ Roster: `content/roster.json`. Events: `content/events.json`. Site links and Goo
 The genuine original Heartbeat v7 PNG is 595x335, SHA256 `228cfbf667e636dc95bb3b3195f8c9d43e168c573e6e10b463b306dfbfb1f6e3`. Keep this image unmodified. Never replace it with the movie poster.
 
 Source archive SHA256: `71c0e9c575d1b9708a059265b594e51f6b1cdf37f95928937c875e31141ddb88`.
+
+## v4.3.4 merged overview
+
+The former second and third homepage screens are one section: `#worlds` contains the Brand Origin copy and the three state cards. Keep the compatibility anchor `#brand-origin`, but do not recreate it as a separate section.

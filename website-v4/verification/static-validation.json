@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-09-03T01:38:00.965Z",
-  "version": "production-v4.3.3-responsive-feedback",
+  "checkedAt": "2026-09-03T03:00:48.616Z",
+  "version": "production-v4.3.4-overview-merged",
   "errors": [],
   "warnings": [],
   "counts": {
@@ -8,10 +8,10 @@
     "events": 3,
     "menuItems": 88,
     "scheduleFallbackRows": 28,
-    "localReferences": 53
+    "localReferences": 54
   },
   "index": {
-    "bytes": 102570,
-    "sha256": "11ca3b2514df1efabc08f364e8cff826b31488fa06d429f17f48cee5b5ebec27"
+    "bytes": 102733,
+    "sha256": "1f350d74c736b43b16bced84d0713682d56d7b4ff56aab07b1776a450f9af897"
   }
 }

@@ -1,0 +1,61 @@
+/* MagicOffice v4.3.4 — Brand Origin and Three States share one compact section. */
+.mo-overview-section{
+  --section-bg:linear-gradient(160deg,#faeedb 0%,#f5ddd5 48%,#e9c7a4 100%);
+  --section-ink:#36232a;
+  --section-muted:#6d555c;
+  --section-line:rgba(86,45,56,.2);
+  padding:clamp(60px,6.4vw,88px) 0 clamp(68px,7vw,96px);
+}
+.mo-hero + .mo-overview-section{padding-top:clamp(74px,7vw,98px)}
+.mo-overview-section .mo-anchor-target{position:absolute;left:0;top:0;width:1px;height:1px;scroll-margin-top:calc(var(--header-h) + 16px);pointer-events:none}
+.mo-overview-intro{display:grid;grid-template-columns:minmax(290px,.82fr) minmax(0,1.18fr);gap:clamp(28px,5vw,68px);align-items:center;margin-bottom:clamp(26px,3.5vw,40px);padding:clamp(26px,3vw,38px);border:1px solid rgba(91,49,57,.18);border-radius:34px;background:linear-gradient(145deg,rgba(255,250,238,.88),rgba(247,226,215,.72));box-shadow:0 20px 52px rgba(78,43,47,.11)}
+.mo-overview-title{position:relative;min-width:0;padding-right:clamp(12px,2vw,28px)}
+.mo-overview-title::after{content:"";position:absolute;top:0;right:0;bottom:0;width:1px;background:linear-gradient(transparent,rgba(163,67,63,.36),transparent)}
+.mo-overview-title .mo-eyebrow{margin-bottom:14px;max-width:100%;overflow-wrap:anywhere}
+.mo-overview-title h2{margin:.08em 0 .2em;color:#4a2632;font-size:clamp(2.2rem,4.25vw,4.1rem);line-height:1.08;letter-spacing:.012em;word-break:keep-all;text-wrap:balance}
+.mo-overview-lead{margin:0;color:#8b4152;font-family:var(--font-serif);font-size:clamp(1rem,1.5vw,1.28rem);font-weight:700;letter-spacing:.03em}
+.mo-overview-mark{width:88px;height:auto;margin-top:20px;opacity:.52;filter:saturate(.8)}
+.mo-overview-copy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px 22px;min-width:0}
+.mo-overview-copy p{margin:0;padding:15px 16px;border:1px solid rgba(90,50,57,.1);border-radius:20px;background:rgba(255,250,240,.46);color:#4d3a3f;font-family:var(--font-serif);font-size:clamp(.94rem,1.08vw,1.05rem);line-height:1.9}
+.mo-overview-copy-wide{grid-column:1/-1;padding-top:17px!important;border-color:rgba(154,66,68,.16)!important;background:rgba(255,245,233,.67)!important}
+.mo-world-grid--overview{gap:16px}
+.mo-world-grid--overview .mo-world-card{min-height:300px;border-radius:28px;box-shadow:0 18px 44px rgba(70,39,43,.14)}
+.mo-world-grid--overview .mo-world-card::before{border-radius:20px}
+.mo-world-grid--overview .mo-world-copy{inset:auto 24px 23px}
+.mo-world-grid--overview .mo-world-copy h3{font-size:clamp(1.55rem,2.15vw,2rem)}
+.mo-world-grid--overview .mo-world-copy p{font-size:.84rem;line-height:1.62}
+
+@media(max-width:960px){
+  .mo-hero + .mo-overview-section{padding-top:68px}
+  .mo-overview-section{padding-bottom:64px}
+  .mo-overview-intro{grid-template-columns:1fr;gap:20px;padding:27px;border-radius:28px}
+  .mo-overview-title{padding-right:0;padding-bottom:20px;text-align:center}
+  .mo-overview-title::after{top:auto;left:8%;right:8%;bottom:0;width:auto;height:1px;background:linear-gradient(90deg,transparent,rgba(163,67,63,.38),transparent)}
+  .mo-overview-title .mo-eyebrow{justify-content:center}
+  .mo-overview-title h2{font-size:clamp(2rem,6vw,3rem)}
+  .mo-overview-mark{width:76px;margin:17px auto 0}
+  .mo-overview-copy{gap:12px 16px}
+  .mo-world-grid--overview{grid-template-columns:1fr;gap:12px}
+  .mo-world-grid--overview .mo-world-card{display:grid;grid-template-columns:minmax(170px,42%) minmax(0,1fr);min-height:180px}
+  .mo-world-grid--overview .mo-world-card img{position:relative;inset:auto;width:100%;height:100%;min-height:180px;object-fit:cover}
+  .mo-world-grid--overview .mo-world-card::after{background:linear-gradient(90deg,rgba(20,7,13,.08) 16%,rgba(20,7,13,.9) 66%,rgba(20,7,13,.96) 100%)}
+  .mo-world-grid--overview .mo-world-copy{position:relative;inset:auto;z-index:4;align-self:center;padding:20px 19px}
+}
+
+@media(max-width:560px){
+  .mo-hero + .mo-overview-section{padding-top:58px}
+  .mo-overview-section{padding-bottom:54px}
+  .mo-overview-intro{margin-bottom:20px;padding:22px 18px;border-radius:26px}
+  .mo-overview-title h2{font-size:clamp(1.8rem,8vw,2.25rem);line-height:1.28}
+  .mo-overview-lead{font-size:1rem}
+  .mo-overview-copy{grid-template-columns:1fr;gap:10px}
+  .mo-overview-copy-wide{grid-column:auto}
+  .mo-overview-copy p{padding:14px;border-radius:18px;font-size:.9rem;line-height:1.82}
+  .mo-world-grid--overview .mo-world-card{grid-template-columns:minmax(120px,39%) minmax(0,1fr);min-height:160px;border-radius:22px}
+  .mo-world-grid--overview .mo-world-card::before{inset:7px;border-radius:15px}
+  .mo-world-grid--overview .mo-world-card img{min-height:160px}
+  .mo-world-grid--overview .mo-world-copy{padding:16px 14px}
+  .mo-world-grid--overview .mo-world-copy small{font-size:.6rem;letter-spacing:.1em}
+  .mo-world-grid--overview .mo-world-copy h3{font-size:1.18rem;line-height:1.32}
+  .mo-world-grid--overview .mo-world-copy p{font-size:.75rem;line-height:1.55}
+}
