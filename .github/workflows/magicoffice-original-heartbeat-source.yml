@@ -1,0 +1,67 @@
+name: Retrieve original Heartbeat campaign asset
+on:
+  push:
+    paths: ['.github/workflows/magicoffice-original-heartbeat-source.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare authenticated retrieval tools
+        run: |
+          npm install --no-save --no-audit --no-fund vercel@59.3.0
+          python -m pip install --quiet pillow requests
+      - name: Read original deployed image, without generating or substituting artwork
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          mkdir -p original-heartbeat
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess, os, json, hashlib, io
+          import requests
+          from PIL import Image
+          hosts = [
+            'magicoffice-hwpboyvf0-magicoffice.vercel.app',
+            'magicoffice-eoar23fic-magicoffice.vercel.app',
+            'magicoffice-la1g2z5nv-magicoffice.vercel.app',
+            'magicoffice-ckd9kqeh8-magicoffice.vercel.app',
+          ]
+          report = []
+          for index, host in enumerate(hosts):
+            path = '/assets/media/heartbeat-support-2026.jpg'
+            url = 'https://' + host + path
+            row = {'source': url}
+            try:
+              r = requests.get(url, timeout=30)
+              data = r.content
+              try:
+                im = Image.open(io.BytesIO(data)); im.load()
+              except Exception:
+                if not os.environ.get('VERCEL_TOKEN'): raise RuntimeError('No authenticated retrieval token configured')
+                p = subprocess.run(['npx','vercel','curl',path,'--deployment','https://'+host,'--token',os.environ['VERCEL_TOKEN']],capture_output=True,timeout=50)
+                data = p.stdout
+                im = Image.open(io.BytesIO(data)); im.load()
+              if im.width < 700 or im.height < 350: raise RuntimeError('Image dimensions below campaign minimum')
+              name = f'original-heartbeat-{index}.jpg'
+              Path('original-heartbeat', name).write_bytes(data)
+              row.update(file=name,width=im.width,height=im.height,bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+            except Exception as error:
+              row['error'] = type(error).__name__ + ': source unavailable or not a decodable image'
+            report.append(row)
+          Path('original-heartbeat/source-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: magicoffice-original-heartbeat-source
+          path: original-heartbeat/
+          if-no-files-found: error
+          retention-days: 7
