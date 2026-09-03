@@ -10,53 +10,43 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Prepare source verification
-        run: python -m pip install --quiet pillow requests beautifulsoup4
-      - name: Fetch only the original campaign image or its exact named event element
+      - run: python -m pip install --quiet pillow requests
+      - name: Retrieve original campaign without any recomposition or rescaling
         run: |
           mkdir -p original-heartbeat
           python - <<'PY'
           from pathlib import Path
-          import json, hashlib, io, base64
-          from urllib.parse import urljoin
+          import json, hashlib, io
           import requests
           from PIL import Image
-          from bs4 import BeautifulSoup
-          sources = [
-            'https://magicoffice-hwpboyvf0-magicoffice.vercel.app/assets/media/heartbeat-support-2026.jpg?_vercel_share=gNQ61ZLUXoS8j1wpqmhRldknLdrYfY64',
-            'https://magicoffice-ckd9kqeh8-magicoffice.vercel.app/release.json?_vercel_share=wq2WfbVqvr4Gq3jUvouN6RnlCs2OhUqX',
-          ]
+          from urllib.parse import urlparse,parse_qs
+          session=requests.Session()
+          share='https://magicoffice-ckd9kqeh8-magicoffice.vercel.app/release.json?_vercel_share=wq2WfbVqvr4Gq3jUvouN6RnlCs2OhUqX'
+          session.get(share,timeout=40)
+          sources={
+            'original-v7':'https://magicoffice-ckd9kqeh8-magicoffice.vercel.app/assets/media/heartbeat-support-v7.png?v=20260830-v7',
+            'canva-original':'https://media.canva.com/v2/document-image/hash:-733210113/height:335/id:DAHTvA91Tk8/type:B/width:595?brand=BAGPuTF1NEo&csig=AAAAAAAAAAAAAAAAAAAAAPbgKBwZdEgNwhukctTcbzwI39agx45WKDRLQ0uAhlAB&disableexport=T&exp=1788398668&fallback=https%3A%2F%2Fs3.amazonaws.com%2Fdocument-export.canva.com%2F91Tk8%2FDAHTvA91Tk8%2F1%2Fthumbnail%2F0001.png%3FX-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Credential%3DAKIAQYCGKMUH4GDRW44L%252F20260902%252Fus-east-1%252Fs3%252Faws4_request%26X-Amz-Date%3D20260902T024930Z%26X-Amz-Expires%3D83998%26X-Amz-Signature%3D279f08541804b4083350d63eb107b9d990169c861c3181a2280d581569969fae%26X-Amz-SignedHeaders%3Dhost%26response-expires%3DThu%252C%252003%2520Sep%25202026%252002%253A09%253A28%2520GMT&osig=AAAAAAAAAAAAAAAAAAAAAEqkzJqP-Pmp0gKZfTBK1FUccy8UXOymcpioLXwuZmb0&page=1&signed=brand%2Cdisableexport%2Cfallback%2Cpage%2Cversion&signer=document-rpc&version=1',
+          }
+          sources['canva-fallback']=parse_qs(urlparse(sources['canva-original']).query)['fallback'][0]
           report=[]
-          def save(data,source,name):
-            im=Image.open(io.BytesIO(data)); im.load()
-            if im.width<700 or im.height<350: raise ValueError('undersized')
-            fn=name+'.'+{'JPEG':'jpg','WEBP':'webp','PNG':'png'}[im.format]
-            Path('original-heartbeat',fn).write_bytes(data)
-            return {'source':source,'file':fn,'width':im.width,'height':im.height,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}
-          for i,share in enumerate(sources):
-            session=requests.Session()
+          for name,url in sources.items():
+            row={'name':name,'source':url.split('?')[0]}
             try:
-              r=session.get(share,timeout=40)
-              try:
-                report.append(save(r.content,share.split('?')[0],f'original-{i}'))
-                continue
-              except Exception: pass
-              root=urljoin(share,'/')
-              r=session.get(root,timeout=40)
-              soup=BeautifulSoup(r.content,'html.parser')
-              section=soup.select_one('section#heartbeat-support, section#event-heartbeat-support')
-              if not section: raise ValueError('Exact original Heartbeat section not available')
-              Path('original-heartbeat',f'event-element-{i}.html').write_text(str(section))
-              for j,image in enumerate(section.select('img')):
-                src=image.get('src','')
-                data=base64.b64decode(src.split(',',1)[1]) if src.startswith('data:image') else session.get(urljoin(root,src),timeout=40).content
-                report.append(save(data,src[:180],f'campaign-{i}-{j}'))
-            except Exception as e:
-              report.append({'source':share.split('?')[0],'error':str(e),'status':r.status_code if 'r' in locals() else 0})
-          Path('original-heartbeat/source-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
-          print(json.dumps(report,ensure_ascii=False,indent=2))
+              r=session.get(url,timeout=40);r.raise_for_status()
+              im=Image.open(io.BytesIO(r.content));im.load()
+              if im.width<500 or im.height<300:raise ValueError('Below original thumbnail dimensions')
+              ext={'JPEG':'jpg','PNG':'png','WEBP':'webp'}[im.format]
+              file=name+'.'+ext
+              Path('original-heartbeat',file).write_bytes(r.content)
+              row.update(file=file,width=im.width,height=im.height,sha256=hashlib.sha256(r.content).hexdigest(),bytes=len(r.content))
+            except Exception as e:row['error']=type(e).__name__
+            report.append(row)
+          Path('original-heartbeat/source-report.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          if not any('file' in r for r in report):raise RuntimeError('No authentic campaign asset retrieved')
           PY
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: magicoffice-original-heartbeat-source
           path: original-heartbeat/
