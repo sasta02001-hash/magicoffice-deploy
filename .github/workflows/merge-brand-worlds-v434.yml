@@ -1,0 +1,201 @@
+name: Merge MagicOffice homepage sections 2 and 3
+on:
+  push:
+    paths: ['.github/workflows/merge-brand-worlds-v434.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Merge Brand Origin and Three States in the maintained v4 source
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          root = Path('website-v4')
+          index_path = root / 'src/index.template.html'
+          html = index_path.read_text(encoding='utf-8')
+
+          old = '''<section class="mo-section mo-section--paper" id="brand-origin">
+          <div class="mo-shell mo-story-grid">
+          <div class="mo-story-title"><p class="mo-eyebrow">BRAND ORIGIN</p><h2>故事，從走進來的<br/>那一刻開始。</h2><img alt="" aria-hidden="true" class="mo-story-mark" src="assets/images/logo/logo-pink.png"/></div>
+          <div class="mo-story-copy">在浮世繪所描繪的那個時代餘韻裡，有一間名為 MagicOffice／魔幻的店。
+
+          它白天像一間安靜的茶與咖啡空間，夜晚則轉為帶著酒與燈影的場所。
+
+          這裡的姶仕，不只是服務者。她們更像是氛圍的引導者，用語氣、距離與細節，讓每一位客人進入剛好的狀態。
+
+          在這裡，沒有被強調的喧鬧，只有被細緻安排過的相遇。每一段停留，都會被溫柔地記住，像浮世繪般，被描繪成一瞬間的畫面。</div>
+          </div>
+          </section>
+          <section class="mo-section mo-section--sunrise" id="worlds">
+          <div class="mo-shell"><div class="mo-heading"><p class="mo-eyebrow">ONE TEAM · THREE STATES</p><h2>同一個魔幻，三種進入方式</h2><p>日咖、夜酒與偶像活動，共用同一組人物與世界觀，但保有不同的節奏與服務入口。</p></div>
+          <div class="mo-world-grid">
+          <article class="mo-world-card"><img alt="Magic Office 偶像及活動" src="assets/images/worlds/world-idol.webp"/><div class="mo-world-copy"><small>MAGIC OFFICE</small><h3>偶像及活動</h3><p>生誕、應援、限定周邊與線上參與。</p></div></article>
+          <article class="mo-world-card"><img alt="Magic Off Ice 夜間酒吧" src="assets/images/worlds/world-bar.webp"/><div class="mo-world-copy"><small>MAGIC OFF ICE</small><h3>酒吧及活動</h3><p>20:00 之後，以調酒、燈影與夜間互動延續故事。</p></div></article>
+          <article class="mo-world-card"><img alt="MagiCoffice 午後咖啡" src="assets/images/worlds/world-cafe.webp"/><div class="mo-world-copy"><small>MAGICOFFICE CAFÉ</small><h3>咖啡廳及活動</h3><p>14:00 起，以咖啡、甜點與較安靜的節奏迎接相遇。</p></div></article>
+          </div>
+          </div>
+          </section>'''.replace('\n          ', '\n')
+
+          new = '''<section aria-label="MagicOffice 品牌故事與日夜世界" class="mo-section mo-section--sunrise mo-overview-section" id="worlds">
+          <span aria-hidden="true" class="mo-anchor-target" id="brand-origin"></span>
+          <div class="mo-shell">
+          <div class="mo-overview-intro">
+          <div class="mo-overview-title"><p class="mo-eyebrow">BRAND ORIGIN · ONE TEAM, THREE STATES</p><h2>故事，從走進來的<br/>那一刻開始。</h2><p class="mo-overview-lead">同一個魔幻，三種進入方式。</p><img alt="" aria-hidden="true" class="mo-overview-mark" src="assets/images/logo/logo-pink.png"/></div>
+          <div class="mo-overview-copy"><p>在浮世繪所描繪的那個時代餘韻裡，有一間名為 MagicOffice／魔幻的店。它白天像一間安靜的茶與咖啡空間，夜晚則轉為帶著酒與燈影的場所。</p><p>這裡的姶仕不只是服務者。她們更像是氛圍的引導者，用語氣、距離與細節，讓每一位客人進入剛好的狀態。</p><p class="mo-overview-copy-wide">日咖、夜酒與偶像活動，共用同一組人物與世界觀，也保有各自的節奏與服務入口。沒有被強調的喧鬧，只有被細緻安排過的相遇；每一段停留，都會像浮世繪般被溫柔地記住。</p></div>
+          </div>
+          <div class="mo-world-grid mo-world-grid--overview">
+          <article class="mo-world-card"><img alt="Magic Office 偶像及活動" src="assets/images/worlds/world-idol.webp"/><div class="mo-world-copy"><small>MAGIC OFFICE</small><h3>偶像及活動</h3><p>生誕、應援、限定周邊與線上參與。</p></div></article>
+          <article class="mo-world-card"><img alt="Magic Off Ice 夜間酒吧" src="assets/images/worlds/world-bar.webp"/><div class="mo-world-copy"><small>MAGIC OFF ICE</small><h3>酒吧及活動</h3><p>20:00 之後，以調酒、燈影與夜間互動延續故事。</p></div></article>
+          <article class="mo-world-card"><img alt="MagiCoffice 午後咖啡" src="assets/images/worlds/world-cafe.webp"/><div class="mo-world-copy"><small>MAGICOFFICE CAFÉ</small><h3>咖啡廳及活動</h3><p>14:00 起，以咖啡、甜點與較安靜的節奏迎接相遇。</p></div></article>
+          </div>
+          </div>
+          </section>'''.replace('\n          ', '\n')
+
+          if html.count(old) != 1:
+              raise RuntimeError(f'Expected one exact pair of sections, found {html.count(old)}')
+          html = html.replace(old, new)
+          html = html.replace('magicoffice-v4.3.3-responsive-feedback-2026-09-03', 'magicoffice-v4.3.4-overview-merged-2026-09-03')
+          stylesheet = '<link href="assets/css/usability-v4.3.3.css?v={{BUILD_VERSION}}" rel="stylesheet"/>'
+          addition = stylesheet + '\n<link href="assets/css/overview-v4.3.4.css?v={{BUILD_VERSION}}" rel="stylesheet"/>'
+          if html.count(stylesheet) != 1:
+              raise RuntimeError('Could not identify the usability stylesheet insertion point')
+          html = html.replace(stylesheet, addition)
+          index_path.write_text(html, encoding='utf-8')
+
+          site_path = root / 'content/site.json'
+          site = json.loads(site_path.read_text(encoding='utf-8'))
+          site['version'] = 'production-v4.3.4-overview-merged'
+          site['description'] = 'MagicOffice v4.3：首頁商標無外框、品牌故事與三種狀態合併呈現、午後浪花與魔幻夜雪雙時段菜單、完整活動與線上訂位。'
+          site['release'] = 'magicoffice-v4.3.4-overview-merged-2026-09-03'
+          site['updatedAt'] = '2026-09-03'
+          site['designSystem']['rhythm'] = 'night → merged brand and three-state overview → night → washi → sakura → event themes → two time-period menu pages'
+          site_path.write_text(json.dumps(site, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          package_path = root / 'package.json'
+          package = json.loads(package_path.read_text(encoding='utf-8'))
+          package['version'] = '4.3.4'
+          package_path.write_text(json.dumps(package, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          validate_path = root / 'scripts/validate.mjs'
+          validation = validate_path.read_text(encoding='utf-8')
+          needle = "assert((html.match(/data-collection-period=/g)||[]).length === 2, '收藏品項應依時段合併');\n"
+          extra = needle + "assert((html.match(/class=\\\"mo-overview-intro\\\"/g) || []).length === 1, '品牌故事與三種狀態必須合併為單一總覽');\nassert((html.match(/<section[^>]*id=\\\"worlds\\\"/g) || []).length === 1 && !html.includes('<section class=\\\"mo-section mo-section--paper\\\" id=\\\"brand-origin\\\">'), '第二、第三區仍被拆成兩個獨立頁面');\nassert(html.includes('id=\\\"brand-origin\\\"') && html.includes('mo-world-grid--overview'), '合併總覽缺少相容錨點或三種狀態卡片');\n"
+          if validation.count(needle) != 1:
+              raise RuntimeError('Could not add merged-overview validation')
+          validation = validation.replace(needle, extra)
+          validate_path.write_text(validation, encoding='utf-8')
+
+          readme_path = root / 'README.md'
+          readme = readme_path.read_text(encoding='utf-8')
+          note = '\n## v4.3.4 merged overview\n\nThe former second and third homepage screens are one section: `#worlds` contains the Brand Origin copy and the three state cards. Keep the compatibility anchor `#brand-origin`, but do not recreate it as a separate section.\n'
+          if '## v4.3.4 merged overview' not in readme:
+              readme_path.write_text(readme.rstrip() + '\n' + note, encoding='utf-8')
+          PY
+      - name: Add compact shared visual treatment
+        run: |
+          cat > website-v4/assets/css/overview-v4.3.4.css <<'CSS'
+          /* MagicOffice v4.3.4 — Brand Origin and Three States share one compact section. */
+          .mo-overview-section{
+            --section-bg:linear-gradient(160deg,#faeedb 0%,#f5ddd5 48%,#e9c7a4 100%);
+            --section-ink:#36232a;
+            --section-muted:#6d555c;
+            --section-line:rgba(86,45,56,.2);
+            padding:clamp(60px,6.4vw,88px) 0 clamp(68px,7vw,96px);
+          }
+          .mo-hero + .mo-overview-section{padding-top:clamp(74px,7vw,98px)}
+          .mo-overview-section .mo-anchor-target{position:absolute;left:0;top:0;width:1px;height:1px;scroll-margin-top:calc(var(--header-h) + 16px);pointer-events:none}
+          .mo-overview-intro{display:grid;grid-template-columns:minmax(290px,.82fr) minmax(0,1.18fr);gap:clamp(28px,5vw,68px);align-items:center;margin-bottom:clamp(26px,3.5vw,40px);padding:clamp(26px,3vw,38px);border:1px solid rgba(91,49,57,.18);border-radius:34px;background:linear-gradient(145deg,rgba(255,250,238,.88),rgba(247,226,215,.72));box-shadow:0 20px 52px rgba(78,43,47,.11)}
+          .mo-overview-title{position:relative;min-width:0;padding-right:clamp(12px,2vw,28px)}
+          .mo-overview-title::after{content:"";position:absolute;top:0;right:0;bottom:0;width:1px;background:linear-gradient(transparent,rgba(163,67,63,.36),transparent)}
+          .mo-overview-title .mo-eyebrow{margin-bottom:14px;max-width:100%;overflow-wrap:anywhere}
+          .mo-overview-title h2{margin:.08em 0 .2em;color:#4a2632;font-size:clamp(2.2rem,4.25vw,4.1rem);line-height:1.08;letter-spacing:.012em;word-break:keep-all;text-wrap:balance}
+          .mo-overview-lead{margin:0;color:#8b4152;font-family:var(--font-serif);font-size:clamp(1rem,1.5vw,1.28rem);font-weight:700;letter-spacing:.03em}
+          .mo-overview-mark{width:88px;height:auto;margin-top:20px;opacity:.52;filter:saturate(.8)}
+          .mo-overview-copy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px 22px;min-width:0}
+          .mo-overview-copy p{margin:0;padding:15px 16px;border:1px solid rgba(90,50,57,.1);border-radius:20px;background:rgba(255,250,240,.46);color:#4d3a3f;font-family:var(--font-serif);font-size:clamp(.94rem,1.08vw,1.05rem);line-height:1.9}
+          .mo-overview-copy-wide{grid-column:1/-1;padding-top:17px!important;border-color:rgba(154,66,68,.16)!important;background:rgba(255,245,233,.67)!important}
+          .mo-world-grid--overview{gap:16px}
+          .mo-world-grid--overview .mo-world-card{min-height:300px;border-radius:28px;box-shadow:0 18px 44px rgba(70,39,43,.14)}
+          .mo-world-grid--overview .mo-world-card::before{border-radius:20px}
+          .mo-world-grid--overview .mo-world-copy{inset:auto 24px 23px}
+          .mo-world-grid--overview .mo-world-copy h3{font-size:clamp(1.55rem,2.15vw,2rem)}
+          .mo-world-grid--overview .mo-world-copy p{font-size:.84rem;line-height:1.62}
+
+          @media(max-width:960px){
+            .mo-hero + .mo-overview-section{padding-top:68px}
+            .mo-overview-section{padding-bottom:64px}
+            .mo-overview-intro{grid-template-columns:1fr;gap:20px;padding:27px;border-radius:28px}
+            .mo-overview-title{padding-right:0;padding-bottom:20px;text-align:center}
+            .mo-overview-title::after{top:auto;left:8%;right:8%;bottom:0;width:auto;height:1px;background:linear-gradient(90deg,transparent,rgba(163,67,63,.38),transparent)}
+            .mo-overview-title .mo-eyebrow{justify-content:center}
+            .mo-overview-title h2{font-size:clamp(2rem,6vw,3rem)}
+            .mo-overview-mark{width:76px;margin:17px auto 0}
+            .mo-overview-copy{gap:12px 16px}
+            .mo-world-grid--overview{grid-template-columns:1fr;gap:12px}
+            .mo-world-grid--overview .mo-world-card{display:grid;grid-template-columns:minmax(170px,42%) minmax(0,1fr);min-height:180px}
+            .mo-world-grid--overview .mo-world-card img{position:relative;inset:auto;width:100%;height:100%;min-height:180px;object-fit:cover}
+            .mo-world-grid--overview .mo-world-card::after{background:linear-gradient(90deg,rgba(20,7,13,.08) 16%,rgba(20,7,13,.9) 66%,rgba(20,7,13,.96) 100%)}
+            .mo-world-grid--overview .mo-world-copy{position:relative;inset:auto;z-index:4;align-self:center;padding:20px 19px}
+          }
+
+          @media(max-width:560px){
+            .mo-hero + .mo-overview-section{padding-top:58px}
+            .mo-overview-section{padding-bottom:54px}
+            .mo-overview-intro{margin-bottom:20px;padding:22px 18px;border-radius:26px}
+            .mo-overview-title h2{font-size:clamp(1.8rem,8vw,2.25rem);line-height:1.28}
+            .mo-overview-lead{font-size:1rem}
+            .mo-overview-copy{grid-template-columns:1fr;gap:10px}
+            .mo-overview-copy-wide{grid-column:auto}
+            .mo-overview-copy p{padding:14px;border-radius:18px;font-size:.9rem;line-height:1.82}
+            .mo-world-grid--overview .mo-world-card{grid-template-columns:minmax(120px,39%) minmax(0,1fr);min-height:160px;border-radius:22px}
+            .mo-world-grid--overview .mo-world-card::before{inset:7px;border-radius:15px}
+            .mo-world-grid--overview .mo-world-card img{min-height:160px}
+            .mo-world-grid--overview .mo-world-copy{padding:16px 14px}
+            .mo-world-grid--overview .mo-world-copy small{font-size:.6rem;letter-spacing:.1em}
+            .mo-world-grid--overview .mo-world-copy h3{font-size:1.18rem;line-height:1.32}
+            .mo-world-grid--overview .mo-world-copy p{font-size:.75rem;line-height:1.55}
+          }
+          CSS
+          sed -i 's/^          //' website-v4/assets/css/overview-v4.3.4.css
+      - name: Validate the real source and build output
+        working-directory: website-v4
+        run: |
+          npm run check
+          npm run test:data
+          npm run build:offline
+          node - <<'NODE'
+          const fs=require('fs');
+          const html=fs.readFileSync('dist/index.html','utf8');
+          if((html.match(/class="mo-overview-intro"/g)||[]).length!==1)throw new Error('Merged overview missing');
+          if((html.match(/<section[^>]*id="worlds"/g)||[]).length!==1)throw new Error('Worlds section count is not one');
+          if(html.includes('<section class="mo-section mo-section--paper" id="brand-origin">'))throw new Error('Brand Origin remains a separate section');
+          if((html.match(/class="mo-world-card"/g)||[]).length!==3)throw new Error('Three state cards changed');
+          console.log('Merged overview static assertions passed.');
+          NODE
+      - name: Commit maintained website source
+        run: |
+          git config user.name 'MagicOffice website maintenance'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add website-v4
+          git commit -m 'Merge homepage Brand Origin and Three States into one compact section'
+          git push origin HEAD:main
+      - name: Package the exact validated source
+        run: tar -czf MagicOffice_v4.3.4_OVERVIEW_MERGED_SOURCE.tgz -C website-v4 .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v4.3.4_OVERVIEW_MERGED_SOURCE
+          path: MagicOffice_v4.3.4_OVERVIEW_MERGED_SOURCE.tgz
+          if-no-files-found: error
+          retention-days: 14
