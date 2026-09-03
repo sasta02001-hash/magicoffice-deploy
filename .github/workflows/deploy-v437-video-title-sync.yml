@@ -1,0 +1,140 @@
+name: Deploy MagicOffice v4.3.7 corrected video title
+on:
+  push:
+    paths: ['.github/workflows/deploy-v437-video-title-sync.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_ORG_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+      VERCEL_PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+      RELEASE: magicoffice-v4.3.7-video-title-sync-2026-09-03
+      SOURCE_ID: 1TNDSaLHvxXWjUpKTrMZrG0YV3IpvrD0P
+      SOURCE_SHA: 27686947757551e2f710bc3ff2564b72802c06d8f8b16910ee200633b26fd013
+      VIDEO_SHA: c951db5697b28624d4394be2c151e28fc15cd17215ced51be97b31eef73b5e5f
+      VIDEO_NAME: MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4
+      DISPLAY_TITLE: MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download the verified source package and rebuild the selected video
+        run: |
+          set -euo pipefail
+          download_drive() {
+            local id="$1" output="$2"
+            for url in \
+              "https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t" \
+              "https://drive.google.com/uc?export=download&id=${id}&confirm=t"; do
+              if curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 240 "$url" -o "$output"; then
+                test -s "$output" && return 0
+              fi
+            done
+            return 1
+          }
+          rm -rf site
+          mkdir -p site
+          download_drive "$SOURCE_ID" /tmp/magicoffice-v437.tgz
+          echo "$SOURCE_SHA  /tmp/magicoffice-v437.tgz" | sha256sum -c -
+          tar -xzf /tmp/magicoffice-v437.tgz -C site
+          mkdir -p site/assets/video /tmp/magicoffice-video-parts
+          download_drive '1h2FpKw1g1fvOTa51uiIw4GXVuj6djzpD' /tmp/magicoffice-video-parts/part00
+          download_drive '1j6BQrz05v0lHMMNwn2w0ivAr4z4SU4gc' /tmp/magicoffice-video-parts/part01
+          download_drive '1Z27CCubSZTlQ1DypElOzSZpE3mUhxedo' /tmp/magicoffice-video-parts/part02
+          download_drive '1ba2AXGMpdLbuGKF-oitYLgEpGh0mEsSH' /tmp/magicoffice-video-parts/part03
+          cat /tmp/magicoffice-video-parts/part00 /tmp/magicoffice-video-parts/part01 /tmp/magicoffice-video-parts/part02 /tmp/magicoffice-video-parts/part03 > "site/assets/video/$VIDEO_NAME"
+          echo "$VIDEO_SHA  site/assets/video/$VIDEO_NAME" | sha256sum -c -
+          test "$(stat -c %s "site/assets/video/$VIDEO_NAME")" = '241646148'
+      - name: Validate source, title derivation and all existing site data
+        working-directory: site
+        run: |
+          set -euo pipefail
+          npm run check
+          npm run test:data
+          npm run build:offline
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          html=Path('dist/index.html').read_text(encoding='utf-8')
+          site=json.loads(Path('content/site.json').read_text(encoding='utf-8'))
+          expected='MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB'
+          checks={
+            'release': 'magicoffice-v4.3.7-video-title-sync-2026-09-03' in html,
+            'driveNameSource': site['hero']['driveDisplayName']==expected+'.mp4',
+            'extensionPolicy': site['hero']['captionPolicy']=='google-drive-display-name-without-extension',
+            'visibleTitle': f'<strong class="mo-cinema-caption-title">{expected}</strong>' in html,
+            'noVisibleExtension': f'mo-cinema-caption-title">{expected}.mp4' not in html,
+            'wrongPreviousTitleRemoved': 'MagiCofficec魔幻人物誌' not in html,
+            'styledCaption': 'assets/css/video-title-v4.3.7.css' in html,
+            'existingContent': html.count('class="mo-cast-card"')==16 and html.count('data-event-status="')==3 and html.count(' role="tab" data-menu-tab=')==2,
+          }
+          print(json.dumps(checks,ensure_ascii=False,indent=2))
+          failed=[name for name,ok in checks.items() if not ok]
+          if failed: raise SystemExit('Validation failed: '+', '.join(failed))
+          PY
+      - name: Configure the existing MagicOffice Vercel project
+        working-directory: site
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('vercel.json')
+          data=json.loads(path.read_text(encoding='utf-8'))
+          data['buildCommand']='npm run build:offline'
+          release='magicoffice-v4.3.7-video-title-sync-2026-09-03'
+          for rule in data.setdefault('headers',[]):
+              if rule.get('source')=='/(.*)':
+                  headers=[h for h in rule.setdefault('headers',[]) if h.get('key','').lower()!='x-magicoffice-release']
+                  headers.append({'key':'X-MagicOffice-Release','value':release})
+                  rule['headers']=headers
+          path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          PY
+          mkdir -p .vercel
+          printf '%s\n' '{"orgId":"team_44tkvxP20I5s9SUmlxfUEQM1","projectId":"prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D"}' > .vercel/project.json
+          npx --yes vercel@59.3.0 pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Build and deploy to the unchanged production domain
+        id: production
+        working-directory: site
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          npx --yes vercel@59.3.0 build --prod --token="$VERCEL_TOKEN"
+          url="$(npx --yes vercel@59.3.0 deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$url" > ../v437-production-url.txt
+      - name: Verify the real production page and video asset
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 36); do
+            if curl -fsS "https://magicoffice.vercel.app/?verify=v437-${attempt}" -o /tmp/index.html && grep -q "$RELEASE" /tmp/index.html; then
+              break
+            fi
+            sleep 5
+          done
+          grep -q "$RELEASE" /tmp/index.html
+          grep -q '<strong class="mo-cinema-caption-title">MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB</strong>' /tmp/index.html
+          ! grep -q 'mo-cinema-caption-title">MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4' /tmp/index.html
+          ! grep -q 'MagiCofficec魔幻人物誌' /tmp/index.html
+          curl -fsS -r 0-1023 "https://magicoffice.vercel.app/assets/video/$VIDEO_NAME?verify=v437" -o /tmp/video-head.bin
+          test "$(stat -c %s /tmp/video-head.bin)" -ge 1024
+          curl -fsSI "https://magicoffice.vercel.app/assets/css/video-title-v4.3.7.css?verify=v437" | grep -qE 'HTTP/[0-9.]+ 200'
+          printf 'release=%s\ndeployment=%s\nvisible_title=%s\nfile_extension_visible=false\nverified_at=%s\n' "$RELEASE" '${{ steps.production.outputs.url }}' "$DISPLAY_TITLE" "$(date -u +%FT%TZ)" > v437-production-receipt.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: MagicOffice_v437_video_title_production_receipt
+          path: |
+            v437-production-url.txt
+            v437-production-receipt.txt
+            site/dist/verification-report.json
+          if-no-files-found: warn
+          retention-days: 14
