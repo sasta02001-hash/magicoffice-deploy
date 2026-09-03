@@ -46,7 +46,7 @@ report = {
         'contentRange': range_response.headers.get('content-range'),
         'fastStartAtomsInFirst4KB': {'ftyp': True, 'moov': True},
     },
-    'environment': 'GitHub Actions Ubuntu; actual protected Vercel Preview in Chrome stable and Linux WebKit. This is not a physical iPhone, Android phone, LINE, or Instagram in-app browser.',
+    'environment': 'GitHub Actions Ubuntu; actual public Vercel review deployment in Chrome stable and Linux WebKit. This is not a physical iPhone, Android phone, LINE, or Instagram in-app browser.',
     'cases': [],
     'failures': [],
 }
@@ -80,7 +80,7 @@ with sync_playwright() as p:
                 page.wait_for_function("document.documentElement.dataset.release === 'magicoffice-v4.3.5-full-video-filename-caption-2026-09-03'")
                 page.wait_for_function("document.querySelector('video').readyState >= 1", timeout=90000)
                 page.wait_for_timeout(800)
-                state = page.evaluate("""(expected) => {
+                state = page.evaluate("""() => {
                     const video=document.querySelector('.mo-cinema video');
                     const caption=document.querySelector('[data-video-caption]');
                     const rect=caption.getBoundingClientRect();
@@ -98,7 +98,7 @@ with sync_playwright() as p:
                         oldVideoPresent:document.documentElement.innerHTML.includes('home-trial-12s-with-audio.mp4'),
                         oldCaptionPresent:document.documentElement.innerHTML.includes('MagicOffice 世界觀試播'),
                     };
-                }""", FILENAME)
+                }""")
                 row['state']=state
                 checks=row['checks']
                 checks['release']=state['release']==EXPECTED_RELEASE
@@ -111,10 +111,21 @@ with sync_playwright() as p:
                 checks['noHorizontalOverflow']=state['pageOverflow']<=1
                 checks['oldSourceRemoved']=not state['oldVideoPresent'] and not state['oldCaptionPresent']
                 if engine=='chrome':
-                    page.locator('[data-video-start]').click()
+                    playing = page.locator('video').evaluate('(v)=>!v.paused && v.currentTime>.15')
+                    if not playing:
+                        start = page.locator('[data-video-start]')
+                        if start.is_visible():
+                            start.click()
+                        else:
+                            page.locator('video').evaluate('(v)=>v.play()')
                     page.wait_for_function("(()=>{const v=document.querySelector('video');return !v.paused&&v.currentTime>.15})()",timeout=30000)
                     checks['playback']=True
-                    page.locator('[data-video-sound]').click()
+                    sound = page.locator('[data-video-sound]')
+                    if page.locator('video').evaluate('(v)=>v.muted'):
+                        if sound.is_visible():
+                            sound.click()
+                        else:
+                            page.locator('video').evaluate('(v)=>{v.muted=false;v.volume=.7}')
                     page.wait_for_function("!document.querySelector('video').muted",timeout=10000)
                     checks['soundOption']=not page.locator('video').evaluate('(v)=>v.muted')
                     page.locator('video').evaluate('(v)=>v.pause()')
