@@ -19,9 +19,9 @@ jobs:
           python -m pip install --quiet requests playwright==1.55.0
           python -m playwright install --with-deps chrome webkit
           sudo apt-get install -y -qq fonts-noto-cjk
-      - name: Verify the actual protected Vercel Preview
+      - name: Verify the actual public Vercel review deployment
         env:
-          CHECK_URL: https://magicoffice-e6f34vvvn-magicoffice.vercel.app/?_vercel_share=ln08XmlkoyQujZFwTN6BBWPqu9wzBP1p
+          CHECK_URL: https://magicoffice-video-review.vercel.app/
         run: python qa/v435-video-check.py
       - name: Store actual browser screenshots and report
         if: always()
