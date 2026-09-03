@@ -1,0 +1,171 @@
+name: Deploy v4.3.9 centered video caption
+on:
+  push:
+    paths: ['.github/workflows/deploy-v439-caption-center.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VERCEL_ORG_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+      VERCEL_PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+      RELEASE: magicoffice-v4.3.9-video-caption-centered-2026-09-03
+      SOURCE_ID: 1V2mtf_qaPZWBa4wELmZ0xtgySSnps5_f
+      VIDEO_ID: 1LDyVVsaMrjK1U7eu5PBf1mVLrCgg0YrF
+      VIDEO_NAME: MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download the current approved v4.3.8 source and exact video
+        run: |
+          set -euo pipefail
+          mkdir site
+          curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 180 \
+            "https://drive.usercontent.google.com/download?id=${SOURCE_ID}&export=download&confirm=t" \
+            -o /tmp/site.tgz
+          test "$(stat -c%s /tmp/site.tgz)" -eq 6533224
+          tar -xzf /tmp/site.tgz -C site
+          mkdir -p site/assets/video
+          curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 300 \
+            "https://drive.usercontent.google.com/download?id=${VIDEO_ID}&export=download&confirm=t" \
+            -o "site/assets/video/${VIDEO_NAME}"
+          test "$(stat -c%s "site/assets/video/${VIDEO_NAME}")" -eq 241646148
+      - name: Center the visible Drive title directly below the video without changing any other setting
+        run: |
+          set -euo pipefail
+          cat > site/assets/css/video-caption-center-v4.3.9.css <<'CSS'
+          /* v4.3.9 — keep the Drive display title directly below and centered to the video frame. */
+          .mo-cinema-wrap{
+            width:100%;
+          }
+          .mo-cinema-caption[data-video-display-name]{
+            box-sizing:border-box;
+            width:100%;
+            max-width:none;
+            margin:14px 0 0;
+            padding:10px 12px 2px;
+            justify-items:center;
+            align-items:center;
+            text-align:center;
+          }
+          .mo-cinema-caption-label,
+          .mo-cinema-caption-title{
+            width:100%;
+            margin-inline:auto;
+            text-align:center;
+          }
+          @media(max-width:960px){
+            .mo-cinema-caption[data-video-display-name]{
+              margin-top:11px;
+              padding-inline:8px;
+            }
+          }
+          CSS
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          root = Path('site')
+          template = root / 'src/index.template.html'
+          html = template.read_text(encoding='utf-8')
+          old_release = 'magicoffice-v4.3.8-autoplay-poster-fallback-2026-09-03'
+          new_release = 'magicoffice-v4.3.9-video-caption-centered-2026-09-03'
+          if old_release not in html:
+              raise RuntimeError('Current v4.3.8 release marker was not found; stop instead of altering another version')
+          html = html.replace(old_release, new_release)
+          anchor = '<link href="assets/css/video-autoplay-v4.3.8.css?v={{BUILD_VERSION}}" rel="stylesheet"/>'
+          extra = anchor + '\n<link href="assets/css/video-caption-center-v4.3.9.css?v={{BUILD_VERSION}}" rel="stylesheet"/>'
+          if html.count(anchor) != 1:
+              raise RuntimeError('Could not locate the exact autoplay stylesheet insertion point')
+          html = html.replace(anchor, extra)
+          if 'MagiCofficec魔幻世界人物誌' not in html:
+              raise RuntimeError('The verified Google Drive display title changed unexpectedly')
+          if 'data-video-start' in html or 'mo-cinema-start' in html:
+              raise RuntimeError('A blocking custom play button returned unexpectedly')
+          template.write_text(html, encoding='utf-8')
+
+          site_path = root / 'content/site.json'
+          site = json.loads(site_path.read_text(encoding='utf-8'))
+          hero = site.get('hero', {})
+          assert hero.get('driveDisplayName') == 'MagiCofficec魔幻世界人物誌'
+          assert hero.get('autoplay') is True
+          assert hero.get('fallbackPoster') is True
+          site['version'] = 'production-v4.3.9-video-caption-centered'
+          site['release'] = new_release
+          hero['captionPlacement'] = 'centered-directly-below-video'
+          hero['displayTitleUpdateRule'] = '每次置換影片時，先讀取指定 Google Drive 檔案的 display_title；官網只顯示該名稱、不顯示副檔名，並置中於影片正下方。'
+          site['hero'] = hero
+          site_path.write_text(json.dumps(site, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          package_path = root / 'package.json'
+          package = json.loads(package_path.read_text(encoding='utf-8'))
+          package['version'] = '4.3.9'
+          package_path.write_text(json.dumps(package, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          vercel_path = root / 'vercel.json'
+          vercel = json.loads(vercel_path.read_text(encoding='utf-8'))
+          vercel['buildCommand'] = 'npm run build:offline'
+          for rule in vercel.get('headers', []):
+              if rule.get('source') == '/(.*)':
+                  headers = [h for h in rule.get('headers', []) if h.get('key','').lower() != 'x-magicoffice-release']
+                  headers.append({'key':'X-MagicOffice-Release','value':new_release})
+                  rule['headers'] = headers
+          vercel_path.write_text(json.dumps(vercel, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+      - name: Validate all existing functionality and build output
+        working-directory: site
+        run: |
+          set -euo pipefail
+          npm run check
+          npm run test:data
+          npm run build:offline
+          grep -q "$RELEASE" dist/index.html
+          grep -q 'video-caption-center-v4.3.9.css' dist/index.html
+          grep -q '>MagiCofficec魔幻世界人物誌<' dist/index.html
+          ! grep -q 'data-video-start' dist/index.html
+          grep -q ' autoplay' dist/index.html
+          grep -q ' poster=' dist/index.html
+          test "$(grep -o 'class="mo-cast-card"' dist/index.html | wc -l)" -eq 16
+          test "$(grep -o 'data-event-status="' dist/index.html | wc -l)" -eq 3
+          test "$(grep -o ' role="tab" data-menu-tab=' dist/index.html | wc -l)" -eq 2
+      - name: Link and deploy the unchanged official project
+        id: deploy
+        working-directory: site
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p .vercel
+          printf '%s\n' '{"orgId":"team_44tkvxP20I5s9SUmlxfUEQM1","projectId":"prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D"}' > .vercel/project.json
+          npx --yes vercel@59.3.0 pull --yes --environment=production --token="$VERCEL_TOKEN"
+          npx --yes vercel@59.3.0 build --prod --token="$VERCEL_TOKEN"
+          URL="$(npx --yes vercel@59.3.0 deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+      - name: Verify the original production URL
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            curl -fsS "https://magicoffice.vercel.app/?verify=v439-${attempt}" -o /tmp/index.html || true
+            if grep -q "$RELEASE" /tmp/index.html 2>/dev/null; then break; fi
+            sleep 4
+          done
+          grep -q "$RELEASE" /tmp/index.html
+          grep -q 'video-caption-center-v4.3.9.css' /tmp/index.html
+          grep -q '>MagiCofficec魔幻世界人物誌<' /tmp/index.html
+          ! grep -q 'data-video-start' /tmp/index.html
+          curl -fsS 'https://magicoffice.vercel.app/assets/css/video-caption-center-v4.3.9.css' -o /tmp/caption.css
+          grep -q 'text-align:center' /tmp/caption.css
+          grep -q 'width:100%' /tmp/caption.css
+          printf 'release=%s\ndeployment=%s\nverified_at=%s\n' "$RELEASE" '${{ steps.deploy.outputs.url }}' "$(date -u +%FT%TZ)" > v439-production-receipt.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: MagicOffice_v439_caption_center_receipt
+          path: v439-production-receipt.txt
+          if-no-files-found: warn
+          retention-days: 14
