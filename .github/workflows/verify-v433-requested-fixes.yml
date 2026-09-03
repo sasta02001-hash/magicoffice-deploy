@@ -1,0 +1,32 @@
+name: Verify v4.3.3 requested fixes on the actual deployment
+on:
+  push:
+    paths: ['.github/workflows/verify-v433-requested-fixes.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser engines
+        run: |
+          python -m pip install --quiet requests playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Check actual preview, not local mocked responses
+        env:
+          CHECK_URL: https://magicoffice-i08ksi306-magicoffice.vercel.app/?_vercel_share=xM64QvxKigcNbQsKTHkXI76ilVGZbnxe
+        run: python qa/v433-browser-check.py
+      - name: Store actual screenshots and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v433_actual_browser_checks
+          path: v433-browser-evidence/
+          if-no-files-found: error
+          retention-days: 14
