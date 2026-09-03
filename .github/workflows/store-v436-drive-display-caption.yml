@@ -30,13 +30,15 @@ jobs:
           const fs=require('fs');
           const site=JSON.parse(fs.readFileSync('website-v4/content/site.json','utf8'));
           const html=fs.readFileSync('website-v4/src/index.template.html','utf8');
+          const build=fs.readFileSync('website-v4/scripts/build.mjs','utf8');
           const expected='MagiCofficec魔幻人物誌.mp4';
           const technical='MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4';
           if(site.hero.driveDisplayName!==expected)throw new Error('Drive display name is not preserved');
           if(site.hero.sourceFileName!==technical)throw new Error('Technical source filename changed');
           if(site.hero.captionPolicy!=='google-drive-display-name')throw new Error('Caption policy changed');
-          if(!html.includes(`<p class="mo-cinema-caption" data-video-display-name>${expected}</p>`))throw new Error('Template does not show Drive display name');
-          if(html.includes(`<p class="mo-cinema-caption" data-video-display-name>${technical}</p>`))throw new Error('Technical filename remains visible');
+          if(!html.includes('<p class="mo-cinema-caption" data-video-display-name>{{HERO_VIDEO_DISPLAY_NAME}}</p>'))throw new Error('Template display-name placeholder is missing');
+          if(!build.includes("const heroVideoDisplayName = site.hero?.driveDisplayName"))throw new Error('Build does not source the visible caption from Drive display name');
+          if(html.includes(`<p class="mo-cinema-caption" data-video-display-name>${technical}</p>`))throw new Error('Technical filename is hard-coded as visible text');
           console.log('Google Drive display-name caption policy verified.');
           NODE
       - name: Commit the maintainable source change
