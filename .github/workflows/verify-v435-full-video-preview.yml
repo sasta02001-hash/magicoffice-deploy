@@ -31,3 +31,4 @@ jobs:
           path: v435-video-evidence/
           if-no-files-found: error
           retention-days: 14
+      # The playback assertion accepts successful muted autoplay before testing sound.
