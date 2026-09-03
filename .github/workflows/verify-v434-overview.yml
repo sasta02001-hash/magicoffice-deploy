@@ -1,0 +1,33 @@
+name: Verify v4.3.4 merged homepage overview
+on:
+  push:
+    paths: ['.github/workflows/verify-v434-overview.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install codec-enabled Chrome, WebKit and Chinese fonts
+        run: |
+          python -m pip install --quiet playwright==1.55.0
+          python -m playwright install --with-deps chrome webkit
+          sudo apt-get install -y -qq fonts-noto-cjk
+      - name: Verify actual protected Preview
+        env:
+          CHECK_URL: https://magicoffice-7suzudfxx-magicoffice.vercel.app/?_vercel_share=v7JmBOlmoJA9LePmt98PcXpmXsluQsxX
+        run: python qa/v434-overview-check.py
+      - name: Store screenshots and browser report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v434_PREVIEW_overview_checks
+          path: v434-overview-evidence/
+          if-no-files-found: error
+          retention-days: 14
