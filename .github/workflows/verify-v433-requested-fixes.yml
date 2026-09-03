@@ -20,15 +20,15 @@ jobs:
           python -m playwright install --with-deps chrome webkit
           sudo apt-get install -y -qq fonts-noto-cjk
           google-chrome --version
-      - name: Check actual review deployment from the identical SHA-verified source
+      - name: Check the actual official production domain
         env:
-          CHECK_URL: https://magicoffice-review.vercel.app/
+          CHECK_URL: https://magicoffice.vercel.app/?verify=433-responsive-feedback
         run: python qa/v433-browser-check.py
-      - name: Store actual screenshots and results
+      - name: Store actual production screenshots and results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: MagicOffice_v433_actual_browser_checks
+          name: MagicOffice_v433_PRODUCTION_browser_checks
           path: v433-browser-evidence/
           if-no-files-found: error
           retention-days: 14
