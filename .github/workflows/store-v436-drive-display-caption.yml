@@ -1,0 +1,53 @@
+name: Preserve v4.3.6 Google Drive display-name caption policy
+on:
+  push:
+    paths: ['.github/workflows/store-v436-drive-display-caption.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  preserve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Overlay the SHA-verified v4.3.6 source while preserving the hosted video binary
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 --retry-delay 2 --max-time 180 'https://drive.usercontent.google.com/download?id=1b3L4eu4Xf5tCK3b6zyHcq3hlGJQJHexY&export=download&confirm=t' -o /tmp/v436-source.tgz
+          echo '393cf3644d11d638c81ee6d1d58d88cd162df050ebf7242a5137bdbfae9379d9  /tmp/v436-source.tgz' | sha256sum -c -
+          tar -xzf /tmp/v436-source.tgz -C website-v4
+          node --check website-v4/scripts/build.mjs
+          node --check website-v4/scripts/validate.mjs
+          node --check website-v4/assets/js/app.js
+          node --check website-v4/assets/js/menu-view.js
+          node - <<'NODE'
+          const fs=require('fs');
+          const site=JSON.parse(fs.readFileSync('website-v4/content/site.json','utf8'));
+          const html=fs.readFileSync('website-v4/src/index.template.html','utf8');
+          const expected='MagiCofficec魔幻人物誌.mp4';
+          const technical='MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4';
+          if(site.hero.driveDisplayName!==expected)throw new Error('Drive display name is not preserved');
+          if(site.hero.sourceFileName!==technical)throw new Error('Technical source filename changed');
+          if(site.hero.captionPolicy!=='google-drive-display-name')throw new Error('Caption policy changed');
+          if(!html.includes(`<p class="mo-cinema-caption" data-video-display-name>${expected}</p>`))throw new Error('Template does not show Drive display name');
+          if(html.includes(`<p class="mo-cinema-caption" data-video-display-name>${technical}</p>`))throw new Error('Technical filename remains visible');
+          console.log('Google Drive display-name caption policy verified.');
+          NODE
+      - name: Commit the maintainable source change
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice website maintenance'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add website-v4
+          if git diff --cached --quiet; then
+            echo 'Source already matches v4.3.6.'
+          else
+            git commit -m 'Use Google Drive display name for the homepage video caption'
+            git push origin HEAD:main
+          fi
