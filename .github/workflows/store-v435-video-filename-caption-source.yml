@@ -1,0 +1,65 @@
+name: Preserve MagicOffice v4.3.5 video source and filename-caption policy
+on:
+  push:
+    paths: ['.github/workflows/store-v435-video-filename-caption-source.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  preserve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Import the SHA-verified v4.3.5 source archive
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 180 \
+            'https://drive.usercontent.google.com/download?id=18U0_46VtUOfNE9_rrAx36R4r2Me7zQOD&export=download&confirm=t' \
+            -o /tmp/MagicOffice_v4.3.5.tgz
+          echo 'bd6d8266ed81223bdceeafeaab022776d566d71b5753f883deb5f15042081d2a  /tmp/MagicOffice_v4.3.5.tgz' | sha256sum -c -
+          rm -rf /tmp/v435-source
+          mkdir -p /tmp/v435-source
+          tar -xzf /tmp/MagicOffice_v4.3.5.tgz -C /tmp/v435-source
+          test "$(node -p "require('/tmp/v435-source/package.json').version")" = '4.3.5'
+          grep -q 'magicoffice-v4.3.5-full-video-filename-caption-2026-09-03' /tmp/v435-source/src/index.template.html
+          grep -q 'MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4' /tmp/v435-source/content/hero-video-source.json
+          test ! -f /tmp/v435-source/assets/video/MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4
+          mkdir -p website-v4
+          rsync -a --delete --exclude='dist/' --exclude='node_modules/' --exclude='.vercel/' /tmp/v435-source/ website-v4/
+      - name: Validate source without committing the 231 MB media binary
+        working-directory: website-v4
+        run: |
+          set -euo pipefail
+          npm run check
+          node - <<'NODE'
+          const fs=require('fs');
+          const site=JSON.parse(fs.readFileSync('content/site.json','utf8'));
+          const manifest=JSON.parse(fs.readFileSync('content/hero-video-source.json','utf8'));
+          if(site.hero.filename!==manifest.filename) throw new Error('site filename and media manifest differ');
+          if(site.hero.caption!==manifest.filename) throw new Error('caption must exactly equal Google Drive filename');
+          if(manifest.sha256!=='c951db5697b28624d4394be2c151e28fc15cd17215ced51be97b31eef73b5e5f') throw new Error('unexpected video hash');
+          if(manifest.parts.length!==4) throw new Error('large media parts missing');
+          NODE
+          if find . -type f -size +90M | grep -q .; then
+            echo 'A file larger than 90 MB would be committed; aborting.' >&2
+            find . -type f -size +90M -ls
+            exit 1
+          fi
+      - name: Commit the maintainable website source
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice website maintenance'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add website-v4
+          if git diff --cached --quiet; then
+            echo 'No source changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Use full MagicOffice video and exact Google Drive filename caption'
+          git push origin HEAD:main
