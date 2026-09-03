@@ -1,0 +1,306 @@
+name: Deploy v4.3.11 audible-first hero video
+on:
+  push:
+    paths: ['.github/workflows/deploy-v4311-audible-autoplay.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      RELEASE: magicoffice-v4.3.11-audible-autoplay-2026-09-03
+      VERCEL_ORG_ID: team_44tkvxP20I5s9SUmlxfUEQM1
+      VERCEL_PROJECT_ID: prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Apply audible-first playback policy to maintained source
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, re
+
+          root = Path('website-v4')
+          release = 'magicoffice-v4.3.11-audible-autoplay-2026-09-03'
+          version = 'production-v4.3.11-audible-autoplay'
+
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise RuntimeError(f'{label}: expected exactly one match, found {count}')
+              return text.replace(old, new)
+
+          # HTML: no custom overlay, no muted attribute, audible state by default.
+          index_path = root / 'src/index.template.html'
+          html = index_path.read_text(encoding='utf-8')
+          html = re.sub(r'magicoffice-v4\.3\.\d+[^\"]*-2026-09-03', release, html, count=1)
+          html = replace_once(
+              html,
+              '<link href="assets/css/video-v4.3.5.css?v={{BUILD_VERSION}}" rel="stylesheet"/>',
+              '<link href="assets/css/video-title-v4.3.7.css?v={{BUILD_VERSION}}" rel="stylesheet"/>\n<link href="assets/css/video-autoplay-v4.3.8.css?v={{BUILD_VERSION}}" rel="stylesheet"/>\n<link href="assets/css/video-caption-center-v4.3.10.css?v={{BUILD_VERSION}}" rel="stylesheet"/>\n<link href="assets/css/video-audio-v4.3.11.css?v={{BUILD_VERSION}}" rel="stylesheet"/>',
+              'video stylesheet links',
+          )
+          html = replace_once(
+              html,
+              '<div aria-label="MagicOffice 完整有聲影片" class="mo-cinema" data-state="idle" data-video-ready="false" data-audio-state="muted">',
+              '<div aria-label="{{HERO_DISPLAY_TITLE}} 有聲影片" class="mo-cinema" data-state="idle" data-video-ready="false" data-audio-state="audible" data-autoplay="true" data-loop="false">',
+              'cinema state',
+          )
+          html = replace_once(
+              html,
+              '<video autoplay="" controls="" controlslist="nodownload noplaybackrate" disablepictureinpicture="" loop="" muted="" playsinline="" poster="assets/images/hero/hero-poster.webp" preload="metadata" src="{{HERO_VIDEO}}" data-source-filename="{{HERO_FILENAME}}" webkit-playsinline=""></video>',
+              '<video autoplay="" controls="" controlslist="nodownload noplaybackrate" data-default-audio="audible" disablepictureinpicture="" playsinline="" poster="assets/images/hero/hero-poster.webp" preload="metadata" src="{{HERO_VIDEO}}" data-source-filename="{{HERO_FILENAME}}" webkit-playsinline=""></video>',
+              'video element',
+          )
+          html = replace_once(
+              html,
+              '<div class="mo-cinema-start"><button type="button" data-video-start><span aria-hidden="true">▶</span><b>播放影片</b><small>點擊後可開啟聲音</small></button></div>\n<button type="button" class="mo-video-sound-overlay" data-video-sound aria-label="開啟影片聲音"><span aria-hidden="true">🔇</span><b>開啟聲音</b></button>\n',
+              '',
+              'custom video overlays',
+          )
+          html = replace_once(
+              html,
+              '<p class="mo-cinema-caption" data-video-caption aria-label="影片內容標註">{{HERO_FILENAME}}</p><span class="mo-sr-only" data-video-status role="status" aria-live="polite"></span>',
+              '<p class="mo-cinema-caption" data-video-display-name aria-label="影片內容：{{HERO_DISPLAY_TITLE}}">\n<span class="mo-cinema-caption-label" aria-hidden="true">影片內容</span>\n<strong class="mo-cinema-caption-title">{{HERO_DISPLAY_TITLE}}</strong>\n</p><span class="mo-sr-only" data-video-status role="status" aria-live="polite"></span>',
+              'Drive display title caption',
+          )
+          index_path.write_text(html, encoding='utf-8')
+
+          # Build: keep the media source filename separate from the visitor-facing Drive display title.
+          build_path = root / 'scripts/build.mjs'
+          build = build_path.read_text(encoding='utf-8')
+          build = replace_once(
+              build,
+              "const heroFilename = String(site.hero?.filename || path.basename(heroVideo));\nif (!heroVideo || !heroFilename) throw new Error('content/site.json hero.video and hero.filename are required');\nhtml = html.replaceAll('{{HERO_VIDEO}}', esc(heroVideo)).replaceAll('{{HERO_FILENAME}}', esc(heroFilename));",
+              "const heroFilename = String(site.hero?.filename || path.basename(heroVideo));\nconst heroDisplayTitle = String(site.hero?.displayTitle || site.hero?.driveDisplayName || heroFilename.replace(/\\.[^./\\\\]+$/, '')).trim();\nif (!heroVideo || !heroFilename || !heroDisplayTitle) throw new Error('content/site.json hero.video, hero.filename and hero.displayTitle are required');\nhtml = html.replaceAll('{{HERO_VIDEO}}', esc(heroVideo)).replaceAll('{{HERO_FILENAME}}', esc(heroFilename)).replaceAll('{{HERO_DISPLAY_TITLE}}', esc(heroDisplayTitle));",
+              'hero display title build mapping',
+          )
+          build_path.write_text(build, encoding='utf-8')
+
+          # JavaScript: attempt autoplay with sound; never silently downgrade to muted autoplay.
+          app_path = root / 'assets/js/app.js'
+          app = app_path.read_text(encoding='utf-8')
+          caption_pattern = re.compile(
+              r"    const caption = \$\('\[data-video-caption\]'\);\n    if \(!video\) return;\n\n    const syncFilenameCaption = \(\) => \{.*?\n    \};\n    syncFilenameCaption\(\);",
+              re.S,
+          )
+          caption_replacement = """    const caption = $('[data-video-display-name]', cinema);
+    const captionTitle = caption ? $('.mo-cinema-caption-title', caption) : null;
+    if (!video) return;
+
+    const syncFilenameCaption = () => {
+      const displayTitle = String(site?.hero?.displayTitle || site?.hero?.driveDisplayName || site?.hero?.caption || '')
+        .replace(/\\.[^./\\\\]+$/, '').trim();
+      if (captionTitle && displayTitle) captionTitle.textContent = displayTitle;
+      if (caption && displayTitle) caption.setAttribute('aria-label', `影片內容：${displayTitle}`);
+    };
+    syncFilenameCaption();"""
+          app, count = caption_pattern.subn(caption_replacement, app, count=1)
+          if count != 1:
+              raise RuntimeError(f'caption JS: expected one match, found {count}')
+          app = replace_once(app, 'const safePlay = async ({ audible = false } = {}) => {', 'const safePlay = async ({ audible = true } = {}) => {', 'safePlay default')
+          app = replace_once(
+              app,
+              "        setState(hasPlayed ? 'paused' : 'idle', '瀏覽器阻擋自動播放，請按「播放影片」。');",
+              "        setState(hasPlayed ? 'paused' : 'idle', '瀏覽器阻擋有聲自動播放；封面會保留，使用影片原生控制列即可有聲播放。');",
+              'autoplay blocked status',
+          )
+          app = replace_once(
+              app,
+              '    video.defaultMuted = true;\n    video.muted = true;\n    video.loop = true;',
+              '    video.defaultMuted = false;\n    video.muted = false;\n    video.loop = false;',
+              'default audio state',
+          )
+          app = app.replace("setState(hasPlayed ? cinema.dataset.state : 'ready', '影片已就緒，可直接播放並開啟聲音。');", "setState(hasPlayed ? cinema.dataset.state : 'ready', '影片已就緒，將優先以有聲模式播放。');")
+          app = app.replace("if (!hasPlayed && cinema.dataset.state === 'loading') setState('ready', '影片已就緒，可直接播放並開啟聲音。');", "if (!hasPlayed && cinema.dataset.state === 'loading') setState('ready', '影片已就緒，將優先以有聲模式播放。');")
+          app = replace_once(
+              app,
+              "    setState('idle', '載入前顯示正式封面；播放失敗時不會出現黑框。');",
+              "    setState('idle', '將嘗試有聲自動播放；若瀏覽器阻擋，會保留正式封面。');",
+              'initial video status',
+          )
+          app = replace_once(app, "requestAnimationFrame(() => safePlay());", "requestAnimationFrame(() => safePlay({ audible: true }));", 'initial audible autoplay')
+          app = replace_once(app, "document.addEventListener('visibilitychange', () => { if (!document.hidden && !hasPlayed && !loadFailed) safePlay(); });", "document.addEventListener('visibilitychange', () => { if (!document.hidden && !hasPlayed && !loadFailed) safePlay({ audible: true }); });", 'audible retry')
+          app_path.write_text(app, encoding='utf-8')
+
+          # Public configuration: preserve the Drive display title and explicitly record the sound policy.
+          site_path = root / 'content/site.json'
+          site = json.loads(site_path.read_text(encoding='utf-8'))
+          site['version'] = version
+          site['release'] = release
+          site['updatedAt'] = '2026-09-03'
+          hero = site.setdefault('hero', {})
+          hero.update({
+              'filename': 'MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4',
+              'sourceFileName': 'MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4',
+              'driveFileId': '1LDyVVsaMrjK1U7eu5PBf1mVLrCgg0YrF',
+              'driveFileName': 'MagiCofficec魔幻世界人物誌.mp4',
+              'driveDisplayName': 'MagiCofficec魔幻世界人物誌',
+              'displayTitle': 'MagiCofficec魔幻世界人物誌',
+              'caption': 'MagiCofficec魔幻世界人物誌',
+              'captionPolicy': 'google-drive-display-title',
+              'autoplay': True,
+              'mutedAutoplay': False,
+              'defaultAudioState': 'audible',
+              'defaultVolume': 0.7,
+              'loop': False,
+              'fallbackPoster': True,
+              'playbackPolicy': '進站後先嘗試有聲自動播放；若瀏覽器政策阻擋，不改成靜音播放，保留正式封面與原生控制列，使用者按下播放時聲音預設開啟。',
+              'captionPlacement': 'label-and-video-title-centered-directly-below-video',
+              'displayTitleUpdateRule': '每次置換影片時先讀取指定 Google Drive 檔案的顯示名稱；官網不顯示副檔名，名稱置中於影片正下方。',
+          })
+          site['contentManagement']['hero'] = 'content/site.json + Google Drive 顯示名稱 + 分段影音來源；優先有聲自動播放，受阻時保留封面且不靜音降級'
+          site_path.write_text(json.dumps(site, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          manifest_path = root / 'content/hero-video-source.json'
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          manifest['sourceLabel'] = 'Google Drive technical source filename; visitor-facing title comes from content/site.json hero.displayTitle without the extension'
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          package_path = root / 'package.json'
+          package = json.loads(package_path.read_text(encoding='utf-8'))
+          package['version'] = '4.3.11'
+          package_path.write_text(json.dumps(package, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          # Validation now enforces audible-first markup and no custom overlay.
+          validate_path = root / 'scripts/validate.mjs'
+          validate = validate_path.read_text(encoding='utf-8')
+          validate = replace_once(
+              validate,
+              "  site.hero.video, 'MAGICOFFICE', 'application/ld+json', 'data-video-sound', 'data-video-start',",
+              "  site.hero.video, 'MAGICOFFICE', 'application/ld+json', 'data-video-display-name', 'data-default-audio=\"audible\"',",
+              'validation required tokens',
+          )
+          validate = replace_once(
+              validate,
+              "assert(html.includes('data-video-caption') && html.includes(`>${expectedHeroFilename}</p>`), '影片下方標註必須與 Google Drive 檔名完全相同');",
+              "const expectedHeroDisplayTitle = site.hero?.displayTitle;\nassert(expectedHeroDisplayTitle && html.includes('data-video-display-name') && html.includes(`<strong class=\"mo-cinema-caption-title\">${expectedHeroDisplayTitle}</strong>`), '影片下方必須顯示 Google Drive 顯示名稱且不含副檔名');\nconst heroVideoTag = html.match(/<video[^>]*data-default-audio=\"audible\"[^>]*>/)?.[0] || '';\nassert(heroVideoTag.includes('autoplay') && !/\\smuted(?:=|\\s|>)/.test(heroVideoTag) && !/\\sloop(?:=|\\s|>)/.test(heroVideoTag), '首頁影片必須優先有聲自動播放，且不得靜音或循環');\nassert(!html.includes('data-video-start') && !html.includes('mo-video-sound-overlay'), '不得重新加入擋住影片的自製播放或聲音按鈕');",
+              'caption and autoplay validation',
+          )
+          validate_path.write_text(validate, encoding='utf-8')
+
+          # Vercel remote build downloads the verified split video rather than uploading a 241 MB source file.
+          vercel_path = root / 'vercel.json'
+          vercel = json.loads(vercel_path.read_text(encoding='utf-8'))
+          vercel['buildCommand'] = 'npm run build:offline'
+          for rule in vercel.get('headers', []):
+              if rule.get('source') == '/(.*)':
+                  headers = [h for h in rule.get('headers', []) if h.get('key', '').lower() != 'x-magicoffice-release']
+                  headers.append({'key': 'X-MagicOffice-Release', 'value': release})
+                  rule['headers'] = headers
+          if not any(rule.get('source') == '/' for rule in vercel.get('headers', [])):
+              vercel['headers'].insert(-1, {'source': '/', 'headers': [{'key': 'Cache-Control', 'value': 'no-cache, no-store, must-revalidate'}]})
+          vercel_path.write_text(json.dumps(vercel, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          (root / '.vercelignore').write_text('assets/video/*.mp4\ndist/\nverification/\nnode_modules/\n.vercel/\n', encoding='utf-8')
+
+          readme_path = root / 'README.md'
+          readme = readme_path.read_text(encoding='utf-8')
+          note = '''\n## v4.3.11 audible-first playback\n\nThe hero video is configured to attempt autoplay with sound at volume 0.7. Do not add the HTML `muted` attribute and do not silently retry in muted mode. Browsers may block audible autoplay; in that case the official poster remains visible and the native video controls start playback with sound after a user gesture.\n'''
+          if '## v4.3.11 audible-first playback' not in readme:
+              readme_path.write_text(readme.rstrip() + '\n' + note, encoding='utf-8')
+          PY
+      - name: Add current title, autoplay, centering and sound styles
+        run: |
+          cat > website-v4/assets/css/video-title-v4.3.7.css <<'CSS'
+          .mo-cinema-caption[data-video-display-name]{display:grid;justify-items:center;gap:7px;width:min(100%,780px);margin:15px auto 0;padding:9px 18px 2px;text-align:center;color:#f5e7e4}.mo-cinema-caption-label{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;color:#d9ae7a;font-size:.72rem;font-weight:700;line-height:1;letter-spacing:.22em}.mo-cinema-caption-label::before,.mo-cinema-caption-label::after{content:"";flex:0 1 76px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,193,139,.86))}.mo-cinema-caption-label::after{transform:scaleX(-1)}.mo-cinema-caption-title{display:block;max-width:100%;color:#f4ddd6;font-family:var(--font-serif);font-size:clamp(1.02rem,1.38vw,1.3rem);font-weight:650;line-height:1.48;letter-spacing:.035em;overflow-wrap:anywhere;text-wrap:balance;text-shadow:0 2px 16px rgba(0,0,0,.58),0 0 18px rgba(218,151,128,.16)}@media(max-width:960px){.mo-cinema-caption[data-video-display-name]{margin-top:11px;padding-inline:8px}.mo-cinema-caption-title{font-size:clamp(.94rem,3.8vw,1.12rem);line-height:1.5;letter-spacing:.02em}}@media(max-width:420px){.mo-cinema-caption-label{font-size:.66rem;letter-spacing:.18em}.mo-cinema-caption-title{font-size:.91rem;line-height:1.48}}
+          CSS
+          cat > website-v4/assets/css/video-autoplay-v4.3.8.css <<'CSS'
+          .mo-cinema-start,.mo-video-sound-overlay{display:none!important}.mo-cinema video{z-index:4;opacity:1;transition:opacity .26s ease}.mo-cinema .mo-poster,.mo-cinema .mo-poster-wordmark{opacity:0!important;visibility:hidden!important;pointer-events:none!important}.mo-cinema[data-state="error"] video{opacity:0}.mo-cinema[data-state="error"] .mo-poster,.mo-cinema[data-state="error"] .mo-poster-wordmark{opacity:1!important;visibility:visible!important}.mo-cinema-caption[data-video-display-name]{margin-top:17px;gap:9px}.mo-cinema-caption-label{font-size:.76rem;letter-spacing:.24em}.mo-cinema-caption-title{color:#f8e3d5;font-size:clamp(1.26rem,1.85vw,1.72rem);font-weight:700;line-height:1.36;letter-spacing:.055em;text-shadow:0 3px 20px rgba(0,0,0,.62),0 0 22px rgba(228,169,132,.22)}@media(max-width:960px){.mo-cinema-caption[data-video-display-name]{margin-top:13px;gap:7px}.mo-cinema-caption-title{font-size:clamp(1.08rem,4.8vw,1.32rem);line-height:1.42;letter-spacing:.035em}}@media(max-width:420px){.mo-cinema-caption-label{font-size:.68rem;letter-spacing:.2em}.mo-cinema-caption-title{font-size:1.08rem;line-height:1.42}}
+          CSS
+          cat > website-v4/assets/css/video-caption-center-v4.3.10.css <<'CSS'
+          .mo-cinema-wrap{width:100%;display:flex;flex-direction:column;align-items:stretch}.mo-cinema-caption[data-video-display-name]{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;justify-items:center!important;align-self:stretch!important;width:100%!important;max-width:100%!important;margin:14px 0 0!important;padding:10px 12px 2px!important;text-align:center!important}.mo-cinema-caption[data-video-display-name]>.mo-cinema-caption-label,.mo-cinema-caption[data-video-display-name]>.mo-cinema-caption-title{box-sizing:border-box!important;display:block!important;width:100%!important;max-width:100%!important;margin-left:auto!important;margin-right:auto!important;padding-left:0!important;padding-right:0!important;align-self:center!important;justify-self:stretch!important;text-align:center!important}.mo-cinema-caption[data-video-display-name]>.mo-cinema-caption-label{display:flex!important;justify-content:center!important;align-items:center!important}@media(max-width:960px){.mo-cinema-caption[data-video-display-name]{margin-top:11px!important;padding-inline:8px!important}}
+          CSS
+          cat > website-v4/assets/css/video-audio-v4.3.11.css <<'CSS'
+          /* Audible-first policy: native controls remain unobstructed; no custom overlay is rendered. */
+          .mo-cinema video{display:block;width:100%}
+          .mo-cinema-start,.mo-video-sound-overlay{display:none!important}
+          CSS
+      - name: Syntax, data, build and static release checks
+        working-directory: website-v4
+        run: |
+          set -euo pipefail
+          npm run check
+          npm run test:data
+          npm run build:offline
+          node - <<'NODE'
+          const fs=require('fs');
+          const html=fs.readFileSync('dist/index.html','utf8');
+          const release='magicoffice-v4.3.11-audible-autoplay-2026-09-03';
+          const video=(html.match(/<video[^>]*data-default-audio="audible"[^>]*>/)||[])[0]||'';
+          const checks={
+            release:html.includes(release),
+            autoplay:video.includes('autoplay'),
+            audible:!(/\smuted(?:=|\s|>)/.test(video)),
+            noLoop:!(/\sloop(?:=|\s|>)/.test(video)),
+            nativeControls:video.includes('controls'),
+            poster:video.includes('poster='),
+            noCustomOverlay:!html.includes('data-video-start')&&!html.includes('mo-video-sound-overlay'),
+            title:html.includes('<strong class="mo-cinema-caption-title">MagiCofficec魔幻世界人物誌</strong>'),
+          };
+          console.log(checks);
+          const failed=Object.entries(checks).filter(([,ok])=>!ok).map(([name])=>name);
+          if(failed.length)throw new Error('Failed checks: '+failed.join(', '));
+          NODE
+      - name: Commit the maintained text source
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice website maintenance'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add website-v4/src/index.template.html website-v4/scripts/build.mjs website-v4/assets/js/app.js website-v4/content/site.json website-v4/content/hero-video-source.json website-v4/package.json website-v4/scripts/validate.mjs website-v4/vercel.json website-v4/.vercelignore website-v4/README.md website-v4/assets/css/video-title-v4.3.7.css website-v4/assets/css/video-autoplay-v4.3.8.css website-v4/assets/css/video-caption-center-v4.3.10.css website-v4/assets/css/video-audio-v4.3.11.css
+          git commit -m 'Default the hero video to audible-first autoplay with poster fallback'
+          git push origin HEAD:main
+      - name: Deploy to the existing production project
+        id: production
+        working-directory: website-v4
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p .vercel
+          printf '%s\n' '{"orgId":"team_44tkvxP20I5s9SUmlxfUEQM1","projectId":"prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D"}' > .vercel/project.json
+          npx --yes vercel@59.3.0 pull --yes --environment=production --token="$VERCEL_TOKEN"
+          URL="$(npx --yes vercel@59.3.0 deploy --yes --prod --token="$VERCEL_TOKEN")"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$URL" > ../v4311-production-url.txt
+      - name: Verify the unchanged official URL
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            curl -fsS "https://magicoffice.vercel.app/?verify=v4311-${attempt}" -o /tmp/index.html || true
+            if grep -q "$RELEASE" /tmp/index.html 2>/dev/null; then break; fi
+            sleep 5
+          done
+          grep -q "$RELEASE" /tmp/index.html
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('/tmp/index.html').read_text()
+          video=re.search(r'<video[^>]*data-default-audio="audible"[^>]*>',html)
+          assert video, 'audible video element missing'
+          tag=video.group(0)
+          assert 'autoplay' in tag and 'controls' in tag and 'poster=' in tag
+          assert not re.search(r'\smuted(?:=|\s|>)',tag)
+          assert not re.search(r'\sloop(?:=|\s|>)',tag)
+          assert 'data-video-start' not in html and 'mo-video-sound-overlay' not in html
+          assert '<strong class="mo-cinema-caption-title">MagiCofficec魔幻世界人物誌</strong>' in html
+          print({'release':True,'audibleFirst':True,'posterFallback':True,'nativeControls':True})
+          PY
+          curl -fsSI 'https://magicoffice.vercel.app/assets/css/video-audio-v4.3.11.css' | grep -q '200'
+          printf 'release=%s\ndeployment=%s\nverified_at=%s\n' "$RELEASE" '${{ steps.production.outputs.url }}' "$(date -u +%FT%TZ)" > v4311-production-receipt.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: MagicOffice_v4311_AUDIBLE_AUTOPLAY_receipt
+          path: |
+            v4311-production-url.txt
+            v4311-production-receipt.txt
+            website-v4/verification/static-validation.json
+          if-no-files-found: warn
+          retention-days: 14
