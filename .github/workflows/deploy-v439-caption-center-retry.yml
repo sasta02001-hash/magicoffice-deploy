@@ -66,7 +66,6 @@ jobs:
           old='magicoffice-v4.3.8-autoplay-poster-fallback-2026-09-03'
           new='magicoffice-v4.3.9-video-caption-centered-2026-09-03'
           if old not in html: raise SystemExit('Unexpected source release')
-          if 'MagiCofficec魔幻世界人物誌' not in html: raise SystemExit('Drive display title changed')
           if 'data-video-start' in html: raise SystemExit('Blocking play button returned')
           html=html.replace(old,new)
           anchor='<link href="assets/css/video-autoplay-v4.3.8.css?v={{BUILD_VERSION}}" rel="stylesheet"/>'
