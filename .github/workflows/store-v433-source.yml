@@ -1,0 +1,46 @@
+name: Preserve verified v4.3.3 website source
+on:
+  push:
+    paths: ['.github/workflows/store-v433-source.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  preserve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Import exact source without using the obsolete website rebuilders
+        run: |
+          set -euo pipefail
+          curl -fL --retry 2 --max-time 120 'https://drive.usercontent.google.com/download?id=1Tkl5OVrp3UvOygn5o9M_TabRLVNVbAf5&export=download&confirm=t' -o /tmp/website-source.tgz
+          echo '71c0e9c575d1b9708a059265b594e51f6b1cdf37f95928937c875e31141ddb88  /tmp/website-source.tgz' | sha256sum -c -
+          python - <<'PY'
+          import tarfile, pathlib
+          root=pathlib.Path('website-v4')
+          if root.exists(): raise RuntimeError('Source destination already exists; stop instead of overwriting')
+          root.mkdir()
+          with tarfile.open('/tmp/website-source.tgz') as archive:
+            for item in archive.getmembers():
+              p=pathlib.PurePosixPath(item.name)
+              if p.is_absolute() or '..' in p.parts or item.issym() or item.islnk(): raise RuntimeError('Unsafe archive member')
+              if '__pycache__' in p.parts or item.name.endswith('.pyc'): continue
+              archive.extract(item,root,filter='data')
+          (root/'.gitignore').write_text('dist/\nnode_modules/\n.vercel/\n__pycache__/\n*.pyc\n')
+          (root/'README.md').write_text('''# MagicOffice official website source\n\nThis is the actual v4.3.3 responsive-feedback source. Do not run the obsolete root/rebuild-v43 builders; those recreate the wrong campaign graphic and low-resolution assets.\n\nBuild: `npm run check && npm run test:data && npm run build:offline`.\n\nEdit `src/index.template.html`, `assets/css/usability-v4.3.3.css`, and `assets/js/app.js`. The shared `assets/js/menu-view.js` must render both initial HTML and live CMS updates.\n\nRoster: `content/roster.json`. Events: `content/events.json`. Site links and Google Sheets settings: `content/site.json`. Keep six mobile shortcuts in their published order; expose two complete time-period menu pages while retaining all three CMS worlds internally.\n\nThe genuine original Heartbeat v7 PNG is 595x335, SHA256 `228cfbf667e636dc95bb3b3195f8c9d43e168c573e6e10b463b306dfbfb1f6e3`. Keep this image unmodified. Never replace it with the movie poster.\n\nSource archive SHA256: `71c0e9c575d1b9708a059265b594e51f6b1cdf37f95928937c875e31141ddb88`.\n''')
+          PY
+          (cd website-v4 && npm run check && npm run test:data && npm run build:offline)
+      - name: Commit only the actual source directory
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice website maintenance'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add website-v4
+          git commit -m 'Store actual v4.3.3 source: responsive profiles, six shortcuts, time-period menus, authentic Heartbeat artwork'
+          git push origin HEAD:main
