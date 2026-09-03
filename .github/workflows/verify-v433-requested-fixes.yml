@@ -14,11 +14,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install browser engines
+      - name: Install codec-enabled Chrome and WebKit
         run: |
           python -m pip install --quiet requests playwright==1.55.0
-          python -m playwright install --with-deps chromium webkit
+          python -m playwright install --with-deps chrome webkit
           sudo apt-get install -y -qq fonts-noto-cjk
+          google-chrome --version
       - name: Check actual review deployment from the identical SHA-verified source
         env:
           CHECK_URL: https://magicoffice-review.vercel.app/
