@@ -1,0 +1,155 @@
+name: Prepare v4.3.12 muted autoplay
+on:
+  push:
+    paths: ['.github/workflows/deploy-v4312-muted-autoplay.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Switch the maintained site to muted autoplay
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, re
+
+          root = Path('website-v4')
+          release = 'magicoffice-v4.3.12-muted-autoplay-2026-09-03'
+          version = 'production-v4.3.12-muted-autoplay'
+
+          def once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise RuntimeError(f'{label}: expected exactly one match, found {count}')
+              return text.replace(old, new)
+
+          # HTML: autoplay remains enabled, but starts muted and keeps the poster fallback.
+          index_path = root / 'src/index.template.html'
+          html = index_path.read_text(encoding='utf-8')
+          html, count = re.subn(r'magicoffice-v4\.3\.\d+[^\"]*-2026-09-03', release, html, count=1)
+          if count != 1:
+              raise RuntimeError('release marker was not found exactly once')
+          html = once(html,
+              '<link href="assets/css/video-audio-v4.3.11.css?v={{BUILD_VERSION}}" rel="stylesheet"/>',
+              '<link href="assets/css/video-muted-v4.3.12.css?v={{BUILD_VERSION}}" rel="stylesheet"/>',
+              'muted video stylesheet')
+          html = once(html,
+              '<div aria-label="{{HERO_DISPLAY_TITLE}} 有聲影片" class="mo-cinema" data-state="idle" data-video-ready="false" data-audio-state="audible" data-autoplay="true" data-loop="false">',
+              '<div aria-label="{{HERO_DISPLAY_TITLE}} 影片" class="mo-cinema" data-state="idle" data-video-ready="false" data-audio-state="muted" data-autoplay="true" data-loop="false">',
+              'cinema audio state')
+          html = once(html,
+              '<video autoplay="" controls="" controlslist="nodownload noplaybackrate" data-default-audio="audible" disablepictureinpicture="" playsinline="" poster="assets/images/hero/hero-poster.webp" preload="metadata" src="{{HERO_VIDEO}}" data-source-filename="{{HERO_FILENAME}}" webkit-playsinline=""></video>',
+              '<video autoplay="" controls="" controlslist="nodownload noplaybackrate" data-default-audio="muted" disablepictureinpicture="" muted="" playsinline="" poster="assets/images/hero/hero-poster.webp" preload="metadata" src="{{HERO_VIDEO}}" data-source-filename="{{HERO_FILENAME}}" webkit-playsinline=""></video>',
+              'video element')
+          index_path.write_text(html, encoding='utf-8')
+
+          css_path = root / 'assets/css/video-muted-v4.3.12.css'
+          css_path.write_text('''/* v4.3.12 — unobstructed muted autoplay with native controls and poster fallback. */\n.mo-cinema video{display:block;width:100%}\n.mo-cinema-start,.mo-video-sound-overlay{display:none!important}\n''', encoding='utf-8')
+
+          # JavaScript: muted autoplay is the default and never asks for audible playback on load.
+          app_path = root / 'assets/js/app.js'
+          app = app_path.read_text(encoding='utf-8')
+          app = once(app,
+              'const safePlay = async ({ audible = true } = {}) => {',
+              'const safePlay = async ({ audible = false } = {}) => {',
+              'safePlay default')
+          app = once(app,
+              "        setState(hasPlayed ? 'paused' : 'idle', '瀏覽器阻擋有聲自動播放；封面會保留，使用影片原生控制列即可有聲播放。');",
+              "        setState(hasPlayed ? 'paused' : 'idle', '瀏覽器阻擋自動播放；封面會保留，使用影片原生控制列即可播放。');",
+              'blocked autoplay status')
+          app = once(app,
+              '    video.defaultMuted = false;\n    video.muted = false;\n    video.loop = false;',
+              '    video.defaultMuted = true;\n    video.muted = true;\n    video.loop = false;',
+              'default muted state')
+          app = app.replace('影片已就緒，將優先以有聲模式播放。', '影片已就緒，將以靜音模式自動播放。')
+          app = once(app,
+              "    setState('idle', '將嘗試有聲自動播放；若瀏覽器阻擋，會保留正式封面。');",
+              "    setState('idle', '將以靜音模式自動播放；若瀏覽器阻擋，會保留正式封面。');",
+              'initial muted status')
+          app = once(app,
+              "      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(() => safePlay({ audible: true }));\n      document.addEventListener('visibilitychange', () => { if (!document.hidden && !hasPlayed && !loadFailed) safePlay({ audible: true }); });",
+              "      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(() => safePlay({ audible: false }));\n      document.addEventListener('visibilitychange', () => { if (!document.hidden && !hasPlayed && !loadFailed) safePlay({ audible: false }); });",
+              'muted autoplay calls')
+          app_path.write_text(app, encoding='utf-8')
+
+          # Public configuration.
+          site_path = root / 'content/site.json'
+          site = json.loads(site_path.read_text(encoding='utf-8'))
+          site['version'] = version
+          site['release'] = release
+          hero = site.setdefault('hero', {})
+          hero['autoplay'] = True
+          hero['mutedAutoplay'] = True
+          hero['defaultAudioState'] = 'muted'
+          hero['loop'] = False
+          hero['fallbackPoster'] = True
+          hero['playbackPolicy'] = '進站後以靜音、行內模式直接自動播放；瀏覽器阻擋或影音失敗時保留正式封面，播放操作使用影片原生控制列。'
+          site.setdefault('contentManagement', {})['hero'] = 'content/site.json + Google Drive 顯示名稱 + 分段影音來源；靜音自動播放，失敗時保留正式封面'
+          site_path.write_text(json.dumps(site, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          package_path = root / 'package.json'
+          package = json.loads(package_path.read_text(encoding='utf-8'))
+          package['version'] = '4.3.12'
+          package_path.write_text(json.dumps(package, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          # Validation must now require muted autoplay.
+          validate_path = root / 'scripts/validate.mjs'
+          validate = validate_path.read_text(encoding='utf-8')
+          validate = once(validate,
+              "  site.hero.video, 'MAGICOFFICE', 'application/ld+json', 'data-video-display-name', 'data-default-audio=\"audible\"',",
+              "  site.hero.video, 'MAGICOFFICE', 'application/ld+json', 'data-video-display-name', 'data-default-audio=\"muted\"',",
+              'required muted token')
+          validate = once(validate,
+              "const heroVideoTag = html.match(/<video[^>]*data-default-audio=\"audible\"[^>]*>/)?.[0] || '';\nassert(heroVideoTag.includes('autoplay') && !/\\smuted(?:=|\\s|>)/.test(heroVideoTag) && !/\\sloop(?:=|\\s|>)/.test(heroVideoTag), '首頁影片必須優先有聲自動播放，且不得靜音或循環');",
+              "const heroVideoTag = html.match(/<video[^>]*data-default-audio=\"muted\"[^>]*>/)?.[0] || '';\nassert(heroVideoTag.includes('autoplay') && /\\smuted(?:=|\\s|>)/.test(heroVideoTag) && !/\\sloop(?:=|\\s|>)/.test(heroVideoTag), '首頁影片必須以靜音模式自動播放，且不得循環');",
+              'muted autoplay validation')
+          validate_path.write_text(validate, encoding='utf-8')
+
+          readme_path = root / 'README.md'
+          readme = readme_path.read_text(encoding='utf-8')
+          note = '\n## v4.3.12 muted autoplay\n\nThe hero video autoplays muted with native controls. Do not reintroduce a custom play overlay. Keep the poster visible when media playback fails.\n'
+          if '## v4.3.12 muted autoplay' not in readme:
+              readme_path.write_text(readme.rstrip() + '\n' + note, encoding='utf-8')
+          PY
+      - name: Validate and build the complete site
+        working-directory: website-v4
+        run: |
+          set -euo pipefail
+          npm run check
+          npm run test:data
+          npm run build:offline
+          node - <<'NODE'
+          const fs=require('fs');
+          const html=fs.readFileSync('dist/index.html','utf8');
+          const video=(html.match(/<video[^>]*data-default-audio="muted"[^>]*>/)||[])[0]||'';
+          if(!html.includes('magicoffice-v4.3.12-muted-autoplay-2026-09-03')) throw new Error('release missing');
+          if(!video.includes('autoplay') || !/\smuted(?:=|\s|>)/.test(video) || /\sloop(?:=|\s|>)/.test(video)) throw new Error('video is not muted autoplay');
+          if(html.includes('data-video-start') || html.includes('mo-video-sound-overlay')) throw new Error('custom overlay returned');
+          console.log('Muted autoplay release validated.');
+          NODE
+      - name: Preserve the maintained source
+        run: |
+          set -euo pipefail
+          git config user.name 'MagicOffice website maintenance'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add website-v4
+          git reset website-v4/assets/video/*.mp4 website-v4/dist website-v4/verification 2>/dev/null || true
+          git commit -m 'Set the hero video to direct muted autoplay with poster fallback'
+          git push origin HEAD:main
+      - name: Package exact validated source
+        run: tar -czf MagicOffice_v4.3.12_MUTED_AUTOPLAY_SOURCE.tgz -C website-v4 .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice_v4.3.12_MUTED_AUTOPLAY_SOURCE
+          path: MagicOffice_v4.3.12_MUTED_AUTOPLAY_SOURCE.tgz
+          if-no-files-found: error
+          retention-days: 14
