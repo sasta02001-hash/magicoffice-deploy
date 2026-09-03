@@ -69,7 +69,7 @@ for (const row of schedule.rows) assert(/^\d{4}-\d{2}-\d{2}$/.test(row.date || '
 for (const token of [
   'data-build=', 'data-roster-grid', 'data-schedule-grid', 'data-event-grid', 'data-event-detail',
   'data-menu-panes', 'mo-mobile-bar', 'mo-site-data', 'mo-events-data',
-  site.hero.video, 'MAGICOFFICE', 'application/ld+json', 'data-video-sound', 'data-video-start',
+  site.hero.video, 'MAGICOFFICE', 'application/ld+json', 'data-video-display-name', 'data-default-audio="audible"',
 ]) assert(html.includes(token), `首頁缺少必要標記：${token}`);
 assert(!/\{\{[^}]+\}\}|<!--(?:ROSTER|SCHEDULE|LINE_MEMBER|EVENT|MENU|RECRUITMENT|SEO)_/.test(html), '首頁仍有未替換的建置標記');
 assert((html.match(/class="mo-cast-card"/g) || []).length === 16, '首頁預渲染人物卡數量不是 16');
@@ -109,7 +109,11 @@ const expectedHeroVideo = site.hero?.video;
 assert(expectedHeroFilename && expectedHeroVideo, 'site.hero filename/video 必填');
 assert(html.includes(`src=\"${expectedHeroVideo}\"`), '首頁影片未使用 site.hero.video');
 assert(html.includes(`data-source-filename=\"${expectedHeroFilename}\"`), '影片來源缺少 Google Drive 檔名標記');
-assert(html.includes('data-video-caption') && html.includes(`>${expectedHeroFilename}</p>`), '影片下方標註必須與 Google Drive 檔名完全相同');
+const expectedHeroDisplayTitle = site.hero?.displayTitle;
+assert(expectedHeroDisplayTitle && html.includes('data-video-display-name') && html.includes(`<strong class="mo-cinema-caption-title">${expectedHeroDisplayTitle}</strong>`), '影片下方必須顯示 Google Drive 顯示名稱且不含副檔名');
+const heroVideoTag = html.match(/<video[^>]*data-default-audio="audible"[^>]*>/)?.[0] || '';
+assert(heroVideoTag.includes('autoplay') && !/\smuted(?:=|\s|>)/.test(heroVideoTag) && !/\sloop(?:=|\s|>)/.test(heroVideoTag), '首頁影片必須優先有聲自動播放，且不得靜音或循環');
+assert(!html.includes('data-video-start') && !html.includes('mo-video-sound-overlay'), '不得重新加入擋住影片的自製播放或聲音按鈕');
 assert(!html.includes('home-trial-12s-with-audio.mp4') && !html.includes('MagicOffice 世界觀試播'), '舊試播影片或舊標註仍存在');
 
 assert(site.schedule?.spreadsheetId === '15y3DL7_nUj5JLng9mKayhwDnAnZPQgPHg0zCrLdb0BQ', '班表來源試算表 ID 不符');

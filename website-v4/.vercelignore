@@ -1,0 +1,5 @@
+assets/video/*.mp4
+dist/
+verification/
+node_modules/
+.vercel/

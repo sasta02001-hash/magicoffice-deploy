@@ -4,7 +4,7 @@
   "mimeType": "video/mp4",
   "bytes": 241646148,
   "sha256": "c951db5697b28624d4394be2c151e28fc15cd17215ced51be97b31eef73b5e5f",
-  "sourceLabel": "Google Drive filename; the website caption must match this filename exactly",
+  "sourceLabel": "Google Drive technical source filename; visitor-facing title comes from content/site.json hero.displayTitle without the extension",
   "parts": [
     {
       "order": 0,

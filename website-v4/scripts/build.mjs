@@ -305,8 +305,9 @@ function main() {
   let html = fs.readFileSync(path.join(SRC, 'index.template.html'), 'utf8');
 const heroVideo = String(site.hero?.video || '');
 const heroFilename = String(site.hero?.filename || path.basename(heroVideo));
-if (!heroVideo || !heroFilename) throw new Error('content/site.json hero.video and hero.filename are required');
-html = html.replaceAll('{{HERO_VIDEO}}', esc(heroVideo)).replaceAll('{{HERO_FILENAME}}', esc(heroFilename));
+const heroDisplayTitle = String(site.hero?.displayTitle || site.hero?.driveDisplayName || heroFilename.replace(/\.[^./\\]+$/, '')).trim();
+if (!heroVideo || !heroFilename || !heroDisplayTitle) throw new Error('content/site.json hero.video, hero.filename and hero.displayTitle are required');
+html = html.replaceAll('{{HERO_VIDEO}}', esc(heroVideo)).replaceAll('{{HERO_FILENAME}}', esc(heroFilename)).replaceAll('{{HERO_DISPLAY_TITLE}}', esc(heroDisplayTitle));
   html = html
     .replaceAll('{{BUILD_VERSION}}', version)
     .replace('<!--SEO_JSONLD-->', buildJsonLd())

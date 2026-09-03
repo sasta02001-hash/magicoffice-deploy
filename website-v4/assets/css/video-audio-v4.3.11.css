@@ -1,0 +1,3 @@
+/* Audible-first policy: native controls remain unobstructed; no custom overlay is rendered. */
+.mo-cinema video{display:block;width:100%}
+.mo-cinema-start,.mo-video-sound-overlay{display:none!important}

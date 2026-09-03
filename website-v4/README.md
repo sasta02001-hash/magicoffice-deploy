@@ -19,3 +19,6 @@ The former second and third homepage screens are one section: `#worlds` contains
 
 The homepage video source is `assets/video/MagicOffice_FINAL_LARGE_SLOW_SUBTITLES_720p48_UNDER300MB.mp4`. Large MP4 bytes stay outside Git and are reconstructed from the SHA-verified parts in `content/hero-video-source.json` by `npm run media:fetch`. The visible caption immediately below the video must always be the exact Google Drive filename, including capitalization, underscores, and extension. `assets/js/app.js` derives the caption from `data-source-filename` or the video URL filename, so later replacements must update the hosted filename and `data-source-filename` together rather than writing a marketing caption.
 
+## v4.3.11 audible-first playback
+
+The hero video attempts autoplay with sound at volume 0.7. Do not add the HTML `muted` attribute and do not retry in muted mode. Browsers may block audible autoplay; in that case the official poster remains visible and the native controls start playback with sound after a user gesture.

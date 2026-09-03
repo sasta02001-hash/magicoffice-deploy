@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html data-release="magicoffice-v4.3.5-full-video-filename-caption-2026-09-03" data-build="MagicOffice-production-ready-v4.3-design-locked" lang="zh-Hant">
+<html data-release="magicoffice-v4.3.11-audible-autoplay-2026-09-03" data-build="MagicOffice-production-ready-v4.3-design-locked" lang="zh-Hant">
 <head>
 <meta charset="utf-8"/>
 
@@ -25,7 +25,10 @@
 <link href="assets/css/v4.3-design-locked.css?v={{BUILD_VERSION}}" rel="stylesheet"/>
 <link href="assets/css/usability-v4.3.3.css?v={{BUILD_VERSION}}" rel="stylesheet"/>
 <link href="assets/css/overview-v4.3.4.css?v={{BUILD_VERSION}}" rel="stylesheet"/>
-<link href="assets/css/video-v4.3.5.css?v={{BUILD_VERSION}}" rel="stylesheet"/>
+<link href="assets/css/video-title-v4.3.7.css?v={{BUILD_VERSION}}" rel="stylesheet"/>
+<link href="assets/css/video-autoplay-v4.3.8.css?v={{BUILD_VERSION}}" rel="stylesheet"/>
+<link href="assets/css/video-caption-center-v4.3.10.css?v={{BUILD_VERSION}}" rel="stylesheet"/>
+<link href="assets/css/video-audio-v4.3.11.css?v={{BUILD_VERSION}}" rel="stylesheet"/>
 <meta content="{{BUILD_VERSION}}" name="x-magicoffice-build"/>
 <!--SEO_JSONLD-->
 </head>
@@ -55,8 +58,8 @@
 <div class="mo-hero-meta"><span>CAFÉ 14:00–20:00</span><span>BAR 20:00–02:00</span><span>台北市松山區</span></div>
 </div>
 <div class="mo-cinema-wrap">
-<div aria-label="MagicOffice 完整有聲影片" class="mo-cinema" data-state="idle" data-video-ready="false" data-audio-state="muted">
-<video autoplay="" controls="" controlslist="nodownload noplaybackrate" disablepictureinpicture="" loop="" muted="" playsinline="" poster="assets/images/hero/hero-poster.webp" preload="metadata" src="{{HERO_VIDEO}}" data-source-filename="{{HERO_FILENAME}}" webkit-playsinline=""></video>
+<div aria-label="{{HERO_DISPLAY_TITLE}} 有聲影片" class="mo-cinema" data-state="idle" data-video-ready="false" data-audio-state="audible" data-autoplay="true" data-loop="false">
+<video autoplay="" controls="" controlslist="nodownload noplaybackrate" data-default-audio="audible" disablepictureinpicture="" playsinline="" poster="assets/images/hero/hero-poster.webp" preload="metadata" src="{{HERO_VIDEO}}" data-source-filename="{{HERO_FILENAME}}" webkit-playsinline=""></video>
 <div aria-hidden="true" class="mo-poster"><img alt="" src="assets/images/hero/hero-poster.webp"/></div>
 <div aria-hidden="true" class="mo-poster-wordmark">
 <svg role="presentation" viewbox="0 0 560 250">
@@ -71,10 +74,11 @@
 <text fill="url(#wmGold)" filter="url(#wmGlow)" font-family="Didot, Bodoni 72, Times New Roman, serif" font-size="50" letter-spacing="8" text-anchor="middle" x="280" y="153">MAGICOFFICE</text><path d="M280 178v46m0-22c-8 6-10 13 0 22c10-9 8-16 0-22Z" fill="none" stroke="url(#wmGold)" stroke-width="1.5"></path>
 </svg>
 </div>
-<div class="mo-cinema-start"><button type="button" data-video-start><span aria-hidden="true">▶</span><b>播放影片</b><small>點擊後可開啟聲音</small></button></div>
-<button type="button" class="mo-video-sound-overlay" data-video-sound aria-label="開啟影片聲音"><span aria-hidden="true">🔇</span><b>開啟聲音</b></button>
 </div>
-<p class="mo-cinema-caption" data-video-caption aria-label="影片內容標註">{{HERO_FILENAME}}</p><span class="mo-sr-only" data-video-status role="status" aria-live="polite"></span>
+<p class="mo-cinema-caption" data-video-display-name aria-label="影片內容：{{HERO_DISPLAY_TITLE}}">
+<span class="mo-cinema-caption-label" aria-hidden="true">影片內容</span>
+<strong class="mo-cinema-caption-title">{{HERO_DISPLAY_TITLE}}</strong>
+</p><span class="mo-sr-only" data-video-status role="status" aria-live="polite"></span>
 </div>
 </div>
 </section>
