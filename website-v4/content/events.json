@@ -1,0 +1,425 @@
+{
+  "schemaVersion": "3.0",
+  "timezone": "Asia/Taipei",
+  "updatedAt": "2026-09-03T09:18:00+08:00",
+  "events": [
+    {
+      "id": "heartbeat-support",
+      "anchor": "heartbeat",
+      "title": "心跳應援",
+      "subtitle": "全力で応援するよ！！",
+      "eyebrow": "HEARTBEAT SUPPORT · 2026.09.01–09.15",
+      "displayDate": "2026.09.01–09.15",
+      "start": "2026-09-01T00:00:00+08:00",
+      "end": "2026-09-15T23:59:59+08:00",
+      "theme": "heartbeat",
+      "poster": "assets/images/events/heartbeat/heartbeat-original-v7-228cfbf6.png",
+      "summary": "9/1–9/15 期間限定應援主題。九月整月活動，完成訂位即送小卡一張；活動內容與異動以官網及官方公告為準。",
+      "lead": "九月整月活動｜訂位即送小卡一張",
+      "facts": [
+        {
+          "label": "EVENT PERIOD",
+          "value": "2026.09.01–09.15",
+          "note": "心跳應援期間限定"
+        },
+        {
+          "label": "SEPTEMBER GIFT",
+          "value": "訂位即送小卡一張",
+          "note": "九月整月活動"
+        },
+        {
+          "label": "THEME",
+          "value": "全力で応援するよ！！",
+          "note": "期間限定應援主題"
+        },
+        {
+          "label": "RESERVATION",
+          "value": "收到官方確認後成立",
+          "note": "送出表單不代表完成訂位"
+        }
+      ],
+      "actions": {
+        "registerLabel": "立即訂位",
+        "registerUrl": "https://gforms.app/r/71hSwQR",
+        "updateLabel": "LINE 接收更新",
+        "updateUrl": "https://lin.ee/NcCGG1P"
+      },
+      "accordions": [
+        {
+          "title": "活動說明與注意事項",
+          "meta": "完整規則",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "心跳應援活動期間為 2026 年 9 月 1 日至 9 月 15 日。",
+                "九月整月完成訂位，即贈活動小卡一張。",
+                "活動主題文案為「全力で応援するよ！！」。",
+                "贈禮依現場供應與官方最新公告為準。",
+                "訂位表單送出後，仍須收到官方確認回覆才正式成立。"
+              ]
+            }
+          ]
+        }
+      ],
+      "posterAlt": "MagicOffice 心跳應援原官網活動主視覺｜藍白應援服人物、2026.09.01–09.15",
+      "assetReview": {
+        "status": "verified-exact-original",
+        "canvaDesignId": "DAHTvA91Tk8",
+        "sourceDeployment": "magicoffice-ckd9kqeh8-magicoffice.vercel.app",
+        "sourcePath": "/assets/media/heartbeat-support-v7.png",
+        "sha256": "228cfbf667e636dc95bb3b3195f8c9d43e168c573e6e10b463b306dfbfb1f6e3",
+        "naturalWidth": 595,
+        "naturalHeight": 335,
+        "upscaled": false,
+        "recomposed": false
+      },
+      "posterWidth": 595,
+      "posterHeight": 335
+    },
+    {
+      "id": "mid-autumn",
+      "anchor": "mid-autumn",
+      "title": "中秋月宴",
+      "subtitle": "魔幻烤肉大會",
+      "eyebrow": "2026 MID-AUTUMN EVENT · 09.05 SAT",
+      "displayDate": "2026.09.05",
+      "start": "2026-09-05T18:00:00+08:00",
+      "end": "2026-09-06T00:00:00+08:00",
+      "statusSuffix": "20 席限定",
+      "theme": "moon",
+      "poster": "assets/images/events/mid-autumn.webp",
+      "posterAlt": "中秋月宴｜魔幻烤肉大會官方主視覺",
+      "summary": "每位客人帶兩味入宴，與姶仕共同完成一桌只會出現一次的中秋月宴。你帶來的不只是食材，也是整晚的話題、參賽作品與月下相遇的開始。",
+      "lead": "帶上一味，與魔幻共赴月宴。",
+      "facts": [
+        {
+          "label": "DATE",
+          "value": "2026.09.05 SAT",
+          "note": "星期六"
+        },
+        {
+          "label": "TIME",
+          "value": "18:00–00:00",
+          "note": "22:00 揭曉得主"
+        },
+        {
+          "label": "TICKET",
+          "value": "NT$500／人",
+          "note": "票券本身不另收服務費"
+        },
+        {
+          "label": "CAPACITY",
+          "value": "20 席限定",
+          "note": "額滿即止"
+        }
+      ],
+      "actions": {
+        "registerLabel": "前往立即訂位",
+        "registerUrl": "https://gforms.app/r/71hSwQR",
+        "updateLabel": "加入 LINE 接收活動更新",
+        "updateUrl": "https://lin.ee/NcCGG1P"
+      },
+      "featureCards": [
+        {
+          "index": "01",
+          "eyebrow": "BRING TWO FLAVOURS",
+          "title": "每人帶兩味入宴",
+          "text": "第一份從豬肉、牛肉或羊肉中擇一；第二份帶蔬菜、海鮮或其他可燒烤食材。兩份食材都會參加評選。"
+        },
+        {
+          "index": "02",
+          "eyebrow": "MAID BADGE JUDGING",
+          "title": "創意徽章 × 好吃徽章",
+          "text": "由當日出勤姶仕實際評選。創意徽章看想法與話題；好吃徽章則以實際品嘗後的喜愛度為準。"
+        },
+        {
+          "index": "03",
+          "eyebrow": "22:00 REVEAL",
+          "title": "月下揭曉兩位得主",
+          "text": "兩位不同得主各獲一盤 6 杯調酒 SHOT；全場共 2 盤、12 杯。"
+        }
+      ],
+      "accordions": [
+        {
+          "title": "活動票包含",
+          "meta": "票券內容",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "18:00–00:00 中秋月宴入場資格",
+                "22:00 姶仕徽章評選參加資格",
+                "完成報到後，官方 LINE 集點卡增加 1 點",
+                "活動後可使用的手機拍兌換券 1 張",
+                "每人兩份食材的創意與好吃徽章參賽資格"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "LINE 集點與手機拍回訪",
+          "meta": "使用期限",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "手機拍券於 2026 年 9 月 5 日活動當日不可使用",
+                "可於活動後至 2026 年 9 月 30 日前使用",
+                "星期六、星期日亦適用，店休日除外",
+                "兌換當日仍須符合一般來店低消與消費規則"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "票券、食材與天候注意事項",
+          "meta": "重要規則",
+          "blocks": [
+            {
+              "type": "notice",
+              "title": "票券與追加消費",
+              "text": "活動票 NT$500，票券本身不另收服務費；現場追加消費依店內規則另計服務費。"
+            },
+            {
+              "type": "notice",
+              "title": "食材與飲品",
+              "text": "活動當日禁止攜帶任何外來飲品。食材須可由現場戶外烤爐安全處理；活動方保留拒收不適合食材的權利。"
+            },
+            {
+              "type": "notice",
+              "title": "天候退款",
+              "text": "若主辦方因天候或安全因素取消活動，活動票將原額退還；退款申請與進度查詢請透過官方 LINE。"
+            }
+          ]
+        }
+      ],
+      "closingNote": "請由 MagicOffice 一般訂位表單提出預約；活動票付款與兩份食材登記依後續確認訊息辦理，收到官方確認後才正式成立。"
+    },
+    {
+      "id": "yuzu-birthday",
+      "anchor": "yuzu",
+      "title": "玫瑰之夜",
+      "subtitle": "柚子 9/19 生誕",
+      "eyebrow": "YUZU BIRTHDAY 2026 · NIGHT OF ROSES",
+      "displayDate": "2026.09.19",
+      "start": "2026-09-19T20:00:00+08:00",
+      "end": "2026-09-20T02:00:00+08:00",
+      "statusSuffix": "09.19",
+      "theme": "rose",
+      "poster": "assets/images/events/yuzu/cover.webp",
+      "posterAlt": "柚子 9/19 生誕｜玫瑰之夜官方主視覺",
+      "summary": "黑粉色小禮服、限定收藏、賓果與掛軸抽取，在粉白與香檳金交疊的夜晚裡展開。現場入席、線上周邊與遠端開瓶皆由同一份表單進入；送出後仍須收到官方確認訊息，參與才正式成立。",
+      "lead": "黑粉色小禮服、限定收藏、賓果與掛軸抽取。",
+      "facts": [
+        {
+          "label": "DATE",
+          "value": "2026.09.19 SAT",
+          "note": "柚子生誕限定夜"
+        },
+        {
+          "label": "TIME",
+          "value": "20:00–02:00",
+          "note": "供餐至 20:30"
+        },
+        {
+          "label": "DRESS",
+          "value": "黑粉色小禮服",
+          "note": "生誕主題服裝"
+        },
+        {
+          "label": "LOW SPEND",
+          "value": "NT$500／90 分鐘",
+          "note": "後續消費加收 10% 服務費"
+        }
+      ],
+      "actions": {
+        "registerLabel": "預約入席",
+        "registerUrl": "https://forms.gle/Sw5ap9UokMsbWeZTA",
+        "secondaryLabel": "線上周邊／遠端開瓶",
+        "secondaryUrl": "https://forms.gle/Sw5ap9UokMsbWeZTA",
+        "updateLabel": "LINE 訂位異動／退款",
+        "updateUrl": "https://lin.ee/NcCGG1P"
+      },
+      "accordions": [
+        {
+          "title": "01｜當日流程",
+          "meta": "EVENT SCHEDULE",
+          "blocks": [
+            {
+              "type": "timeline",
+              "items": [
+                {
+                  "time": "20:00–22:00",
+                  "title": "自由活動",
+                  "text": "入席、交流與當日限定互動。"
+                },
+                {
+                  "time": "22:00–22:15",
+                  "title": "賓果活動",
+                  "text": "得獎者限 1 人，可得掛軸抽取機會 2 次。"
+                },
+                {
+                  "time": "22:15–00:00",
+                  "title": "自由活動",
+                  "text": "延續夜晚交流與收藏活動。"
+                },
+                {
+                  "time": "00:00–00:10",
+                  "title": "掛軸抽取",
+                  "text": "掛軸共 2 個；同一人第二次抽中時先詢問是否釋出，若不釋出可由同一人獲得。"
+                },
+                {
+                  "time": "00:10–02:00",
+                  "title": "自由活動",
+                  "text": "玫瑰之夜延續至 02:00。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "02｜生誕限定販售周邊",
+          "meta": "LIMITED COLLECTION",
+          "blocks": [
+            {
+              "type": "gallery",
+              "items": [
+                {
+                  "image": "assets/images/events/yuzu/lighter.webp",
+                  "caption": "柚子打火機 · NT$150"
+                },
+                {
+                  "image": "assets/images/events/yuzu/easycard.webp",
+                  "caption": "柚子限定悠遊卡 · NT$600"
+                },
+                {
+                  "image": "assets/images/events/yuzu/magnet.webp",
+                  "caption": "冰箱貼 A 款 · NT$150"
+                },
+                {
+                  "image": "assets/images/events/yuzu/card-01.webp",
+                  "caption": "公開小卡款式 01"
+                },
+                {
+                  "image": "assets/images/events/yuzu/card-02.webp",
+                  "caption": "公開小卡款式 02"
+                },
+                {
+                  "image": "assets/images/events/yuzu/card-03.webp",
+                  "caption": "公開小卡款式 03"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "items": [
+                "柚子打火機 NT$150",
+                "小卡一套共 5 款 NT$200；公開 3 款，其餘 2 款圖樣未公開",
+                "柚子限定悠遊卡 NT$600",
+                "冰箱貼共 2 款，單個 NT$150；A 款公開、B 款未公開",
+                "全都要套組 NT$1,150：打火機 1 個、小卡五款一套、限定悠遊卡 1 張、冰箱貼兩款各 1 個。數量有限。"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "03｜入店・互動贈禮",
+          "meta": "IN-STORE BENEFITS",
+          "blocks": [
+            {
+              "type": "gallery",
+              "items": [
+                {
+                  "image": "assets/images/events/yuzu/entry-photo.webp",
+                  "caption": "入店即贈生寫真 1 張"
+                },
+                {
+                  "image": "assets/images/events/yuzu/quiz-badge.webp",
+                  "caption": "有獎徵答 80 分以上可得徽章 1 個"
+                },
+                {
+                  "image": "assets/images/events/yuzu/three-drinks.webp",
+                  "caption": "賞當日出勤姶仕共三杯，可得限定小卡 2 張"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "04｜香檳累積贈禮",
+          "meta": "CHAMPAGNE REWARDS",
+          "blocks": [
+            {
+              "type": "rewards",
+              "items": [
+                {
+                  "level": "NT$3,000",
+                  "title": "特殊小卡與香檳限定生寫真",
+                  "text": "特殊小卡 2 張＋香檳限定生寫真 1 張；掛軸抽取 2 次。",
+                  "image": "assets/images/events/yuzu/champagne-photo.webp"
+                },
+                {
+                  "level": "NT$5,000",
+                  "title": "提供開瓶影片",
+                  "text": "開瓶影片＋以上全部贈禮；掛軸抽取 5 次。"
+                },
+                {
+                  "level": "NT$10,000",
+                  "title": "寵物悠遊卡與合照豪華拍",
+                  "text": "寵物悠遊卡＋合照豪華拍 1 張＋以上全部贈禮；掛軸抽取 10 次。",
+                  "image": "assets/images/events/yuzu/pet-easycard.webp"
+                },
+                {
+                  "level": "NT$30,000",
+                  "title": "柚子手工訂製香檳 1 支",
+                  "text": "柚子手工訂製香檳 1 支＋以上全部贈禮；掛軸抽取 20 次。"
+                }
+              ]
+            },
+            {
+              "type": "notice",
+              "title": "階梯規則",
+              "text": "高階包含全部前階贈禮；掛軸抽取次數採最高階總數，不逐階累加。"
+            }
+          ]
+        },
+        {
+          "title": "05｜線上周邊・遠端開瓶",
+          "meta": "ONLINE SUPPORT",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "無法到店者可購買線上周邊或遠端開瓶；兩者皆使用同一份表單。遠端開瓶請於備註填寫開瓶金額及匯款資訊。",
+                "未滿 NT$5,000，由柚子 IG 限時動態感謝，不提供開瓶影片；滿 NT$5,000 以上提供開瓶影片。",
+                "線上開瓶可包含於掛軸抽取，由現場管理職代填。",
+                "線上參與者由合照豪華拍改為柚子獨照。",
+                "預設到店領取，商品長期保留；如需寄送，請透過 MagicOffice LINE 官方聯繫。",
+                "如需退款，請於 9/20 前透過官方 LINE 提出申請；9/20 起不受理退款。"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "訂位須知",
+          "meta": "RESERVATION RULES",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "訂位只保留 10 分鐘。",
+                "人數過多時將實施併桌，請入席者見諒。",
+                "20:00 後，一人低消 NT$500／90 分鐘。",
+                "00:30 後入場同樣低消 NT$500，不保證坐滿 90 分鐘。",
+                "後續追加消費依店內規則加收 10% 服務費。",
+                "供餐至 20:30；拍立得及其他周邊請看姶仕限時動態及官網。"
+              ]
+            }
+          ]
+        }
+      ],
+      "closingNote": "表單送出不代表成功，須收到官方確認訊息後才正式成立。"
+    }
+  ]
+}

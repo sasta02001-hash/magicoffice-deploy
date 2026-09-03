@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-09-01T14:20:04.418Z",
+  "results": [
+    {
+      "name": "本週出勤",
+      "updated": false,
+      "reason": "SCHEDULE_SYNC_UNAVAILABLE"
+    },
+    {
+      "name": "菜單 CMS",
+      "updated": false,
+      "reason": "MENU_SYNC_UNAVAILABLE"
+    }
+  ]
+}

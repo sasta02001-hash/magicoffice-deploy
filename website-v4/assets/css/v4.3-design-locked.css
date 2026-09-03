@@ -1,0 +1,543 @@
+/*
+ * MagicOffice v4.3 — design-lock implementation
+ * Approved direction: floating borderless hero logo + strongly visible ukiyo-e menu worlds.
+ */
+
+/* ---------- Hero: logo and copy float directly on the scene ---------- */
+.mo-hero{background:#211019}
+.mo-hero-bg{filter:saturate(1.08) brightness(.84) contrast(1.01)}
+.mo-hero::before{background:
+  linear-gradient(90deg,rgba(27,8,17,.91) 0%,rgba(42,14,28,.75) 35%,rgba(32,11,22,.18) 64%,rgba(17,7,13,.28) 100%),
+  linear-gradient(180deg,rgba(9,4,7,.05),transparent 50%,rgba(18,7,13,.50) 100%)}
+.mo-hero-copy{
+  overflow:visible;
+  padding:clamp(20px,2.2vw,34px) 0;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.mo-hero-copy::before{
+  content:"";
+  position:absolute;
+  inset:-14% -20%;
+  z-index:-1;
+  border:0!important;
+  border-radius:50%!important;
+  background:radial-gradient(ellipse at 43% 48%,rgba(28,7,17,.72) 0%,rgba(34,9,21,.48) 45%,rgba(31,8,19,.16) 68%,transparent 80%)!important;
+  filter:blur(12px);
+}
+.mo-hero-copy::after{
+  right:-4%;top:-22%;width:220px;height:165px;
+  background:url('../images/patterns/sakura-woodblock.svg') right top/330px auto no-repeat;
+  opacity:.42;
+}
+.mo-hero-logo{
+  width:min(280px,76%);
+  margin:0 0 10px;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  filter:drop-shadow(0 8px 22px rgba(0,0,0,.38)) drop-shadow(0 0 16px rgba(237,204,139,.08));
+}
+.mo-hero h1{font-size:clamp(3.05rem,4.35vw,4.7rem);letter-spacing:.012em;text-shadow:0 5px 24px rgba(0,0,0,.35)}
+.mo-hero-copy>.mo-eyebrow{letter-spacing:.24em}
+.mo-hero-actions .mo-btn{min-width:170px}
+.mo-hero-meta span{border-color:rgba(244,226,191,.26);background:rgba(26,8,17,.34);box-shadow:0 8px 20px rgba(0,0,0,.10)}
+
+/* ---------- Menu section world canvas ---------- */
+.mo-menu-section{
+  --section-bg:#f6ead6;
+  --section-ink:#2d2024;
+  --section-muted:#6a565a;
+  transition:background .28s ease,color .28s ease;
+  isolation:isolate;
+}
+.mo-menu-section::before{opacity:.23}
+.mo-menu-section>.mo-shell>.mo-heading{display:none}
+.mo-menu-section>.mo-shell>.mo-data-status{
+  position:relative;z-index:5;
+  width:max-content;max-width:100%;margin:0 0 14px auto;
+  border-radius:999px;
+  background:rgba(255,249,235,.86);
+  box-shadow:0 12px 30px rgba(63,37,39,.10);
+}
+.mo-menu-section[data-active-menu-world="CAFE"]{
+  --section-bg:linear-gradient(180deg,#f5e7ce 0%,#efe0c4 12%,#153d55 12.2%,#0c2b42 100%);
+  --section-ink:#162f40;--section-muted:#5d5150;
+}
+.mo-menu-section[data-active-menu-world="BAR"]{
+  --section-bg:linear-gradient(180deg,#12121f 0%,#201326 46%,#40172d 100%);
+  --section-ink:#fff6e7;--section-muted:#cdbdc1;--section-line:rgba(236,209,141,.22);
+}
+.mo-menu-section[data-active-menu-world="COLLECTION"]{
+  --section-bg:linear-gradient(180deg,#f8eddf 0%,#f7e1dc 58%,#e8c3c6 100%);
+  --section-ink:#442630;--section-muted:#745961;
+}
+
+.mo-menu-tabs{
+  position:sticky;top:calc(var(--header-h) + 8px);z-index:90;
+  margin:0 0 18px;padding:7px;
+  border:1px solid rgba(91,54,58,.18);
+  border-radius:999px;
+  background:rgba(255,248,235,.94);
+  box-shadow:0 16px 42px rgba(50,28,31,.13);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+}
+.mo-menu-tabs button{
+  min-height:48px;border:0!important;border-radius:999px!important;
+  color:#4d343a;background:transparent;
+  font-family:var(--font-serif);font-size:.95rem;letter-spacing:.04em;
+}
+.mo-menu-tabs button.is-active{background:linear-gradient(135deg,#a83f61,#6e2144);box-shadow:0 10px 28px rgba(91,25,52,.25);color:#fff8ee}
+
+.mo-menu-pane{
+  --menu-card:#fff6e5;
+  --menu-card-2:#eddabe;
+  --menu-card-ink:#18364a;
+  --menu-border:rgba(222,180,105,.68);
+  position:relative;isolation:isolate;overflow:hidden;
+  padding:clamp(18px,2.3vw,32px);
+  border:1px solid var(--menu-border);
+  border-radius:clamp(32px,4vw,54px);
+  box-shadow:0 30px 88px rgba(34,19,23,.22);
+  background:#102e43;
+}
+.mo-menu-pane::before,.mo-menu-pane::after{content:"";position:absolute;inset:0;z-index:-3;pointer-events:none;border-radius:inherit}
+.mo-menu-pane::before{background-size:cover;background-position:center;background-repeat:no-repeat;opacity:.98}
+.mo-menu-pane::after{z-index:-2;background:url('../images/patterns/washi.svg') 0 0/320px 320px repeat;mix-blend-mode:soft-light;opacity:.28}
+.mo-menu-pane[data-menu-world="CAFE"]{
+  --menu-card:#fff7e8;--menu-card-2:#ead7b5;--menu-card-ink:#12364c;--menu-border:rgba(219,177,93,.72);
+  background:#123b53;color:#132f40;
+}
+.mo-menu-pane[data-menu-world="CAFE"]::before{background-image:linear-gradient(180deg,rgba(8,31,45,.12),rgba(5,27,41,.08)),url('../images/patterns/cafe-wave-crest.svg');background-position:center bottom}
+.mo-menu-pane[data-menu-world="BAR"]{
+  --menu-card:#301522;--menu-card-2:#171522;--menu-card-ink:#f7e3bc;--menu-border:rgba(218,166,83,.55);
+  background:#101425;color:#fff3de;
+}
+.mo-menu-pane[data-menu-world="BAR"]::before{background-image:linear-gradient(180deg,rgba(8,10,20,.12),rgba(12,7,16,.26)),url('../images/patterns/bar-night-crest.svg');background-position:center top}
+.mo-menu-pane[data-menu-world="COLLECTION"]{
+  --menu-card:#fff8ec;--menu-card-2:#f0d5cf;--menu-card-ink:#562638;--menu-border:rgba(197,129,100,.52);
+  background:#f5dfd8;color:#4f2936;
+}
+.mo-menu-pane[data-menu-world="COLLECTION"]::before{background-image:linear-gradient(180deg,rgba(255,247,232,.10),rgba(235,191,194,.16)),url('../images/patterns/collection-sakura-crest.svg');background-position:center top}
+
+/* world-specific editorial header */
+.mo-menu-world-header{
+  position:relative;display:grid;
+  grid-template-columns:minmax(220px,.72fr) minmax(360px,1.35fr) minmax(260px,.88fr);
+  gap:clamp(14px,2vw,26px);align-items:stretch;
+  min-height:300px;margin-bottom:18px;padding:18px 62px 18px 18px;
+  border:1px solid var(--menu-border);border-radius:36px;
+  background:rgba(255,247,229,.92);
+  box-shadow:0 18px 50px rgba(12,25,34,.16);
+  overflow:hidden;
+}
+.mo-menu-world-header::before{content:"";position:absolute;inset:8px;border:1px solid rgba(92,61,46,.12);border-radius:28px;pointer-events:none}
+.mo-menu-world-header::after{content:"";position:absolute;left:-2%;right:-2%;bottom:-28px;height:105px;background:url('../images/patterns/kumo.svg') center bottom/cover no-repeat;opacity:.16;pointer-events:none}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-header{background:linear-gradient(135deg,rgba(18,20,35,.94),rgba(47,18,35,.92));color:#fff3dd;box-shadow:0 20px 58px rgba(0,0,0,.28)}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-header::before{border-color:rgba(235,196,127,.16)}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-world-header{background:linear-gradient(135deg,rgba(255,248,234,.93),rgba(246,220,215,.91));color:#4c2935}
+
+.mo-menu-world-title{
+  position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-width:0;padding:28px 20px;text-align:center;
+  border:1px solid rgba(96,61,48,.24);border-radius:28px;
+  background:rgba(255,250,238,.80);
+}
+.mo-menu-world-title::before,.mo-menu-world-title::after{content:"";position:absolute;left:16%;right:16%;height:1px;background:linear-gradient(90deg,transparent,currentColor,transparent);opacity:.28}
+.mo-menu-world-title::before{top:18px}.mo-menu-world-title::after{bottom:18px}
+.mo-menu-world-title p{margin:0 0 7px;color:#9a5262;font-family:var(--font-serif);font-size:.82rem;letter-spacing:.2em}
+.mo-menu-world-title h3{margin:0;color:inherit;font-size:clamp(2rem,3vw,3.25rem);letter-spacing:.08em;word-break:keep-all}
+.mo-menu-world-title small{margin-top:8px;color:rgba(44,36,37,.66);font-family:var(--font-roman);font-size:.68rem;font-weight:700;letter-spacing:.18em}
+.mo-menu-world-emblem{display:grid;place-items:center;width:48px;height:48px;margin-bottom:13px;border:1px solid currentColor;border-radius:50%;color:#9b5261;font-size:1.2rem;opacity:.82}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-title{border-color:rgba(231,194,126,.28);background:rgba(13,15,27,.64);color:#efd39c}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-title p,.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-emblem{color:#d09a61}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-title small{color:#c9b9b7}
+
+.mo-menu-world-photo{position:relative;z-index:2;overflow:hidden;margin:0;min-height:260px;border:1px solid var(--menu-border);border-radius:28px;background:#1d1118;box-shadow:0 15px 38px rgba(0,0,0,.18)}
+.mo-menu-world-photo::after{content:"";position:absolute;inset:7px;border:1px solid rgba(255,236,199,.28);border-radius:21px;pointer-events:none}
+.mo-menu-world-photo img{width:100%;height:100%;min-height:260px;object-fit:cover;filter:saturate(.92) brightness(.92) contrast(1.02)}
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-world-photo img{object-position:center 56%;filter:saturate(.92) brightness(.98)}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-photo img{filter:saturate(.92) brightness(.78) contrast(1.08)}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-world-photo img{filter:saturate(.98) brightness(.9) contrast(1.03)}
+
+.mo-menu-world-copy{position:relative;z-index:2;display:grid;align-content:center;padding:26px 24px;border-radius:28px;color:inherit;background:rgba(255,249,237,.58)}
+.mo-menu-world-copy .mo-eyebrow{margin-bottom:8px;color:#a05a62}
+.mo-menu-world-copy h4{margin:0 0 12px;font-size:clamp(1.55rem,2.2vw,2.35rem);word-break:keep-all}
+.mo-menu-world-copy>p:not(.mo-eyebrow){margin:0;color:inherit;font-size:.9rem;line-height:1.9;opacity:.82}
+.mo-menu-world-facts{display:flex;flex-wrap:wrap;gap:7px;margin-top:17px}
+.mo-menu-world-facts span{display:inline-flex;align-items:center;min-height:30px;padding:4px 10px;border:1px solid rgba(87,52,48,.18);border-radius:999px;background:rgba(255,250,238,.54);font-size:.66rem;white-space:nowrap}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-copy{background:rgba(11,13,24,.48)}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-copy .mo-eyebrow{color:#e0b775}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-facts span{border-color:rgba(231,194,126,.20);background:rgba(255,255,255,.045);color:#e8d8d3}
+
+.mo-menu-world-vertical{
+  position:absolute;right:13px;top:50%;z-index:3;transform:translateY(-50%);
+  display:flex;align-items:center;justify-content:center;width:36px;min-height:190px;padding:10px 6px;
+  border:1px solid var(--menu-border);border-radius:18px;
+  background:rgba(255,248,232,.78);color:#673144;
+  writing-mode:vertical-rl;text-orientation:mixed;
+  font-family:var(--font-serif);font-size:.76rem;letter-spacing:.12em;
+}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-vertical{background:rgba(84,28,48,.82);color:#efd39c}
+
+/* category rail from the approved mockups */
+.mo-menu-category-rail{
+  position:relative;z-index:4;display:flex;gap:8px;align-items:center;
+  margin:0 0 18px;padding:8px;
+  overflow-x:auto;scrollbar-width:thin;
+  border:1px solid var(--menu-border);border-radius:999px;
+  background:rgba(255,248,234,.86);box-shadow:0 13px 34px rgba(35,21,24,.11);
+}
+.mo-menu-category-rail button{
+  flex:0 0 auto;min-height:40px;padding:0 17px;border:1px solid rgba(91,54,58,.14);border-radius:999px;
+  background:transparent;color:#55383f;font-family:var(--font-serif);font-size:.78rem;cursor:pointer;white-space:nowrap;
+}
+.mo-menu-category-rail button.is-active{border-color:#a64b5d;background:linear-gradient(135deg,#a84a62,#732541);color:#fff8ec;box-shadow:0 8px 20px rgba(102,34,55,.18)}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-category-rail{background:rgba(13,15,27,.80);border-color:rgba(221,176,98,.36)}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-category-rail button{border-color:rgba(232,194,126,.18);color:#eadad0}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-category-rail button.is-active{background:linear-gradient(135deg,#9c3b51,#641f3a);color:#ffe7b4}
+
+/* menu cards: actual woodblock styling, not a colour swap */
+.mo-menu-grid{position:relative;z-index:3;display:grid;gap:15px;grid-template-columns:repeat(4,minmax(0,1fr));align-items:start}
+.mo-menu-group{
+  position:relative;overflow:hidden;min-width:0;padding:22px 20px 19px;
+  border:1px solid var(--menu-border);border-radius:28px;
+  background:linear-gradient(155deg,var(--menu-card),var(--menu-card-2));
+  color:var(--menu-card-ink);box-shadow:0 16px 36px rgba(0,0,0,.12);
+}
+.mo-menu-group::before{content:"";position:absolute;inset:7px;border:1px solid rgba(67,48,45,.10);border-radius:21px;pointer-events:none}
+.mo-menu-group::after{content:"✿";position:absolute;right:15px;top:14px;display:grid;place-items:center;width:32px;height:32px;border:1px solid currentColor;border-radius:50%;font-size:.8rem;opacity:.22}
+.mo-menu-group h3{position:relative;margin:0 0 13px;padding:0 42px 11px 0;border-bottom:3px double rgba(57,43,41,.18);font-size:1.26rem;letter-spacing:.06em;word-break:keep-all}
+.mo-menu-group h3::before{content:"";display:inline-block;width:7px;height:7px;margin:0 9px 2px 0;border-radius:50%;background:currentColor;box-shadow:11px 0 0 color-mix(in srgb,currentColor 42%,transparent)}
+.mo-menu-group ul{position:relative;list-style:none;margin:0;padding:0}
+.mo-menu-group li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:9px 0;border-bottom:1px dashed color-mix(in srgb,currentColor 19%,transparent)}
+.mo-menu-group li:last-child{border-bottom:0}
+.mo-menu-group li>span{min-width:0;font-size:.82rem;font-weight:680;line-height:1.45}
+.mo-menu-group li>span small{display:block;margin-top:2px;font-size:.66rem;font-weight:400;line-height:1.5;opacity:.68}
+.mo-menu-group li>strong{align-self:start;padding:3px 8px;border:1px solid currentColor;border-radius:999px;background:rgba(255,251,240,.45);font-size:.68rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.mo-menu-group>.mo-menu-note{position:relative;margin:13px 0 0;padding:12px;border:1px solid color-mix(in srgb,currentColor 16%,transparent);border-radius:16px;background:rgba(255,251,240,.40);font-size:.68rem}
+
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-group:nth-child(2n)::before{background:url('../images/patterns/seigaiha.svg') right bottom/130px 65px no-repeat;opacity:.28}
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-group:nth-child(3)::after{content:"浪";font-family:var(--font-serif)}
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-group li>strong{background:#14384d;color:#fff6df;border-color:#14384d}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-group{background:linear-gradient(145deg,rgba(70,24,42,.94),rgba(20,19,31,.95));color:#f7e0b4;box-shadow:0 18px 42px rgba(0,0,0,.24)}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-group::before{border-color:rgba(231,194,126,.12);background:url('../images/patterns/asanoha.svg') right bottom/150px 130px no-repeat;opacity:.7}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-group li>span small{color:#d1bfc1;opacity:.72}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-group li>strong{background:rgba(12,13,23,.72);color:#f0cb83;border-color:rgba(230,185,105,.34)}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-group>.mo-menu-note{background:rgba(9,11,20,.52);border-color:rgba(230,185,105,.18);color:#d9c9c5}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group{background:linear-gradient(145deg,rgba(255,248,235,.96),rgba(239,211,205,.94));color:#5a2c3b}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group::before{background:url('../images/patterns/shippo.svg') right bottom/150px 150px no-repeat;opacity:.34}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group h3{padding:12px 50px 12px 18px;margin:-22px -20px 16px;background:linear-gradient(90deg,#8e3654,#b86a77 64%,#e7b4aa);color:#fff8eb;border:0;border-radius:27px 27px 15px 15px}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group h3::before{background:#f3d398}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group li>strong{color:#8f3952;border-color:rgba(143,57,82,.30)}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group ul{columns:2;column-gap:24px}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group li{break-inside:avoid}
+
+.mo-menu-pane>.mo-menu-note{position:relative;z-index:4;margin:16px 0 0;padding:14px 18px;border:0;border-radius:20px;background:rgba(255,249,235,.90);box-shadow:inset 5px 0 0 #b16a70;color:#4b343a;font-size:.76rem}
+.mo-menu-pane[data-menu-world="BAR"]>.mo-menu-note{background:rgba(13,14,24,.85);box-shadow:inset 5px 0 0 #d19b61;color:#e6d7d1}
+.mo-purchase-callout{margin-top:20px;border-radius:32px!important}
+
+/* ---------- Responsive design lock ---------- */
+@media(max-width:1180px){
+  .mo-menu-world-header{grid-template-columns:minmax(205px,.75fr) minmax(320px,1.25fr) minmax(240px,.9fr);padding-right:54px}
+  .mo-menu-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:960px){
+  .mo-hero-copy{padding:22px 12px!important}
+  .mo-hero-copy::before{inset:-10% -8%}
+  .mo-hero-logo{width:min(250px,64vw)}
+  .mo-menu-section>.mo-shell>.mo-data-status{margin-inline:auto}
+  .mo-menu-world-header{grid-template-columns:1fr 1.35fr;padding:15px 15px 58px;min-height:0}
+  .mo-menu-world-title{min-height:250px}
+  .mo-menu-world-copy{grid-column:1/-1}
+  .mo-menu-world-vertical{right:50%;top:auto;bottom:12px;transform:translateX(50%);width:auto;min-height:0;padding:6px 16px;writing-mode:horizontal-tb;border-radius:999px}
+  .mo-menu-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-grid{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .mo-menu-section{padding-inline:0}
+  .mo-menu-section>.mo-shell{width:min(100% - 18px,1260px)}
+  .mo-menu-tabs{top:calc(var(--header-h) + 4px);border-radius:23px;gap:5px}
+  .mo-menu-tabs button{min-height:45px;padding-inline:5px;font-size:clamp(.7rem,3vw,.82rem)}
+  .mo-menu-pane{padding:10px;border-radius:30px}
+  .mo-menu-world-header{display:flex;flex-direction:column;gap:10px;padding:10px 10px 54px;border-radius:24px}
+  .mo-menu-world-header::before{inset:5px;border-radius:19px}
+  .mo-menu-world-title{min-height:0;padding:24px 18px;border-radius:21px}
+  .mo-menu-world-title h3{font-size:2.25rem}
+  .mo-menu-world-photo{min-height:0;aspect-ratio:16/9;border-radius:21px}
+  .mo-menu-world-photo::after{inset:5px;border-radius:16px}
+  .mo-menu-world-photo img{min-height:0}
+  .mo-menu-world-copy{padding:22px 18px;border-radius:21px}
+  .mo-menu-world-copy h4{font-size:1.65rem}
+  .mo-menu-world-facts{gap:5px}.mo-menu-world-facts span{font-size:.59rem;padding-inline:8px}
+  .mo-menu-category-rail{margin-bottom:10px;padding:6px;border-radius:21px}
+  .mo-menu-category-rail button{min-height:37px;padding-inline:13px;font-size:.72rem}
+  .mo-menu-grid,.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-grid{grid-template-columns:1fr;gap:10px}
+  .mo-menu-group{padding:19px 17px;border-radius:22px}
+  .mo-menu-group::before{border-radius:16px}
+  .mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group h3{margin:-19px -17px 14px;border-radius:21px 21px 13px 13px}
+  .mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group ul{columns:1}
+}
+@media(max-width:390px){
+  .mo-hero h1{font-size:2.15rem}
+  .mo-hero-copy>.mo-eyebrow{font-size:.62rem;letter-spacing:.15em}
+  .mo-hero-actions .mo-btn{min-width:0;flex:1 1 130px;padding-inline:15px}
+}
+@media(prefers-reduced-motion:reduce){
+  .mo-menu-section,.mo-menu-tabs button,.mo-menu-category-rail button{transition:none!important}
+}
+
+/* ======================================================================
+ * v4.3 DESIGN LOCK — approved mockup fidelity pass
+ * - floating hero brand with no frame
+ * - warmer/livelier sakura light
+ * - two-sided vertical title slips
+ * - visible woodblock worlds and compact masonry menu columns
+ * ====================================================================== */
+
+/* Hero light, typography and composition follow the approved hero mockup. */
+.mo-hero-bg{
+  background-position:center 48%;
+  filter:saturate(1.17) brightness(.92) contrast(1.015);
+}
+.mo-hero::before{
+  background:
+    linear-gradient(90deg,rgba(24,7,15,.82) 0%,rgba(44,14,29,.62) 34%,rgba(38,13,26,.10) 65%,rgba(18,7,14,.19) 100%),
+    linear-gradient(180deg,rgba(8,3,6,.02),transparent 48%,rgba(20,7,13,.37) 100%);
+}
+.mo-hero::after{opacity:.72}
+.mo-hero-logo{width:min(310px,82%)}
+.mo-hero h1{
+  font-weight:600;
+  letter-spacing:.018em;
+  color:#f8e9d4;
+  text-shadow:0 5px 22px rgba(0,0,0,.36),0 0 24px rgba(225,174,113,.09);
+}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .mo-hero h1{
+    background:linear-gradient(180deg,#fff6e8 4%,#f4dfc6 51%,#d7a982 100%);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+}
+.mo-hero-lead{color:#fff0e9;font-weight:550;letter-spacing:.045em}
+.mo-hero-copy>p:not(.mo-eyebrow):not(.mo-hero-lead){color:#eadcdf}
+.mo-cinema{border-radius:46px;box-shadow:0 35px 88px rgba(0,0,0,.34),0 0 0 7px rgba(91,38,57,.17)}
+.mo-cinema::before{border-radius:36px}
+.mo-media-console{border-radius:30px;background:linear-gradient(135deg,rgba(91,44,61,.88),rgba(39,17,29,.91))}
+
+/* The hero mark must remain completely frame-free. */
+.mo-hero-copy,.mo-hero-logo{
+  border:0!important;background-color:transparent!important;box-shadow:none!important;
+}
+.mo-hero-copy{background-image:none!important}
+.mo-hero-logo{background-image:none!important}
+
+/* World header gains the two hanging title slips visible in the approved menus. */
+.mo-menu-world-header{padding-inline:66px;isolation:isolate}
+.mo-menu-world-vertical{
+  top:50%;bottom:auto;width:38px;min-height:205px;
+  transform:translateY(-50%);z-index:5;
+  border-radius:20px;
+  box-shadow:0 10px 26px rgba(48,25,29,.12),inset 0 0 0 5px rgba(255,248,231,.21);
+}
+.mo-menu-world-vertical--left{left:13px;right:auto}
+.mo-menu-world-vertical--right{right:13px;left:auto}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-vertical{
+  background:linear-gradient(180deg,rgba(103,32,54,.92),rgba(38,19,35,.94));
+  border-color:rgba(231,188,111,.55);color:#f1d49e;
+}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-world-vertical{
+  background:linear-gradient(180deg,rgba(255,247,231,.94),rgba(241,210,202,.94));
+  border-color:rgba(181,108,102,.42);color:#6d3043;
+}
+
+/* Distinct woodblock canvases: top illustration at native visual scale, motif below. */
+.mo-menu-pane::before{
+  background-repeat:no-repeat,repeat,no-repeat!important;
+  background-position:center top,center top,center!important;
+  opacity:1;
+}
+.mo-menu-pane[data-menu-world="CAFE"]::before{
+  background-image:url('../images/patterns/cafe-wave-crest.svg'),url('../images/patterns/seigaiha.svg'),linear-gradient(180deg,#123c55,#082b42)!important;
+  background-size:100% auto,168px 84px,cover!important;
+}
+.mo-menu-pane[data-menu-world="BAR"]::before{
+  background-image:url('../images/patterns/bar-night-crest.svg'),url('../images/patterns/asanoha.svg'),linear-gradient(180deg,#11172a,#241426 55%,#42192f)!important;
+  background-size:100% auto,180px 156px,cover!important;
+}
+.mo-menu-pane[data-menu-world="COLLECTION"]::before{
+  background-image:url('../images/patterns/collection-sakura-crest.svg'),url('../images/patterns/shippo.svg'),linear-gradient(180deg,#fff4e6,#f6dfd9 58%,#e9c5c8)!important;
+  background-size:100% auto,150px 150px,cover!important;
+}
+
+/* Editorial header art appears within the first screen rather than being lost below a long menu. */
+.mo-menu-world-header::after{
+  left:auto;right:-1%;top:0;bottom:auto;width:31%;height:100%;
+  background-position:right center;background-size:auto 100%;background-repeat:no-repeat;
+  opacity:.23;z-index:0;
+}
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-world-header::after{background-image:url('../images/patterns/cafe-wave-crest.svg');opacity:.23}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-header::after{background-image:url('../images/patterns/bar-night-crest.svg');opacity:.22}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-world-header::after{background-image:url('../images/patterns/collection-sakura-crest.svg');opacity:.20}
+.mo-menu-world-title,.mo-menu-world-photo,.mo-menu-world-copy{z-index:2}
+.mo-menu-world-title{box-shadow:0 12px 32px rgba(54,29,32,.08)}
+.mo-menu-world-title h3{font-weight:650}
+.mo-menu-world-photo{box-shadow:0 18px 44px rgba(0,0,0,.18)}
+.mo-menu-world-copy{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+
+/* Compact masonry flow follows the approved menu boards and removes large empty grid holes. */
+.mo-menu-grid{
+  display:block!important;
+  columns:4 235px;
+  column-gap:15px;
+}
+.mo-menu-group{
+  display:inline-block;width:100%;margin:0 0 15px;
+  break-inside:avoid;page-break-inside:avoid;
+  vertical-align:top;
+}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-grid{columns:2 360px}
+
+/* Strong, world-specific card language. */
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-group{
+  border-color:rgba(214,172,91,.76);
+  background:
+    linear-gradient(rgba(255,247,229,.965),rgba(239,218,178,.96)),
+    url('../images/patterns/washi.svg');
+  box-shadow:0 14px 34px rgba(3,26,40,.16);
+}
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-group h3{
+  color:#12384f;border-bottom:3px double rgba(18,56,79,.22);
+}
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-group::before{
+  background-image:url('../images/patterns/seigaiha.svg');background-position:right bottom;background-size:145px 72px;background-repeat:no-repeat;
+  opacity:.30;
+}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-group{
+  border-color:rgba(226,174,93,.58);
+  background:
+    linear-gradient(145deg,rgba(77,25,43,.965),rgba(17,19,32,.97)),
+    url('../images/patterns/washi.svg');
+}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-group h3{color:#f1cf8c;border-bottom-color:rgba(235,196,126,.22)}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-group::before{
+  background-image:url('../images/patterns/asanoha.svg'),url('../images/patterns/snow-wheel.svg');
+  background-position:right bottom,left top;background-size:150px 130px,110px 110px;background-repeat:no-repeat;
+  opacity:.68;
+}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group{
+  border-color:rgba(190,119,103,.48);
+  background:
+    linear-gradient(145deg,rgba(255,248,234,.98),rgba(242,215,208,.96)),
+    url('../images/patterns/washi.svg');
+  box-shadow:0 15px 36px rgba(111,49,64,.13);
+}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-group::before{
+  background-image:url('../images/patterns/shippo.svg'),url('../images/patterns/sakura.svg');
+  background-position:right bottom,left top;background-size:155px 155px,120px 120px;background-repeat:no-repeat;
+  opacity:.35;
+}
+
+@media(max-width:1180px){
+  .mo-menu-world-header{padding-inline:58px}
+  .mo-menu-grid{columns:3 230px}
+}
+@media(max-width:960px){
+  .mo-menu-world-header{padding:15px 15px 61px}
+  .mo-menu-world-vertical{top:auto;bottom:12px;min-height:0;width:auto;padding:6px 15px;writing-mode:horizontal-tb;transform:none;border-radius:999px}
+  .mo-menu-world-vertical--left{left:12px;right:auto}
+  .mo-menu-world-vertical--right{right:12px;left:auto}
+  .mo-menu-grid{columns:2 225px}
+  .mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-grid{columns:1}
+}
+@media(max-width:680px){
+  .mo-hero-bg{filter:saturate(1.12) brightness(.90) contrast(1.01)}
+  .mo-hero-logo{width:min(230px,63vw)}
+  .mo-cinema{border-radius:30px}.mo-cinema::before{border-radius:22px}
+  .mo-menu-world-header{padding:10px 10px 58px}
+  .mo-menu-world-vertical{font-size:.62rem;max-width:43%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mo-menu-grid,.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-grid{columns:1}
+}
+@media(forced-colors:active){
+  .mo-hero h1{-webkit-text-fill-color:CanvasText;color:CanvasText;background:none}
+}
+
+/* Balanced editorial columns: real wrappers keep all four boards visible and remove empty masonry holes. */
+.mo-menu-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:15px;
+  columns:auto!important;
+  align-items:start;
+}
+.mo-menu-column{display:flex;min-width:0;flex-direction:column;gap:15px}
+.mo-menu-column[hidden]{display:none!important}
+.mo-menu-group{display:block;width:auto;margin:0;break-inside:auto}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-grid{grid-template-columns:repeat(2,minmax(0,1fr));columns:auto!important}
+@media(max-width:1180px){
+  .mo-menu-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:680px){
+  .mo-menu-grid,.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-grid{grid-template-columns:1fr}
+}
+
+/* ---------- v4.3 design-reference fidelity: keep the woodblock artwork visible on long menu canvases ---------- */
+.mo-menu-pane::before{
+  background-size:100% auto!important;
+  background-repeat:no-repeat!important;
+  background-position:center top!important;
+}
+.mo-menu-pane[data-menu-world="CAFE"]{
+  background-image:
+    linear-gradient(180deg,rgba(11,47,67,.92),rgba(5,35,53,.97)),
+    url('../images/patterns/seigaiha.svg');
+  background-size:auto,116px 58px;
+  background-repeat:no-repeat,repeat;
+}
+.mo-menu-pane[data-menu-world="BAR"]{
+  background-image:
+    linear-gradient(180deg,rgba(12,16,32,.93),rgba(27,14,31,.97) 48%,rgba(52,18,38,.96)),
+    url('../images/patterns/asanoha.svg');
+  background-size:auto,190px 190px;
+  background-repeat:no-repeat,repeat;
+}
+.mo-menu-pane[data-menu-world="COLLECTION"]{
+  background-image:
+    linear-gradient(180deg,rgba(255,247,234,.92),rgba(247,222,216,.94) 55%,rgba(232,190,194,.94)),
+    url('../images/patterns/shippo.svg');
+  background-size:auto,180px 180px;
+  background-repeat:no-repeat,repeat;
+}
+.mo-menu-pane[data-menu-world="CAFE"]::before{opacity:.96!important}
+.mo-menu-pane[data-menu-world="BAR"]::before{opacity:.86!important}
+.mo-menu-pane[data-menu-world="COLLECTION"]::before{opacity:.72!important}
+
+/* Keep main menu cards readable while allowing the approved world art to frame them. */
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-grid,
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-grid,
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-grid{position:relative;z-index:3}
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-category-rail,
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-category-rail,
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-category-rail{position:relative;z-index:4}
+
+/* Woodblock illustration inside the editorial copy panel, matching the approved menu references. */
+.mo-menu-world-copy{position:relative;overflow:hidden}
+.mo-menu-world-copy>*{position:relative;z-index:2}
+.mo-menu-world-copy::after{
+  content:"";position:absolute;right:-76px;bottom:-54px;width:320px;height:185px;
+  background-position:center;background-repeat:no-repeat;background-size:cover;
+  opacity:.22;pointer-events:none;z-index:1;
+  -webkit-mask-image:linear-gradient(135deg,transparent 0%,#000 34%,#000 100%);
+  mask-image:linear-gradient(135deg,transparent 0%,#000 34%,#000 100%);
+}
+.mo-menu-pane[data-menu-world="CAFE"] .mo-menu-world-copy::after{background-image:url('../images/patterns/cafe-wave-crest.svg');opacity:.34}
+.mo-menu-pane[data-menu-world="BAR"] .mo-menu-world-copy::after{background-image:url('../images/patterns/bar-night-crest.svg');opacity:.26}
+.mo-menu-pane[data-menu-world="COLLECTION"] .mo-menu-world-copy::after{background-image:url('../images/patterns/collection-sakura-crest.svg');opacity:.24}

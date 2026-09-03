@@ -1,0 +1,796 @@
+{
+  "schemaVersion": "2.0",
+  "updatedAt": "2026-09-01T00:00:00+08:00",
+  "worlds": [
+    {
+      "code": "CAFE",
+      "tab": "午後咖啡",
+      "eyebrow": "MAGICOFFICE CAFÉ · 14:00–20:00",
+      "title": "浮世繪浪花・午後咖啡",
+      "intro": "以咖啡、甜點與較安靜的節奏迎接相遇。每節 90 分鐘，低消 NT$350，另加 10% 服務費。",
+      "image": "assets/images/menu/cafe.webp",
+      "note": "主食加購飲品可折 NT$50（冷萃咖啡／冰滴酒香不適用）；主食加購飲品及拍立得，可折 NT$100。",
+      "key": "cafe",
+      "groups": [
+        {
+          "id": "CAFE-01",
+          "title": "咖啡",
+          "sort": 10,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "CAFE-01-01",
+              "name": "濃縮咖啡",
+              "price": "NT$180",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "CAFE-01-02",
+              "name": "美式咖啡",
+              "price": "NT$180",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "CAFE-01-03",
+              "name": "鮮奶拿鐵",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 30
+            },
+            {
+              "id": "CAFE-01-04",
+              "name": "燕麥奶拿鐵",
+              "price": "NT$300",
+              "status": "供應中",
+              "sort": 40
+            },
+            {
+              "id": "CAFE-01-05",
+              "name": "黑糖拿鐵",
+              "price": "NT$280",
+              "status": "供應中",
+              "sort": 50
+            },
+            {
+              "id": "CAFE-01-06",
+              "name": "焦糖拿鐵",
+              "price": "NT$280",
+              "status": "供應中",
+              "sort": 60
+            },
+            {
+              "id": "CAFE-01-07",
+              "name": "卡布奇諾",
+              "price": "NT$200",
+              "status": "供應中",
+              "sort": 70
+            },
+            {
+              "id": "CAFE-01-08",
+              "name": "冷萃咖啡",
+              "price": "NT$350",
+              "status": "供應中",
+              "sort": 80
+            },
+            {
+              "id": "CAFE-01-09",
+              "name": "冰滴酒香",
+              "price": "NT$550",
+              "status": "供應中",
+              "sort": 90
+            },
+            {
+              "id": "CAFE-01-10",
+              "name": "檸檬西西里",
+              "price": "NT$280",
+              "status": "供應中",
+              "sort": 100
+            },
+            {
+              "id": "CAFE-01-11",
+              "name": "草莓咖啡冰沙",
+              "price": "NT$300",
+              "status": "供應中",
+              "sort": 110
+            },
+            {
+              "id": "CAFE-01-12",
+              "name": "摩卡拿鐵",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 120
+            },
+            {
+              "id": "CAFE-01-13",
+              "name": "手沖咖啡",
+              "price": "NT$550",
+              "status": "供應中",
+              "sort": 130
+            },
+            {
+              "id": "CAFE-01-14",
+              "name": "隨機手沖咖啡",
+              "price": "NT$550",
+              "status": "供應中",
+              "sort": 140
+            }
+          ]
+        },
+        {
+          "id": "CAFE-02",
+          "title": "其餘品項",
+          "sort": 20,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "CAFE-02-01",
+              "name": "紅茶／壺",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "CAFE-02-02",
+              "name": "奶茶／壺",
+              "price": "NT$280",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "CAFE-02-03",
+              "name": "洋甘菊茶",
+              "price": "NT$200",
+              "status": "供應中",
+              "sort": 30
+            },
+            {
+              "id": "CAFE-02-04",
+              "name": "薄荷茶",
+              "price": "NT$200",
+              "status": "供應中",
+              "sort": 40
+            },
+            {
+              "id": "CAFE-02-05",
+              "name": "檸檬汁",
+              "price": "NT$200",
+              "status": "供應中",
+              "sort": 50
+            },
+            {
+              "id": "CAFE-02-06",
+              "name": "水蜜桃氣泡飲",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 60
+            },
+            {
+              "id": "CAFE-02-07",
+              "name": "藍柑氣泡飲",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 70
+            }
+          ]
+        },
+        {
+          "id": "CAFE-03",
+          "title": "甜點",
+          "sort": 30,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "CAFE-03-01",
+              "name": "提拉米蘇",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "CAFE-03-02",
+              "name": "檸檬起司",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "CAFE-03-03",
+              "name": "黑森林",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 30
+            },
+            {
+              "id": "CAFE-03-04",
+              "name": "重乳酪起司",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 40
+            },
+            {
+              "id": "CAFE-03-05",
+              "name": "鮮奶拿破崙",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 50
+            },
+            {
+              "id": "CAFE-03-06",
+              "name": "藍莓起司",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 60
+            },
+            {
+              "id": "CAFE-03-07",
+              "name": "德國布丁塔",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 70
+            }
+          ]
+        },
+        {
+          "id": "CAFE-04",
+          "title": "厚片",
+          "sort": 40,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "CAFE-04-01",
+              "name": "花生厚片",
+              "price": "NT$150",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "CAFE-04-02",
+              "name": "草莓厚片",
+              "price": "NT$150",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "CAFE-04-03",
+              "name": "香蒜厚片",
+              "price": "NT$150",
+              "status": "供應中",
+              "sort": 30
+            },
+            {
+              "id": "CAFE-04-04",
+              "name": "奶酥厚片",
+              "price": "NT$150",
+              "status": "供應中",
+              "sort": 40
+            }
+          ]
+        },
+        {
+          "id": "CAFE-05",
+          "title": "軟法",
+          "sort": 50,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "CAFE-05-01",
+              "name": "燻雞軟法",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "CAFE-05-02",
+              "name": "鮭魚軟法",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "CAFE-05-03",
+              "name": "火腿軟法",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 30
+            }
+          ]
+        },
+        {
+          "id": "CAFE-06",
+          "title": "貝果",
+          "sort": 60,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "CAFE-06-01",
+              "name": "鮭魚貝果",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "CAFE-06-02",
+              "name": "火腿貝果",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "CAFE-06-03",
+              "name": "燻雞貝果",
+              "price": "NT$250",
+              "status": "供應中",
+              "sort": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "BAR",
+      "tab": "魔幻夜晚",
+      "eyebrow": "MAGIC OFF ICE · 20:00–02:00",
+      "title": "浮世繪夜雪・魔幻酒吧",
+      "intro": "冰、酒與燈影喚醒夜間狀態。每節 90 分鐘，低消 NT$500，另加 10% 服務費。",
+      "image": "assets/images/menu/bar.webp",
+      "note": "破杯費 NT$500｜清潔費 NT$5,000｜包廂 NT$1,000／小時｜隱藏品項請詢問現場。",
+      "key": "bar",
+      "groups": [
+        {
+          "id": "BAR-01",
+          "title": "特別的夜晚，特別的酒",
+          "sort": 10,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "BAR-01-01",
+              "name": "浪漫，我從未如此危險",
+              "price": "NT$600",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "BAR-01-02",
+              "name": "綠光乍現，醉意降臨",
+              "price": "NT$600",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "BAR-01-03",
+              "name": "台灣金門高粱創意調酒",
+              "price": "NT$500",
+              "status": "供應中",
+              "sort": 30
+            }
+          ]
+        },
+        {
+          "id": "BAR-02",
+          "title": "FRUITY",
+          "sort": 20,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "BAR-02-01",
+              "name": "芭結一下",
+              "price": "NT$480",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "BAR-02-02",
+              "name": "先醉佳麗",
+              "price": "NT$480",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "BAR-02-03",
+              "name": "老闆最愛",
+              "price": "NT$500",
+              "status": "供應中",
+              "sort": 30
+            }
+          ]
+        },
+        {
+          "id": "BAR-03",
+          "title": "WINE",
+          "sort": 30,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "BAR-03-01",
+              "name": "百芒之中",
+              "price": "NT$500",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "BAR-03-02",
+              "name": "桑格莉雅",
+              "price": "NT$500",
+              "status": "供應中",
+              "sort": 20
+            }
+          ]
+        },
+        {
+          "id": "BAR-04",
+          "title": "MILK",
+          "sort": 40,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "BAR-04-01",
+              "name": "禁愛杏奴",
+              "price": "NT$500",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "BAR-04-02",
+              "name": "提拉米蘇",
+              "price": "NT$500",
+              "status": "供應中",
+              "sort": 20
+            }
+          ]
+        },
+        {
+          "id": "BAR-05",
+          "title": "不醉不歸",
+          "sort": 50,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "BAR-05-01",
+              "name": "1+1",
+              "price": "NT$350",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "BAR-05-02",
+              "name": "琴費斯",
+              "price": "NT$350",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "BAR-05-03",
+              "name": "神風特攻隊",
+              "price": "NT$350",
+              "status": "供應中",
+              "sort": 30
+            }
+          ]
+        },
+        {
+          "id": "BAR-06",
+          "title": "你是不是不能喝",
+          "sort": 60,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "BAR-06-01",
+              "name": "長島冰茶",
+              "price": "NT$400",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "BAR-06-02",
+              "name": "性慾海灘",
+              "price": "NT$400",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "BAR-06-03",
+              "name": "柯夢波丹",
+              "price": "NT$400",
+              "status": "供應中",
+              "sort": 30
+            },
+            {
+              "id": "BAR-06-04",
+              "name": "老式情懷",
+              "price": "NT$400",
+              "status": "供應中",
+              "sort": 40
+            },
+            {
+              "id": "BAR-06-05",
+              "name": "內格羅尼",
+              "price": "NT$400",
+              "status": "供應中",
+              "sort": 50
+            },
+            {
+              "id": "BAR-06-06",
+              "name": "側車",
+              "price": "NT$400",
+              "status": "供應中",
+              "sort": 60
+            }
+          ]
+        },
+        {
+          "id": "BAR-07",
+          "title": "下班辛苦了",
+          "sort": 70,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "BAR-07-01",
+              "name": "雪山啤酒",
+              "price": "NT$180",
+              "status": "供應中",
+              "sort": 10
+            }
+          ]
+        },
+        {
+          "id": "BAR-08",
+          "title": "沒事，我知道你不能喝",
+          "sort": 80,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "BAR-08-01",
+              "name": "蘇打水",
+              "price": "NT$150",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "BAR-08-02",
+              "name": "通寧水",
+              "price": "NT$150",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "BAR-08-03",
+              "name": "可樂",
+              "price": "NT$150",
+              "status": "供應中",
+              "sort": 30
+            },
+            {
+              "id": "BAR-08-04",
+              "name": "雪碧",
+              "price": "NT$150",
+              "status": "供應中",
+              "sort": 40
+            },
+            {
+              "id": "BAR-08-05",
+              "name": "紅牛",
+              "price": "NT$200",
+              "status": "供應中",
+              "sort": 50
+            },
+            {
+              "id": "BAR-08-06",
+              "name": "蘋果汁",
+              "price": "NT$200",
+              "status": "供應中",
+              "sort": 60
+            },
+            {
+              "id": "BAR-08-07",
+              "name": "柳橙汁",
+              "price": "NT$200",
+              "status": "供應中",
+              "sort": 70
+            },
+            {
+              "id": "BAR-08-08",
+              "name": "蔓越莓汁",
+              "price": "NT$200",
+              "status": "供應中",
+              "sort": 80
+            },
+            {
+              "id": "BAR-08-09",
+              "name": "楊枝甘露",
+              "price": "NT$350",
+              "status": "供應中",
+              "sort": 90
+            },
+            {
+              "id": "BAR-08-10",
+              "name": "百香果沙瓦",
+              "price": "NT$380",
+              "status": "供應中",
+              "sort": 100
+            }
+          ]
+        },
+        {
+          "id": "BAR-09",
+          "title": "隱藏品項",
+          "sort": 90,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "BAR-09-01",
+              "name": "魅惑薯條",
+              "price": "NT$280",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "BAR-09-02",
+              "name": "幻氣調香",
+              "price": "請詢問現場",
+              "status": "供應中",
+              "sort": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "COLLECTION",
+      "tab": "浮世繪／周邊",
+      "eyebrow": "SIGNATURE COLLECTION",
+      "title": "把相遇留成收藏",
+      "intro": "拍立得、手機拍、豪華拍與限定互動，將當日的故事保留下來。",
+      "image": "assets/images/menu/collection-ukiyoe-banner.webp",
+      "note": "茶飲／壺可抵一節低消；若擔心姶仕喝醉，調酒 Shot 可製作無酒精版本。",
+      "key": "collection",
+      "groups": [
+        {
+          "id": "COLLECTION-01",
+          "title": "午後篇",
+          "sort": 10,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "COLLECTION-01-01",
+              "name": "浮世繪（拍立得）",
+              "price": "姶仕自訂",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "COLLECTION-01-02",
+              "name": "電子浮世繪（手機拍）",
+              "price": "姶仕自訂",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "COLLECTION-01-03",
+              "name": "另類浮世繪（豪華拍）",
+              "price": "姶仕自訂",
+              "status": "供應中",
+              "sort": 30
+            },
+            {
+              "id": "COLLECTION-01-04",
+              "name": "會動的浮世繪（30 秒影片）",
+              "price": "姶仕自訂",
+              "status": "供應中",
+              "sort": 40
+            },
+            {
+              "id": "COLLECTION-01-05",
+              "name": "賞茶（無酒精）",
+              "price": "NT$300",
+              "status": "供應中",
+              "sort": 50
+            },
+            {
+              "id": "COLLECTION-01-06",
+              "name": "茶飲／壺",
+              "price": "NT$2,200",
+              "status": "供應中",
+              "sort": 60
+            }
+          ],
+          "periodCode": "CAFE"
+        },
+        {
+          "id": "COLLECTION-02",
+          "title": "夜晚篇",
+          "sort": 20,
+          "status": "顯示",
+          "items": [
+            {
+              "id": "COLLECTION-02-01",
+              "name": "浮世繪（拍立得）",
+              "price": "姶仕自訂",
+              "status": "供應中",
+              "sort": 10
+            },
+            {
+              "id": "COLLECTION-02-02",
+              "name": "電子浮世繪（手機拍）",
+              "price": "姶仕自訂",
+              "status": "供應中",
+              "sort": 20
+            },
+            {
+              "id": "COLLECTION-02-03",
+              "name": "另類浮世繪（豪華拍）",
+              "price": "姶仕自訂",
+              "status": "供應中",
+              "sort": 30
+            },
+            {
+              "id": "COLLECTION-02-04",
+              "name": "會動的浮世繪（30 秒影片）",
+              "price": "姶仕自訂",
+              "status": "供應中",
+              "sort": 40
+            },
+            {
+              "id": "COLLECTION-02-05",
+              "name": "賞酒",
+              "price": "NT$300",
+              "status": "供應中",
+              "sort": 50
+            },
+            {
+              "id": "COLLECTION-02-06",
+              "name": "姶仕推薦調酒",
+              "price": "NT$880",
+              "status": "供應中",
+              "sort": 60
+            },
+            {
+              "id": "COLLECTION-02-07",
+              "name": "調酒 6 杯 Shot 塔",
+              "price": "NT$1,200",
+              "status": "供應中",
+              "sort": 70
+            },
+            {
+              "id": "COLLECTION-02-08",
+              "name": "調酒 12 杯 Shot 塔",
+              "price": "NT$2,200",
+              "status": "供應中",
+              "sort": 80
+            },
+            {
+              "id": "COLLECTION-02-09",
+              "name": "調酒 24 杯 Shot 塔",
+              "price": "NT$4,000",
+              "status": "供應中",
+              "sort": 90
+            },
+            {
+              "id": "COLLECTION-02-10",
+              "name": "純酒 6 杯 Shot 塔",
+              "price": "NT$2,000",
+              "status": "供應中",
+              "sort": 100
+            },
+            {
+              "id": "COLLECTION-02-11",
+              "name": "純酒 12 杯 Shot 塔",
+              "price": "NT$3,000",
+              "status": "供應中",
+              "sort": 110
+            },
+            {
+              "id": "COLLECTION-02-12",
+              "name": "純酒 24 杯 Shot 塔",
+              "price": "NT$5,000",
+              "status": "供應中",
+              "sort": 120
+            }
+          ],
+          "periodCode": "BAR"
+        }
+      ]
+    }
+  ]
+}

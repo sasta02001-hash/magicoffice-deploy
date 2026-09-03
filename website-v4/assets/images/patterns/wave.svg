@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" preserveAspectRatio="none">
+<defs><linearGradient id="w" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8bd4e9" stop-opacity=".52"/><stop offset="1" stop-color="#266684" stop-opacity=".08"/></linearGradient></defs>
+<g fill="none" stroke="url(#w)" stroke-width="3.2" opacity=".72">
+<path d="M-70 310Q60 180 190 310T450 310T710 310T970 310T1230 310"/>
+<path d="M-120 350Q20 210 160 350T440 350T720 350T1000 350T1280 350"/>
+<path d="M-30 395Q95 270 220 395T470 395T720 395T970 395T1220 395"/>
+</g><g fill="none" stroke="#d5eef4" stroke-width="1.5" opacity=".34"><path d="M0 285c105-85 175-84 280 0 105 85 175 84 280 0 105-85 175-84 280 0 105 85 175 84 280 0"/></g>
+</svg>

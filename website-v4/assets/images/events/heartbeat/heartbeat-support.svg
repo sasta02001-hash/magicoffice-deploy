@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">MagicOffice 心跳應援</title>
+  <desc id="desc">2026年9月1日至9月15日心跳應援活動，九月整月訂位即送小卡一張。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff8fc"/>
+      <stop offset=".45" stop-color="#ffd7e8"/>
+      <stop offset="1" stop-color="#f28ab5"/>
+    </linearGradient>
+    <linearGradient id="pink" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#ff72aa"/><stop offset="1" stop-color="#d51f67"/>
+    </linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#fff"/><stop offset=".48" stop-color="#ffe5ef"/><stop offset=".5" stop-color="#ffc2d8"/><stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <pattern id="dots" width="34" height="34" patternUnits="userSpaceOnUse">
+      <circle cx="4" cy="4" r="3.2" fill="#c82768" opacity=".15"/>
+    </pattern>
+    <pattern id="stripes" width="42" height="42" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <rect width="14" height="42" fill="#fff" opacity=".13"/>
+    </pattern>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#a51855" flood-opacity=".35"/>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#dots)"/>
+  <path d="M0 690L1600 120V900H0Z" fill="url(#stripes)" opacity=".9"/>
+  <circle cx="1360" cy="120" r="280" fill="#fff" opacity=".24" filter="url(#soft)"/>
+  <circle cx="210" cy="770" r="250" fill="#ff4b93" opacity=".16" filter="url(#soft)"/>
+
+  <g fill="none" stroke="#fff" stroke-width="12" opacity=".72">
+    <path d="M1120 120c-92-104-250 4-182 142l182 184 182-184c68-138-90-246-182-142Z"/>
+    <path d="M102 390h190l45-92 78 205 66-137 43 70h302" stroke-linejoin="round"/>
+  </g>
+
+  <g opacity=".75" fill="#fff">
+    <path d="M118 122c-30-34-82 2-60 47l60 61 60-61c22-45-30-81-60-47Z"/>
+    <path d="M1450 650c-22-25-60 2-44 34l44 45 44-45c16-32-22-59-44-34Z"/>
+    <path d="M1290 770c-15-18-43 1-31 24l31 32 31-32c12-23-16-42-31-24Z"/>
+  </g>
+
+  <g transform="translate(100 72)">
+    <text x="0" y="0" dominant-baseline="hanging" font-family="Arial, 'Noto Sans TC', sans-serif" font-size="34" font-weight="800" fill="#a91e55" letter-spacing="4">MAGICOFFICE</text>
+    <text x="300" y="2" dominant-baseline="hanging" font-family="'Noto Serif TC', serif" font-size="31" font-weight="700" fill="#7a264a">魔幻</text>
+    <path d="M0 55H420" stroke="#bb3169" stroke-width="3"/>
+  </g>
+
+  <g transform="translate(100 205)" filter="url(#shadow)">
+    <text x="0" y="190" font-family="'Noto Sans TC', 'Microsoft JhengHei', sans-serif" font-size="202" font-weight="900" fill="url(#chrome)" stroke="#d72c70" stroke-width="18" paint-order="stroke fill">心跳應援</text>
+    <path d="M10 242h180l30-62 58 142 53-105 35 49h410" fill="none" stroke="#d72c70" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g transform="translate(100 532)">
+    <rect width="675" height="86" rx="43" fill="#fff" opacity=".9"/>
+    <rect x="8" y="8" width="659" height="70" rx="35" fill="none" stroke="#d72c70" stroke-width="3" stroke-dasharray="8 10"/>
+    <text x="337.5" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="800" fill="#bd225f" letter-spacing="3">2026.09.01 — 09.15</text>
+  </g>
+
+  <text x="105" y="690" font-family="'Comic Sans MS','Noto Sans TC',cursive" font-size="54" font-style="italic" font-weight="700" fill="#9d2858">全力で応援するよ！！</text>
+
+  <g transform="translate(100 750)">
+    <rect width="910" height="86" rx="20" fill="#c72566"/>
+    <path d="M26 0 0 43l26 43M884 0l26 43-26 43" fill="#9f174e"/>
+    <text x="455" y="56" text-anchor="middle" font-family="'Noto Sans TC','Microsoft JhengHei',sans-serif" font-size="36" font-weight="800" fill="#fff">九月整月活動｜訂位即送小卡一張</text>
+  </g>
+
+  <g transform="translate(1190 500) rotate(-10)" filter="url(#shadow)">
+    <path d="M0 92 260 0v228L0 136Z" fill="url(#pink)" stroke="#fff" stroke-width="10"/>
+    <rect x="-52" y="78" width="70" height="78" rx="18" fill="#fff" stroke="#d72c70" stroke-width="9"/>
+    <text x="145" y="137" text-anchor="middle" font-family="Arial,sans-serif" font-size="73" font-weight="900" fill="#fff">MO</text>
+    <path d="M278 28q80 70 0 150M308 0q118 103 0 206" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+  </g>
+
+  <g fill="#fff" opacity=".9">
+    <circle cx="1080" cy="625" r="11"/><circle cx="1140" cy="710" r="7"/><circle cx="1490" cy="345" r="10"/><circle cx="1340" cy="400" r="6"/>
+    <path d="M1090 145l12 28 30 4-23 20 7 30-26-16-26 16 7-30-23-20 30-4z"/>
+    <path d="M1460 500l8 18 20 3-15 13 5 20-18-10-17 10 5-20-15-13 20-3z"/>
+  </g>
+  <rect x="18" y="18" width="1564" height="864" rx="34" fill="none" stroke="#fff" stroke-width="6" opacity=".72"/>
+  <rect x="34" y="34" width="1532" height="832" rx="25" fill="none" stroke="#b52b63" stroke-width="2" stroke-dasharray="12 12" opacity=".55"/>
+</svg>

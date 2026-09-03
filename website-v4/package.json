@@ -1,0 +1,29 @@
+{
+  "name": "magicoffice-design-locked",
+  "version": "4.3.3",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check scripts/build.mjs && node --check scripts/sync-content.mjs && node --check scripts/sync-snapshots.mjs && node --check scripts/validate.mjs && node --check scripts/build-standalone.mjs && node --check scripts/browser-test.mjs && node --check scripts/data-layer-test.mjs && node --check assets/js/app.js && node --check api/_shared.js && node --check api/schedule.js && node --check api/menu.js && node --check assets/js/menu-view.js && node --check assets/js/menu-view.js",
+    "sync": "node scripts/sync-content.mjs",
+    "sync:soft": "node scripts/sync-content.mjs --soft",
+    "sync:snapshots": "node scripts/sync-snapshots.mjs",
+    "build": "node scripts/sync-snapshots.mjs && node scripts/build.mjs && node scripts/validate.mjs",
+    "build:offline": "node scripts/build.mjs && node scripts/validate.mjs",
+    "deploy:build": "npm run build",
+    "dev": "node scripts/build.mjs && node scripts/dev-server.mjs",
+    "standalone": "node scripts/build-standalone.mjs",
+    "test:browser": "python scripts/browser-feedback-check.py",
+    "release": "npm run check && npm run test:data && npm run build",
+    "test:data": "node scripts/data-layer-test.mjs",
+    "test:browser:basic": "python scripts/browser-feedback-check.py",
+    "check:publish": "node scripts/check-publish-ready.mjs",
+    "build:production": "npm run check:publish && npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^24.16.0"
+  }
+}

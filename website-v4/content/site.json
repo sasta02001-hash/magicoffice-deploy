@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "4.3",
+  "version": "production-v4.3.3-responsive-feedback",
+  "timezone": "Asia/Taipei",
+  "brandName": "MagicOffice／魔幻",
+  "legalName": "魔幻姶仕社",
+  "tagline": "白天讓人安定，夜晚讓情緒流動。",
+  "description": "MagicOffice v4.3 Design Locked：首頁商標無外框、午後浪花、魔幻夜雪、櫻花收藏三套高辨識浮世繪菜單、完整活動與線上訂位。",
+  "address": "台北市松山區八德路二段375號",
+  "links": {
+    "booking": "https://gforms.app/r/71hSwQR",
+    "line": "https://lin.ee/NcCGG1P",
+    "instagram": "https://www.instagram.com/maid_magicoffice/",
+    "maps": "https://maps.app.goo.gl/udVL8zhpwbxjCEot9?g_st=ic",
+    "recruitment": "https://gforms.app/r/bEg7YnB",
+    "purchase": "https://docs.google.com/forms/d/e/1FAIpQLScUb7_kaJYbrWB0DB8mS-4VQkFHXv1xWsXghXdp5yTferWkQQ/viewform"
+  },
+  "schedule": {
+    "spreadsheetId": "15y3DL7_nUj5JLng9mKayhwDnAnZPQgPHg0zCrLdb0BQ",
+    "sheetName": "公開班表",
+    "gid": "999817265",
+    "cacheMinutes": 5,
+    "refreshMinutes": 5,
+    "clientCacheMaxHours": 168,
+    "timeoutMs": 9000,
+    "sourceLabel": "MagicOffice｜官網公開班表"
+  },
+  "menu": {
+    "spreadsheetId": "1nYJJJNJTLU19mBNm3Sjwo_Ep54AZPQl-PCS6koLFe84",
+    "itemsSheet": "菜單品項",
+    "categoriesSheet": "分類設定",
+    "worldsSheet": "世界設定",
+    "cacheMinutes": 5,
+    "refreshMinutes": 10,
+    "clientCacheMaxHours": 168,
+    "timeoutMs": 10000,
+    "sourceLabel": "MagicOffice｜官網菜單 CMS v1.0"
+  },
+  "hero": {
+    "poster": "assets/images/hero/hero-poster.webp",
+    "video": "assets/video/home-trial-12s-with-audio.mp4",
+    "durationLabel": "12 SEC · SOUND AVAILABLE",
+    "audio": "AAC-LC stereo 48kHz"
+  },
+  "contentManagement": {
+    "roster": "content/roster.json",
+    "events": "content/events.json",
+    "schedule": "Google Sheets 即時同步＋快取＋內嵌快照",
+    "menu": "Google Sheets 即時同步＋快取＋內嵌快照",
+    "hero": "content/site.json + assets/images/hero + assets/video"
+  },
+  "designSystem": {
+    "name": "MagicOffice v4.3 Design Locked",
+    "rhythm": "night → washi → sunrise → night → washi → sakura → event themes → three menu worlds",
+    "fonts": "serif for brand and headings; sans-serif for operation and long-form content",
+    "menuThemes": {
+      "CAFE": "青海波與浪花",
+      "BAR": "夜雪與麻葉",
+      "COLLECTION": "櫻枝、扇面與七寶紋"
+    },
+    "shapeLanguage": "soft rounded contours, floating borderless hero branding, visible woodblock-print menu worlds"
+  },
+  "release": "magicoffice-v4.3.3-responsive-feedback-2026-09-03",
+  "updatedAt": "2026-09-03",
+  "releaseStatus": "release-candidate",
+  "quickLinks": [
+    {
+      "label": "姶仕名錄",
+      "href": "#roster"
+    },
+    {
+      "label": "本週出勤",
+      "href": "#schedule"
+    },
+    {
+      "label": "線上購拍",
+      "action": "purchase"
+    },
+    {
+      "label": "活動快報",
+      "href": "#events"
+    },
+    {
+      "label": "服務價目",
+      "href": "#menu"
+    },
+    {
+      "label": "立即訂位",
+      "href": "https://gforms.app/r/71hSwQR"
+    }
+  ]
+}

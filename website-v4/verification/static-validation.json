@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-09-03T01:38:00.965Z",
+  "version": "production-v4.3.3-responsive-feedback",
+  "errors": [],
+  "warnings": [],
+  "counts": {
+    "roster": 16,
+    "events": 3,
+    "menuItems": 88,
+    "scheduleFallbackRows": 28,
+    "localReferences": 53
+  },
+  "index": {
+    "bytes": 102570,
+    "sha256": "11ca3b2514df1efabc08f364e8cff826b31488fa06d429f17f48cee5b5ebec27"
+  }
+}
