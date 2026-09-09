@@ -1,0 +1,55 @@
+name: MagicOffice Final Render
+
+on:
+  push:
+    paths:
+      - '.github/workflows/magicoffice-final-render.yml'
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg p7zip-full fonts-noto-cjk
+          python -m pip install --upgrade gdown
+      - name: Download official sources from Drive
+        run: |
+          mkdir -p work/assets
+          gdown 'https://drive.google.com/uc?id=11MkhIqzTJXIzhVVU5qFsuyiW5J4S58ub' -O work/MagicOffice_4K_NATIVE_REPAIRED.mp4
+          gdown --folder 'https://drive.google.com/drive/folders/1DGRecFN7xM_I0awecv5G5ms5OmpxLcHU' -O work/assets
+          find work/assets -maxdepth 3 -type f -printf '%p\t%s bytes\n' | sort | tee work/ASSET_INVENTORY.txt
+          ffprobe -v error -show_streams -show_format -of json work/MagicOffice_4K_NATIVE_REPAIRED.mp4 > work/MOTHER_FFPROBE.json
+      - name: Verify and unpack asset bundles
+        run: |
+          mkdir -p work/unpacked
+          find work/assets -type f -name '*.zip' -print0 | while IFS= read -r -d '' f; do
+            d="work/unpacked/$(basename "$f" .zip)"
+            mkdir -p "$d"
+            unzip -q -o "$f" -d "$d"
+          done
+          find work/unpacked -maxdepth 5 -type f -printf '%p\t%s bytes\n' | sort | tee work/UNPACKED_INVENTORY.txt
+      - name: Locate locked deliverables
+        run: |
+          echo '=== ASS ===' | tee work/LOCATED.txt
+          find work -type f \( -iname '*.ass' -o -iname '*.srt' \) -print | tee -a work/LOCATED.txt
+          echo '=== WAV ===' | tee -a work/LOCATED.txt
+          find work -type f -iname '*.wav' -print | tee -a work/LOCATED.txt
+          echo '=== VIDEO / MOV ===' | tee -a work/LOCATED.txt
+          find work -type f \( -iname '*.mp4' -o -iname '*.mov' -o -iname '*.webm' \) -print | tee -a work/LOCATED.txt
+          echo '=== PNG ===' | tee -a work/LOCATED.txt
+          find work -type f -iname '*.png' -print | head -200 | tee -a work/LOCATED.txt
+      - name: Upload diagnostic manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: magicoffice-source-diagnostic
+          path: |
+            work/ASSET_INVENTORY.txt
+            work/UNPACKED_INVENTORY.txt
+            work/LOCATED.txt
+            work/MOTHER_FFPROBE.json
+          retention-days: 7
