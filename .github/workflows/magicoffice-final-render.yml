@@ -1,55 +1,30 @@
 name: MagicOffice Final Render
-
 on:
   push:
-    paths:
-      - '.github/workflows/magicoffice-final-render.yml'
+    paths: ['.github/workflows/magicoffice-final-render.yml']
   workflow_dispatch:
-
 jobs:
   render:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-      - name: Install tools
+      - run: python -m pip install --upgrade gdown
+      - name: Download and unpack locked source bundles
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg p7zip-full fonts-noto-cjk
-          python -m pip install --upgrade gdown
-      - name: Download official sources from Drive
-        run: |
-          mkdir -p work/assets
-          gdown 'https://drive.google.com/uc?id=11MkhIqzTJXIzhVVU5qFsuyiW5J4S58ub' -O work/MagicOffice_4K_NATIVE_REPAIRED.mp4
+          mkdir -p work/assets work/unpacked
           gdown --folder 'https://drive.google.com/drive/folders/1DGRecFN7xM_I0awecv5G5ms5OmpxLcHU' -O work/assets
-          find work/assets -maxdepth 3 -type f -printf '%p\t%s bytes\n' | sort | tee work/ASSET_INVENTORY.txt
-          ffprobe -v error -show_streams -show_format -of json work/MagicOffice_4K_NATIVE_REPAIRED.mp4 > work/MOTHER_FFPROBE.json
-      - name: Verify and unpack asset bundles
+          find work/assets -name '*.zip' -print0 | while IFS= read -r -d '' f; do d="work/unpacked/$(basename "$f" .zip)"; mkdir -p "$d"; unzip -q -o "$f" -d "$d"; done
+          NP=$(find work/unpacked -name 'MAGICOFFICE_NAMEPLATE_COMPONENTS_V2_DELIVERY.zip' | head -1); [ -z "$NP" ] || { mkdir -p work/nameplates; unzip -q -o "$NP" -d work/nameplates; }
+          CG=$(find work/unpacked -name 'MAGICOFFICE_COMMON_TEXT_GUIDES_AND_TIMING.zip' | head -1); [ -z "$CG" ] || { mkdir -p work/nameplate_guides; unzip -q -o "$CG" -d work/nameplate_guides; }
+          SM=$(find work/unpacked -name 'SIX_NAMEPLATE_STATIC_MASTERS.zip' | head -1); [ -z "$SM" ] || { mkdir -p work/nameplate_static; unzip -q -o "$SM" -d work/nameplate_static; }
+      - name: Collect exact locked instructions
         run: |
-          mkdir -p work/unpacked
-          find work/assets -type f -name '*.zip' -print0 | while IFS= read -r -d '' f; do
-            d="work/unpacked/$(basename "$f" .zip)"
-            mkdir -p "$d"
-            unzip -q -o "$f" -d "$d"
-          done
-          find work/unpacked -maxdepth 5 -type f -printf '%p\t%s bytes\n' | sort | tee work/UNPACKED_INVENTORY.txt
-      - name: Locate locked deliverables
-        run: |
-          echo '=== ASS ===' | tee work/LOCATED.txt
-          find work -type f \( -iname '*.ass' -o -iname '*.srt' \) -print | tee -a work/LOCATED.txt
-          echo '=== WAV ===' | tee -a work/LOCATED.txt
-          find work -type f -iname '*.wav' -print | tee -a work/LOCATED.txt
-          echo '=== VIDEO / MOV ===' | tee -a work/LOCATED.txt
-          find work -type f \( -iname '*.mp4' -o -iname '*.mov' -o -iname '*.webm' \) -print | tee -a work/LOCATED.txt
-          echo '=== PNG ===' | tee -a work/LOCATED.txt
-          find work -type f -iname '*.png' -print | head -200 | tee -a work/LOCATED.txt
-      - name: Upload diagnostic manifest
-        uses: actions/upload-artifact@v4
+          mkdir -p spec
+          find work -type f \( -iname '*.md' -o -iname '*.txt' -o -iname '*.json' -o -iname '*.csv' -o -iname '*.ass' \) -print0 | while IFS= read -r -d '' f; do cp --parents "$f" spec/; done
+          find work/nameplates work/nameplate_guides work/nameplate_static -type f -printf '%p\t%s bytes\n' 2>/dev/null | sort > spec/NAMEPLATE_FILES.txt || true
+      - uses: actions/upload-artifact@v4
         with:
-          name: magicoffice-source-diagnostic
-          path: |
-            work/ASSET_INVENTORY.txt
-            work/UNPACKED_INVENTORY.txt
-            work/LOCATED.txt
-            work/MOTHER_FFPROBE.json
+          name: magicoffice-locked-specs
+          path: spec
           retention-days: 7
