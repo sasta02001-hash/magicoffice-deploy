@@ -53,7 +53,7 @@ jobs:
             VOICE=$(find work/u -type f | grep -Ei 'voice.*processed.*\.wav$' | head -1 || true)
             [ -n "$VOICE" ] || VOICE="work/assets/人物語音全檔.wav"
             MUSIC="work/assets/ElevenLabs_Untitled_project.wav"
-            ffmpeg -hide_banner -loglevel error -y -i "$MUSIC" -i "$VOICE" -filter_complex "[0:a]apad,volume=1.0[m];[1:a]apad,volume=1.0[v];[m][v]sidechaincompress=threshold=0.04:ratio=6:attack=90:release=500[duck];[duck][v]amix=inputs=2:normalize=0,alimiter=limit=0.95[a]" -map '[a]' -t 228.208333 -c:a aac -b:a 320k -ar 48000 work/final_mix.m4a
+            ffmpeg -hide_banner -loglevel error -y -i "$MUSIC" -i "$VOICE" -filter_complex "[0:a]apad,volume=1.0[m];[1:a]apad,volume=1.0,asplit=2[v_sc][v_mix];[m][v_sc]sidechaincompress=threshold=0.04:ratio=6:attack=90:release=500[duck];[duck][v_mix]amix=inputs=2:normalize=0,alimiter=limit=0.95[a]" -map '[a]' -t 228.208333 -c:a aac -b:a 320k -ar 48000 work/final_mix.m4a
           fi
           ffprobe -v error -show_streams -show_format -of json work/final_mix.m4a > work/qc/AUDIO.json
           ffmpeg -hide_banner -i work/final_mix.m4a -af silencedetect=n=-55dB:d=0.5 -f null - 2> work/qc/SILENCE_SCAN.txt || true
