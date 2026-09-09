@@ -2,31 +2,103 @@ name: MagicOffice Final Render
 on:
   push:
     paths: ['.github/workflows/magicoffice-final-render.yml']
+  workflow_dispatch:
 jobs:
   render:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v4
-      - run: python -m pip install --upgrade gdown
-      - run: |
-          mkdir -p work/assets work/u work/np work/ng work/ns
+      - name: Install render tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install --upgrade gdown pillow
+      - name: Download exact locked sources
+        run: |
+          mkdir -p work/assets work/u work/np work/roles work/out work/qc
+          gdown 'https://drive.google.com/uc?id=11MkhIqzTJXIzhVVU5qFsuyiW5J4S58ub' -O work/mother.mp4
           gdown --folder 'https://drive.google.com/drive/folders/1DGRecFN7xM_I0awecv5G5ms5OmpxLcHU' -O work/assets
           find work/assets -name '*.zip' -print0 | while IFS= read -r -d '' f; do d="work/u/$(basename "$f" .zip)"; mkdir -p "$d"; unzip -q -o "$f" -d "$d"; done
           unzip -q -o "$(find work/u -name MAGICOFFICE_NAMEPLATE_COMPONENTS_V2_DELIVERY.zip | head -1)" -d work/np
-          unzip -q -o "$(find work/u -name MAGICOFFICE_COMMON_TEXT_GUIDES_AND_TIMING.zip | head -1)" -d work/ng
-          unzip -q -o "$(find work/u -name SIX_NAMEPLATE_STATIC_MASTERS.zip | head -1)" -d work/ns
-      - name: Print locked specs
+          for n in 01_YOSHINO 02_SAKURI 03_TSUKIYOMI 04_MOMIJI 05_XUEHUA 06_MAGIC; do z=$(find work/np -name "A${n}_COMPONENTS_430.zip" | head -1); mkdir -p "work/roles/$n"; unzip -q -o "$z" -d "work/roles/$n"; done
+          ffprobe -v error -show_streams -show_format -of json work/mother.mp4 > work/qc/MOTHER.json
+      - name: Render locked 4-second nameplates
         run: |
-          echo '=== NAMEPLATE HANDOFF ==='
-          cat "$(find work/u -name MAGICOFFICE_NAMEPLATE_HANDOFF_v1.txt | head -1)"
-          echo '=== NAMEPLATE FILES ==='
-          find work/np work/ng work/ns -type f -printf '%p\t%s\n' | sort
-          echo '=== TIMING DOCS ==='
-          find work/ng -type f \( -iname '*.txt' -o -iname '*.md' -o -iname '*.csv' -o -iname '*.json' \) -print0 | while IFS= read -r -d '' f; do echo "--- $f"; cat "$f"; done
-          echo '=== AUDIO RECIPE ==='
-          cat "$(find work/u -name AUDIO_MIX_RECIPE_LOCKED.txt | head -1)"
-          echo '=== SUBTITLE MAP ==='
-          cat "$(find work/u -name SUBTITLE_TIMING_MAP_LOCKED.csv | head -1)"
-          echo '=== SOFT README ==='
-          cat "$(find work/u -path '*MagicOffice_SOFT_ENTRANCES*' -name README.md | head -1)"
+          for n in 01_YOSHINO 02_SAKURI 03_TSUKIYOMI 04_MOMIJI 05_XUEHUA 06_MAGIC; do
+            python scripts/render_nameplates.py "work/roles/$n" "work/frames_$n"
+            ffmpeg -hide_banner -loglevel error -framerate 48 -i "work/frames_$n/f_%03d.png" -vf scale=860:1470:flags=lanczos -c:v prores_ks -profile:v 4 -pix_fmt yuva444p10le -y "work/np_$n.mov"
+            rm -rf "work/frames_$n"
+          done
+      - name: Render locked opening and ending
+        run: |
+          SOFT=$(find work/u -path '*MagicOffice_SOFT_ENTRANCES*' -name package.json -printf '%h\n' | head -1)
+          cd "$SOFT"
+          npm install --no-audit --no-fund
+          npm run render:opening
+          npm run render:ending
+          cd -
+          OPEN=$(find "$SOFT" -type f -iname '*opening*.mp4' ! -path '*/public/video/*' -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
+          END=$(find "$SOFT" -type f -iname '*ending*.mp4' ! -path '*/public/video/*' -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
+          cp "$OPEN" work/opening.mp4
+          cp "$END" work/ending.mp4
+          ffprobe -v error -show_streams -of json work/opening.mp4 > work/qc/OPENING.json
+          ffprobe -v error -show_streams -of json work/ending.mp4 > work/qc/ENDING.json
+      - name: Select locked subtitle and approved mix
+        run: |
+          ASS=$(find work/u -type f -iname '*.ass' | grep -Ei '4K|2160|MASTER' | head -1); [ -n "$ASS" ] || ASS=$(find work/u -type f -iname '*.ass' | head -1)
+          MIX=$(find work/u -type f -iname 'MagicOffice_full_mix_approved.m4a' | head -1)
+          cp "$ASS" work/subtitles.ass
+          cp "$MIX" work/final_mix.m4a
+          ffprobe -v error -show_streams -show_format -of json work/final_mix.m4a > work/qc/AUDIO.json
+      - name: Composite true 4K FINAL
+        run: |
+          ffmpeg -hide_banner -y \
+            -i work/mother.mp4 -i work/opening.mp4 -i work/ending.mp4 \
+            -i work/np_01_YOSHINO.mov -i work/np_02_SAKURI.mov -i work/np_03_TSUKIYOMI.mov -i work/np_04_MOMIJI.mov -i work/np_05_XUEHUA.mov -i work/np_06_MAGIC.mov \
+            -i work/final_mix.m4a \
+            -filter_complex "[0:v]setpts=PTS-STARTPTS[b];[1:v]scale=3840:2160:flags=lanczos,setpts=PTS-STARTPTS[o];[b][o]overlay=0:0:enable='between(t,0,5.625)'[v1];[2:v]scale=3840:2160:flags=lanczos,setpts=PTS-STARTPTS+223.208333/TB[e];[v1][e]overlay=0:0:enable='between(t,223.208333,228.208333)'[v2];[3:v]setpts=PTS-STARTPTS+25.583/TB[n1];[v2][n1]overlay=140:330:enable='between(t,25.583,29.583)'[v3];[4:v]setpts=PTS-STARTPTS+57.500/TB[n2];[v3][n2]overlay=2820:330:enable='between(t,57.500,61.500)'[v4];[5:v]setpts=PTS-STARTPTS+84.042/TB[n3];[v4][n3]overlay=2820:330:enable='between(t,84.042,88.042)'[v5];[6:v]setpts=PTS-STARTPTS+104.083/TB[n4];[v5][n4]overlay=140:330:enable='between(t,104.083,108.083)'[v6];[7:v]setpts=PTS-STARTPTS+150.833/TB[n5];[v6][n5]overlay=2820:330:enable='between(t,150.833,154.833)'[v7];[8:v]setpts=PTS-STARTPTS+199.900/TB[n6];[v7][n6]overlay=140:330:enable='between(t,199.900,203.900)',ass=work/subtitles.ass[vout]" \
+            -map '[vout]' -map 9:a:0 -c:v libx264 -preset medium -crf 10 -pix_fmt yuv420p -profile:v high -level 5.2 \
+            -color_primaries bt709 -color_trc bt709 -colorspace bt709 -color_range tv -c:a copy -movflags +faststart -shortest work/out/MagicOffice_4K_FINAL_MASTER.mp4
+      - name: QC 4K before derivative
+        run: |
+          ffprobe -v error -show_streams -show_format -of json work/out/MagicOffice_4K_FINAL_MASTER.mp4 > work/qc/FINAL_4K.json
+          ffmpeg -v error -i work/out/MagicOffice_4K_FINAL_MASTER.mp4 -map 0:v:0 -f null -
+          ffmpeg -v error -i work/out/MagicOffice_4K_FINAL_MASTER.mp4 -map 0:a:0 -f null -
+          for t in 3 27 59 86 106 152 201 210 225; do ffmpeg -v error -ss $t -i work/out/MagicOffice_4K_FINAL_MASTER.mp4 -frames:v 1 -q:v 2 -y work/qc/frame_${t}.jpg; done
+          sha256sum work/out/MagicOffice_4K_FINAL_MASTER.mp4 > work/qc/SHA256_4K.txt
+      - name: Produce under-520MB 1080p from accepted 4K FINAL
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -i work/out/MagicOffice_4K_FINAL_MASTER.mp4 -map 0:v:0 -vf scale=1920:1080:flags=lanczos -c:v libx264 -preset slow -b:v 16.8M -maxrate 18M -bufsize 36M -pass 1 -an -f mp4 /dev/null
+          ffmpeg -hide_banner -loglevel error -y -i work/out/MagicOffice_4K_FINAL_MASTER.mp4 -map 0:v:0 -map 0:a:0 -vf scale=1920:1080:flags=lanczos -c:v libx264 -preset slow -b:v 16.8M -maxrate 18M -bufsize 36M -pass 2 -c:a aac -b:a 320k -ar 48000 -movflags +faststart work/out/MagicOffice_1080p_FINAL_UNDER520MB.mp4
+          rm -f ffmpeg2pass-0.log*
+      - name: Final QC and size gate
+        run: |
+          test $(stat -c%s work/out/MagicOffice_1080p_FINAL_UNDER520MB.mp4) -lt 520000000
+          ffprobe -v error -show_streams -show_format -of json work/out/MagicOffice_1080p_FINAL_UNDER520MB.mp4 > work/qc/FINAL_1080.json
+          ffmpeg -v error -i work/out/MagicOffice_1080p_FINAL_UNDER520MB.mp4 -map 0:v:0 -f null -
+          ffmpeg -v error -i work/out/MagicOffice_1080p_FINAL_UNDER520MB.mp4 -map 0:a:0 -f null -
+          sha256sum work/out/MagicOffice_1080p_FINAL_UNDER520MB.mp4 > work/qc/SHA256_1080.txt
+          stat -c '%n %s bytes' work/out/*.mp4 > work/qc/SIZES.txt
+      - name: Split 4K for reliable artifact delivery
+        run: |
+          mkdir -p work/out/4k_parts
+          split -b 1900M -d -a 2 work/out/MagicOffice_4K_FINAL_MASTER.mp4 work/out/4k_parts/MagicOffice_4K_FINAL_MASTER.mp4.part
+          sha256sum work/out/4k_parts/* > work/qc/SHA256_4K_PARTS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice-1080p-FINAL
+          path: work/out/MagicOffice_1080p_FINAL_UNDER520MB.mp4
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice-4K-FINAL-parts
+          path: work/out/4k_parts/*
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MagicOffice-FINAL-QC
+          path: work/qc
+          retention-days: 7
