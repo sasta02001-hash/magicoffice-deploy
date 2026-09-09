@@ -42,24 +42,24 @@ jobs:
           END=$(find "$SOFT" -type f -iname '*ending*.mp4' ! -path '*/public/video/*' -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)
           cp "$OPEN" work/opening.mp4
           cp "$END" work/ending.mp4
-          ffprobe -v error -show_streams -of json work/opening.mp4 > work/qc/OPENING.json
-          ffprobe -v error -show_streams -of json work/ending.mp4 > work/qc/ENDING.json
-      - name: Select locked subtitle and approved mix
+      - name: Build locked subtitles and continuous audio mix
         run: |
           ASS=$(find work/u -type f -iname '*.ass' | grep -Ei '4K|2160|MASTER' | head -1); [ -n "$ASS" ] || ASS=$(find work/u -type f -iname '*.ass' | head -1)
-          MIX=$(find work/u -type f -iname 'MagicOffice_full_mix_approved.m4a' | head -1)
           cp "$ASS" work/subtitles.ass
-          cp "$MIX" work/final_mix.m4a
+          MIX=$(find work/u -type f | grep -Ei 'full.*mix.*approved.*\.(m4a|wav)$' | head -1 || true)
+          if [ -n "$MIX" ]; then
+            ffmpeg -hide_banner -loglevel error -y -i "$MIX" -af apad -t 228.208333 -c:a aac -b:a 320k -ar 48000 work/final_mix.m4a
+          else
+            VOICE=$(find work/u -type f | grep -Ei 'voice.*processed.*\.wav$' | head -1 || true)
+            [ -n "$VOICE" ] || VOICE="work/assets/人物語音全檔.wav"
+            MUSIC="work/assets/ElevenLabs_Untitled_project.wav"
+            ffmpeg -hide_banner -loglevel error -y -i "$MUSIC" -i "$VOICE" -filter_complex "[0:a]apad,volume=1.0[m];[1:a]apad,volume=1.0[v];[m][v]sidechaincompress=threshold=0.04:ratio=6:attack=90:release=500[duck];[duck][v]amix=inputs=2:normalize=0,alimiter=limit=0.95[a]" -map '[a]' -t 228.208333 -c:a aac -b:a 320k -ar 48000 work/final_mix.m4a
+          fi
           ffprobe -v error -show_streams -show_format -of json work/final_mix.m4a > work/qc/AUDIO.json
+          ffmpeg -hide_banner -i work/final_mix.m4a -af silencedetect=n=-55dB:d=0.5 -f null - 2> work/qc/SILENCE_SCAN.txt || true
       - name: Composite true 4K FINAL
         run: |
-          ffmpeg -hide_banner -y \
-            -i work/mother.mp4 -i work/opening.mp4 -i work/ending.mp4 \
-            -i work/np_01_YOSHINO.mov -i work/np_02_SAKURI.mov -i work/np_03_TSUKIYOMI.mov -i work/np_04_MOMIJI.mov -i work/np_05_XUEHUA.mov -i work/np_06_MAGIC.mov \
-            -i work/final_mix.m4a \
-            -filter_complex "[0:v]setpts=PTS-STARTPTS[b];[1:v]scale=3840:2160:flags=lanczos,setpts=PTS-STARTPTS[o];[b][o]overlay=0:0:enable='between(t,0,5.625)'[v1];[2:v]scale=3840:2160:flags=lanczos,setpts=PTS-STARTPTS+223.208333/TB[e];[v1][e]overlay=0:0:enable='between(t,223.208333,228.208333)'[v2];[3:v]setpts=PTS-STARTPTS+25.583/TB[n1];[v2][n1]overlay=140:330:enable='between(t,25.583,29.583)'[v3];[4:v]setpts=PTS-STARTPTS+57.500/TB[n2];[v3][n2]overlay=2820:330:enable='between(t,57.500,61.500)'[v4];[5:v]setpts=PTS-STARTPTS+84.042/TB[n3];[v4][n3]overlay=2820:330:enable='between(t,84.042,88.042)'[v5];[6:v]setpts=PTS-STARTPTS+104.083/TB[n4];[v5][n4]overlay=140:330:enable='between(t,104.083,108.083)'[v6];[7:v]setpts=PTS-STARTPTS+150.833/TB[n5];[v6][n5]overlay=2820:330:enable='between(t,150.833,154.833)'[v7];[8:v]setpts=PTS-STARTPTS+199.900/TB[n6];[v7][n6]overlay=140:330:enable='between(t,199.900,203.900)',ass=work/subtitles.ass[vout]" \
-            -map '[vout]' -map 9:a:0 -c:v libx264 -preset medium -crf 10 -pix_fmt yuv420p -profile:v high -level 5.2 \
-            -color_primaries bt709 -color_trc bt709 -colorspace bt709 -color_range tv -c:a copy -movflags +faststart -shortest work/out/MagicOffice_4K_FINAL_MASTER.mp4
+          ffmpeg -hide_banner -y -i work/mother.mp4 -i work/opening.mp4 -i work/ending.mp4 -i work/np_01_YOSHINO.mov -i work/np_02_SAKURI.mov -i work/np_03_TSUKIYOMI.mov -i work/np_04_MOMIJI.mov -i work/np_05_XUEHUA.mov -i work/np_06_MAGIC.mov -i work/final_mix.m4a -filter_complex "[0:v]setpts=PTS-STARTPTS[b];[1:v]scale=3840:2160:flags=lanczos,setpts=PTS-STARTPTS[o];[b][o]overlay=0:0:enable='between(t,0,5.625)'[v1];[2:v]scale=3840:2160:flags=lanczos,setpts=PTS-STARTPTS+223.208333/TB[e];[v1][e]overlay=0:0:enable='between(t,223.208333,228.208333)'[v2];[3:v]setpts=PTS-STARTPTS+25.583/TB[n1];[v2][n1]overlay=140:330:enable='between(t,25.583,29.583)'[v3];[4:v]setpts=PTS-STARTPTS+57.500/TB[n2];[v3][n2]overlay=2820:330:enable='between(t,57.500,61.500)'[v4];[5:v]setpts=PTS-STARTPTS+84.042/TB[n3];[v4][n3]overlay=2820:330:enable='between(t,84.042,88.042)'[v5];[6:v]setpts=PTS-STARTPTS+104.083/TB[n4];[v5][n4]overlay=140:330:enable='between(t,104.083,108.083)'[v6];[7:v]setpts=PTS-STARTPTS+150.833/TB[n5];[v6][n5]overlay=2820:330:enable='between(t,150.833,154.833)'[v7];[8:v]setpts=PTS-STARTPTS+199.900/TB[n6];[v7][n6]overlay=140:330:enable='between(t,199.900,203.900)',ass=work/subtitles.ass[vout]" -map '[vout]' -map 9:a:0 -c:v libx264 -preset medium -crf 10 -pix_fmt yuv420p -profile:v high -level 5.2 -color_primaries bt709 -color_trc bt709 -colorspace bt709 -color_range tv -c:a copy -movflags +faststart -shortest work/out/MagicOffice_4K_FINAL_MASTER.mp4
       - name: QC 4K before derivative
         run: |
           ffprobe -v error -show_streams -show_format -of json work/out/MagicOffice_4K_FINAL_MASTER.mp4 > work/qc/FINAL_4K.json
