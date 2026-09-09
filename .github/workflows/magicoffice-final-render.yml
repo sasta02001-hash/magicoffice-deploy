@@ -2,7 +2,6 @@ name: MagicOffice Final Render
 on:
   push:
     paths: ['.github/workflows/magicoffice-final-render.yml']
-  workflow_dispatch:
 jobs:
   render:
     runs-on: ubuntu-latest
@@ -10,21 +9,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python -m pip install --upgrade gdown
-      - name: Download and unpack locked source bundles
-        run: |
-          mkdir -p work/assets work/unpacked
+      - run: |
+          mkdir -p work/assets work/u work/np work/ng work/ns
           gdown --folder 'https://drive.google.com/drive/folders/1DGRecFN7xM_I0awecv5G5ms5OmpxLcHU' -O work/assets
-          find work/assets -name '*.zip' -print0 | while IFS= read -r -d '' f; do d="work/unpacked/$(basename "$f" .zip)"; mkdir -p "$d"; unzip -q -o "$f" -d "$d"; done
-          NP=$(find work/unpacked -name 'MAGICOFFICE_NAMEPLATE_COMPONENTS_V2_DELIVERY.zip' | head -1); [ -z "$NP" ] || { mkdir -p work/nameplates; unzip -q -o "$NP" -d work/nameplates; }
-          CG=$(find work/unpacked -name 'MAGICOFFICE_COMMON_TEXT_GUIDES_AND_TIMING.zip' | head -1); [ -z "$CG" ] || { mkdir -p work/nameplate_guides; unzip -q -o "$CG" -d work/nameplate_guides; }
-          SM=$(find work/unpacked -name 'SIX_NAMEPLATE_STATIC_MASTERS.zip' | head -1); [ -z "$SM" ] || { mkdir -p work/nameplate_static; unzip -q -o "$SM" -d work/nameplate_static; }
-      - name: Collect exact locked instructions
+          find work/assets -name '*.zip' -print0 | while IFS= read -r -d '' f; do d="work/u/$(basename "$f" .zip)"; mkdir -p "$d"; unzip -q -o "$f" -d "$d"; done
+          unzip -q -o "$(find work/u -name MAGICOFFICE_NAMEPLATE_COMPONENTS_V2_DELIVERY.zip | head -1)" -d work/np
+          unzip -q -o "$(find work/u -name MAGICOFFICE_COMMON_TEXT_GUIDES_AND_TIMING.zip | head -1)" -d work/ng
+          unzip -q -o "$(find work/u -name SIX_NAMEPLATE_STATIC_MASTERS.zip | head -1)" -d work/ns
+      - name: Print locked specs
         run: |
-          mkdir -p spec
-          find work -type f \( -iname '*.md' -o -iname '*.txt' -o -iname '*.json' -o -iname '*.csv' -o -iname '*.ass' \) -print0 | while IFS= read -r -d '' f; do cp --parents "$f" spec/; done
-          find work/nameplates work/nameplate_guides work/nameplate_static -type f -printf '%p\t%s bytes\n' 2>/dev/null | sort > spec/NAMEPLATE_FILES.txt || true
-      - uses: actions/upload-artifact@v4
-        with:
-          name: magicoffice-locked-specs
-          path: spec
-          retention-days: 7
+          echo '=== NAMEPLATE HANDOFF ==='
+          cat "$(find work/u -name MAGICOFFICE_NAMEPLATE_HANDOFF_v1.txt | head -1)"
+          echo '=== NAMEPLATE FILES ==='
+          find work/np work/ng work/ns -type f -printf '%p\t%s\n' | sort
+          echo '=== TIMING DOCS ==='
+          find work/ng -type f \( -iname '*.txt' -o -iname '*.md' -o -iname '*.csv' -o -iname '*.json' \) -print0 | while IFS= read -r -d '' f; do echo "--- $f"; cat "$f"; done
+          echo '=== AUDIO RECIPE ==='
+          cat "$(find work/u -name AUDIO_MIX_RECIPE_LOCKED.txt | head -1)"
+          echo '=== SUBTITLE MAP ==='
+          cat "$(find work/u -name SUBTITLE_TIMING_MAP_LOCKED.csv | head -1)"
+          echo '=== SOFT README ==='
+          cat "$(find work/u -path '*MagicOffice_SOFT_ENTRANCES*' -name README.md | head -1)"
