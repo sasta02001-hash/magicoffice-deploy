@@ -72,7 +72,7 @@ async function run() {
     assert.equal(u.origin,'https://api.vercel.com');
     u.searchParams.set('teamId',TEAM);
     const response=await fetch(u,{method,redirect:'error',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(45000)});
-    if(!response.ok)throw new Error(`VERCEL_API_HTTP_${response.status}`);
+    if(!response.ok)throw new Error(`VERCEL_API_HTTP_${response.status}:${method}:${route.replace(/dpl_[A-Za-z0-9]+/g,'deployment').replace(/\/files\/[^?]+/g,'/files/file')}`);
     return response.json();
   }
   async function production() {
