@@ -31,7 +31,7 @@ export function flattenFiles(nodes,prefix='') {
     assert.ok(typeof n.name==='string'&&!n.name.includes('/')&&!['.','..'].includes(n.name),'UNSAFE_SOURCE_PATH');
     const name=prefix+n.name;
     if(n.type==='directory'||n.type==='folder'||Array.isArray(n.children))return flattenFiles(n.children||[],name+'/');
-    assert.equal(n.type,'file','UNSUPPORTED_SOURCE_TYPE');
+    assert.equal(n.type,'file',`UNSUPPORTED_SOURCE_TYPE:${String(n.type).replace(/[^a-zA-Z0-9_-]/g,'').slice(0,30)}:keys=${Object.keys(n).join(',')}`);
     return [{file:name,uid:n.uid}];
   });
 }
