@@ -1,0 +1,20 @@
+{
+  "status": "published-and-verified",
+  "requestedAt": "2026-09-19T11:30:32.108Z",
+  "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
+  "previousDeployment": "dpl_Enud1PqUirUXGmQuZ9bQKQxd5zeC",
+  "verifiedAt": "2026-09-19T11:35:14.175Z",
+  "rows": 115,
+  "publicRows": 101,
+  "sourceHash": "c2962a40cfdb12875f9809bf5042545d7f948e67fa46f89714ffc86eb3b7b824",
+  "publicHash": "5efe84fbb51ddfd16276fb23553262ea57c199f9ef15b177e415eadda6994244",
+  "fallbackSha256": "6b06e6bc3b017e99c27af799aa0b5cda1c9b4f1bf31a920fa0484895144b32a7",
+  "tests": "passed",
+  "deploymentId": "dpl_21qsofdfGRN7KLZz3W2cEiThBaQr",
+  "finishedAt": "2026-09-19T11:35:30.041Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35440502176",
+  "publisherCommit": "e99e76cf4d70f065244e89948b19e7a449bb5a08",
+  "serviceTestsPassed": 28,
+  "publisherTestsPassed": 5,
+  "mainSiteModified": false
+}
