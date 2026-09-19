@@ -85,7 +85,7 @@ async function run() {
     const before=await production();
     assert.equal(before.id,request.expectedDeploymentId,'DEPLOYMENT_BASE_CHANGED');
     receipt.previousDeployment=before.id;
-    const tree=flattenFiles(await api(`/v6/deployments/${before.id}/files?base=source`));
+    const tree=flattenFiles(await api(`/v6/deployments/${before.id}/files?base=src`));
     assert.deepEqual(tree.map(f=>f.file).sort(),[...FILES].sort(),'SERVICE_FILES_CHANGED_REVIEW_REQUIRED');
     // Source locations and unfiltered data remain inside this ephemeral runner.
     // They are never committed, printed, or attached as public Actions artifacts.
@@ -138,7 +138,7 @@ async function run() {
     assert.ok(ready,'DEPLOYMENT_READY_TIMEOUT');
     assert.equal((await production()).id,deployed.id,'ALIAS_NOT_UPDATED');
     // Verify the deployed backup bytes as well as the currently live responses.
-    const newTree=flattenFiles(await api(`/v6/deployments/${deployed.id}/files?base=source`));
+    const newTree=flattenFiles(await api(`/v6/deployments/${deployed.id}/files?base=src`));
     const bf=newTree.find(f=>f.file==='fallback.json');assert.ok(bf,'BACKUP_NOT_DEPLOYED');
     const b=await api(`/v8/deployments/${deployed.id}/files/${encodeURIComponent(bf.uid)}`);
     assert.equal(hash(Buffer.from(typeof b==='string'?b:b.data??b.content,'base64')),receipt.fallbackSha256,'DEPLOYED_BACKUP_MISMATCH');
