@@ -1,0 +1,39 @@
+name: Publish verified MagicOffice schedule
+on:
+  push:
+    branches: [schedule-maintenance]
+    paths:
+      - daily-schedule/request.json
+      - daily-schedule/publish.mjs
+      - .github/workflows/daily-schedule.yml
+permissions:
+  contents: read
+concurrency:
+  group: magicoffice-data-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: daily-schedule
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify publisher safeguards
+        run: node --test daily-schedule/publish.test.mjs
+      - name: Refresh original roster and publish data service
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: node daily-schedule/publish.mjs
+      - name: Save publication receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schedule-publication-receipt
+          path: daily-schedule/receipt.json
+          if-no-files-found: warn
+          retention-days: 30
