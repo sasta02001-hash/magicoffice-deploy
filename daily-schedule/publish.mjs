@@ -72,7 +72,13 @@ async function run() {
     assert.equal(u.origin,'https://api.vercel.com');
     u.searchParams.set('teamId',TEAM);
     const response=await fetch(u,{method,redirect:'error',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(45000)});
-    if(!response.ok)throw new Error(`VERCEL_API_HTTP_${response.status}:${method}:${route.replace(/dpl_[A-Za-z0-9]+/g,'deployment').replace(/\/files\/[^?]+/g,'/files/file')}`);
+    if(!response.ok) {
+      const payload=await response.json().catch(()=>({}));
+      const code=String(payload.error?.code??payload.code??'unknown').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,60);
+      const message=String(payload.error?.message??payload.message??'').toLowerCase();
+      const reason=/expir/.test(message)?'expired':/invalid.*token|token.*invalid/.test(message)?'invalid-token':/revok/.test(message)?'revoked':/permission|scope|not authorized|access/.test(message)?'access-denied':'unspecified';
+      throw new Error(`VERCEL_API_HTTP_${response.status}:${method}:${route.replace(/dpl_[A-Za-z0-9]+/g,'deployment').replace(/\/files\/[^?]+/g,'/files/file')}:code=${code}:reason=${reason}`);
+    }
     return response.json();
   }
   async function production() {
