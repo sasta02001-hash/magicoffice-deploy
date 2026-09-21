@@ -1,0 +1,37 @@
+{
+  "status": "blocked-credential-access",
+  "checkedAt": "2026-09-21T03:09:51Z",
+  "diagnosticRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35556487025",
+  "preflightRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35556569695",
+  "repairCommit": "f0ca3c9767aa270f26b136a810d8bd1cea210799",
+  "checks": [
+    {
+      "check": "project",
+      "httpStatus": 403,
+      "code": "forbidden"
+    },
+    {
+      "check": "production-alias",
+      "httpStatus": 403,
+      "code": "forbidden"
+    },
+    {
+      "check": "deployment-id",
+      "httpStatus": 403,
+      "code": "forbidden"
+    },
+    {
+      "check": "deployment-host",
+      "httpStatus": 403,
+      "code": "forbidden"
+    }
+  ],
+  "conclusion": "Actions VERCEL_TOKEN is denied access. Expiry, revocation, and scope are not individually proven. Connected Vercel app can read the same deployment.",
+  "completed": "Added and exercised blocking credential preflight before publisher.",
+  "publicationAttempted": false,
+  "newDeploymentCreated": false,
+  "lastSuccessfulDeployment": "dpl_21qsofdfGRN7KLZz3W2cEiThBaQr",
+  "requiredAction": "Account owner must restore or replace Actions VERCEL_TOKEN with access to the existing magicoffice team and data project. Then re-read original roster and submit a fresh verified request; do not merely refresh its timestamp.",
+  "mainSiteChanged": false,
+  "sourceSpreadsheetChanged": false
+}
