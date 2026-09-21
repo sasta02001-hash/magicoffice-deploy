@@ -9,11 +9,11 @@ const PROJECT = 'prj_ivj29hH4VhtflaVtGapoPLR1RnOi';
 const TEAM = 'team_44tkvxP20I5s9SUmlxfUEQM1';
 const NAME = 'qingwen-coffee-menu-vercel';
 const HOST = 'qingwen-coffee-menu-vercel.vercel.app';
-const BASE = 'dpl_9dV91zrcxBFr5unVC1Esz7NN9DcB';
-const SOURCE_COMMIT = 'fce82407437a6866710538b6e7b10733c024a689';
+const BASE = 'dpl_4LmH1odyGzJ268eeeX2ZNnF8RJTt';
+const SOURCE_COMMIT = '1c4e6dff59f286d59b60a655c3b746a4d4fbcdfb';
 const EXPECTED_MENU = '27a35ae01a14c33c097dc5fc93a4fa5a72fe0e554f479d9b5d26f438ec19b122';
 const WIFI_HASHES = {
-  'index.html': '95e3e17dcb94f3ed3b03f9f35cf360b61512f89c24c672bd126c74db76b99aa4',
+  'index.html': '9466b125942c14b585bfa6fc19d5c20b9c4474e778dc55d56a725fdd85ed550e',
   'wifi-qr.png': '0ef49f56fbd7d3d4dd640dfafa82486cb3f28d92e590fc202ffad9124b629611'
 };
 const hash = b => createHash('sha256').update(b).digest('hex');
@@ -103,14 +103,18 @@ try {
   assert.ok(['.','dist','public'].includes(publicRoot),'UNEXPECTED_PUBLIC_ROOT');
   assert.equal(hash(await publicBytes('/')),EXPECTED_MENU,'LIVE_MENU_DIFFERS_FROM_APPROVED_SOURCE');
   assert.ok(!/href\s*=\s*["'][^"']*\/wifi(?:\/|["'])/i.test(menuCandidates[0][1].toString()),'MENU_LINKS_TO_WIFI');
-  const preserved=[...bytesByPath].map(([file,bytes])=>({file,sha256:hash(bytes)}));
+  const wifiPaths=Object.keys(WIFI_HASHES).map(file=>path.posix.join(publicRoot,'wifi',file));
+  const preserved=[...bytesByPath].filter(([file])=>!wifiPaths.includes(file)).map(([file,bytes])=>({file,sha256:hash(bytes)}));
   receipt.preservedFiles=preserved;
   receipt.publicRoot=publicRoot;
   for(const [file,digest] of Object.entries(WIFI_HASHES)) {
     const bytes=await fs.readFile(new URL('./wifi/'+file,import.meta.url));
     assert.equal(hash(bytes),digest,'WIFI_SOURCE_HASH_MISMATCH');
     const target=path.posix.join(publicRoot,'wifi',file);
-    assert.ok(!bytesByPath.has(target),'WIFI_PATH_ALREADY_EXISTS');
+    if(bytesByPath.has(target)) {
+      const previous=file==='index.html'?'95e3e17dcb94f3ed3b03f9f35cf360b61512f89c24c672bd126c74db76b99aa4':WIFI_HASHES[file];
+      assert.equal(hash(bytesByPath.get(target)),previous,'WIFI_CHANGED_BEFORE_REPAIR');
+    }
     const dest=path.join(temp,target);
     await fs.mkdir(path.dirname(dest),{recursive:true});
     await fs.writeFile(dest,bytes);
