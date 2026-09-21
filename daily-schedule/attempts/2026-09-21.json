@@ -1,0 +1,69 @@
+{
+  "date": "2026-09-21",
+  "status": "not-published",
+  "sourceVerifiedAt": "2026-09-21T01:01:51.006Z",
+  "sourceRows": 124,
+  "publicRows": 110,
+  "hekiruRows": 13,
+  "sourceHash": "7c61908551ce650a54387f2e954cdb0415444fa84ee552cbb82ef253460c3539",
+  "publicHash": "b6591b4a4783134fef11048151bb6136881b756b679b8ef365130c324dbc9e93",
+  "differenceFromLastPublished": {
+    "added": 10,
+    "removed": 1,
+    "timeChanged": 0
+  },
+  "diagnostics": {
+    "timedRows": 96,
+    "untimedRows": 25,
+    "closedDays": 3,
+    "excludedLeaveSegments": 8,
+    "completeHeaders": true
+  },
+  "publishedMonths": [
+    "2026-09"
+  ],
+  "currentWeek": {
+    "start": "2026-09-21",
+    "end": "2026-09-27",
+    "sourceRowCount": 27,
+    "missingDates": []
+  },
+  "unpublishedDates": [
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-03",
+    "2026-10-04"
+  ],
+  "publication": {
+    "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35549603643",
+    "jobId": 106181765387,
+    "commit": "6bff9e2b0030682bfb800e4091073fd85bc17900",
+    "httpStatus": 403,
+    "errorCode": "forbidden",
+    "reason": "access-denied",
+    "failedOperation": "GET /v13/deployments/magicoffice-data.vercel.app",
+    "deploymentCreated": false,
+    "retainedDeploymentId": "dpl_21qsofdfGRN7KLZz3W2cEiThBaQr",
+    "publisherTestsPassed": 5,
+    "serviceTests": "not reached",
+    "rootCauseQualification": "Existing Actions authorization rejected; exact expiry/revocation/scope cause not proven."
+  },
+  "health": {
+    "homepageHttp": 200,
+    "status": "healthy",
+    "scheduleState": "live",
+    "stale": false,
+    "sourceHttpStatus": 200,
+    "independentRowComparison": "matching",
+    "build": "production-v4.3.45-hekiru-restored-20260918",
+    "menuState": "published",
+    "menuItems": 80,
+    "menuValid": true,
+    "menuSourceTime": "2026-09-12T05:04:19.495Z",
+    "nightVisibleItems": 12,
+    "nightTextColor": "#F7E0B4",
+    "runtimeErrorsLast24h": 0,
+    "siteFrontendErrorsThisVisit": 0
+  },
+  "mainSiteModified": false
+}
