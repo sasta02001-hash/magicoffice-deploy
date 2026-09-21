@@ -26,13 +26,13 @@ jobs:
           node-version: '24'
       - name: Verify deployment credential access
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
         run: node daily-schedule/diagnose-access.mjs
       - name: Verify publisher safeguards
         run: node --test daily-schedule/publish.test.mjs
       - name: Refresh original roster and publish data service
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
         run: node daily-schedule/publish.mjs
       - name: Save publication receipt
         if: always()
