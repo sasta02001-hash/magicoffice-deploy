@@ -5,6 +5,7 @@ on:
     paths:
       - daily-schedule/request.json
       - daily-schedule/publish.mjs
+      - daily-schedule/diagnose-access.mjs
       - .github/workflows/daily-schedule.yml
 permissions:
   contents: read
@@ -23,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Diagnose Vercel access
+      - name: Verify deployment credential access
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: node daily-schedule/diagnose-access.mjs
