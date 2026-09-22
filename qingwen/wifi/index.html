@@ -15,6 +15,7 @@
 .secondary:disabled{background:#f0ece8;color:#9c928b;border-color:#e0dad4;cursor:not-allowed}
 
 .qr-guide{font-size:16px;line-height:1.75;margin:0 0 12px;color:var(--muted)}.wifi-qr{margin:20px auto 12px;max-width:300px;text-align:center}.wifi-qr img{display:block;width:100%;height:auto;background:white;-webkit-touch-callout:default}.wifi-qr figcaption{font-size:18px;font-weight:600;letter-spacing:.04em}.connection-options{margin:6px 0 16px}.connection-options>summary{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 0;font-size:14px;color:var(--muted);cursor:pointer;list-style:none;text-align:center;text-decoration:underline;text-underline-offset:4px}.connection-options>summary::-webkit-details-marker{display:none}.connection-options>summary::after{content:'＋';text-decoration:none}.connection-options[open]>summary::after{content:'−'}.manual-heading{font-size:15px;line-height:1.8;margin:16px 0 0;color:var(--muted)}.connection-options .details{margin:16px 0 8px}.connection-options .status{margin-bottom:0}
+.review-fallback{margin:12px 0 0;text-align:center;font-size:14px;color:var(--muted)}.review-fallback a{display:inline-block;padding:10px 0;text-underline-offset:4px}
 </style>
 </head>
 <body>
@@ -27,9 +28,10 @@
 <p class="eyebrow" lang="en">WELCOME / FREE WI-FI</p>
 <h1 id="welcome-title">青文咖啡<br>免費 Wi-Fi</h1>
 <p class="description">分享你的咖啡時光，<br>繼續享受在青文的每一刻。</p>
-<a id="review-link" class="button primary" href="https://search.google.com/local/writereview?placeid=ChIJbYrXQgCrQjQRb_VACxRSwuQ" target="_blank" rel="noopener noreferrer">前往 Google 評論 <span aria-hidden="true">↗</span></a>
+<a id="review-link" class="button primary" href="https://www.google.com/maps/place/%E9%9D%92%E6%96%87%E7%8F%88%E7%90%B2+%E4%B8%8D%E9%99%90%E6%99%82%E5%92%96%E5%95%A1%E5%BB%B3%EF%BD%9C%E5%AF%B5%E7%89%A9%E5%8F%8B%E5%96%84%E3%80%81%E9%85%92%E9%A6%99%E5%86%B0%E6%BB%B4%E3%80%81%E6%97%A9%E5%8D%88%E9%A4%90/@25.0426537,121.5496643,15z/data=!4m12!1m2!2m1!1z6Z2S5paH5ZKW5ZWh!3m8!1s0x3442ab0042d78a6d:0xe4c252140b40f56f!8m2!3d25.04794!4d121.5448772!9m1!1b1!15sCgzpnZLmloflkpbllaFaECIO6Z2SIOaWhyDlkpbllaGSAQtjb2ZmZWVfc2hvcOABAA!16s%2Fg%2F11n4tgshgb?entry=ttu" target="_blank" rel="noopener noreferrer">開啟 Google 地圖評論 <span aria-hidden="true">↗</span></a>
 <button id="continue-button" class="button secondary" type="button" disabled aria-describedby="review-hint">繼續上網</button>
-<p class="hint" id="review-hint" aria-live="polite">請先點選「前往 Google 評論」，再繼續。</p>
+<p class="hint" id="review-hint" aria-live="polite">請先點選「開啟 Google 地圖評論」，再繼續。</p>
+<p class="review-fallback" id="maps-fallback" hidden><a id="maps-web-link" href="https://www.google.com/maps/place/%E9%9D%92%E6%96%87%E7%8F%88%E7%90%B2+%E4%B8%8D%E9%99%90%E6%99%82%E5%92%96%E5%95%A1%E5%BB%B3%EF%BD%9C%E5%AF%B5%E7%89%A9%E5%8F%8B%E5%96%84%E3%80%81%E9%85%92%E9%A6%99%E5%86%B0%E6%BB%B4%E3%80%81%E6%97%A9%E5%8D%88%E9%A4%90/@25.0426537,121.5496643,15z/data=!4m12!1m2!2m1!1z6Z2S5paH5ZKW5ZWh!3m8!1s0x3442ab0042d78a6d:0xe4c252140b40f56f!8m2!3d25.04794!4d121.5448772!9m1!1b1!15sCgzpnZLmloflkpbllaFaECIO6Z2SIOaWhyDlkpbllaGSAQtjb2ZmZWVfc2hvcOABAA!16s%2Fg%2F11n4tgshgb?entry=ttu" target="_blank" rel="noopener noreferrer">未開啟 Google 地圖 App？使用網頁版</a></p>
 <noscript><p class="fine">Wi-Fi：deng-5G<br>密碼：88888888</p></noscript>
 </section>
 <section id="wifi-step" aria-labelledby="wifi-info" hidden>
@@ -55,12 +57,30 @@ const storageKey='qingwen-review-link-opened';
 let opened=false;
 try{opened=sessionStorage.getItem(storageKey)==='1';}catch{}
 const review=document.getElementById('review-link');
+const mapsWeb=document.getElementById('maps-web-link');
+const mapsFallback=document.getElementById('maps-fallback');
+const mapsUrl=mapsWeb.href;
+const userAgent=navigator.userAgent||'';
+const isIOS=/iPhone|iPad|iPod/.test(userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const isAndroid=/Android/i.test(userAgent);
+// Launch directly from the customer's tap; keep the review tab in the Maps URL.
+// A web page cannot inspect whether Maps is installed or whether a review was sent.
+if(isIOS){
+ review.href=mapsUrl.replace(/^https:\/\//,'comgooglemapsurl://');
+ review.removeAttribute('target');
+}else if(isAndroid){
+ review.href=mapsUrl.replace(/^https:\/\//,'intent://')+'#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url='+encodeURIComponent(mapsUrl)+';end';
+ review.removeAttribute('target');
+}
+
 const next=document.getElementById('continue-button');
 const first=document.getElementById('review-step');
 const wifi=document.getElementById('wifi-step');
 const hint=document.getElementById('review-hint');
-function update(){next.disabled=!opened;hint.textContent=opened?'回到此頁後，點選「繼續上網」。':'請先點選「前往 Google 評論」，再繼續。';}
-review.addEventListener('click',()=>{opened=true;try{sessionStorage.setItem(storageKey,'1');}catch{}update();});
+function update(){next.disabled=!opened;hint.textContent=opened?'回到此頁後，點選「繼續上網」。':'請先點選「開啟 Google 地圖評論」，再繼續。';}
+function markReviewOpened(){opened=true;try{sessionStorage.setItem(storageKey,'1');}catch{}update();}
+review.addEventListener('click',()=>{markReviewOpened();if(isIOS||isAndroid)mapsFallback.hidden=false;});
+mapsWeb.addEventListener('click',markReviewOpened);
 window.addEventListener('pageshow',update);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)update();});
 next.addEventListener('click',()=>{if(!opened)return;document.getElementById('connection-options').open=false;document.getElementById('copy-status').textContent='';first.hidden=true;wifi.hidden=false;document.getElementById('wifi-info').focus({preventScroll:true});});
