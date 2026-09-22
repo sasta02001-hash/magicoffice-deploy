@@ -14,6 +14,13 @@ export const FILES=['package.json','config.json','fallback.json','vercel.json','
 const FIELDS=['date','name','startTime','endTime','shift','costume','event','sort','updatedAt'];
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+export function rosterDiff(before,after) {
+  const grouped=rows=>{const m=new Map();for(const r of rows){const k=JSON.stringify([r.date,r.name]);const a=m.get(k)||[];a.push(JSON.stringify([r.startTime,r.endTime]));m.set(k,a);}return m;};
+  const old=grouped(before), next=grouped(after);let added=0,removed=0,timeChanges=0;
+  for(const k of new Set([...old.keys(),...next.keys()])){const a=[...(old.get(k)||[])],b=[...(next.get(k)||[])];for(let i=a.length-1;i>=0;i--){const j=b.indexOf(a[i]);if(j>=0){a.splice(i,1);b.splice(j,1);}}const n=Math.min(a.length,b.length);timeChanges+=n;removed+=a.length-n;added+=b.length-n;}
+  return {added,removed,timeChanges};
+}
+
 export function validateRequest(request,now=Date.now()) {
   assert.equal(request.projectId,PROJECT,'WRONG_PROJECT');
   assert.match(request.expectedDeploymentId,/^dpl_[A-Za-z0-9]+$/);
@@ -128,6 +135,7 @@ async function run() {
     const testEnv={...process.env};delete testEnv.VERCEL_TOKEN;delete testEnv.GITHUB_TOKEN;
     execFileSync('npm',['test'],{cwd:temp,env:testEnv,stdio:'pipe',timeout:120000});
     assert.equal((await production()).id,before.id,'CONCURRENT_DEPLOYMENT_DETECTED');
+    receipt.diff=rosterDiff(fallback.rows,fresh.rows);
     receipt.verifiedAt=fresh.sourceVerifiedAt;receipt.rows=fresh.rows.length;receipt.publicRows=publicRows.length;
     receipt.sourceHash=fresh.sourceHash;receipt.publicHash=contentHash(publicRows);
     receipt.fallbackSha256=hash(text);receipt.tests='passed';

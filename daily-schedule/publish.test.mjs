@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {PROJECT,validateRequest,flattenFiles,validateRows,filteredRows,verifyLive} from './publish.mjs';
+import {rosterDiff,PROJECT,validateRequest,flattenFiles,validateRows,filteredRows,verifyLive} from './publish.mjs';
 const now=Date.parse('2026-09-19T08:00:00Z');
 const req={projectId:PROJECT,expectedDeploymentId:'dpl_TEST',sourceVerifiedAt:new Date(now).toISOString(),sourceHash:'a'.repeat(64),publicHash:'b'.repeat(64),publishedMonths:['2026-09'],excludedNames:['心葉','嚕咩','Rumei','咲茉','泉']};
 const row={date:'2026-09-19',name:'碧瑠',startTime:'20:00',endTime:'02:00',shift:'夜間',costume:'',event:'',sort:'10',updatedAt:req.sourceVerifiedAt};
@@ -29,4 +29,12 @@ test('HTTP success alone cannot pass stale or mismatched live data',()=>{
   verifyLive(live,[row],()=> 'ok');
   assert.throws(()=>verifyLive({...live,stale:true},[row],()=> 'ok'));
   assert.throws(()=>verifyLive({...live,rows:[]},[row],()=> 'ok'));
+});
+
+test('roster delta ignores timestamps, preserves split shifts and counts pure additions/removals',()=>{
+ assert.deepEqual(rosterDiff([row],[{...row,updatedAt:'new'}]),{added:0,removed:0,timeChanges:0});
+ assert.deepEqual(rosterDiff([row],[{...row,startTime:'20:30'}]),{added:0,removed:0,timeChanges:1});
+ assert.deepEqual(rosterDiff([row],[row,{...row,name:'other'}]),{added:1,removed:0,timeChanges:0});
+ assert.deepEqual(rosterDiff([row,{...row,name:'other'}],[row]),{added:0,removed:1,timeChanges:0});
+ assert.deepEqual(rosterDiff([row,{...row,startTime:'14:00',endTime:'18:00'}],[row,{...row,startTime:'14:30',endTime:'18:00'}]),{added:0,removed:0,timeChanges:1});
 });
