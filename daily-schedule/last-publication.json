@@ -1,20 +1,51 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-09-21T03:54:05.679Z",
+  "requestedAt": "2026-09-22T00:59:39.364Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_21qsofdfGRN7KLZz3W2cEiThBaQr",
-  "verifiedAt": "2026-09-21T04:14:55.600Z",
+  "previousDeployment": "dpl_8t6DNEgvF1fr3juxsjEmSqCd9aK5",
+  "diff": {
+    "added": 0,
+    "removed": 0,
+    "timeChanges": 1
+  },
+  "verifiedAt": "2026-09-22T01:02:22.872Z",
   "rows": 125,
   "publicRows": 111,
-  "sourceHash": "9a980a50d3da5498bc63e62160caf3b08e00945a45da158393d1fc9e5fe76180",
-  "publicHash": "30f56f620e86dfecf1a5b5a617170d70600dc486cbc585c32fd04752add2811b",
-  "fallbackSha256": "c4995d706bea97f4c63f66345f49f11ce9b348f8f9d3cf6940e7dcd3036cbda6",
+  "sourceHash": "0d6bc9f640a56d560689750af442c8709c37769b2a7fa8cd3d9edb781e5ca6ca",
+  "publicHash": "96465af286c7553d183c94cedfae141307e7eb9e066bbbcb656f9f15b3c7d046",
+  "fallbackSha256": "3b854553f6aec917c4bd4f87190088591417467c01809826735f5aa6328b3fc6",
   "tests": "passed",
-  "deploymentId": "dpl_8t6DNEgvF1fr3juxsjEmSqCd9aK5",
-  "finishedAt": "2026-09-21T04:15:10.855Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35560233744",
-  "publisherCommit": "ba718796b86716ebd9b66b4fe1bfba54837c9cb6",
-  "publisherTestsPassed": 5,
+  "deploymentId": "dpl_GkYMzwFrmJvt1yMbjZANWQ5afCJ6",
+  "finishedAt": "2026-09-22T01:02:38.538Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35674269632",
+  "publisherCommit": "3b1801c798854c34b224fd327e42c6caf9386e38",
+  "publisherTestsPassed": 6,
   "mainSiteModified": false,
-  "secretName": "MAGICOFFICE"
+  "secretName": "MAGICOFFICE",
+  "inspection": {
+    "originalGridVerifiedAt": "2026-09-22T00:59:39.364Z",
+    "postPublishIndependentParity": true,
+    "menuUnchanged": true,
+    "menuItemCount": 80,
+    "menuFetchedAt": "2026-09-12T05:04:19.495Z",
+    "health": "healthy",
+    "healthEvidence": "Successful publisher post-deployment /api/health assertion",
+    "nightCollectionVisibleItems": 12,
+    "nightCollectionColor": "#F7E0B4",
+    "runtimeErrorsAndWarningsLast24Hours": 0,
+    "browserSiteErrors": 0,
+    "mainDataBuild": "production-v4.3.45-hekiru-restored-20260918",
+    "knownMetaBuildMismatch": "production-v4.3.41-personnel-graduated-20260917",
+    "unpublishedDates": [
+      "2026-10-01",
+      "2026-10-02",
+      "2026-10-03",
+      "2026-10-04"
+    ],
+    "metadataNote": "7 tabs; no published October tab; former empty worksheet10 is absent",
+    "toolLimitations": [
+      "Vercel web-fetch /api/health share URL creation failed twice; browser blocked by client. Health verified by production publisher, not inferred from tool failures."
+    ],
+    "ciNonBlockingWarnings": "GitHub v4 actions Node20 forced to Node24 and dependency deprecation warnings; not website runtime errors"
+  }
 }
