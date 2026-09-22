@@ -14,7 +14,7 @@
 @media(prefers-reduced-motion:no-preference){.button{transition:background .15s}}
 .secondary:disabled{background:#f0ece8;color:#9c928b;border-color:#e0dad4;cursor:not-allowed}
 
-.qr-guide{font-size:16px;line-height:1.75;margin:0 0 12px;color:var(--muted)}.wifi-qr{margin:12px auto 18px;max-width:300px;text-align:center}.wifi-qr img{display:block;width:100%;height:auto;background:white;-webkit-touch-callout:default}.wifi-qr figcaption{font-size:18px;font-weight:600;letter-spacing:.04em}.qr-help{font-size:14px;color:var(--muted);margin:18px 0 24px}.qr-help summary{cursor:pointer;text-decoration:underline;text-underline-offset:4px}.qr-help p{line-height:1.8;margin:12px 0}.manual-heading{font-size:15px;margin:24px 0 0;color:var(--muted)}
+.qr-guide{font-size:16px;line-height:1.75;margin:0 0 12px;color:var(--muted)}.wifi-qr{margin:20px auto 12px;max-width:300px;text-align:center}.wifi-qr img{display:block;width:100%;height:auto;background:white;-webkit-touch-callout:default}.wifi-qr figcaption{font-size:18px;font-weight:600;letter-spacing:.04em}.connection-options{margin:6px 0 16px}.connection-options>summary{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 0;font-size:14px;color:var(--muted);cursor:pointer;list-style:none;text-align:center;text-decoration:underline;text-underline-offset:4px}.connection-options>summary::-webkit-details-marker{display:none}.connection-options>summary::after{content:'＋';text-decoration:none}.connection-options[open]>summary::after{content:'−'}.manual-heading{font-size:15px;line-height:1.8;margin:16px 0 0;color:var(--muted)}.connection-options .details{margin:16px 0 8px}.connection-options .status{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -34,14 +34,15 @@
 </section>
 <section id="wifi-step" aria-labelledby="wifi-info" hidden>
 <p class="eyebrow" lang="en">ENJOY YOUR TIME</p>
-<h2 id="wifi-info" tabindex="-1">用 iPhone 加入 Wi-Fi</h2>
-<p class="qr-guide" id="qr-instructions">長按下方 QR 圖片。如果出現「加入網路」選項，請點選並依畫面提示操作。</p>
+<h2 id="wifi-info" tabindex="-1">長按 QR Code 連線</h2>
+<p class="qr-guide" id="qr-instructions">長按下方 QR Code。若手機顯示「加入網路」，點選後依提示完成連線。</p>
 <figure class="wifi-qr"><img id="wifi-qr-image" src="/wifi/wifi-qr.png" alt="加入 deng-5G 的 Wi-Fi QR Code" aria-describedby="qr-instructions" width="740" height="740"><figcaption>deng-5G</figcaption></figure>
-<a class="button secondary" href="/wifi/wifi-qr.png" target="_blank" rel="noopener">開啟 QR 原圖</a>
-<details class="qr-help"><summary>長按沒有出現加入選項？</summary><p>可開啟 QR 原圖，長按並儲存至「照片」，開啟後再長按 QR Code 試試。若仍沒有加入選項，請使用下方密碼連線。</p></details>
-<p class="manual-heading">也可以複製密碼，到「設定」→「Wi-Fi」加入：</p>
+<details class="connection-options" id="connection-options">
+<summary>想用其他方式進行連線</summary>
+<p class="manual-heading">開啟手機「設定」→「Wi-Fi」，選擇 deng-5G，輸入或貼上密碼即可連線。</p>
 <div class="details"><div class="field"><span class="field-label">Wi-Fi 名稱</span><span class="field-value">deng-5G</span></div><div class="field"><span class="field-label">密碼</span><div class="field-password"><span class="field-value" id="wifi-password">88888888</span><button class="copy" type="button" id="copy-password">複製密碼</button></div></div></div>
 <p class="status" id="copy-status" role="status" aria-live="polite"></p>
+</details>
 <button class="back" id="back-button" type="button">返回</button>
 </section>
 </div>
@@ -62,11 +63,11 @@ function update(){next.disabled=!opened;hint.textContent=opened?'回到此頁後
 review.addEventListener('click',()=>{opened=true;try{sessionStorage.setItem(storageKey,'1');}catch{}update();});
 window.addEventListener('pageshow',update);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)update();});
-next.addEventListener('click',()=>{if(!opened)return;first.hidden=true;wifi.hidden=false;document.getElementById('wifi-info').focus({preventScroll:true});});
+next.addEventListener('click',()=>{if(!opened)return;document.getElementById('connection-options').open=false;document.getElementById('copy-status').textContent='';first.hidden=true;wifi.hidden=false;document.getElementById('wifi-info').focus({preventScroll:true});});
 document.getElementById('back-button').addEventListener('click',()=>{wifi.hidden=true;first.hidden=false;update();next.focus({preventScroll:true});});
 document.getElementById('copy-password').addEventListener('click',async()=>{
  const status=document.getElementById('copy-status');
- try{if(!navigator.clipboard?.writeText)throw new Error('Clipboard unavailable');await navigator.clipboard.writeText('88888888');status.textContent='密碼已複製';}
+ try{if(!navigator.clipboard?.writeText)throw new Error('Clipboard unavailable');await navigator.clipboard.writeText('88888888');status.textContent='密碼已複製，請到 Wi-Fi 設定貼上。';}
  catch{status.textContent='請長按上方密碼複製。';}
 });
 update();
