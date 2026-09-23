@@ -9,11 +9,11 @@ const PROJECT = 'prj_ivj29hH4VhtflaVtGapoPLR1RnOi';
 const TEAM = 'team_44tkvxP20I5s9SUmlxfUEQM1';
 const NAME = 'qingwen-coffee-menu-vercel';
 const HOST = 'qingwen-coffee-menu-vercel.vercel.app';
-const BASE = 'dpl_6nukuedpKRWu3jY4XxKz72Y2wBRC';
-const SOURCE_COMMIT = process.env.GITHUB_SHA || 'qingwen-wifi-welcome-20260923';
+const BASE = 'dpl_APJLDozWZ58gz1p54NH7cV1HDUcj';
+const SOURCE_COMMIT = process.env.GITHUB_SHA || 'qingwen-wifi-connection-wait-20260923';
 const EXPECTED_MENU = '27a35ae01a14c33c097dc5fc93a4fa5a72fe0e554f479d9b5d26f438ec19b122';
 const WIFI_HASHES = {
-  'index.html': 'f43fb5fb1aa820b94f591ffc975ea95975a14981bb505eec96b43761546c6f34',
+  'index.html': '75657f8e1150676951af0e1473cb5fb0afe30cad5da8911f4429097168cd99b3',
   'wifi-qr.png': '0ef49f56fbd7d3d4dd640dfafa82486cb3f28d92e590fc202ffad9124b629611'
 };
 const hash = b => createHash('sha256').update(b).digest('hex');
@@ -112,7 +112,7 @@ try {
     assert.equal(hash(bytes),digest,'WIFI_SOURCE_HASH_MISMATCH');
     const target=path.posix.join(publicRoot,'wifi',file);
     if(bytesByPath.has(target)) {
-      const previous=file==='index.html'?'368a464312021583caad215cb0bafe36361a3d3536a12fabb9c23c7836915490':WIFI_HASHES[file];
+      const previous=file==='index.html'?'f43fb5fb1aa820b94f591ffc975ea95975a14981bb505eec96b43761546c6f34':WIFI_HASHES[file];
       assert.equal(hash(bytesByPath.get(target)),previous,'WIFI_CHANGED_BEFORE_REPAIR');
     }
     const dest=path.join(temp,target);
