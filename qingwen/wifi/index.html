@@ -16,6 +16,7 @@
 
 .qr-guide{font-size:16px;line-height:1.75;margin:0 0 12px;color:var(--muted)}.wifi-qr{margin:20px auto 12px;max-width:300px;text-align:center}.wifi-qr img{display:block;width:100%;height:auto;background:white;-webkit-touch-callout:default}.wifi-qr figcaption{font-size:18px;font-weight:600;letter-spacing:.04em}.connection-options{margin:6px 0 16px}.connection-options>summary{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 0;font-size:14px;color:var(--muted);cursor:pointer;list-style:none;text-align:center;text-decoration:underline;text-underline-offset:4px}.connection-options>summary::-webkit-details-marker{display:none}.connection-options>summary::after{content:'＋';text-decoration:none}.connection-options[open]>summary::after{content:'−'}.manual-heading{font-size:15px;line-height:1.8;margin:16px 0 0;color:var(--muted)}.connection-options .details{margin:16px 0 8px}.connection-options .status{margin-bottom:0}
 .review-fallback{margin:12px 0 0;text-align:center;font-size:14px;color:var(--muted)}.review-fallback a{display:inline-block;padding:10px 0;text-underline-offset:4px}
+.wifi-menu-label{white-space:nowrap;font-weight:600;color:var(--ink)}.wifi-menu-icon{display:inline-block;width:1.15em;height:1.15em;margin-left:.25em;vertical-align:-.2em}
 </style>
 </head>
 <body>
@@ -37,7 +38,7 @@
 <section id="wifi-step" aria-labelledby="wifi-info" hidden>
 <p class="eyebrow" lang="en">ENJOY YOUR TIME</p>
 <h2 id="wifi-info" tabindex="-1">長按 QR Code 連線</h2>
-<p class="qr-guide" id="qr-instructions">長按下方 QR Code。若手機顯示「加入網路」，點選後依提示完成連線。</p>
+<p class="qr-guide" id="qr-instructions">長按下方 QR Code，選擇「<span class="wifi-menu-label">加入網路<svg class="wifi-menu-icon" viewBox="0 0 24 24" role="img" aria-label="Wi-Fi 圖示" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8.5a16 16 0 0 1 20 0M5.5 12a10.5 10.5 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0"/><circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/></svg></span>」。</p>
 <figure class="wifi-qr"><img id="wifi-qr-image" src="/wifi/wifi-qr.png" alt="加入 deng-5G 的 Wi-Fi QR Code" aria-describedby="qr-instructions" width="740" height="740"><figcaption>deng-5G</figcaption></figure>
 <details class="connection-options" id="connection-options">
 <summary>想用其他方式進行連線</summary>
