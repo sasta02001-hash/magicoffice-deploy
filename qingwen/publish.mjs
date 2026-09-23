@@ -4,17 +4,19 @@ import os from 'node:os';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
+import {patchMenu} from './patch-menu.mjs';
 
 const PROJECT = 'prj_ivj29hH4VhtflaVtGapoPLR1RnOi';
 const TEAM = 'team_44tkvxP20I5s9SUmlxfUEQM1';
 const NAME = 'qingwen-coffee-menu-vercel';
 const HOST = 'qingwen-coffee-menu-vercel.vercel.app';
-const BASE = 'dpl_APJLDozWZ58gz1p54NH7cV1HDUcj';
-const SOURCE_COMMIT = process.env.GITHUB_SHA || 'qingwen-wifi-connection-wait-20260923';
+const BASE = 'dpl_4gBiVDN5K9HtgRnnLDQiEvwNvtwu';
+const SOURCE_COMMIT = process.env.GITHUB_SHA || 'qingwen-menu-combos-20260924';
 const EXPECTED_MENU = '27a35ae01a14c33c097dc5fc93a4fa5a72fe0e554f479d9b5d26f438ec19b122';
-const WIFI_HASHES = {
-  'index.html': '75657f8e1150676951af0e1473cb5fb0afe30cad5da8911f4429097168cd99b3',
-  'wifi-qr.png': '0ef49f56fbd7d3d4dd640dfafa82486cb3f28d92e590fc202ffad9124b629611'
+const MENU_HASHES = {
+  'index.html': '27a35ae01a14c33c097dc5fc93a4fa5a72fe0e554f479d9b5d26f438ec19b122',
+  'style.css': 'eb50f0ed99678ddd1907e3857d6f2a658e5f06a79df8bee20baedf841712ec09',
+  'menu.js': '237bf4eab0d7b9cc25ae1e0af61ac8f3e594c73f1b89b60abe22737c6c1b0c38'
 };
 const hash = b => createHash('sha256').update(b).digest('hex');
 const delay = ms => new Promise(r => setTimeout(r, ms));
@@ -45,6 +47,13 @@ async function api(route) {
     throw new Error(`VERCEL_HTTP_${r.status}:${code}`);
   }
   return r.json();
+}
+async function checkBrowser(target,label) {
+  const code=await new Promise((resolve,reject)=>{
+    const child=spawn(process.execPath,[new URL('./browser-check.mjs',import.meta.url).pathname,target,label],{stdio:'inherit',env:{PATH:process.env.PATH,HOME:process.env.HOME}});
+    child.on('error',()=>reject(new Error('BROWSER_START_FAILED')));child.on('close',resolve);
+  });
+  assert.equal(code,0,'BROWSER_VERIFICATION_FAILED');
 }
 async function production() {
   const d=await api(`/v13/deployments/${HOST}`);
@@ -82,7 +91,7 @@ try {
   assert.equal(new Set(tree.map(x=>x.file)).size,tree.length,'DUPLICATE_SOURCE_PATH');
   receipt.originalFiles=tree.map(x=>x.file);
   await save();
-  temp=await fs.mkdtemp(path.join(os.tmpdir(),'qingwen-wifi-'));
+  temp=await fs.mkdtemp(path.join(os.tmpdir(),'qingwen-menu-'));
   const bytesByPath=new Map();
   let total=0;
   for(const entry of tree) {
@@ -95,40 +104,39 @@ try {
     await fs.mkdir(path.dirname(dest),{recursive:true});
     await fs.writeFile(dest,bytes);
   }
-  // Retain all deployed source files and settings; add only the approved Wi-Fi files.
-  const menuCandidates=[...bytesByPath].filter(([p,b])=>p.endsWith('index.html')&&hash(b)===EXPECTED_MENU);
-  assert.equal(menuCandidates.length,1,'APPROVED_MENU_NOT_FOUND_IN_DEPLOYMENT');
-  const menuPath=menuCandidates[0][0];
-  const publicRoot=path.posix.dirname(menuPath);
-  assert.ok(['.','dist','public'].includes(publicRoot),'UNEXPECTED_PUBLIC_ROOT');
-  assert.equal(hash(await publicBytes('/')),EXPECTED_MENU,'LIVE_MENU_DIFFERS_FROM_APPROVED_SOURCE');
-  assert.ok(!/href\s*=\s*["'][^"']*\/wifi(?:\/|["'])/i.test(menuCandidates[0][1].toString()),'MENU_LINKS_TO_WIFI');
-  const wifiPaths=Object.keys(WIFI_HASHES).map(file=>path.posix.join(publicRoot,'wifi',file));
-  const preserved=[...bytesByPath].filter(([file])=>!wifiPaths.includes(file)).map(([file,bytes])=>({file,sha256:hash(bytes)}));
-  receipt.preservedFiles=preserved;
+  // Patch only the menu. Every other current source file, including Wi-Fi, is preserved.
+  const anchors=tree.filter(x=>path.posix.basename(x.file)==='index.html' && hash(bytesByPath.get(x.file))===EXPECTED_MENU);
+  assert.equal(anchors.length,1,'MENU_SOURCE_NOT_FOUND');
+  const publicRoot=path.posix.dirname(anchors[0].file).replace(/^\.$/,'');
   receipt.publicRoot=publicRoot;
-  for(const [file,digest] of Object.entries(WIFI_HASHES)) {
-    const bytes=await fs.readFile(new URL('./wifi/'+file,import.meta.url));
-    assert.equal(hash(bytes),digest,'WIFI_SOURCE_HASH_MISMATCH');
-    const target=path.posix.join(publicRoot,'wifi',file);
-    if(bytesByPath.has(target)) {
-      const previous=file==='index.html'?'f43fb5fb1aa820b94f591ffc975ea95975a14981bb505eec96b43761546c6f34':WIFI_HASHES[file];
-      assert.equal(hash(bytesByPath.get(target)),previous,'WIFI_CHANGED_BEFORE_REPAIR');
-    }
-    const dest=path.join(temp,target);
-    await fs.mkdir(path.dirname(dest),{recursive:true});
-    await fs.writeFile(dest,bytes);
-    bytesByPath.set(target,bytes);
+  const menuPaths=Object.keys(MENU_HASHES).map(file=>path.posix.join(publicRoot,file));
+  const originalMenu=new Map();
+  for(const [file,digest] of Object.entries(MENU_HASHES)) {
+    const bytes=bytesByPath.get(path.posix.join(publicRoot,file));
+    assert.ok(bytes,'MENU_FILE_MISSING');
+    assert.equal(hash(bytes),digest,'MENU_CHANGED_BEFORE_PATCH');
+    originalMenu.set(file,bytes);
   }
-  const wifi=(await fs.readFile(new URL('./wifi/index.html',import.meta.url),'utf8'));
-  const anchors=[...wifi.matchAll(/href\s*=\s*["']([^"']*)["']/gi)].map(x=>x[1]);
-  assert.ok(!anchors.some(x=>x==='/'||x==='../'||x.startsWith('/menu')||x.includes(HOST)),'WIFI_LINKS_TO_MENU');
+  const patched=await patchMenu(originalMenu);
+  const preserved=tree.filter(x=>!menuPaths.includes(x.file)).map(x=>({file:x.file,sha256:hash(bytesByPath.get(x.file))}));
+  receipt.preservedFiles=preserved;
+  receipt.changedFiles=[];
+  for(const [file,bytes] of patched) {
+    const target=path.posix.join(publicRoot,file);
+    await fs.writeFile(path.join(temp,target),bytes);
+    bytesByPath.set(target,bytes);
+    receipt.changedFiles.push({file:target,sha256:hash(bytes)});
+  }
+  assert.ok(preserved.some(x=>x.file.endsWith('wifi/index.html')),'WIFI_MISSING_IN_SOURCE');
+  const beforeWifi=hash(await publicBytes('/wifi/'));
+  const beforeQr=hash(await publicBytes('/wifi/wifi-qr.png'));
   await fs.mkdir(path.join(temp,'.vercel'),{recursive:true});
   await fs.writeFile(path.join(temp,'.vercel/project.json'),JSON.stringify({projectId:PROJECT,orgId:TEAM,projectName:NAME}));
+  await checkBrowser(path.join(temp,publicRoot),'preview');
   assert.equal((await production()).id,before.id,'PRODUCTION_CHANGED_BEFORE_PUBLISH');
   receipt.status='publishing';
   await save();
-  console.log(JSON.stringify({status:'publishing',projectId:PROJECT,preservedFileCount:preserved.length,addedFiles:Object.keys(WIFI_HASHES)}));
+  console.log(JSON.stringify({status:'publishing',projectId:PROJECT,preservedFileCount:preserved.length,changedFiles:receipt.changedFiles.map(x=>x.file)}));
   const code=await new Promise((resolve,reject)=>{
     const child=spawn('npx',['--yes','vercel@59.23.2','deploy','--prod','--yes','--scope','magicoffice','--token',token],{
       cwd:temp,stdio:'inherit',env:{...process.env,VERCEL_PROJECT_ID:PROJECT,VERCEL_ORG_ID:TEAM}
@@ -156,19 +164,23 @@ try {
     const old=tree.find(x=>x.file===entry.file);
     if(next.uid!==old.uid)assert.equal(hash(await sourceBytes(after.id,next.uid)),entry.sha256,'PRESERVED_FILE_CHANGED');
   }
-  for(const [file,digest] of Object.entries(WIFI_HASHES)) {
-    const next=afterTree.find(x=>x.file===path.posix.join(publicRoot,'wifi',file));
-    assert.ok(next,'WIFI_FILE_MISSING');
-    assert.equal(hash(await sourceBytes(after.id,next.uid)),digest,'DEPLOYED_WIFI_HASH_MISMATCH');
+  for(const entry of receipt.changedFiles) {
+    const next=afterTree.find(x=>x.file===entry.file);
+    assert.ok(next,'PATCHED_FILE_MISSING');
+    assert.equal(hash(await sourceBytes(after.id,next.uid)),entry.sha256,'PATCHED_SOURCE_HASH_MISMATCH');
   }
-  assert.equal(hash(await publicBytes('/')),EXPECTED_MENU,'LIVE_MENU_CHANGED');
-  assert.equal(hash(await publicBytes('/wifi/')),WIFI_HASHES['index.html'],'LIVE_WIFI_MISMATCH');
-  assert.equal(hash(await publicBytes('/wifi/wifi-qr.png')),WIFI_HASHES['wifi-qr.png'],'LIVE_QR_MISMATCH');
+  for(const [file,bytes] of patched) {
+    const route=file==='index.html'?'/':'/'+file;
+    assert.equal(hash(await publicBytes(route)),hash(bytes),'LIVE_MENU_HASH_MISMATCH');
+  }
+  assert.equal(hash(await publicBytes('/wifi/')),beforeWifi,'LIVE_WIFI_CHANGED');
+  assert.equal(hash(await publicBytes('/wifi/wifi-qr.png')),beforeQr,'LIVE_QR_CHANGED');
+  await checkBrowser(`https://${HOST}/`,'production');
   receipt.status='published-and-verified';
-  receipt.publicUrl=`https://${HOST}/wifi/`;
+  receipt.publicUrl=`https://${HOST}/#sets`;
   receipt.finishedAt=new Date().toISOString();
   await save();
-  console.log(JSON.stringify({status:receipt.status,deploymentId:after.id,url:receipt.publicUrl,menuUnchanged:true}));
+  console.log(JSON.stringify({status:receipt.status,deploymentId:after.id,url:receipt.publicUrl,wifiUnchanged:true}));
 } catch(error) {
   receipt.status='failed';
   receipt.error=String(error.message).replaceAll(token||'__NO_TOKEN__','[redacted]').split('\n')[0].slice(0,200);
