@@ -1,0 +1,33 @@
+name: Repair and verify VX website
+on:
+  push:
+    branches: [vx-maintenance]
+    paths: ['vx-maintenance/**', '.github/workflows/vx-maintenance.yml']
+permissions:
+  contents: read
+concurrency:
+  group: vx-website-maintenance
+  cancel-in-progress: false
+jobs:
+  maintain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Inspect current VX source and staged privacy files
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node vx-maintenance/inspect.mjs
+      - name: Save inspection evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vx-maintenance-receipt
+          path: vx-maintenance/inspection.json
+          if-no-files-found: warn
+          retention-days: 30
