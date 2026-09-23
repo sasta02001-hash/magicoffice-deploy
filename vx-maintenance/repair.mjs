@@ -185,11 +185,11 @@ async function restoreContent(api,id,temp) {
     return {...entry,bytes:Buffer.byteLength(text),sha256:hash(text)};
   });return result;
 }
-async function publicBytes(url,{maxBytes=200_000_000}={}) {
+async function publicBytes(url,{maxBytes=200_000_000,timeoutMs=90_000}={}) {
   const allowed=[PUBLIC_ORIGIN,PRIVACY_ORIGIN,`https://${CONTENT_HOST}`];
   assert(allowed.includes(new URL(url).origin),'Unexpected public request origin');
   let response;
-  try {response=await fetch(url,{redirect:'error',signal:AbortSignal.timeout(90_000),headers:{'Cache-Control':'no-cache'}});}catch {throw new Error('Public request failed or redirected');}
+  try {response=await fetch(url,{redirect:'error',signal:AbortSignal.timeout(Math.max(1,Math.floor(timeoutMs))),headers:{'Cache-Control':'no-cache'}});}catch {throw new Error('Public request failed or redirected');}
   assert(response.ok,`Public HTTP ${response.status}`);
   const length=Number(response.headers.get('content-length')??0);assert(length<=maxBytes,'Public response exceeds size limit');
   const chunks=[];let total=0;
@@ -197,12 +197,41 @@ async function publicBytes(url,{maxBytes=200_000_000}={}) {
   return {bytes:Buffer.concat(chunks),headers:response.headers};
 }
 async function publicJSON(url) {const r=await publicBytes(url,{maxBytes:2_000_000});return parseJson(r.bytes.toString('utf8'),'public JSON');}
-async function verifyAsset(asset,origin) {
-  const result=await publicBytes(`${origin}/${asset.path}`);
+async function verifyAsset(asset,origin,timeoutMs=90_000) {
+  const result=await publicBytes(`${origin}/${asset.path}`,{timeoutMs});
   assert(result.headers.get('content-type')?.includes('video/mp4'),'Privacy asset is not MP4');
   assert(result.bytes.length===asset.bytes,'Privacy asset byte count mismatch');
   assert(hash(result.bytes)===asset.sha256,'Privacy asset SHA-256 mismatch');
   return {path:asset.path,bytes:asset.bytes,sha256:asset.sha256,verified:true};
+}
+async function verifyPublishedAssets(assets,receipt,save) {
+  // Wait for the existing production URLs to converge; never bypass CDN keys or redeploy.
+  const started=Date.now(),deadline=started+120_000,verified=new Map();
+  const backoff=[5000,10000,20000,30000];let pending=[...assets],attempt=0;
+  receipt.publicAssetAttempts=[];
+  while(pending.length){
+    attempt++;
+    const failures=[];
+    await parallel(pending,3,async asset=>{
+      try {
+        const remaining=deadline-Date.now();assert(remaining>0,'Publication asset verification deadline reached');
+        const proof=await verifyAsset(asset,PUBLIC_ORIGIN,Math.min(90_000,remaining));verified.set(asset.path,proof);
+      } catch(error) {
+        const message=String(error?.message??'');
+        const safe=['Privacy asset is not MP4','Privacy asset byte count mismatch','Privacy asset SHA-256 mismatch','Public request failed or redirected','Public response exceeds size limit','Publication asset verification deadline reached'];
+        failures.push({path:asset.path,error:safe.includes(message)||/^Public HTTP \d{3}$/.test(message)?message:'Asset verification failed'});
+      }
+    });
+    const remaining=deadline-Date.now();
+    const retryAfterMs=failures.length&&remaining>0?Math.min(backoff[Math.min(attempt-1,backoff.length-1)],remaining):0;
+    receipt.publicAssetAttempts.push({attempt,checkedAt:new Date().toISOString(),elapsedMs:Date.now()-started,verifiedCount:verified.size,failures,retryAfterMs});
+    receipt.publicAssetChecks=assets.filter(a=>verified.has(a.path)).map(a=>verified.get(a.path));await save();
+    if(!failures.length)return assets.map(a=>verified.get(a.path));
+    assert(remaining>0,'Published asset verification did not converge within 120 seconds');
+    const failedPaths=new Set(failures.map(f=>f.path));pending=pending.filter(a=>failedPaths.has(a.path));
+    await pause(retryAfterMs);
+    assert(Date.now()<deadline,'Published asset verification did not converge within 120 seconds');
+  }
 }
 async function writeJSON(file,data){await fs.writeFile(file,JSON.stringify(data,null,2)+'\n',{mode:0o600});}
 
@@ -315,7 +344,7 @@ export async function run() {
     receipt.stage='post-deploy-health';await save();
     let healthy=false;for(let n=0;n<18;n++){const h=await publicJSON(`${PUBLIC_ORIGIN}/health.json`);if(h.revision===builtHealth.revision&&h.count===32){receipt.publicHealth=h;healthy=true;break;}await pause(5000);}
     assert(healthy,'Published health revision did not converge');
-    receipt.stage='post-deploy-assets';await save();receipt.publicAssetChecks=await parallel(assets,3,asset=>verifyAsset(asset,PUBLIC_ORIGIN));await save();
+    receipt.stage='post-deploy-assets';await save();receipt.publicAssetChecks=await verifyPublishedAssets(assets,receipt,save);await save();
     receipt.stage='post-deploy-pages';await save();
     receipt.publicPages=await parallel(works,4,async w=>{const r=await publicBytes(`${PUBLIC_ORIGIN}/works/${w.id}/`,{maxBytes:1_000_000});const html=r.bytes.toString('utf8');assert(html.includes(`<link rel="canonical" href="${PUBLIC_ORIGIN}/works/${w.id}/">`),'Public work canonical mismatch');if(w.id==='009')assert(!html.includes('榛果粽')&&html.includes('榛果棕'),'Public spelling repair missing');return {id:w.id,status:200};});
     await mainUnchanged();receipt.mainProductionUnchanged=true;
