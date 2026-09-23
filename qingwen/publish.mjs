@@ -10,13 +10,11 @@ const PROJECT = 'prj_ivj29hH4VhtflaVtGapoPLR1RnOi';
 const TEAM = 'team_44tkvxP20I5s9SUmlxfUEQM1';
 const NAME = 'qingwen-coffee-menu-vercel';
 const HOST = 'qingwen-coffee-menu-vercel.vercel.app';
-const BASE = 'dpl_4gBiVDN5K9HtgRnnLDQiEvwNvtwu';
+const BASE = 'dpl_7isfEpidJrwVJ8j2BnRZ5HDbRm9k';
 const SOURCE_COMMIT = process.env.GITHUB_SHA || 'qingwen-menu-combos-20260924';
-const EXPECTED_MENU = '27a35ae01a14c33c097dc5fc93a4fa5a72fe0e554f479d9b5d26f438ec19b122';
+const EXPECTED_MENU = '5c36af0e0576e43205bd2cb05487c6646e3c5d8f81329ac8465ef01b510c07bc';
 const MENU_HASHES = {
-  'index.html': '27a35ae01a14c33c097dc5fc93a4fa5a72fe0e554f479d9b5d26f438ec19b122',
-  'style.css': 'eb50f0ed99678ddd1907e3857d6f2a658e5f06a79df8bee20baedf841712ec09',
-  'menu.js': '237bf4eab0d7b9cc25ae1e0af61ac8f3e594c73f1b89b60abe22737c6c1b0c38'
+  'index.html': '5c36af0e0576e43205bd2cb05487c6646e3c5d8f81329ac8465ef01b510c07bc'
 };
 const hash = b => createHash('sha256').update(b).digest('hex');
 const delay = ms => new Promise(r => setTimeout(r, ms));
