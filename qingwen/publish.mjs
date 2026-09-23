@@ -10,11 +10,11 @@ const PROJECT = 'prj_ivj29hH4VhtflaVtGapoPLR1RnOi';
 const TEAM = 'team_44tkvxP20I5s9SUmlxfUEQM1';
 const NAME = 'qingwen-coffee-menu-vercel';
 const HOST = 'qingwen-coffee-menu-vercel.vercel.app';
-const BASE = 'dpl_7isfEpidJrwVJ8j2BnRZ5HDbRm9k';
+const BASE = 'dpl_6mNqwPdjyNrnDGdGpSxzdnVZGXtN';
 const SOURCE_COMMIT = process.env.GITHUB_SHA || 'qingwen-menu-combos-20260924';
-const EXPECTED_MENU = '5c36af0e0576e43205bd2cb05487c6646e3c5d8f81329ac8465ef01b510c07bc';
+const EXPECTED_MENU = '40f441a51af95772833a075c6bddb129109b85a627d749d06695c9a79f6ce39e';
 const MENU_HASHES = {
-  'index.html': '5c36af0e0576e43205bd2cb05487c6646e3c5d8f81329ac8465ef01b510c07bc'
+  'index.html': EXPECTED_MENU
 };
 const hash = b => createHash('sha256').update(b).digest('hex');
 const delay = ms => new Promise(r => setTimeout(r, ms));
@@ -175,7 +175,7 @@ try {
   assert.equal(hash(await publicBytes('/wifi/wifi-qr.png')),beforeQr,'LIVE_QR_CHANGED');
   await checkBrowser(`https://${HOST}/`,'production');
   receipt.status='published-and-verified';
-  receipt.publicUrl=`https://${HOST}/#sets`;
+  receipt.publicUrl=`https://${HOST}/#drinks`;
   receipt.finishedAt=new Date().toISOString();
   await save();
   console.log(JSON.stringify({status:receipt.status,deploymentId:after.id,url:receipt.publicUrl,wifiUnchanged:true}));

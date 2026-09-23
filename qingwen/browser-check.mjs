@@ -46,6 +46,10 @@ try {
       assert.equal(await page.locator(`#${id}`).isVisible(),true,`TAB_${id}`);
       const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
       assert.equal(overflow,false,`HORIZONTAL_OVERFLOW_${width}_${id}`);
+      if(id==='drinks') {
+        assert.equal(await page.locator('#drinks .item').filter({has:page.locator('.item-name', {hasText:/^青文紅茶$/})}).locator('.price').innerText(),'$100 / 杯・$200 / 壺','BLACK_TEA_POT_PRICE');
+        assert.equal(await page.locator('#drinks .item').filter({has:page.locator('.item-name', {hasText:/^青文鮮奶茶$/})}).locator('.price').innerText(),'$130 / 杯・$250 / 壺','MILK_TEA_POT_PRICE');
+      }
       if(id==='food'||id==='pizza') {
         const broken=await page.locator(`#${id} img`).evaluateAll(imgs=>imgs.filter(img=>!img.complete||img.naturalWidth===0).length);
         assert.equal(broken,0,`BROKEN_${id}_IMAGES`);
