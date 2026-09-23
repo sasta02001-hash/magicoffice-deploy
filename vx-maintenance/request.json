@@ -1,0 +1,8 @@
+{
+  "mode": "repair",
+  "requestedAt": "2026-09-23T13:52:00.000Z",
+  "expectedDeploymentId": "dpl_EJhQ4ADY5or9rtHRTS2c1nFn1akQ",
+  "expectedMainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
+  "expectedPrivacyDeploymentId": "dpl_DqhBHvq2jtHSsw9MN1pKz7ZBmz8Q",
+  "expectedRevision": "0977b2a90f6d764bf7bbb3bffe0a3d548eb6b7d3a33dec5fc39936c6964c1357"
+}

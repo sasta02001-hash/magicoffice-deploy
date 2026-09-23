@@ -2,7 +2,7 @@ name: Repair and verify VX website
 on:
   push:
     branches: [vx-maintenance]
-    paths: ['vx-maintenance/**', '.github/workflows/vx-maintenance.yml']
+    paths: ['vx-maintenance/request.json', 'vx-maintenance/*.mjs', 'vx-maintenance/*.py', 'vx-maintenance/privacy-plan.json', '.github/workflows/vx-maintenance.yml']
 permissions:
   contents: read
 concurrency:
@@ -11,7 +11,7 @@ concurrency:
 jobs:
   maintain:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,15 +19,53 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Select requested operation
+        id: request
+        run: node -e "const fs=require('fs');const r=JSON.parse(fs.readFileSync('vx-maintenance/request.json'));if(!['check','repair','inspect'].includes(r.mode))throw Error('Unknown mode');fs.appendFileSync(process.env.GITHUB_OUTPUT,'mode='+r.mode+'\n')"
+      - name: Verify maintenance safeguards
+        run: node --test vx-maintenance/repair.test.mjs
       - name: Inspect current VX source and staged privacy files
+        if: steps.request.outputs.mode == 'inspect'
         env:
           VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
         run: node vx-maintenance/inspect.mjs
-      - name: Save inspection evidence
+      - uses: actions/setup-python@v5
+        if: steps.request.outputs.mode == 'repair'
+        with:
+          python-version: '3.12'
+      - name: Prepare video processing dependencies
+        if: steps.request.outputs.mode == 'repair'
+        run: |
+          python -m pip install opencv-python-headless==4.12.0.88 numpy==2.2.6
+          if ! command -v ffmpeg; then sudo apt-get update && sudo apt-get install -y ffmpeg; fi
+      - name: Reproduce and validate approved face masks
+        if: steps.request.outputs.mode == 'repair'
+        run: python vx-maintenance/render-privacy.py --origin https://vxsagittarius.vercel.app --output /tmp/vx-privacy --rules vx-maintenance/privacy-plan.json
+      - name: Publish complete verified privacy media
+        if: steps.request.outputs.mode == 'repair'
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node vx-maintenance/upload-media.mjs /tmp/vx-privacy
+      - name: Switch verified content routes and correct copy
+        if: steps.request.outputs.mode == 'repair'
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: |
+          node -e "const fs=require('fs');const p='vx-maintenance/request.json';const r=JSON.parse(fs.readFileSync(p));r.privacyDeploymentId=JSON.parse(fs.readFileSync('vx-maintenance/media-receipt.json')).deploymentId;fs.writeFileSync(p,JSON.stringify(r));"
+          node vx-maintenance/repair.mjs
+      - name: Verify public pages and privacy media routes
+        if: steps.request.outputs.mode != 'inspect'
+        run: node vx-maintenance/check.mjs
+      - name: Save verified result
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: vx-maintenance-receipt
-          path: vx-maintenance/inspection.json
+          path: |
+            vx-maintenance/inspection.json
+            vx-maintenance/media-receipt.json
+            vx-maintenance/receipt.json
+            vx-maintenance/privacy-assets.json
+            vx-maintenance/check-result.json
           if-no-files-found: warn
           retention-days: 30
