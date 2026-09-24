@@ -1,0 +1,899 @@
+{
+  "startedAt": "2026-09-24T07:31:59.006Z",
+  "status": "verified",
+  "stage": "complete",
+  "contentProjectId": "prj_CbkfJKuRbzmjT4IsWAitQ3K0oAsE",
+  "mode": "publish-refinement",
+  "baselineDeploymentId": "dpl_BDFprF5bPHi69iiJmeeL4dsjTLeF",
+  "mainBaselineDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
+  "sourceFiles": [
+    {
+      "file": "build.mjs",
+      "bytes": 2849,
+      "sha256": "7e46bebf8c06bb6cf3e5963761941504c4798e5ab7eb9af8744b5e246a57b593"
+    },
+    {
+      "file": "catalog.mjs",
+      "bytes": 9974,
+      "sha256": "497b3bab218c57eac819259a8a6329db7f9726d37ec8f242f11f51f7ccf5f0ff"
+    },
+    {
+      "file": "content/media.json",
+      "bytes": 28063,
+      "sha256": "83f2ba1c175a5fb15981124d5efa0c7c9c764afe38ae51435078822c5f48bf79"
+    },
+    {
+      "file": "content/pages/404.html",
+      "bytes": 8444,
+      "sha256": "ed0e7f149016ec8809eb984b0cf6474d72e02c7d7fdd4d229d1a767bf76efa78"
+    },
+    {
+      "file": "content/pages/activities/index.html",
+      "bytes": 9523,
+      "sha256": "c7ff0070bb6d21bed5be912c0332eacdd9f5d479493363c03c7f1c01f1600052"
+    },
+    {
+      "file": "content/pages/project-bleach/index.html",
+      "bytes": 12228,
+      "sha256": "6a7bb8ba67b08e39c266523d9fdd9846f69ae503af9ddabd3798cf2f8cbf2193"
+    },
+    {
+      "file": "content/pages/project-color/index.html",
+      "bytes": 12218,
+      "sha256": "17525e37a173beba9a3c8ef336e75d0b4482dda769025768f5001a6b5826827b"
+    },
+    {
+      "file": "content/pages/project-perm/index.html",
+      "bytes": 12114,
+      "sha256": "61205980997cc62e8854cdfadd645cf42bf4fbd68725cb24db4d57aa93bc7248"
+    },
+    {
+      "file": "content/pages/project-triascend/index.html",
+      "bytes": 13255,
+      "sha256": "33906eb2e68725f4f69e687bb2b8768b242d5894bb7959d1cc9918000665a33f"
+    },
+    {
+      "file": "content/pages/project-trievolve/index.html",
+      "bytes": 13648,
+      "sha256": "bbbdeb33d88b2ad40d1e4fd687d742e6ddc96b762a26b359f2eddddc13bfee73"
+    },
+    {
+      "file": "content/pages/project-triform/index.html",
+      "bytes": 13297,
+      "sha256": "0c60aed8af3b082a9663d29fff30a7f1f1ac8ba23074b34e8d10196219426a48"
+    },
+    {
+      "file": "content/pages/project-trifusion/index.html",
+      "bytes": 13358,
+      "sha256": "163f12c872750120e44bcf358b62cc6f205cf3f39d0e90fa733ee91bc57af1ed"
+    },
+    {
+      "file": "content/pages/services/index.html",
+      "bytes": 16385,
+      "sha256": "1ab02526715223a10d09c60f7a3379d1dff881b03da666d68da9ab2ce830eb65"
+    },
+    {
+      "file": "content/site-routes.json",
+      "bytes": 710,
+      "sha256": "78f2ace3e03cf19c1c3529866710475bd634bb858fd7f320c786640d823ba4f8"
+    },
+    {
+      "file": "content/works.json",
+      "bytes": 14942,
+      "sha256": "78d7594fa0727151b34ec0ec22d198bd6d7ff6b6bd308a38c724003a1104ec5f"
+    },
+    {
+      "file": "package.json",
+      "bytes": 181,
+      "sha256": "0a38e9de11de49de032bc3c514b391ffaaaf8dfd6f788136fcfbc8fc5524d52d"
+    },
+    {
+      "file": "templates/works.html",
+      "bytes": 20576,
+      "sha256": "1d6e876b965638a831c827fc2044c97376ab67e08334136a5455ce4a662c977c"
+    },
+    {
+      "file": "vercel.json",
+      "bytes": 21732,
+      "sha256": "66df6f7b280ba16e3e69e908baa09a8a0b6477433b7f2a9ec190c6739b40c21a"
+    }
+  ],
+  "content": {
+    "count": 32,
+    "allowedOrigins": [
+      "https://vxsagittarius-media-20260917.vercel.app",
+      "https://vxsagittarius-media-011-032.vercel.app",
+      "https://vxsagittarius-covers-20260917.vercel.app",
+      "https://vxsagittarius-media-privacy-2026091.vercel.app"
+    ],
+    "baseOrigins": [
+      "https://vxsagittarius-media-20260917.vercel.app",
+      "https://vxsagittarius-media-011-032.vercel.app"
+    ],
+    "perFileOverrides": [
+      {
+        "id": "001",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/001/film.mp4"
+      },
+      {
+        "id": "003",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/003/film.mp4"
+      },
+      {
+        "id": "005",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/005/film.mp4"
+      },
+      {
+        "id": "006",
+        "file": "cover-384.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/006/cover-384.webp"
+      },
+      {
+        "id": "006",
+        "file": "cover-768.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/006/cover-768.webp"
+      },
+      {
+        "id": "006",
+        "file": "poster.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/006/cover-768.webp"
+      },
+      {
+        "id": "007",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/007/film.mp4"
+      },
+      {
+        "id": "008",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/008/film.mp4"
+      },
+      {
+        "id": "009",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/009/film.mp4"
+      },
+      {
+        "id": "011",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/011/film.mp4"
+      },
+      {
+        "id": "012",
+        "file": "cover-384.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/012/cover-384.webp"
+      },
+      {
+        "id": "012",
+        "file": "cover-768.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/012/cover-768.webp"
+      },
+      {
+        "id": "012",
+        "file": "poster.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/012/cover-768.webp"
+      },
+      {
+        "id": "012",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/012/film.mp4"
+      },
+      {
+        "id": "013",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/013/film.mp4"
+      },
+      {
+        "id": "014",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/014/film.mp4"
+      },
+      {
+        "id": "015",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/015/film.mp4"
+      },
+      {
+        "id": "016",
+        "file": "cover-384.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/016/cover-384.webp"
+      },
+      {
+        "id": "016",
+        "file": "cover-768.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/016/cover-768.webp"
+      },
+      {
+        "id": "016",
+        "file": "poster.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/016/cover-768.webp"
+      },
+      {
+        "id": "016",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/016/film.mp4"
+      },
+      {
+        "id": "017",
+        "file": "cover-384.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/017/cover-384.webp"
+      },
+      {
+        "id": "017",
+        "file": "cover-768.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/017/cover-768.webp"
+      },
+      {
+        "id": "017",
+        "file": "poster.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/017/cover-768.webp"
+      },
+      {
+        "id": "017",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/017/film.mp4"
+      },
+      {
+        "id": "018",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/018/film.mp4"
+      },
+      {
+        "id": "019",
+        "file": "cover-384.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/019/cover-384.webp"
+      },
+      {
+        "id": "019",
+        "file": "cover-768.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/019/cover-768.webp"
+      },
+      {
+        "id": "019",
+        "file": "poster.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/019/cover-768.webp"
+      },
+      {
+        "id": "019",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/019/film.mp4"
+      },
+      {
+        "id": "020",
+        "file": "cover-384.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/020/cover-384.webp"
+      },
+      {
+        "id": "020",
+        "file": "cover-768.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/020/cover-768.webp"
+      },
+      {
+        "id": "020",
+        "file": "poster.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/020/cover-768.webp"
+      },
+      {
+        "id": "020",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/020/film.mp4"
+      },
+      {
+        "id": "023",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/023/film.mp4"
+      },
+      {
+        "id": "024",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/024/film.mp4"
+      },
+      {
+        "id": "025",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/025/film.mp4"
+      },
+      {
+        "id": "026",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/026/film.mp4"
+      },
+      {
+        "id": "028",
+        "file": "cover-384.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/028/cover-384.webp"
+      },
+      {
+        "id": "028",
+        "file": "cover-768.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/028/cover-768.webp"
+      },
+      {
+        "id": "028",
+        "file": "poster.webp",
+        "url": "https://vxsagittarius-covers-20260917.vercel.app/assets/works/028/cover-768.webp"
+      },
+      {
+        "id": "029",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/029/film.mp4"
+      },
+      {
+        "id": "030",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/030/film.mp4"
+      },
+      {
+        "id": "031",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/031/film.mp4"
+      },
+      {
+        "id": "032",
+        "file": "film.mp4",
+        "url": "https://vxsagittarius-media-privacy-2026091.vercel.app/assets/works/032/film.mp4"
+      }
+    ],
+    "supportsPerFileUrl": true,
+    "work009HasTypo": false
+  },
+  "privacy": {
+    "deploymentId": "dpl_EH9com1G1x48eFnuqjEVePy9mEFx",
+    "state": "READY",
+    "sourceFiles": [
+      {
+        "file": "public/assets/works/001/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/003/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/005/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/007/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/008/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/009/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/011/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/012/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/013/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/014/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/015/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/016/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/017/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/018/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/019/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/020/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/023/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/024/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/025/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/026/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/029/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/030/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/031/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/assets/works/032/film.mp4",
+        "size": null
+      },
+      {
+        "file": "public/privacy-manifest.json",
+        "size": null
+      },
+      {
+        "file": "vercel.json",
+        "size": null
+      }
+    ],
+    "manifest": null
+  },
+  "privacyAssetChecks": [
+    {
+      "path": "assets/works/001/film.mp4",
+      "bytes": 1632821,
+      "sha256": "fcd1606b8f83f40852f370b0633209095536e22e49306ba16b72d3a19e1ebd65",
+      "verified": true
+    },
+    {
+      "path": "assets/works/003/film.mp4",
+      "bytes": 2864518,
+      "sha256": "c450838f2d9e986addbb6f708154d5a6b3dfdd997d8c11da07d109bc9801bf76",
+      "verified": true
+    },
+    {
+      "path": "assets/works/005/film.mp4",
+      "bytes": 4401660,
+      "sha256": "b47433484d18b8954d8fc464dab155f4967b3ecd37d544990a6f19b32270c0a9",
+      "verified": true
+    },
+    {
+      "path": "assets/works/007/film.mp4",
+      "bytes": 3444240,
+      "sha256": "d95601c58fbcb4cc10b6254e4fb1c7e8fdaac97811997860800a64d9e353e8c1",
+      "verified": true
+    },
+    {
+      "path": "assets/works/008/film.mp4",
+      "bytes": 3110684,
+      "sha256": "fd33ff900d4af4cb2e2564937c0db73edec2bb2aa6dee0add243dc357cfbb859",
+      "verified": true
+    },
+    {
+      "path": "assets/works/009/film.mp4",
+      "bytes": 4042515,
+      "sha256": "a45d8d83311d64e942f1716457fd9aaae8e4640a57bbaed9c1ab044638a4cf15",
+      "verified": true
+    },
+    {
+      "path": "assets/works/011/film.mp4",
+      "bytes": 3115019,
+      "sha256": "35e0f24fbce139020765028be0977a8b2c2479420cddcab4f3f7393fa61d41a0",
+      "verified": true
+    },
+    {
+      "path": "assets/works/012/film.mp4",
+      "bytes": 1938470,
+      "sha256": "c2d641fe14fad6252a674bb831c5a5b7ca1abab9ae86f99eeb714daf798a501c",
+      "verified": true
+    },
+    {
+      "path": "assets/works/013/film.mp4",
+      "bytes": 3084763,
+      "sha256": "7547e155a6d6891e6a57170febc9a811d944a240b8a44beea692c593e2b99bda",
+      "verified": true
+    },
+    {
+      "path": "assets/works/014/film.mp4",
+      "bytes": 2774182,
+      "sha256": "2405c40840ed28dfeacc113a5d44e61a69b6f65cd1216a12d7444d595c1ab656",
+      "verified": true
+    },
+    {
+      "path": "assets/works/015/film.mp4",
+      "bytes": 1467580,
+      "sha256": "97cf45367502084456cec33f7abe1ab49c45098ad7a1f5d757bf09cbd057a3cf",
+      "verified": true
+    },
+    {
+      "path": "assets/works/016/film.mp4",
+      "bytes": 4507666,
+      "sha256": "ef345395c79ea5723973fedaf0abca184c107c8d000168d77c7414c32a5aef57",
+      "verified": true
+    },
+    {
+      "path": "assets/works/017/film.mp4",
+      "bytes": 2250323,
+      "sha256": "01d0b9f04b4a1734985039563565c085b0a45b82dfbc1c21201d9ddd539e4d1e",
+      "verified": true
+    },
+    {
+      "path": "assets/works/018/film.mp4",
+      "bytes": 1888444,
+      "sha256": "8f9a98260273e1994e0f4eefa24ad952b2b43db0896cc62cd343d03fcdb3e734",
+      "verified": true
+    },
+    {
+      "path": "assets/works/019/film.mp4",
+      "bytes": 2126611,
+      "sha256": "7481050515af34829adc5c9d7b29c4c957c9ae98aba8a60a32542a99dd79e1df",
+      "verified": true
+    },
+    {
+      "path": "assets/works/020/film.mp4",
+      "bytes": 1718063,
+      "sha256": "ffcba8aa1765a78f355ad87f068c2a9a369d8620841559cbfa27731c0454c342",
+      "verified": true
+    },
+    {
+      "path": "assets/works/023/film.mp4",
+      "bytes": 4185373,
+      "sha256": "0245dc9e266d4d9cbf7d4b66bfd245da8b4f96c4e766205e85aa54e14ee7160e",
+      "verified": true
+    },
+    {
+      "path": "assets/works/024/film.mp4",
+      "bytes": 2256555,
+      "sha256": "7efbff336324208886a8f341a01bf8ec021104bebcc142b08358011fd498dbf8",
+      "verified": true
+    },
+    {
+      "path": "assets/works/025/film.mp4",
+      "bytes": 3328627,
+      "sha256": "0a6437572ff3ac3ff18be762e1cc1dccb28f665851affbce5f41b530c41c0775",
+      "verified": true
+    },
+    {
+      "path": "assets/works/026/film.mp4",
+      "bytes": 3486749,
+      "sha256": "f4296bd0dd5b1e0791dd2da891abb3c05a87dbe4edf469f964238fbbd8150088",
+      "verified": true
+    },
+    {
+      "path": "assets/works/029/film.mp4",
+      "bytes": 1843908,
+      "sha256": "d3904647ab66b5ecf53972ff9e72b2779ca263e1b917922ba6a50e1609542032",
+      "verified": true
+    },
+    {
+      "path": "assets/works/030/film.mp4",
+      "bytes": 2579824,
+      "sha256": "6e7209ce9c4bd43423841a7c253cb684defc1fb9aa56ce88e6d768d6431145f7",
+      "verified": true
+    },
+    {
+      "path": "assets/works/031/film.mp4",
+      "bytes": 2247721,
+      "sha256": "8755bef28997922842e3604bad150e3548080a448e921f43ae6daa5e46910e1a",
+      "verified": true
+    },
+    {
+      "path": "assets/works/032/film.mp4",
+      "bytes": 753242,
+      "sha256": "d8e0fca2f5562b455af04de2d3259eac56133e4e6607cef806ff09607cf3190a",
+      "verified": true
+    }
+  ],
+  "expectedNewRevision": "60077030ab3720abfa5990434c59cb84475d43dd12d378ae9cb75d46263f4624",
+  "deploymentId": "dpl_9XSQAAKKRGSAVZiYX5rUnzRS3Rm1",
+  "deploymentState": "READY",
+  "productionAliasAssigned": true,
+  "publicHealth": {
+    "status": "healthy",
+    "service": "vx-content",
+    "revision": "60077030ab3720abfa5990434c59cb84475d43dd12d378ae9cb75d46263f4624",
+    "count": 32,
+    "mode": "independent-content"
+  },
+  "publicAssetAttempts": [
+    {
+      "attempt": 1,
+      "checkedAt": "2026-09-24T07:32:12.349Z",
+      "elapsedMs": 1021,
+      "verifiedCount": 24,
+      "failures": [],
+      "retryAfterMs": 0
+    }
+  ],
+  "publicAssetChecks": [
+    {
+      "path": "assets/works/001/film.mp4",
+      "bytes": 1632821,
+      "sha256": "fcd1606b8f83f40852f370b0633209095536e22e49306ba16b72d3a19e1ebd65",
+      "verified": true
+    },
+    {
+      "path": "assets/works/003/film.mp4",
+      "bytes": 2864518,
+      "sha256": "c450838f2d9e986addbb6f708154d5a6b3dfdd997d8c11da07d109bc9801bf76",
+      "verified": true
+    },
+    {
+      "path": "assets/works/005/film.mp4",
+      "bytes": 4401660,
+      "sha256": "b47433484d18b8954d8fc464dab155f4967b3ecd37d544990a6f19b32270c0a9",
+      "verified": true
+    },
+    {
+      "path": "assets/works/007/film.mp4",
+      "bytes": 3444240,
+      "sha256": "d95601c58fbcb4cc10b6254e4fb1c7e8fdaac97811997860800a64d9e353e8c1",
+      "verified": true
+    },
+    {
+      "path": "assets/works/008/film.mp4",
+      "bytes": 3110684,
+      "sha256": "fd33ff900d4af4cb2e2564937c0db73edec2bb2aa6dee0add243dc357cfbb859",
+      "verified": true
+    },
+    {
+      "path": "assets/works/009/film.mp4",
+      "bytes": 4042515,
+      "sha256": "a45d8d83311d64e942f1716457fd9aaae8e4640a57bbaed9c1ab044638a4cf15",
+      "verified": true
+    },
+    {
+      "path": "assets/works/011/film.mp4",
+      "bytes": 3115019,
+      "sha256": "35e0f24fbce139020765028be0977a8b2c2479420cddcab4f3f7393fa61d41a0",
+      "verified": true
+    },
+    {
+      "path": "assets/works/012/film.mp4",
+      "bytes": 1938470,
+      "sha256": "c2d641fe14fad6252a674bb831c5a5b7ca1abab9ae86f99eeb714daf798a501c",
+      "verified": true
+    },
+    {
+      "path": "assets/works/013/film.mp4",
+      "bytes": 3084763,
+      "sha256": "7547e155a6d6891e6a57170febc9a811d944a240b8a44beea692c593e2b99bda",
+      "verified": true
+    },
+    {
+      "path": "assets/works/014/film.mp4",
+      "bytes": 2774182,
+      "sha256": "2405c40840ed28dfeacc113a5d44e61a69b6f65cd1216a12d7444d595c1ab656",
+      "verified": true
+    },
+    {
+      "path": "assets/works/015/film.mp4",
+      "bytes": 1467580,
+      "sha256": "97cf45367502084456cec33f7abe1ab49c45098ad7a1f5d757bf09cbd057a3cf",
+      "verified": true
+    },
+    {
+      "path": "assets/works/016/film.mp4",
+      "bytes": 4507666,
+      "sha256": "ef345395c79ea5723973fedaf0abca184c107c8d000168d77c7414c32a5aef57",
+      "verified": true
+    },
+    {
+      "path": "assets/works/017/film.mp4",
+      "bytes": 2250323,
+      "sha256": "01d0b9f04b4a1734985039563565c085b0a45b82dfbc1c21201d9ddd539e4d1e",
+      "verified": true
+    },
+    {
+      "path": "assets/works/018/film.mp4",
+      "bytes": 1888444,
+      "sha256": "8f9a98260273e1994e0f4eefa24ad952b2b43db0896cc62cd343d03fcdb3e734",
+      "verified": true
+    },
+    {
+      "path": "assets/works/019/film.mp4",
+      "bytes": 2126611,
+      "sha256": "7481050515af34829adc5c9d7b29c4c957c9ae98aba8a60a32542a99dd79e1df",
+      "verified": true
+    },
+    {
+      "path": "assets/works/020/film.mp4",
+      "bytes": 1718063,
+      "sha256": "ffcba8aa1765a78f355ad87f068c2a9a369d8620841559cbfa27731c0454c342",
+      "verified": true
+    },
+    {
+      "path": "assets/works/023/film.mp4",
+      "bytes": 4185373,
+      "sha256": "0245dc9e266d4d9cbf7d4b66bfd245da8b4f96c4e766205e85aa54e14ee7160e",
+      "verified": true
+    },
+    {
+      "path": "assets/works/024/film.mp4",
+      "bytes": 2256555,
+      "sha256": "7efbff336324208886a8f341a01bf8ec021104bebcc142b08358011fd498dbf8",
+      "verified": true
+    },
+    {
+      "path": "assets/works/025/film.mp4",
+      "bytes": 3328627,
+      "sha256": "0a6437572ff3ac3ff18be762e1cc1dccb28f665851affbce5f41b530c41c0775",
+      "verified": true
+    },
+    {
+      "path": "assets/works/026/film.mp4",
+      "bytes": 3486749,
+      "sha256": "f4296bd0dd5b1e0791dd2da891abb3c05a87dbe4edf469f964238fbbd8150088",
+      "verified": true
+    },
+    {
+      "path": "assets/works/029/film.mp4",
+      "bytes": 1843908,
+      "sha256": "d3904647ab66b5ecf53972ff9e72b2779ca263e1b917922ba6a50e1609542032",
+      "verified": true
+    },
+    {
+      "path": "assets/works/030/film.mp4",
+      "bytes": 2579824,
+      "sha256": "6e7209ce9c4bd43423841a7c253cb684defc1fb9aa56ce88e6d768d6431145f7",
+      "verified": true
+    },
+    {
+      "path": "assets/works/031/film.mp4",
+      "bytes": 2247721,
+      "sha256": "8755bef28997922842e3604bad150e3548080a448e921f43ae6daa5e46910e1a",
+      "verified": true
+    },
+    {
+      "path": "assets/works/032/film.mp4",
+      "bytes": 753242,
+      "sha256": "d8e0fca2f5562b455af04de2d3259eac56133e4e6607cef806ff09607cf3190a",
+      "verified": true
+    }
+  ],
+  "publicPages": [
+    {
+      "id": "001",
+      "status": 200
+    },
+    {
+      "id": "002",
+      "status": 200
+    },
+    {
+      "id": "003",
+      "status": 200
+    },
+    {
+      "id": "004",
+      "status": 200
+    },
+    {
+      "id": "005",
+      "status": 200
+    },
+    {
+      "id": "006",
+      "status": 200
+    },
+    {
+      "id": "007",
+      "status": 200
+    },
+    {
+      "id": "008",
+      "status": 200
+    },
+    {
+      "id": "009",
+      "status": 200
+    },
+    {
+      "id": "010",
+      "status": 200
+    },
+    {
+      "id": "011",
+      "status": 200
+    },
+    {
+      "id": "012",
+      "status": 200
+    },
+    {
+      "id": "013",
+      "status": 200
+    },
+    {
+      "id": "014",
+      "status": 200
+    },
+    {
+      "id": "015",
+      "status": 200
+    },
+    {
+      "id": "016",
+      "status": 200
+    },
+    {
+      "id": "017",
+      "status": 200
+    },
+    {
+      "id": "018",
+      "status": 200
+    },
+    {
+      "id": "019",
+      "status": 200
+    },
+    {
+      "id": "020",
+      "status": 200
+    },
+    {
+      "id": "021",
+      "status": 200
+    },
+    {
+      "id": "022",
+      "status": 200
+    },
+    {
+      "id": "023",
+      "status": 200
+    },
+    {
+      "id": "024",
+      "status": 200
+    },
+    {
+      "id": "025",
+      "status": 200
+    },
+    {
+      "id": "026",
+      "status": 200
+    },
+    {
+      "id": "027",
+      "status": 200
+    },
+    {
+      "id": "028",
+      "status": 200
+    },
+    {
+      "id": "029",
+      "status": 200
+    },
+    {
+      "id": "030",
+      "status": 200
+    },
+    {
+      "id": "031",
+      "status": 200
+    },
+    {
+      "id": "032",
+      "status": 200
+    }
+  ],
+  "mainProductionUnchanged": true,
+  "finishedAt": "2026-09-24T07:32:13.721Z"
+}

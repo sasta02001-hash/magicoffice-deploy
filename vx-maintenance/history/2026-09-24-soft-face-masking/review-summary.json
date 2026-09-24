@@ -1,0 +1,38 @@
+{
+  "renderRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35969193354",
+  "renderCommit": "fc37391e0dbb60f4e6e1c87add6deef0fc0d3f54",
+  "reviewedRevision": "44688e4392587c6cfdbbcbe8700af7647f522e40fc7a81cbef8058374b951d6a",
+  "ids": [
+    "001",
+    "003",
+    "005",
+    "007",
+    "008",
+    "009",
+    "011",
+    "012",
+    "013",
+    "014",
+    "015",
+    "016",
+    "017",
+    "018",
+    "019",
+    "020",
+    "023",
+    "024",
+    "025",
+    "026",
+    "029",
+    "030",
+    "031",
+    "032"
+  ],
+  "frames": 5510,
+  "resolutionFpsFramesAudioUnchanged": true,
+  "visualReview": "All 24 contact sheets; enlarged side faces, fringe, mask eyes, mirror samples; dense 026 gap review",
+  "limitations": [
+    "Contact-sheet sampling is not a claim of human review of every frame.",
+    "Physical mobile devices not tested in this repair."
+  ]
+}
