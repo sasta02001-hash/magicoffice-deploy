@@ -1,8 +1,9 @@
 {
-  "mode": "check",
-  "requestedAt": "2026-09-24T00:58:49.868Z",
+  "mode": "refine-preview",
+  "requestedAt": "2026-09-24T06:41:46.505Z",
   "expectedDeploymentId": "dpl_BDFprF5bPHi69iiJmeeL4dsjTLeF",
   "expectedMainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
   "expectedPrivacyDeploymentId": "dpl_B7C7AXBAXRyfpy4BY5xePwcmH7aJ",
-  "expectedRevision": "793ed976d0fac89b392b4a434d15f3333cd45a1b76de1d03d68d6bb275b194b3"
+  "expectedRevision": "793ed976d0fac89b392b4a434d15f3333cd45a1b76de1d03d68d6bb275b194b3",
+  "reason": "User requested softer face-only privacy masks with hair preserved; render from exact originals for visual review before publication."
 }

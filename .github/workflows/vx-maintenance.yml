@@ -11,7 +11,7 @@ concurrency:
 jobs:
   maintain:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
         with:
@@ -21,7 +21,7 @@ jobs:
           node-version: '24'
       - name: Select requested operation
         id: request
-        run: node -e "const fs=require('fs');const r=JSON.parse(fs.readFileSync('vx-maintenance/request.json'));if(!['check','repair','inspect'].includes(r.mode))throw Error('Unknown mode');fs.appendFileSync(process.env.GITHUB_OUTPUT,'mode='+r.mode+'\n')"
+        run: node -e "const fs=require('fs');const r=JSON.parse(fs.readFileSync('vx-maintenance/request.json'));if(!['check','repair','inspect','refine-preview'].includes(r.mode))throw Error('Unknown mode');fs.appendFileSync(process.env.GITHUB_OUTPUT,'mode='+r.mode+'\n')"
       - name: Verify maintenance safeguards
         run: node --test vx-maintenance/repair.test.mjs
       - name: Inspect current VX source and staged privacy files
@@ -41,6 +41,30 @@ jobs:
       - name: Reproduce and validate approved face masks
         if: steps.request.outputs.mode == 'repair'
         run: python vx-maintenance/render-privacy.py --origin https://vxsagittarius.vercel.app --output /tmp/vx-privacy --rules vx-maintenance/privacy-plan.json
+      - uses: actions/setup-python@v5
+        if: steps.request.outputs.mode == 'refine-preview'
+        with:
+          python-version: '3.11'
+      - name: Prepare hair-aware refinement dependencies
+        if: steps.request.outputs.mode == 'refine-preview'
+        run: |
+          python -m pip install numpy==1.26.4 opencv-contrib-python==4.11.0.86 mediapipe==0.10.21 onnxruntime==1.23.2
+          if ! command -v ffmpeg; then sudo apt-get update && sudo apt-get install -y ffmpeg; fi
+          mkdir -p work/models
+          curl --fail --location --retry 3 https://github.com/yakhyo/face-parsing/releases/download/weights/resnet18.onnx -o work/models/resnet18.onnx
+      - name: Render original-resolution hair-aware review set
+        if: steps.request.outputs.mode == 'refine-preview'
+        run: |
+          python vx-maintenance/download-originals.py
+          python vx-maintenance/render-refinement.py --source work/sources --output /tmp/vx-refined-media --model work/models/resnet18.onnx
+      - name: Save refinement for visual review without publishing
+        if: steps.request.outputs.mode == 'refine-preview'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vx-refined-media
+          path: /tmp/vx-refined-media
+          if-no-files-found: error
+          retention-days: 7
       - name: Publish complete verified privacy media
         if: steps.request.outputs.mode == 'repair'
         env:
@@ -54,7 +78,7 @@ jobs:
           node -e "const fs=require('fs');const p='vx-maintenance/request.json';const r=JSON.parse(fs.readFileSync(p));r.privacyDeploymentId=JSON.parse(fs.readFileSync('vx-maintenance/media-receipt.json')).deploymentId;fs.writeFileSync(p,JSON.stringify(r));"
           node vx-maintenance/repair.mjs
       - name: Verify public pages and privacy media routes
-        if: steps.request.outputs.mode != 'inspect'
+        if: steps.request.outputs.mode != 'inspect' && steps.request.outputs.mode != 'refine-preview'
         run: node vx-maintenance/check.mjs
       - name: Save verified result
         if: always()

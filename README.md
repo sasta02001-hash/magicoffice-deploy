@@ -27,3 +27,7 @@ Do not reuse an old repair request after a deployment succeeded. Read the receip
 ## Evidence
 
 The September 23 diagnosis found privacy media stopped at stage 3 of 21 and the catalogue still routed visitors to original videos. The earlier source ZIP was truncated; masks and source hashes allowed deterministic recovery. Current completion evidence belongs in `vx-maintenance/last-verification.json` and the matching Actions receipt. Historical diagnosis alone is not evidence of current health.
+
+## Hair-aware refinement
+
+`refine-preview` renders the same 24 hash-verified original films with face parsing, feature landmarks and feathered masks. Hair is excluded from the reviewed mask region; work 032 masks exposed eyes above the physical face mask. The full decoded outputs, geometry, frame rate and copied audio are validated. Only masked output media and review evidence are stored in the `vx-refined-media` artifact for seven days. This mode has no publishing credentials and never updates production. Review the rendered motion and contact sheets before a separate guarded publication.
