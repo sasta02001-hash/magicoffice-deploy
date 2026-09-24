@@ -6,7 +6,7 @@ import {validateRefinement} from './refinement-guard.mjs';
 function fixture(){
   const source={width:720,height:1280,frames:100,fps:30,originalSha256:'b'.repeat(64)};
   const plan={works:{'001':{source}}};
-  const manifest={algorithm:'hair-aware-soft-v1',assets:[{id:'001',path:'assets/works/001/film.mp4',sourceSha256:source.originalSha256,validated:true,audioUnchanged:true,width:720,height:1280,frames:100,fps:30,bytes:12000,sha256:'a'.repeat(64)}]};
+  const manifest={algorithm:'hair-aware-soft-v2',assets:[{id:'001',path:'assets/works/001/film.mp4',sourceSha256:source.originalSha256,validated:true,audioUnchanged:true,width:720,height:1280,frames:100,fps:30,bytes:12000,sha256:'a'.repeat(64)}]};
   const assets=manifest.assets.map(({path,bytes,sha256})=>({path,bytes,sha256}));
   const request={mode:'publish-refinement',refinementCommitSha:'c'.repeat(40),refinementRunId:123,approvedPrivacyRevision:createHash('sha256').update(JSON.stringify(assets)).digest('hex')};
   return {request,manifest,plan};

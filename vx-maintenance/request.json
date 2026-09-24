@@ -1,9 +1,9 @@
 {
-  "mode": "check",
-  "requestedAt": "2026-09-24T07:37:18.399Z",
+  "mode": "refine-preview",
+  "requestedAt": "2026-09-24T08:27:46.498Z",
   "expectedDeploymentId": "dpl_9XSQAAKKRGSAVZiYX5rUnzRS3Rm1",
   "expectedMainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
   "expectedPrivacyDeploymentId": "dpl_EH9com1G1x48eFnuqjEVePy9mEFx",
   "expectedRevision": "60077030ab3720abfa5990434c59cb84475d43dd12d378ae9cb75d46263f4624",
-  "reason": "Verify the already-published hair-aware refinement after CDN convergence; preserve new deployment IDs and do not republish. Original-URL Range checks now return 206. Record approved output hashes to prevent legacy mask regression."
+  "reason": "User requests further softening of the face-mask edges. Render all 24 exact originals with wider continuous feathering, antialiased hair boundaries and separate opaque eye protection. Preview only; production unchanged until rendered output is visually reviewed."
 }

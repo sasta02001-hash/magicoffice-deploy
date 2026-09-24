@@ -6,7 +6,7 @@ export function validateRefinement(request,manifest,plan){
   assert.match(request.refinementCommitSha,/^[a-f0-9]{40}$/);
   assert(Number.isSafeInteger(request.refinementRunId)&&request.refinementRunId>0);
   assert.match(request.approvedPrivacyRevision,/^[a-f0-9]{64}$/);
-  assert.equal(manifest.algorithm,'hair-aware-soft-v1');
+  assert.equal(manifest.algorithm,'hair-aware-soft-v2');
   assert.deepEqual(manifest.assets.map(a=>a.id).sort(),Object.keys(plan.works).sort(),'Refinement coverage changed');
   for(const asset of manifest.assets){
     const original=plan.works[asset.id].source;

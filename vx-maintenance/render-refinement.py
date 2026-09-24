@@ -72,7 +72,7 @@ def main():
     assets=[]
     if a.keep_existing:
         existing=json.loads((a.output/'assets.json').read_text())
-        assert existing['algorithm']=='hair-aware-soft-v1'
+        assert existing['algorithm']=='hair-aware-soft-v2'
         assert sorted(v['id'] for v in existing['assets'])==sorted(plan['works'])
         for asset in existing['assets']:
             assert asset['path']==f"assets/works/{asset['id']}/film.mp4"
@@ -82,7 +82,7 @@ def main():
     for wid in ids:
         result=render(wid,plan,a.source,a.output,parser);assets.append(result);print(json.dumps(result),flush=True)
     assets.sort(key=lambda asset:asset['id'])
-    (a.output/'assets.json').write_text(json.dumps({'schemaVersion':1,'algorithm':'hair-aware-soft-v1','assets':assets},indent=2)+'\n')
+    (a.output/'assets.json').write_text(json.dumps({'schemaVersion':1,'algorithm':'hair-aware-soft-v2','assets':assets},indent=2)+'\n')
     (a.output/'privacy-validation.json').write_text(json.dumps(assets,indent=2)+'\n')
 
 if __name__=='__main__':main()

@@ -74,14 +74,14 @@ class Parser:
         mask=cv2.morphologyEx(mask,cv2.MORPH_CLOSE,kernel)
         mask[hair]=0
         distance=cv2.distanceTransform(mask,cv2.DIST_L2,5)
-        feather=max(3,min(bw,bh)*.18)
+        feather=max(3,min(bw,bh)*.28)
         t=np.clip(distance/feather,0,1)
         alpha=t*t*(3-2*t)
         # Keep every parsed identifying feature fully covered, feathering skin
         # around it; no alpha is extended into hair/background.
         if feature.any():
             feature_dist=cv2.distanceTransform((~feature).astype(np.uint8),cv2.DIST_L2,5)
-            f=np.clip(1-feature_dist/max(3,min(bw,bh)*.08),0,1)
+            f=np.clip(1-feature_dist/max(3,min(bw,bh)*.16),0,1)
             f=f*f*(3-2*f)
             alpha=np.maximum(alpha,f*mask)
         alpha[hair]=0
@@ -92,7 +92,7 @@ class Parser:
         t=np.clip((1-radius)/.38,0,1)
         oval=t*t*(3-2*t)
         hair_distance=cv2.distanceTransform((~hair).astype(np.uint8),cv2.DIST_L2,5)
-        ht=np.clip(hair_distance/max(2,min(bw,bh)*.05),0,1)
+        ht=np.clip(hair_distance/max(2,min(bw,bh)*.10),0,1)
         alpha=np.maximum(alpha,oval*ht*ht*(3-2*ht))
         return (a,b,c,d,alpha.astype(np.float32),labels,feature)
 
@@ -186,14 +186,14 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
         if landmark_mask.any():
             landmark_face[labels==17]=0
             distance=cv2.distanceTransform(landmark_face,cv2.DIST_L2,5)
-            t=np.clip(distance/max(3,min(bw,bh)*.18),0,1)
+            t=np.clip(distance/max(3,min(bw,bh)*.28),0,1)
             if not eyes_only:alpha=np.maximum(alpha,t*t*(3-2*t))
             # Eyelashes can be labelled as hair by the segmenter; landmarks
             # explicitly cover visible eyes without covering the whole fringe.
-            radius=max(2,int(min(bw,bh)*.025))
+            radius=max(2,int(min(bw,bh)*.018))
             landmark_mask=cv2.dilate(landmark_mask,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(radius*2+1,radius*2+1)))
             dist=cv2.distanceTransform(1-landmark_mask,cv2.DIST_L2,5)
-            t=np.clip(1-dist/max(4,min(bw,bh)*.055),0,1)
+            t=np.clip(1-dist/max(4,min(bw,bh)*.16),0,1)
             if hair_priority:
                 hair_distance=cv2.distanceTransform((labels!=17).astype(np.uint8),cv2.DIST_L2,5)
                 edge=np.clip(hair_distance/max(2,min(bw,bh)*.035),0,1)
@@ -209,10 +209,47 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
             t=np.clip((1-radius)/.32,0,1)
             alpha=t*t*(3-2*t)
             fallback=True
-        sigma=max(9,min(box[2:])*.18)
-        patch=frame[b:d,a:c]
-        small=cv2.resize(patch,(max(16,(c-a)//4),max(16,(d-b)//4)),interpolation=cv2.INTER_AREA)
-        soft=cv2.resize(cv2.GaussianBlur(small,(0,0),sigma/4,borderType=cv2.BORDER_REFLECT101),(c-a,d-b),interpolation=cv2.INTER_CUBIC).astype(np.float32)
+        # Build a wider continuous transition, then composite the hair matte.
+        # Feature masking and peripheral softness are separate controls.
+        size=min(bw,bh)
+        hair=(labels==17).astype(np.uint8)
+        hair_gate=cv2.GaussianBlur((1-hair).astype(np.float32),(0,0),max(1,size*.018))
+        # Preserve the solid hair interior exactly; a narrow antialiased matte
+        # follows wispy edge pixels instead of binary jagged cutouts.
+        hair_depth=cv2.distanceTransform(hair,cv2.DIST_L2,5)
+        hair_gate[hair_depth>max(2,size*.035)]=0
+        core=((landmark_mask>0)|features)&(labels!=17)
+        smooth=cv2.GaussianBlur(alpha,(0,0),max(1,size*.045))
+        if core.any():
+            outside=cv2.distanceTransform((~core).astype(np.uint8),cv2.DIST_L2,5)
+            t=np.clip(1-outside/max(6,size*.22),0,1)
+            smooth=np.maximum(smooth,t*t*(3-2*t))
+        alpha=np.clip(smooth*hair_gate,0,1)
+        if (eyes_only or temporal_support) and landmark_mask.any():
+            # Exposed eyelashes are sometimes classified as hair. Keep the
+            # reviewed eye/feature core opaque, with a soft local transition.
+            distance=cv2.distanceTransform(1-landmark_mask,cv2.DIST_L2,5)
+            ramp=np.clip(1-distance/max(6,size*.22),0,1)
+            gate=np.maximum(hair_gate,np.exp(-.5*(distance/max(2,size*.045))**2))
+            alpha=np.maximum(alpha,ramp*ramp*(3-2*ramp)*gate)
+        sigma=max(9,size*.18)
+        patch=frame[b:d,a:c].astype(np.float32)
+        dims=(max(16,(c-a)//4),max(16,(d-b)//4))
+        # Normalized convolution excludes hair colors instead of
+        # dragging colored hair into the privacy texture; background remains natural.
+        weight=(labels!=17).astype(np.float32)
+        weight=np.maximum(weight,core.astype(np.float32))
+        if float(weight.sum())<16:weight=(labels!=17).astype(np.float32)
+        sw=cv2.resize(weight,dims,interpolation=cv2.INTER_AREA)
+        weighted=cv2.resize(patch*weight[...,None],dims,interpolation=cv2.INTER_AREA)
+        bwgt=cv2.GaussianBlur(sw,(0,0),sigma/4,borderType=cv2.BORDER_REFLECT101)
+        color=cv2.GaussianBlur(weighted,(0,0),sigma/4,borderType=cv2.BORDER_REFLECT101)
+        normalized=color/np.maximum(bwgt[...,None],1e-5)
+        ordinary=cv2.GaussianBlur(cv2.resize(patch,dims,interpolation=cv2.INTER_AREA),(0,0),sigma/4)
+        normalized=np.where((bwgt>.02)[...,None],normalized,ordinary)
+        blend=0.0 if eyes_only else .70
+        texture=normalized*blend+ordinary*(1-blend)
+        soft=cv2.resize(texture,(c-a,d-b),interpolation=cv2.INTER_CUBIC).astype(np.float32)
         # Blend overlapping blur textures continuously before applying the union
         # mask. Picking a different texture at alpha ties created hard color
         # seams across the face despite individually feathered masks.
