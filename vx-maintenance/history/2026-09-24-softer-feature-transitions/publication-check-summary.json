@@ -1,0 +1,20 @@
+{
+  "startedAt": "2026-09-24T09:12:37.292Z",
+  "status": "passed",
+  "errors": [],
+  "unverified": [
+    "Physical iPhone/Android layout",
+    "Visual face masking across every frame; verify samples in browser",
+    "Private runtime logs"
+  ],
+  "contentRevision": "6ec153b15a806d2990ef222e46dc3dcb1a445a5b22bcc0228db7c029df943f02",
+  "works": 32,
+  "privacyRevision": "16f708fbee71665a8ed747d373e4e94d3a36e14ac6dc7c89d250ac070f0444cb",
+  "finishedAt": "2026-09-24T09:13:38.919Z",
+  "counts": {
+    "pages": 47,
+    "assets": 128,
+    "privacyRoutes": 24,
+    "ranges": 2
+  }
+}

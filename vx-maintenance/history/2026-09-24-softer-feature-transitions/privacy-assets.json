@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "revision": "16f708fbee71665a8ed747d373e4e94d3a36e14ac6dc7c89d250ac070f0444cb",
+  "count": 24,
+  "assets": [
+    {
+      "path": "assets/works/001/film.mp4",
+      "bytes": 1641423,
+      "sha256": "8f6f5e429c042efbbd53047152c6fea1581e835676713b60b1fee964079c54ef"
+    },
+    {
+      "path": "assets/works/003/film.mp4",
+      "bytes": 2864924,
+      "sha256": "803e2adceeb775881dcdf8247a09d419369abbe274210562c344bc728e6770d2"
+    },
+    {
+      "path": "assets/works/005/film.mp4",
+      "bytes": 4412262,
+      "sha256": "6878d20084a07ae93d68908b0ce6d75f20559b75952f257831d736fada4ca5f2"
+    },
+    {
+      "path": "assets/works/007/film.mp4",
+      "bytes": 3443810,
+      "sha256": "d98b7170c4fdf174172ba6d0ac39cca59130ab8bcfa178c4d48fc3290e1e77f8"
+    },
+    {
+      "path": "assets/works/008/film.mp4",
+      "bytes": 3108089,
+      "sha256": "c4f7238247dd86f791b649cb2165e5709c96d2b2096b8fba46280e9a6e6ee3be"
+    },
+    {
+      "path": "assets/works/009/film.mp4",
+      "bytes": 4049262,
+      "sha256": "493a3fd49b8ae715509bd42cdd3efd526a64704a4e9a4df6eda353a443b4ea10"
+    },
+    {
+      "path": "assets/works/011/film.mp4",
+      "bytes": 3112273,
+      "sha256": "ca13725c10a83a52fe0f25861f25ffbc693b368c64bb2b138d36051a407ba993"
+    },
+    {
+      "path": "assets/works/012/film.mp4",
+      "bytes": 1942220,
+      "sha256": "6815df720886835582e76d4755d484189cce66c3e953cb6954e45dacf4ec800e"
+    },
+    {
+      "path": "assets/works/013/film.mp4",
+      "bytes": 3084904,
+      "sha256": "d123b083466333c06afbf5575d0d1f011391dcf729dd2ee3a44b30f7573fdf3a"
+    },
+    {
+      "path": "assets/works/014/film.mp4",
+      "bytes": 2773123,
+      "sha256": "76ea8d60b72a1f2279d254057a8bb4ec3f4dfbbbbfbce1dcb82cd5f31817f60c"
+    },
+    {
+      "path": "assets/works/015/film.mp4",
+      "bytes": 1467627,
+      "sha256": "7e311346136252bd82efdeec3c794cd0ed36d1df6b8dc3dcfc2f7e6dbbc70334"
+    },
+    {
+      "path": "assets/works/016/film.mp4",
+      "bytes": 4498098,
+      "sha256": "1fb7bb659a36370499b544557df4caf03e30a3a75f569cecd5a7c15dcbca764c"
+    },
+    {
+      "path": "assets/works/017/film.mp4",
+      "bytes": 2206922,
+      "sha256": "fb59d2ab3b95de01c74788be63c0198d0512c8434830007e8e45cc01cfa9fc22"
+    },
+    {
+      "path": "assets/works/018/film.mp4",
+      "bytes": 1880416,
+      "sha256": "49c1c5cc5c25f06453b8995dc0740b0f98b507f440aed9ab9594efdc623058ba"
+    },
+    {
+      "path": "assets/works/019/film.mp4",
+      "bytes": 2119112,
+      "sha256": "03ff909249aad29475511e292b93a67d712582b748a1f8441355e6a06a401327"
+    },
+    {
+      "path": "assets/works/020/film.mp4",
+      "bytes": 1706341,
+      "sha256": "2fc65580bbf04adb9e9d98f73a74b3e432735d887fc287bc8793d4a15fbf5868"
+    },
+    {
+      "path": "assets/works/023/film.mp4",
+      "bytes": 4184670,
+      "sha256": "1e1854ba499ecaf9b4c1ed53769d77ada771fa8aa0cbea31aa2c89163208775e"
+    },
+    {
+      "path": "assets/works/024/film.mp4",
+      "bytes": 2307446,
+      "sha256": "fbe22031dc750b8d03080f19779ee02e6fa01e793073be6bd71af62fc6b1242e"
+    },
+    {
+      "path": "assets/works/025/film.mp4",
+      "bytes": 3277266,
+      "sha256": "bfaacc58e7976451599d5cd569d3dd43f594a30d86a7583d6c2c475ce837772a"
+    },
+    {
+      "path": "assets/works/026/film.mp4",
+      "bytes": 3477872,
+      "sha256": "9242ed9c6f4a6182f7771f0421df1de38d2bcb89141b93216a9b717965d8f322"
+    },
+    {
+      "path": "assets/works/029/film.mp4",
+      "bytes": 1845133,
+      "sha256": "6b5705b29cbdaf48d2d6a47dba01d0815bf5836e61e76706a1af075cd1be2194"
+    },
+    {
+      "path": "assets/works/030/film.mp4",
+      "bytes": 2580884,
+      "sha256": "23ace97c3d013871ed83f5262f98ad8e5bacd69c96ffd0b8d1e49da018c69506"
+    },
+    {
+      "path": "assets/works/031/film.mp4",
+      "bytes": 2242856,
+      "sha256": "0c5af21e0e120c849b3d3ce355971e9c7367574eb251ff29080d1cccf1ffc34c"
+    },
+    {
+      "path": "assets/works/032/film.mp4",
+      "bytes": 748873,
+      "sha256": "c8c5ee7466aa689f7eae753ab5cb1a9118498b442f9e3075609e0c840a2b25a9"
+    }
+  ]
+}
