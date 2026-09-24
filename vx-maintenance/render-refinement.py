@@ -37,7 +37,7 @@ def render(wid,plan,source_root,output,parser):
             if not ok:break
             boxes=r.boxes_for(plan,wid,index)
             if boxes:
-                result,alpha,labels,regions=r.apply(frame,boxes,parser,eyes_only=wid=='032',temporal_support=wid=='026',hair_priority=wid=='017')
+                result,alpha,labels,regions=r.apply(frame,boxes,parser,eyes_only=wid=='032',temporal_support=wid=='026',hair_priority=wid=='017',profile_core=wid=='019' and index>=36)
                 proofs.append({'frame':index,'regions':regions})
                 if index%15==0 or index==expected['frames']-1:
                     thumb=cv2.resize(result,(216,384))

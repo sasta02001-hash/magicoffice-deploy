@@ -1,9 +1,14 @@
 {
   "mode": "refine-preview",
-  "requestedAt": "2026-09-24T08:33:46.077Z",
+  "requestedAt": "2026-09-24T08:47:22.981Z",
   "expectedDeploymentId": "dpl_9XSQAAKKRGSAVZiYX5rUnzRS3Rm1",
   "expectedMainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
   "expectedPrivacyDeploymentId": "dpl_EH9com1G1x48eFnuqjEVePy9mEFx",
   "expectedRevision": "60077030ab3720abfa5990434c59cb84475d43dd12d378ae9cb75d46263f4624",
-  "reason": "Further visual review found the whole-face base still appeared like a flat patch. Center the opaque mask on identifying features and feather outward, retaining natural forehead/cheek shading and hair. Render all 24 verified original films for review only."
+  "reason": "Preserve the full reviewed v2 render set and replace only 019, whose prior early-profile tracking put a coarse block below the face and omitted the nose/mouth. One manually reviewed region and a compact feature core correct the detector-missed side profile without changing original media, dimensions, fps, audio, covers or site text.",
+  "refinementBaseRunId": 35975973293,
+  "refinementBaseCommitSha": "6f355ed8438f28524035a0b15b84be945b63b3fb",
+  "refinementIds": [
+    "019"
+  ]
 }

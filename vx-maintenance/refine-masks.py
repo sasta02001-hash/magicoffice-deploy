@@ -111,7 +111,7 @@ def boxes_for(plan,wid,index):
             result.append([x0*width,y0*height,(x1-x0)*width,(y1-y0)*height])
     return result
 
-def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priority=False):
+def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priority=False,profile_core=False):
     h,w=frame.shape[:2]
     output=frame.astype(np.float32)
     combined=np.zeros((h,w),np.float32)
@@ -183,6 +183,15 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
             for ids in groups:
                 pts=(lm[list(ids)]-np.array([a,b])).round().astype(np.int32)
                 cv2.fillConvexPoly(landmark_mask,cv2.convexHull(pts),1)
+        used_profile_core=False
+        if profile_core and not landmark_mask.any():
+            # 019's reviewed profile turn is missed by both face detectors.
+            # Its manually reviewed region locates the exposed nose/mouth on
+            # the right side. Keep a compact opaque feature core there.
+            center=(int(x+bw*.77-a),int(y+bh*.60-b))
+            axes=(max(2,int(bw*.16)),max(2,int(bh*.23)))
+            cv2.ellipse(landmark_mask,center,axes,0,0,360,1,-1)
+            used_profile_core=True
         if landmark_mask.any():
             landmark_face[labels==17]=0
             distance=cv2.distanceTransform(landmark_face,cv2.DIST_L2,5)
@@ -225,7 +234,7 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
             t=np.clip(1-outside/max(6,size*.22),0,1)
             smooth=t*t*(3-2*t)
         alpha=np.clip(smooth*hair_gate,0,1)
-        if (eyes_only or temporal_support) and landmark_mask.any():
+        if (eyes_only or temporal_support or profile_core) and landmark_mask.any():
             # Exposed eyelashes are sometimes classified as hair. Keep the
             # reviewed eye/feature core opaque, with a soft local transition.
             distance=cv2.distanceTransform(1-landmark_mask,cv2.DIST_L2,5)
@@ -257,7 +266,7 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
         texture_weight[b:d,a:c]+=alpha
         combined[b:d,a:c]=np.maximum(combined[b:d,a:c],alpha)
         full_labels[b:d,a:c]=np.maximum(full_labels[b:d,a:c],labels)
-        audit.append({'box':[round(v,1) for v in box],'alphaPixels':int((alpha>.01).sum()),'featurePixels':int(features.sum()),'featuresFullyMasked':bool(np.all(alpha[features]>.99)) if features.any() else None,'hairMaskedPixels':int(((alpha>.01)&(labels==17)).sum()),'landmarkFeaturePixels':int(landmark_mask.sum()),'fallback':fallback})
+        audit.append({'box':[round(v,1) for v in box],'alphaPixels':int((alpha>.01).sum()),'featurePixels':int(features.sum()),'featuresFullyMasked':bool(np.all(alpha[features]>.99)) if features.any() else None,'hairMaskedPixels':int(((alpha>.01)&(labels==17)).sum()),'landmarkFeaturePixels':int(landmark_mask.sum()),'fallback':fallback,'reviewedProfileCore':used_profile_core})
     if temporal_support:
         faces=observed or propagated
         parser.previous_faces=[]
@@ -277,7 +286,7 @@ def main():
     if hashlib.sha256(source.read_bytes()).hexdigest()!=plan['works'][a.id]['source']['originalSha256']:raise RuntimeError('Source hash mismatch')
     cap=cv2.VideoCapture(str(source));cap.set(cv2.CAP_PROP_POS_FRAMES,a.frame);ok,frame=cap.read();cap.release()
     if not ok:raise RuntimeError('Frame missing')
-    parser=Parser(a.model);t=time.time();boxes=boxes_for(plan,a.id,a.frame);out,alpha,labels,audit=apply(frame,boxes,parser,eyes_only=a.id=='032',hair_priority=a.id=='017')
+    parser=Parser(a.model);t=time.time();boxes=boxes_for(plan,a.id,a.frame);out,alpha,labels,audit=apply(frame,boxes,parser,eyes_only=a.id=='032',hair_priority=a.id=='017',profile_core=a.id=='019' and a.frame>=36)
     oldboxes=[]
     for x,y,w,h in boxes:oldboxes.append([x-.12*w,y-.06*h,w*1.24,h*1.15])
     old=legacy.blur(frame.copy(),oldboxes)
