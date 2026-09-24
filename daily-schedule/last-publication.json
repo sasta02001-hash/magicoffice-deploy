@@ -1,29 +1,29 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-09-23T01:01:08.594Z",
+  "requestedAt": "2026-09-24T01:03:52.095Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_GkYMzwFrmJvt1yMbjZANWQ5afCJ6",
+  "previousDeployment": "dpl_5zmhpSH1SS1AzwdqLhyjTeeb84pW",
   "diff": {
     "added": 0,
     "removed": 0,
-    "timeChanges": 1
+    "timeChanges": 0
   },
-  "verifiedAt": "2026-09-23T01:02:09.519Z",
+  "verifiedAt": "2026-09-24T01:06:14.241Z",
   "rows": 125,
   "publicRows": 111,
   "sourceHash": "d9f7d6d8c910e9e8bc0d0bf3d9f99239e3fb61e67476392632afd812853782ad",
   "publicHash": "da8a86ec4cdbf848c4ebe97bffa7ee1cd54ede13342eb5c207e30fc860cccf26",
-  "fallbackSha256": "6c5254801e696f79be2550e87f35ee2e9880f7fec7e71bb697ad1ea5fe8cde94",
+  "fallbackSha256": "6cf3b2b8110c4398406d4e59bf7687a97fe3b709b2bfafece3b9fba484bf5cca",
   "tests": "passed",
-  "deploymentId": "dpl_5zmhpSH1SS1AzwdqLhyjTeeb84pW",
-  "finishedAt": "2026-09-23T01:02:24.818Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35804595649",
-  "publisherCommit": "94e69b165b195bdb8a5ddf7a65b4223696ace3ea",
+  "deploymentId": "dpl_25zMnmELNnuZV996Rs76u5wydGsz",
+  "finishedAt": "2026-09-24T01:06:29.955Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35941422474",
+  "publisherCommit": "a6333ba502afffb1e07f5b4c41dcd3f23121d41f",
   "publisherTestsPassed": 6,
   "mainSiteModified": false,
   "secretName": "MAGICOFFICE",
   "inspection": {
-    "originalGridVerifiedAt": "2026-09-23T01:01:08.594Z",
+    "originalGridVerifiedAt": "2026-09-24T01:03:52.095Z",
     "postPublishIndependentParity": true,
     "fullRows": 125,
     "publicRows": 111,
@@ -33,7 +33,7 @@
     "homepageHttpStatus": 200,
     "healthHttpStatus": 200,
     "health": "healthy",
-    "healthCheckedAt": "2026-09-23T01:03:24.868Z",
+    "healthCheckedAt": "2026-09-24T01:07:03.962Z",
     "menuUnchanged": true,
     "menuItemCount": 80,
     "menuFetchedAt": "2026-09-12T05:04:19.495Z",
@@ -54,7 +54,8 @@
     ],
     "notes": [
       "Some Vercel fetch connector requests transiently failed; single retry succeeded with HTTP200. No credential changes needed.",
-      "Browser extension errors excluded from website errors."
+      "Browser extension errors excluded from website errors.",
+      "GitHub Actions Node/action deprecation warnings are workflow infrastructure warnings, not website runtime warnings."
     ]
   }
 }
