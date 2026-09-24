@@ -1,0 +1,37 @@
+{
+  "reviewedAt": "2026-09-24T09:08:54.076Z",
+  "status": "artifact-reviewed-awaiting-publication",
+  "previewRunUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35978432932",
+  "previewCommitSha": "9af90009d6458588e6082813edee4440a9817cb9",
+  "artifactId": 10799026947,
+  "artifactArchiveSha256": "8cc9e674e1671474b6fb0b2a64717fb50b7d5b29024a09a0b7dbecaf71b38509",
+  "reviewedPrivacyRevision": "843251de8bd2d79ea18db373edafb15bc661474e9fd7f57eb7fe5da0e6b579f7",
+  "algorithm": "hair-aware-soft-v2",
+  "scope": {
+    "films": 24,
+    "frames": 5510,
+    "validatedBytes": 64975288,
+    "checks": [
+      "All 24 artifact media hashes and original source identities",
+      "All 24 original width, height, frame rate and frame counts",
+      "Full decode and unchanged audio verification from rendering receipts",
+      "Contact sheets for all 24 final CI files",
+      "Selected original-resolution 031 and 032 frames",
+      "Dense 026 transition frames 94–111; 019 profile trajectory and final output"
+    ]
+  },
+  "changes": [
+    "Wider nonlinear feather from a compact feature core",
+    "Hair-aware alpha transition and reduced edge-color contamination",
+    "032 exposed-eye handling without white-mask color bleed",
+    "019 corrected profile position and compact fallback core"
+  ],
+  "notes": [
+    "016 frames 115–117 show hair covering the face; zero mask on that turned-away region preserves hair.",
+    "019 local reviewed output and final CI file have identical SHA-256."
+  ],
+  "limits": [
+    "Contact-sheet and selected-frame visual review is not human review of every frame.",
+    "Production browser playback remains pending at time of this record."
+  ]
+}

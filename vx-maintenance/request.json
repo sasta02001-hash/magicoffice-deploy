@@ -1,14 +1,12 @@
 {
-  "mode": "refine-preview",
-  "requestedAt": "2026-09-24T08:47:22.981Z",
+  "mode": "publish-refinement",
+  "requestedAt": "2026-09-24T09:08:54.076Z",
   "expectedDeploymentId": "dpl_9XSQAAKKRGSAVZiYX5rUnzRS3Rm1",
   "expectedMainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
   "expectedPrivacyDeploymentId": "dpl_EH9com1G1x48eFnuqjEVePy9mEFx",
   "expectedRevision": "60077030ab3720abfa5990434c59cb84475d43dd12d378ae9cb75d46263f4624",
-  "reason": "Preserve the full reviewed v2 render set and replace only 019, whose prior early-profile tracking put a coarse block below the face and omitted the nose/mouth. One manually reviewed region and a compact feature core correct the detector-missed side profile without changing original media, dimensions, fps, audio, covers or site text.",
-  "refinementBaseRunId": 35975973293,
-  "refinementBaseCommitSha": "6f355ed8438f28524035a0b15b84be945b63b3fb",
-  "refinementIds": [
-    "019"
-  ]
+  "refinementRunId": 35978432932,
+  "refinementCommitSha": "9af90009d6458588e6082813edee4440a9817cb9",
+  "approvedPrivacyRevision": "843251de8bd2d79ea18db373edafb15bc661474e9fd7f57eb7fe5da0e6b579f7",
+  "reason": "User requested still softer face-blur transitions while preserving hair. Publish exact visually reviewed 24-film hair-aware-soft-v2 artifact, including corrected 019 profile tracking. Preserve original geometry, frame rate and audio."
 }
