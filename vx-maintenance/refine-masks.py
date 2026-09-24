@@ -223,7 +223,7 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
         if core.any():
             outside=cv2.distanceTransform((~core).astype(np.uint8),cv2.DIST_L2,5)
             t=np.clip(1-outside/max(6,size*.22),0,1)
-            smooth=np.maximum(smooth,t*t*(3-2*t))
+            smooth=t*t*(3-2*t)
         alpha=np.clip(smooth*hair_gate,0,1)
         if (eyes_only or temporal_support) and landmark_mask.any():
             # Exposed eyelashes are sometimes classified as hair. Keep the

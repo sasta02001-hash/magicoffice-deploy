@@ -6,11 +6,28 @@ on:
 permissions:
   contents: read
   actions: read
-concurrency:
-  group: vx-website-maintenance
-  cancel-in-progress: false
 jobs:
+  operation:
+    runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.read.outputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: read
+        run: |
+          node <<'JS'
+          const fs=require('fs');
+          const {mode}=JSON.parse(fs.readFileSync('vx-maintenance/request.json'));
+          if(!['check','repair','inspect','refine-preview','publish-refinement'].includes(mode))throw Error('Unknown mode');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT,'mode='+mode+'\n');
+          JS
   maintain:
+    needs: operation
+    concurrency:
+      group: ${{ needs.operation.outputs.mode == 'refine-preview' && 'vx-refinement-preview' || 'vx-website-maintenance' }}
+      cancel-in-progress: ${{ needs.operation.outputs.mode == 'refine-preview' }}
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:

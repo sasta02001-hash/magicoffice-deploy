@@ -1,9 +1,9 @@
 {
   "mode": "refine-preview",
-  "requestedAt": "2026-09-24T08:27:46.498Z",
+  "requestedAt": "2026-09-24T08:33:46.077Z",
   "expectedDeploymentId": "dpl_9XSQAAKKRGSAVZiYX5rUnzRS3Rm1",
   "expectedMainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
   "expectedPrivacyDeploymentId": "dpl_EH9com1G1x48eFnuqjEVePy9mEFx",
   "expectedRevision": "60077030ab3720abfa5990434c59cb84475d43dd12d378ae9cb75d46263f4624",
-  "reason": "User requests further softening of the face-mask edges. Render all 24 exact originals with wider continuous feathering, antialiased hair boundaries and separate opaque eye protection. Preview only; production unchanged until rendered output is visually reviewed."
+  "reason": "Further visual review found the whole-face base still appeared like a flat patch. Center the opaque mask on identifying features and feather outward, retaining natural forehead/cheek shading and hair. Render all 24 verified original films for review only."
 }

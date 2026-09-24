@@ -37,3 +37,5 @@ Focused previews can reuse an exact successful complete artifact while re-render
 ## Second edge refinement
 
 The v2 preview widens the inward and feature-edge feather, antialiases the hair boundary, and uses a mixture of hair-excluded and ordinary blur colors to reduce cutout-like outlines. Exposed eye/temporal feature cores remain protected separately; physical-mask work 032 retains ordinary blur colors to avoid drawing white-mask color into a bright patch. All 24 outputs are re-rendered from verified originals, visually reviewed, then published through the exact-artifact guard. Parsed hair masks are approximate; contact sheets and representative motion remain required evidence rather than an assertion of perfect segmentation.
+
+When reliable features are available, v2 builds the feather outward from those features instead of retaining a full-opacity whole-face base. This keeps the forehead/cheek transition gradual. Preview jobs have their own cancelable concurrency group and no publishing credentials; production/check jobs retain the serialized maintenance group and are never automatically canceled.
