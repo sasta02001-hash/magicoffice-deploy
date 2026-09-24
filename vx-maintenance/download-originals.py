@@ -1,5 +1,6 @@
 """Download only the hash-approved original films needed for refinement."""
 import concurrent.futures
+import argparse
 import hashlib
 import json
 from pathlib import Path
@@ -33,6 +34,8 @@ def get_original(wid):
             time.sleep(2)
 
 if __name__ == '__main__':
+    cli=argparse.ArgumentParser();cli.add_argument('--ids',nargs='+');args=cli.parse_args()
+    ids=args.ids or sorted(plan['works']);assert all(wid in plan['works'] for wid in ids)
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
-        for result in pool.map(get_original, sorted(plan['works'])):
+        for result in pool.map(get_original, ids):
             print(json.dumps(result), flush=True)

@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import {validateRefinement} from './refinement-guard.mjs';
 const TEAM='team_44tkvxP20I5s9SUmlxfUEQM1';
 const PROJECT='prj_jf0F7rOmNEepg1AKF19uwAGSrUvl';
 const HOST='vxsagittarius-media-privacy-2026091.vercel.app';
@@ -27,12 +28,23 @@ async function publicFile(asset){
 try{
   assert.ok(token,'MISSING_TOKEN');
   const request=JSON.parse(await fs.readFile('vx-maintenance/request.json','utf8'));
-  assert.equal(request.mode,'repair');
+  assert.ok(['repair','publish-refinement'].includes(request.mode));
   const plan=JSON.parse(await fs.readFile(path.join(directory,'assets.json'),'utf8'));
+  if(request.mode==='publish-refinement')validateRefinement(request,plan,JSON.parse(await fs.readFile('vx-maintenance/privacy-plan.json','utf8')));
   const assets=plan.assets.map(({path,bytes,sha256})=>({path,bytes,sha256}));
   assert.equal(assets.length,24,'INCOMPLETE_PRIVACY_SET');assert.equal(new Set(assets.map(x=>x.path)).size,24);
   const before=await api(`/v13/deployments/${HOST}`);assert.equal(before.projectId??before.project?.id,PROJECT);assert.equal(before.id,request.expectedPrivacyDeploymentId,'PRIVACY_BASE_CHANGED');
   receipt.previousDeployment=before.id;
+  async function guardBases(){
+    const main=await api('/v13/deployments/vxsagittarius.vercel.app');
+    const content=await api('/v13/deployments/vxsagittarius-content.vercel.app');
+    assert.equal(main.id,request.expectedMainDeploymentId,'MAIN_BASE_CHANGED');
+    assert.equal(content.id,request.expectedDeploymentId,'CONTENT_BASE_CHANGED');
+    const response=await fetch('https://vxsagittarius.vercel.app/health.json',{cache:'no-store',signal:AbortSignal.timeout(30000)});
+    assert.equal(response.status,200,'CONTENT_HEALTH_UNAVAILABLE');const health=await response.json();
+    assert.equal(health.revision,request.expectedRevision,'CONTENT_REVISION_CHANGED');
+  }
+  await guardBases();
   const files=[];
   for(const a of assets){
     assert.match(a.path,/^assets\/works\/\d{3}\/film\.mp4$/);assert.match(a.sha256,/^[a-f0-9]{64}$/);
@@ -46,13 +58,22 @@ try{
   const config={version:2,buildCommand:'echo Validated privacy media',outputDirectory:'public',headers:[{source:'/(.*)',headers:[{key:'X-Content-Type-Options',value:'nosniff'},{key:'Cache-Control',value:'public, max-age=60, must-revalidate'},{key:'X-VX-Privacy-Revision',value:revision}]},...assets.map(a=>({source:'/'+a.path,headers:[{key:'X-VX-Privacy-SHA256',value:a.sha256}]}))]};
   files.push({file:'vercel.json',data:JSON.stringify(config),encoding:'utf-8'},{file:'public/privacy-manifest.json',data:JSON.stringify(manifest),encoding:'utf-8'});
   assert.equal((await api(`/v13/deployments/${HOST}`)).id,before.id,'CONCURRENT_MEDIA_DEPLOYMENT');
+  await guardBases();
   const d=await api('/v13/deployments','POST',{name:NAME,project:PROJECT,target:'production',files,projectSettings:{framework:null,buildCommand:'echo Validated privacy media',installCommand:'echo No external dependencies',outputDirectory:'public'},meta:{privacyRepair:'2026-09-23',githubRunId:process.env.GITHUB_RUN_ID||'manual'}});
   receipt.deploymentId=d.id;receipt.status='building';receipt.revision=revision;await save();
   let ready=false;
   for(let i=0;i<100;i++){const q=await api(`/v13/deployments/${d.id}`);if(['ERROR','CANCELED'].includes(q.readyState))throw Error('MEDIA_'+q.readyState);if(q.readyState==='READY'&&!q.aliasError&&q.alias.includes(HOST)){ready=true;break;}await pause(4000);}
   assert.ok(ready,'MEDIA_READY_TIMEOUT');
   assert.equal((await api(`/v13/deployments/${HOST}`)).id,d.id);
-  for(let i=0;i<assets.length;i+=4)await Promise.all(assets.slice(i,i+4).map(publicFile));
+  // Preserve the new deployment receipt while waiting for the documented
+  // 60-second CDN lifetime on the original public URLs.
+  for(const asset of assets){
+    let verified=false;let lastError;
+    for(let attempt=0;attempt<18;attempt++){
+      try{await publicFile(asset);verified=true;break;}catch(e){lastError=e;await pause(5000);}
+    }
+    if(!verified)throw lastError;
+  }
   await fs.writeFile('vx-maintenance/privacy-assets.json',JSON.stringify(manifest,null,2));
   receipt.status='published-and-verified';receipt.count=assets.length;receipt.finishedAt=new Date().toISOString();await save();console.log(JSON.stringify(receipt));
 }catch(e){receipt.status='failed';receipt.error=e.message.slice(0,200);await save();console.error(receipt.error);process.exitCode=1;}

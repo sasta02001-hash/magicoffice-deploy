@@ -5,6 +5,7 @@ on:
     paths: ['vx-maintenance/request.json', 'vx-maintenance/*.mjs', 'vx-maintenance/*.py', 'vx-maintenance/privacy-plan.json', '.github/workflows/vx-maintenance.yml']
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: vx-website-maintenance
   cancel-in-progress: false
@@ -21,9 +22,20 @@ jobs:
           node-version: '24'
       - name: Select requested operation
         id: request
-        run: node -e "const fs=require('fs');const r=JSON.parse(fs.readFileSync('vx-maintenance/request.json'));if(!['check','repair','inspect','refine-preview'].includes(r.mode))throw Error('Unknown mode');fs.appendFileSync(process.env.GITHUB_OUTPUT,'mode='+r.mode+'\n')"
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import {verifyRefinementRun} from './vx-maintenance/refinement-guard.mjs';
+          const r=JSON.parse(fs.readFileSync('vx-maintenance/request.json'));
+          if(!['check','repair','inspect','refine-preview','publish-refinement'].includes(r.mode))throw Error('Unknown mode');
+          if(r.mode==='publish-refinement')await verifyRefinementRun(r,process.env.GITHUB_REPOSITORY,process.env.GITHUB_TOKEN);
+          if(r.mode==='refine-preview'&&r.refinementBaseRunId)await verifyRefinementRun({...r,refinementRunId:r.refinementBaseRunId,refinementCommitSha:r.refinementBaseCommitSha},process.env.GITHUB_REPOSITORY,process.env.GITHUB_TOKEN);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT,'mode='+r.mode+'\nrefinementRunId='+(r.refinementRunId||'')+'\nrefinementBaseRunId='+(r.refinementBaseRunId||'')+'\n');
+          JS
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Verify maintenance safeguards
-        run: node --test vx-maintenance/repair.test.mjs
+        run: node --test vx-maintenance/repair.test.mjs vx-maintenance/refinement.test.mjs
       - name: Inspect current VX source and staged privacy files
         if: steps.request.outputs.mode == 'inspect'
         env:
@@ -52,11 +64,26 @@ jobs:
           if ! command -v ffmpeg; then sudo apt-get update && sudo apt-get install -y ffmpeg; fi
           mkdir -p work/models
           curl --fail --location --retry 3 https://github.com/yakhyo/face-parsing/releases/download/weights/resnet18.onnx -o work/models/resnet18.onnx
+      - name: Restore unchanged reviewed films for a focused refinement
+        if: steps.request.outputs.mode == 'refine-preview' && steps.request.outputs.refinementBaseRunId != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: vx-refined-media
+          path: /tmp/vx-refined-media
+          run-id: ${{ steps.request.outputs.refinementBaseRunId }}
+          github-token: ${{ github.token }}
       - name: Render original-resolution hair-aware review set
         if: steps.request.outputs.mode == 'refine-preview'
         run: |
-          python vx-maintenance/download-originals.py
-          python vx-maintenance/render-refinement.py --source work/sources --output /tmp/vx-refined-media --model work/models/resnet18.onnx
+          python3 - <<'PY'
+          import json,subprocess
+          request=json.load(open('vx-maintenance/request.json'))
+          ids=request.get('refinementIds',[])
+          if ids and not request.get('refinementBaseRunId'):raise ValueError('Partial refinement requires a verified complete base')
+          args=['--ids',*ids] if ids else []
+          subprocess.run(['python','vx-maintenance/download-originals.py',*args],check=True)
+          subprocess.run(['python','vx-maintenance/render-refinement.py','--source','work/sources','--output','/tmp/vx-refined-media','--model','work/models/resnet18.onnx',*args,*(['--keep-existing'] if request.get('refinementBaseRunId') else [])],check=True)
+          PY
       - name: Save refinement for visual review without publishing
         if: steps.request.outputs.mode == 'refine-preview'
         uses: actions/upload-artifact@v4
@@ -65,13 +92,31 @@ jobs:
           path: /tmp/vx-refined-media
           if-no-files-found: error
           retention-days: 7
+      - name: Retrieve exact reviewed refinement artifact
+        if: steps.request.outputs.mode == 'publish-refinement'
+        uses: actions/download-artifact@v4
+        with:
+          name: vx-refined-media
+          path: /tmp/vx-privacy
+          run-id: ${{ steps.request.outputs.refinementRunId }}
+          github-token: ${{ github.token }}
+      - name: Validate reviewed bytes and retain explicit source color display
+        if: steps.request.outputs.mode == 'publish-refinement'
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import {validateRefinement} from './vx-maintenance/refinement-guard.mjs';
+          validateRefinement(JSON.parse(fs.readFileSync('vx-maintenance/request.json')),JSON.parse(fs.readFileSync('/tmp/vx-privacy/assets.json')),JSON.parse(fs.readFileSync('vx-maintenance/privacy-plan.json')));
+          JS
+          if ! command -v ffmpeg; then sudo apt-get update && sudo apt-get install -y ffmpeg; fi
+          python3 vx-maintenance/tag-refinement-color.py /tmp/vx-privacy
       - name: Publish complete verified privacy media
-        if: steps.request.outputs.mode == 'repair'
+        if: steps.request.outputs.mode == 'repair' || steps.request.outputs.mode == 'publish-refinement'
         env:
           VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
         run: node vx-maintenance/upload-media.mjs /tmp/vx-privacy
       - name: Switch verified content routes and correct copy
-        if: steps.request.outputs.mode == 'repair'
+        if: steps.request.outputs.mode == 'repair' || steps.request.outputs.mode == 'publish-refinement'
         env:
           VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
         run: |
@@ -91,5 +136,6 @@ jobs:
             vx-maintenance/receipt.json
             vx-maintenance/privacy-assets.json
             vx-maintenance/check-result.json
+            vx-maintenance/refinement-normalization.json
           if-no-files-found: warn
           retention-days: 30

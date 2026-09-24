@@ -37,7 +37,7 @@ def render(wid,plan,source_root,output,parser):
             if not ok:break
             boxes=r.boxes_for(plan,wid,index)
             if boxes:
-                result,alpha,labels,regions=r.apply(frame,boxes,parser,eyes_only=wid=='032')
+                result,alpha,labels,regions=r.apply(frame,boxes,parser,eyes_only=wid=='032',temporal_support=wid=='026',hair_priority=wid=='017')
                 proofs.append({'frame':index,'regions':regions})
                 if index%15==0 or index==expected['frames']-1:
                     thumb=cv2.resize(result,(216,384))
@@ -64,14 +64,24 @@ def render(wid,plan,source_root,output,parser):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--model',type=Path,required=True);p.add_argument('--ids',nargs='+');a=p.parse_args()
+    p.add_argument('--model',type=Path,required=True);p.add_argument('--ids',nargs='+');p.add_argument('--keep-existing',action='store_true');a=p.parse_args()
     assert a.source.resolve()!=a.output.resolve()
     assert hashlib.sha256(a.model.read_bytes()).hexdigest()==MODEL_SHA,'Model identity mismatch'
     cv2.setNumThreads(1);plan=json.loads((HERE/'privacy-plan.json').read_text());parser=r.Parser(a.model)
     ids=a.ids or sorted(plan['works']);assert all(i in plan['works'] for i in ids)
     assets=[]
+    if a.keep_existing:
+        existing=json.loads((a.output/'assets.json').read_text())
+        assert existing['algorithm']=='hair-aware-soft-v1'
+        assert sorted(v['id'] for v in existing['assets'])==sorted(plan['works'])
+        for asset in existing['assets']:
+            assert asset['path']==f"assets/works/{asset['id']}/film.mp4"
+            assert asset['sourceSha256']==plan['works'][asset['id']]['source']['originalSha256']
+            assert r.legacy.sha(a.output/asset['path'])==asset['sha256']
+            if asset['id'] not in ids:assets.append(asset)
     for wid in ids:
         result=render(wid,plan,a.source,a.output,parser);assets.append(result);print(json.dumps(result),flush=True)
+    assets.sort(key=lambda asset:asset['id'])
     (a.output/'assets.json').write_text(json.dumps({'schemaVersion':1,'algorithm':'hair-aware-soft-v1','assets':assets},indent=2)+'\n')
     (a.output/'privacy-validation.json').write_text(json.dumps(assets,indent=2)+'\n')
 

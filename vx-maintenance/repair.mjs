@@ -278,13 +278,13 @@ export async function run() {
   try {
     await save();
     const request=parseJson(await fs.readFile(path.join(DIR,'request.json'),'utf8'),'request');
-    assert(['inspect','repair'].includes(request.mode),'Request mode must be inspect or repair');
+    assert(['inspect','repair','publish-refinement'].includes(request.mode),'Unknown publication operation');
     receipt.mode=request.mode;
     const expected=request.expectedDeploymentId??BASELINE;
     assert(typeof expected==='string'&&/^dpl_[a-zA-Z0-9]+$/.test(expected),'Invalid baseline deployment ID');
     const privacyId=request.privacyDeploymentId??PRIVACY_BASELINE;
     assert(typeof privacyId==='string'&&/^dpl_[a-zA-Z0-9]+$/.test(privacyId),'Invalid privacy deployment ID');
-    if(request.mode==='repair')assert(/^[a-f0-9]{64}$/.test(request.expectedRevision),'Repair requires expectedRevision');
+    if(request.mode!=='inspect')assert(/^[a-f0-9]{64}$/.test(request.expectedRevision),'Repair requires expectedRevision');
     const api=createAPI(process.env.VERCEL_TOKEN);
     const expectedMain=request.expectedMainDeploymentId??MAIN_BASELINE;
     assert(typeof expectedMain==='string'&&/^dpl_[a-zA-Z0-9]+$/.test(expectedMain),'Invalid main baseline deployment ID');

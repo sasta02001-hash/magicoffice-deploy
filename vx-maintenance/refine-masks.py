@@ -32,6 +32,9 @@ class Parser:
         self.session = ort.InferenceSession(str(model), sess_options=opts, providers=['CPUExecutionProvider'])
         self.name = self.session.get_inputs()[0].name
         self.mesh = mp.solutions.face_mesh.FaceMesh(static_image_mode=True, max_num_faces=8, refine_landmarks=True, min_detection_confidence=.2)
+        self.previous_gray = None
+        self.previous_faces = []
+        self.previous_age = 0
 
     def landmarks(self, frame):
         result=self.mesh.process(cv2.cvtColor(frame,cv2.COLOR_BGR2RGB))
@@ -108,13 +111,30 @@ def boxes_for(plan,wid,index):
             result.append([x0*width,y0*height,(x1-x0)*width,(y1-y0)*height])
     return result
 
-def apply(frame,boxes,parser,eyes_only=False):
+def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priority=False):
     h,w=frame.shape[:2]
     output=frame.astype(np.float32)
     combined=np.zeros((h,w),np.float32)
+    texture_sum=np.zeros((h,w,3),np.float32)
+    texture_weight=np.zeros((h,w),np.float32)
     full_labels=np.zeros((h,w),np.uint8)
     audit=[]
     landmarks=parser.landmarks(frame) if boxes else []
+    propagated=[]
+    current_gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY) if temporal_support else None
+    if temporal_support and parser.previous_gray is not None and parser.previous_age<4:
+        for previous in parser.previous_faces:
+            points,status,error=cv2.calcOpticalFlowPyrLK(parser.previous_gray,current_gray,previous.astype(np.float32),None,
+                winSize=(25,25),maxLevel=3,criteria=(cv2.TERM_CRITERIA_EPS|cv2.TERM_CRITERIA_COUNT,30,.01))
+            if points is not None:
+                good=(status[:,0]==1)&(error[:,0]<18)
+                if np.mean(good)>.35:
+                    transform,inliers=cv2.estimateAffinePartial2D(previous[good],points[good],method=cv2.RANSAC,ransacReprojThreshold=2)
+                    if transform is not None and float(np.mean(inliers))>.65:
+                        tracked=cv2.transform(previous[None].astype(np.float32),transform)[0]
+                        if float(np.median(np.linalg.norm(tracked-previous,axis=1)))<30:propagated.append(tracked)
+    observed=[]
+    used_propagation=False
     for box in boxes:
         r=parser.parse(frame,box)
         if r is None:continue
@@ -139,6 +159,16 @@ def apply(frame,boxes,parser,eyes_only=False):
                 cc=min(w,int(cx+side/2));cd=min(h,int(cy+side/2))
                 crop=frame[cb:cd,ca:cc];scale=512/max(crop.shape[:2])
                 local_landmarks += [lm/scale+np.array([ca,cb]) for lm in parser.landmarks(cv2.resize(crop,None,fx=scale,fy=scale))]
+        matched=[lm for lm in local_landmarks if x-.1*bw<=lm[1,0]<=x+1.1*bw and y-.1*bh<=lm[1,1]<=y+1.1*bh]
+        if matched:
+            observed.extend(matched)
+        elif temporal_support:
+            # Brief hair occlusions can defeat both detectors. Carry forward
+            # already verified facial features for at most four adjacent frames;
+            # LK follows their actual motion instead of widening the whole mask.
+            tracked=[lm for lm in propagated if x-.1*bw<=lm[1,0]<=x+1.1*bw and y-.1*bh<=lm[1,1]<=y+1.1*bh]
+            local_landmarks+=tracked
+            used_propagation=used_propagation or bool(tracked)
         if eyes_only and features.any():
             landmark_mask[features]=1
         for lm in local_landmarks:
@@ -164,6 +194,10 @@ def apply(frame,boxes,parser,eyes_only=False):
             landmark_mask=cv2.dilate(landmark_mask,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(radius*2+1,radius*2+1)))
             dist=cv2.distanceTransform(1-landmark_mask,cv2.DIST_L2,5)
             t=np.clip(1-dist/max(4,min(bw,bh)*.055),0,1)
+            if hair_priority:
+                hair_distance=cv2.distanceTransform((labels!=17).astype(np.uint8),cv2.DIST_L2,5)
+                edge=np.clip(hair_distance/max(2,min(bw,bh)*.035),0,1)
+                t*=edge
             alpha=np.maximum(alpha,t*t*(3-2*t))
         fallback=False
         if alpha.max()<.1:
@@ -179,13 +213,24 @@ def apply(frame,boxes,parser,eyes_only=False):
         patch=frame[b:d,a:c]
         small=cv2.resize(patch,(max(16,(c-a)//4),max(16,(d-b)//4)),interpolation=cv2.INTER_AREA)
         soft=cv2.resize(cv2.GaussianBlur(small,(0,0),sigma/4,borderType=cv2.BORDER_REFLECT101),(c-a,d-b),interpolation=cv2.INTER_CUBIC).astype(np.float32)
-        old=combined[b:d,a:c]
-        selected=alpha>old
-        blend=frame[b:d,a:c]*(1-alpha[...,None])+soft*alpha[...,None]
-        output[b:d,a:c][selected]=blend[selected]
-        combined[b:d,a:c]=np.maximum(old,alpha)
+        # Blend overlapping blur textures continuously before applying the union
+        # mask. Picking a different texture at alpha ties created hard color
+        # seams across the face despite individually feathered masks.
+        texture_sum[b:d,a:c]+=soft*alpha[...,None]
+        texture_weight[b:d,a:c]+=alpha
+        combined[b:d,a:c]=np.maximum(combined[b:d,a:c],alpha)
         full_labels[b:d,a:c]=np.maximum(full_labels[b:d,a:c],labels)
         audit.append({'box':[round(v,1) for v in box],'alphaPixels':int((alpha>.01).sum()),'featurePixels':int(features.sum()),'featuresFullyMasked':bool(np.all(alpha[features]>.99)) if features.any() else None,'hairMaskedPixels':int(((alpha>.01)&(labels==17)).sum()),'landmarkFeaturePixels':int(landmark_mask.sum()),'fallback':fallback})
+    if temporal_support:
+        faces=observed or propagated
+        parser.previous_faces=[]
+        for face in faces:
+            if not any(np.linalg.norm(face[1]-saved[1])<20 for saved in parser.previous_faces):parser.previous_faces.append(face)
+        parser.previous_gray=current_gray
+        parser.previous_age=0 if observed else parser.previous_age+1
+        if audit:audit[0]['temporalFeatureSupport']=used_propagation
+    texture=texture_sum/np.maximum(texture_weight[...,None],1e-6)
+    output=frame*(1-combined[...,None])+texture*combined[...,None]
     return output.clip(0,255).astype(np.uint8), combined, full_labels,audit
 
 def main():
@@ -195,7 +240,7 @@ def main():
     if hashlib.sha256(source.read_bytes()).hexdigest()!=plan['works'][a.id]['source']['originalSha256']:raise RuntimeError('Source hash mismatch')
     cap=cv2.VideoCapture(str(source));cap.set(cv2.CAP_PROP_POS_FRAMES,a.frame);ok,frame=cap.read();cap.release()
     if not ok:raise RuntimeError('Frame missing')
-    parser=Parser(a.model);t=time.time();boxes=boxes_for(plan,a.id,a.frame);out,alpha,labels,audit=apply(frame,boxes,parser,eyes_only=a.id=='032')
+    parser=Parser(a.model);t=time.time();boxes=boxes_for(plan,a.id,a.frame);out,alpha,labels,audit=apply(frame,boxes,parser,eyes_only=a.id=='032',hair_priority=a.id=='017')
     oldboxes=[]
     for x,y,w,h in boxes:oldboxes.append([x-.12*w,y-.06*h,w*1.24,h*1.15])
     old=legacy.blur(frame.copy(),oldboxes)
