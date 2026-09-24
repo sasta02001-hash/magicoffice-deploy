@@ -1,12 +1,9 @@
 {
-  "mode": "publish-refinement",
-  "requestedAt": "2026-09-24T07:28:02.952Z",
-  "expectedDeploymentId": "dpl_BDFprF5bPHi69iiJmeeL4dsjTLeF",
+  "mode": "check",
+  "requestedAt": "2026-09-24T07:37:18.399Z",
+  "expectedDeploymentId": "dpl_9XSQAAKKRGSAVZiYX5rUnzRS3Rm1",
   "expectedMainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
-  "expectedPrivacyDeploymentId": "dpl_B7C7AXBAXRyfpy4BY5xePwcmH7aJ",
-  "expectedRevision": "793ed976d0fac89b392b4a434d15f3333cd45a1b76de1d03d68d6bb275b194b3",
-  "refinementRunId": 35969193354,
-  "refinementCommitSha": "fc37391e0dbb60f4e6e1c87add6deef0fc0d3f54",
-  "approvedPrivacyRevision": "44688e4392587c6cfdbbcbe8700af7647f522e40fc7a81cbef8058374b951d6a",
-  "reason": "User-authorized replacement of coarse face blur: feathered masks preserve hair; all 24 contact sheets reviewed; 017/026 final refinement reviewed; original resolution, frame count, fps, decoded playback and copied audio validated."
+  "expectedPrivacyDeploymentId": "dpl_EH9com1G1x48eFnuqjEVePy9mEFx",
+  "expectedRevision": "60077030ab3720abfa5990434c59cb84475d43dd12d378ae9cb75d46263f4624",
+  "reason": "Verify the already-published hair-aware refinement after CDN convergence; preserve new deployment IDs and do not republish. Original-URL Range checks now return 206. Record approved output hashes to prevent legacy mask regression."
 }

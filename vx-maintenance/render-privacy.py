@@ -103,6 +103,8 @@ def render(wid, config, masks, source_root, output_root):
         return {'id': wid, 'mode': 'copy-approved', **validate(destination, expected)}
     if source_hash != expected['originalSha256']:
         raise RuntimeError(f'{wid}: unrecognized source SHA; review required')
+    if expected.get('refinementRequired', False):
+        raise RuntimeError(f'{wid}: regenerate with the hair-aware refinement review; legacy masks would regress the approved result')
     # Verify full source decoding and geometry before reusing tracked masks.
     validate(source, expected)
     width, height, fps = audit['width'], audit['height'], audit['fps']

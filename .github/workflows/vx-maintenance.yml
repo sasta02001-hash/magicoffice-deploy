@@ -35,7 +35,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Verify maintenance safeguards
-        run: node --test vx-maintenance/repair.test.mjs vx-maintenance/refinement.test.mjs
+        run: node --test vx-maintenance/repair.test.mjs vx-maintenance/refinement.test.mjs vx-maintenance/range-check.test.mjs
       - name: Inspect current VX source and staged privacy files
         if: steps.request.outputs.mode == 'inspect'
         env:

@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
+import {verifyRange} from './range-check.mjs';
 const ORIGIN='https://vxsagittarius.vercel.app';
 const PRIVACY='https://vxsagittarius-media-privacy-2026091.vercel.app';
 // Keep existing works until an approved baseline update records an intentional removal.
@@ -52,7 +53,7 @@ try{
     out.checks.push({type:'asset',path:asset,status:200,privacyRoute:!!proof});
   });
   assert.equal(out.checks.filter(c=>c.privacyRoute).length,24,'PRIVACY_ROUTE_COVERAGE_REGRESSION');
-  for(const id of ['001','032']){if(!catalog.works.some(w=>w.id===id))continue;const r=await fetch(ORIGIN+'/assets/works/'+id+'/film.mp4',{headers:{Range:'bytes=0-1023'},redirect:'error',signal:AbortSignal.timeout(30000)});assert.equal(r.status,206,'VIDEO_RANGE_FAILED');assert.equal((await r.arrayBuffer()).byteLength,1024);out.checks.push({type:'range',id,status:206});}
+  for(const id of ['001','032']){if(!catalog.works.some(w=>w.id===id))continue;const proof=await verifyRange(ORIGIN+'/assets/works/'+id+'/film.mp4');out.checks.push({type:'range',id,...proof});}
   out.status=out.errors.length?'issues-found':'passed';
 }catch(e){out.status='failed';out.errors.push({error:e.message.slice(0,200)});}
 out.finishedAt=new Date().toISOString();out.counts={pages:out.checks.filter(c=>c.type==='page').length,assets:out.checks.filter(c=>c.type==='asset').length,privacyRoutes:out.checks.filter(c=>c.privacyRoute).length,ranges:out.checks.filter(c=>c.type==='range').length};
