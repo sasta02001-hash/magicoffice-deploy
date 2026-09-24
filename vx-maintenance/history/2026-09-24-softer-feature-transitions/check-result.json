@@ -1,0 +1,1039 @@
+{
+  "startedAt": "2026-09-24T09:18:17.835Z",
+  "status": "passed",
+  "checks": [
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/activities/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/services/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/project-bleach/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/project-perm/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/project-trifusion/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/project-color/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/project-triascend/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/library/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/about/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/nebula/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/booking/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/001/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/project-trievolve/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/project-triform/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/009/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/004/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/008/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/006/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/002/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/007/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/005/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/003/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/014/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/010/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/011/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/012/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/013/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/016/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/017/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/015/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/022/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/018/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/019/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/025/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/024/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/020/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/021/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/023/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/028/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/026/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/031/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/032/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/029/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/030/",
+      "status": 200
+    },
+    {
+      "type": "page",
+      "url": "https://vxsagittarius.vercel.app/works/027/",
+      "status": 200
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/002/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/002/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/002/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/001/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/001/poster.png",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/001/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/001/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/002/film.mp4",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/003/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/003/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/003/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/004/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/004/film.mp4",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/004/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/004/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/003/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/005/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/005/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/006/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/006/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/006/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/006/film.mp4",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/005/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/005/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/007/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/007/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/008/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/008/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/007/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/007/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/008/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/008/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/009/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/010/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/010/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/009/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/010/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/009/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/010/film.mp4",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/009/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/011/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/012/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/011/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/011/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/012/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/012/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/012/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/011/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/014/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/013/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/013/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/014/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/013/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/013/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/014/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/014/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/016/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/015/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/016/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/015/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/016/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/016/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/015/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/015/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/017/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/018/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/018/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/017/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/018/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/017/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/017/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/018/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/020/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/020/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/019/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/019/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/020/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/019/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/020/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/019/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/021/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/021/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/022/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/022/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/021/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/021/film.mp4",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/022/film.mp4",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/022/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/023/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/024/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/023/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/023/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/024/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/024/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/023/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/024/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/025/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/026/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/025/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/025/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/026/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/025/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/026/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/026/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/027/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/027/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/028/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/028/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/028/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/027/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/028/film.mp4",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/027/film.mp4",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/029/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/029/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/029/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/030/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/030/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/030/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/030/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/029/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/031/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/031/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/032/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/032/cover-768.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/032/poster.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/031/cover-384.webp",
+      "status": 200,
+      "privacyRoute": false
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/031/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "asset",
+      "path": "/assets/works/032/film.mp4",
+      "status": 200,
+      "privacyRoute": true
+    },
+    {
+      "type": "range",
+      "id": "001",
+      "status": 206,
+      "attempts": 1,
+      "contentRange": "bytes 0-1023/1641423"
+    },
+    {
+      "type": "range",
+      "id": "032",
+      "status": 206,
+      "attempts": 1,
+      "contentRange": "bytes 0-1023/748873"
+    }
+  ],
+  "errors": [],
+  "unverified": [
+    "Physical iPhone/Android layout",
+    "Visual face masking across every frame; verify samples in browser",
+    "Private runtime logs"
+  ],
+  "contentRevision": "6ec153b15a806d2990ef222e46dc3dcb1a445a5b22bcc0228db7c029df943f02",
+  "works": 32,
+  "privacyRevision": "16f708fbee71665a8ed747d373e4e94d3a36e14ac6dc7c89d250ac070f0444cb",
+  "finishedAt": "2026-09-24T09:18:26.012Z",
+  "counts": {
+    "pages": 47,
+    "assets": 128,
+    "privacyRoutes": 24,
+    "ranges": 2
+  }
+}

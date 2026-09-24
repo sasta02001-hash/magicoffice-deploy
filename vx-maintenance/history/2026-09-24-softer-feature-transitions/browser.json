@@ -1,0 +1,75 @@
+{
+  "checkedAt": "2026-09-24T09:22:57.359Z",
+  "device": "desktop browser",
+  "sampledWorks": [
+    "031",
+    "032",
+    "019",
+    "026",
+    "007"
+  ],
+  "sampleResults": [
+    {
+      "id": "031",
+      "url": "https://vxsagittarius.vercel.app/works/031/",
+      "duration": 6.366667,
+      "ended": true,
+      "readyState": 4,
+      "error": null,
+      "fullyBuffered": true,
+      "replayOperated": true
+    },
+    {
+      "id": "032",
+      "url": "https://vxsagittarius.vercel.app/works/032/",
+      "duration": 1.566667,
+      "ended": true,
+      "readyState": 4,
+      "error": null,
+      "fullyBuffered": true,
+      "replayOperated": true
+    },
+    {
+      "id": "019",
+      "url": "https://vxsagittarius.vercel.app/works/019/",
+      "duration": 6.3,
+      "ended": true,
+      "readyState": 4,
+      "error": null,
+      "fullyBuffered": true,
+      "replayOperated": true
+    },
+    {
+      "id": "026",
+      "url": "https://vxsagittarius.vercel.app/works/026/",
+      "duration": 10.366667,
+      "ended": true,
+      "readyState": 4,
+      "error": null,
+      "fullyBuffered": true,
+      "replayOperated": true
+    },
+    {
+      "id": "007",
+      "url": "https://vxsagittarius.vercel.app/works/007/",
+      "duration": 8.9,
+      "ended": true,
+      "readyState": 4,
+      "error": null,
+      "fullyBuffered": true,
+      "replayOperated": true
+    }
+  ],
+  "screenshotsCaptured": true,
+  "lineHref": "https://lin.ee/Roebk7r",
+  "notes": [
+    "019 initially stalled at time 0 with readyState 1, a temporary playback notice, and error=null. An original-URL reload and UI replay then completed fully without error.",
+    "019 local byte-range retest on the unchanged URL with Cache-Control: no-cache returned the exact requested bytes 0-1023/2119112. The initial response had a larger cached range; the precise transient cause was not proven.",
+    "031 replay completed after initial buffering; all five final sampled films reached ended=true.",
+    "Visual review used final CI contact sheets for all 24 films, enlarged selected frames, dense 026 transition samples, and live browser samples; not manual review of every frame."
+  ],
+  "limits": [
+    "No physical iPhone/Android test in this media refinement.",
+    "Private runtime logs were not checked in this media-focused repair."
+  ]
+}
