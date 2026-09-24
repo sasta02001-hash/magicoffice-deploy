@@ -1,10 +1,11 @@
 {
   "status": "verified",
-  "verifiedAt": "2026-09-23T14:04:32.396Z",
+  "verifiedAt": "2026-09-24T01:10:25.266Z",
   "site": "https://vxsagittarius.vercel.app",
   "repairRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35870291513",
-  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35871490782",
-  "verificationCommit": "a3678669632d63dd9709f214cb54a43f7f0dde13",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35940867724",
+  "verificationCommit": "46dda3ec10e21bd91669062aad7bfbb72efe2973",
+  "historyCommit": "b1261f8f45d8190cfdb05c06148c2e0642855f87",
   "mainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
   "mainProductionUnchanged": true,
   "contentDeploymentId": "dpl_BDFprF5bPHi69iiJmeeL4dsjTLeF",
@@ -20,30 +21,49 @@
   },
   "errors": [],
   "fixes": [
-    "Published 24 blurred films preserving resolution, frame count, frame rate and audio",
-    "Additional mirror-edge masks on 005 and 007",
-    "Corrected work009 榛果粽 to 榛果棕",
-    "Daily check verifies canonical URLs, complete catalogue/sitemap, media types and privacy revision evidence",
-    "Existing daily 09:00 Asia/Taipei task now follows repairs through live verification"
+    "Verified the 24 previously published blurred films remain active in production",
+    "Confirmed work 031 side face is masked in the production player",
+    "Confirmed mirror-edge masks on works 005 and 007",
+    "Confirmed work 009 now reads 榛果棕",
+    "Verified canonical work routes, catalogue/sitemap, media assets and privacy revision evidence"
   ],
-  "note": "Initial post-publication check encountered old media cache; all 24 production files subsequently matched full SHA-256 on 2026-09-23T14:05:14Z. Follow-up daily-check run passed without redeployment or video processing.",
+  "note": "Daily check passed without redeployment or video processing. Matching workflow receipt, production deployment IDs, live catalogue/health data and browser interactions were cross-checked.",
   "browser": {
-    "work032": {
-      "playedToEnd": true,
-      "duration": 1.566667,
-      "width": 700,
-      "height": 1280,
-      "faceMaskVisuallyConfirmed": true
+    "desktopViewport": {
+      "width": 1348,
+      "horizontalOverflow": false
     },
     "catalogExpansionTo32": true,
+    "all32CoverGroupsLoaded": true,
+    "work032": {
+      "playbackReady": true,
+      "faceMaskVisuallyConfirmed": true
+    },
+    "work031": {
+      "playbackReady": true,
+      "sideFaceMaskVisuallyConfirmed": true
+    },
     "work005": {
-      "playedToEnd": true,
-      "duration": 9.766667,
-      "mirrorFacesVisuallyMasked": true
-    }
+      "playbackReady": true,
+      "mirrorEdgeMaskVisuallyConfirmed": true
+    },
+    "work007": {
+      "playbackReady": true,
+      "mirrorMaskVisuallyConfirmed": true
+    },
+    "work009": {
+      "copy": "榛果棕·米灰",
+      "oldTypoAbsent": true
+    },
+    "activitiesFiltersOperated": true,
+    "bookingChecklistCopy": true,
+    "lineHref": "https://lin.ee/Roebk7r",
+    "screenshotsCaptured": true
   },
   "limitations": [
     "No physical iPhone/Android device test",
-    "Visual privacy review uses reviewed masks and sample frames, not a claim of manual inspection of every frame"
+    "Visual privacy review sampled 032, 031, 005 and 007; it is not a claim of manual inspection of every frame",
+    "Browser/web connectors blocked direct sitemap.xml rendering, but the matching GitHub Actions check fetched and validated the live sitemap",
+    "Private runtime logs remain unverified"
   ]
 }
