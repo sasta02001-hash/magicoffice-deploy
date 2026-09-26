@@ -1,29 +1,29 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-09-24T01:03:52.095Z",
+  "requestedAt": "2026-09-26T01:01:10.612Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_5zmhpSH1SS1AzwdqLhyjTeeb84pW",
+  "previousDeployment": "dpl_7H7a5CYda1ok9BDoarMzYCvLgitE",
   "diff": {
     "added": 0,
     "removed": 0,
-    "timeChanges": 0
+    "timeChanges": 1
   },
-  "verifiedAt": "2026-09-24T01:06:14.241Z",
+  "verifiedAt": "2026-09-26T01:01:56.260Z",
   "rows": 125,
   "publicRows": 111,
-  "sourceHash": "d9f7d6d8c910e9e8bc0d0bf3d9f99239e3fb61e67476392632afd812853782ad",
-  "publicHash": "da8a86ec4cdbf848c4ebe97bffa7ee1cd54ede13342eb5c207e30fc860cccf26",
-  "fallbackSha256": "6cf3b2b8110c4398406d4e59bf7687a97fe3b709b2bfafece3b9fba484bf5cca",
+  "sourceHash": "9607ee1f6e2fced5def7a9b0a587298bdbb86d1e2ddc32c426aa8c4501f761f8",
+  "publicHash": "4607c20e7ee00df4d1025828f55b86664e24cc8aaf0b564b7915e521f5a7da12",
+  "fallbackSha256": "d161965966fd3fdbe2b8154db766e176818cede33c9596541f2c5b6fcc9e6db9",
   "tests": "passed",
-  "deploymentId": "dpl_25zMnmELNnuZV996Rs76u5wydGsz",
-  "finishedAt": "2026-09-24T01:06:29.955Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/35941422474",
-  "publisherCommit": "a6333ba502afffb1e07f5b4c41dcd3f23121d41f",
+  "deploymentId": "dpl_J2fUFrwcShDqhZosnDmTNFjE2SHF",
+  "finishedAt": "2026-09-26T01:02:12.207Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36206990968",
+  "publisherCommit": "53310c9e5b4e88e6507165453d385b56b3fd1144",
   "publisherTestsPassed": 6,
   "mainSiteModified": false,
   "secretName": "MAGICOFFICE",
   "inspection": {
-    "originalGridVerifiedAt": "2026-09-24T01:03:52.095Z",
+    "originalGridVerifiedAt": "2026-09-26T01:01:10.612Z",
     "postPublishIndependentParity": true,
     "fullRows": 125,
     "publicRows": 111,
@@ -33,7 +33,7 @@
     "homepageHttpStatus": 200,
     "healthHttpStatus": 200,
     "health": "healthy",
-    "healthCheckedAt": "2026-09-24T01:07:03.962Z",
+    "healthCheckedAt": "2026-09-26T01:00:48.666Z",
     "menuUnchanged": true,
     "menuItemCount": 80,
     "menuFetchedAt": "2026-09-12T05:04:19.495Z",
@@ -53,7 +53,7 @@
       "2026-10-04"
     ],
     "notes": [
-      "Some Vercel fetch connector requests transiently failed; single retry succeeded with HTTP200. No credential changes needed.",
+      "The health connector was transiently unavailable after publication, but it had returned HTTP200 healthy before publication and the publication runner independently passed the same health check.",
       "Browser extension errors excluded from website errors.",
       "GitHub Actions Node/action deprecation warnings are workflow infrastructure warnings, not website runtime warnings."
     ]
