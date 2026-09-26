@@ -1,9 +1,9 @@
 {
   "mode": "check",
-  "requestedAt": "2026-09-24T09:17:29.366Z",
+  "requestedAt": "2026-09-26T01:00:44.191Z",
   "expectedDeploymentId": "dpl_4r4UGjvKKxeRqf45t3m4M7A5zkfG",
   "expectedMainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
   "expectedPrivacyDeploymentId": "dpl_4k7WJp74ysc8Ut1uzPFkHc6kXdBu",
   "expectedRevision": "6ec153b15a806d2990ef222e46dc3dcb1a445a5b22bcc0228db7c029df943f02",
-  "reason": "Verify published softer-edge refinement and record exact approved production media hashes; no media rerender or deployment."
+  "reason": "Daily production health check; verify current pages, media, privacy routes, byte ranges and approved deployment revisions without rerendering or publishing."
 }
