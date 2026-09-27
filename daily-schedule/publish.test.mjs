@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {rosterDiff,PROJECT,validateRequest,flattenFiles,validateRows,filteredRows,verifyLive} from './publish.mjs';
+import {rosterDiff,PROJECT,validateRequest,flattenFiles,validateRows,filteredRows,verifyLive,discoverSheetTabs,patchScheduleParser} from './publish.mjs';
 const now=Date.parse('2026-09-19T08:00:00Z');
 const req={projectId:PROJECT,expectedDeploymentId:'dpl_TEST',sourceVerifiedAt:new Date(now).toISOString(),sourceHash:'a'.repeat(64),publicHash:'b'.repeat(64),publishedMonths:['2026-09'],excludedNames:['心葉','嚕咩','Rumei','咲茉','泉']};
 const row={date:'2026-09-19',name:'碧瑠',startTime:'20:00',endTime:'02:00',shift:'夜間',costume:'',event:'',sort:'10',updatedAt:req.sourceVerifiedAt};
@@ -37,4 +37,19 @@ test('roster delta ignores timestamps, preserves split shifts and counts pure ad
  assert.deepEqual(rosterDiff([row],[row,{...row,name:'other'}]),{added:1,removed:0,timeChanges:0});
  assert.deepEqual(rosterDiff([row,{...row,name:'other'}],[row]),{added:0,removed:1,timeChanges:0});
  assert.deepEqual(rosterDiff([row,{...row,startTime:'14:00',endTime:'18:00'}],[row,{...row,startTime:'14:30',endTime:'18:00'}]),{added:0,removed:0,timeChanges:1});
+});
+
+test('future sheet metadata is discovered without publishing source identifiers',()=>{
+ const html=String.raw`[7,0,\\\"129782300\\\",[{\\\"1\\\":[[0,0,\\\"十月\\\"]]}]`;
+ assert.deepEqual(discoverSheetTabs(html),[{gid:'129782300',title:'十月'}]);
+});
+test('schedule parser migration accepts dotted half-hours and separate closure rows',()=>{
+ const source=`const input = String(value ?? '').trim().replace(/[－–—]/g, '-').replace(/：/g, ':');
+    const dayRows = [];
+      if (!sourceName) fail('ATTENDANCE_WITHOUT_NAME', cell);
+    if (event === '公休') {`;
+ const patched=patchScheduleParser(source);
+ assert.match(patched,/closedByMarker/);
+ assert.match(patched,/\\(\\?<=\\\\d\\)/);
+ assert.equal(patchScheduleParser(patched),patched);
 });
