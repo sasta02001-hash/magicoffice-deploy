@@ -1,11 +1,12 @@
 {
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "expectedDeploymentId": "dpl_7H7a5CYda1ok9BDoarMzYCvLgitE",
-  "sourceVerifiedAt": "2026-09-26T01:01:10.612Z",
-  "sourceHash": "9607ee1f6e2fced5def7a9b0a587298bdbb86d1e2ddc32c426aa8c4501f761f8",
-  "publicHash": "4607c20e7ee00df4d1025828f55b86664e24cc8aaf0b564b7915e521f5a7da12",
+  "expectedDeploymentId": "dpl_J2fUFrwcShDqhZosnDmTNFjE2SHF",
+  "sourceVerifiedAt": "2026-09-27T01:08:39.368Z",
+  "sourceHash": "071a3c3d9255759a45b2a2989b72d6903f1ea0ca5b635d247685ffccd9a1665b",
+  "publicHash": "cea95b7f0b33a572fba6e7c4aa0386b7eb8af937f0fcb3612bbf3273a0858eb2",
   "publishedMonths": [
-    "2026-09"
+    "2026-09",
+    "2026-10"
   ],
   "excludedNames": [
     "Rumei",
