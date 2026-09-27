@@ -40,7 +40,7 @@ test('roster delta ignores timestamps, preserves split shifts and counts pure ad
 });
 
 test('future sheet metadata is discovered without publishing source identifiers',()=>{
- const html=String.raw`[7,0,\\\"129782300\\\",[{\\\"1\\\":[[0,0,\\\"十月\\\"]]}]`;
+ const html=String.raw`[7,0,\"129782300\",[{\"1\":[[0,0,\"十月\"]]}]`;
  assert.deepEqual(discoverSheetTabs(html),[{gid:'129782300',title:'十月'}]);
 });
 test('schedule parser migration accepts dotted half-hours and separate closure rows',()=>{
@@ -50,6 +50,6 @@ test('schedule parser migration accepts dotted half-hours and separate closure r
     if (event === '公休') {`;
  const patched=patchScheduleParser(source);
  assert.match(patched,/closedByMarker/);
- assert.match(patched,/\\(\\?<=\\\\d\\)/);
+ assert.match(patched,/\(\?<=\\d\)/);
  assert.equal(patchScheduleParser(patched),patched);
 });
