@@ -21,6 +21,35 @@ export function rosterDiff(before,after) {
   return {added,removed,timeChanges};
 }
 
+export function discoverSheetTabs(html) {
+  const tabs=[]; const seen=new Set();
+  const pattern=/\[\d+,0,\\\"(\d+)\\\",\[\{\\\"1\\\":\[\[0,0,\\\"([^\"\\]+)\\\"\]/g;
+  for(const match of String(html).matchAll(pattern)) {
+    if(seen.has(match[1]))continue;
+    seen.add(match[1]);tabs.push({gid:match[1],title:match[2]});
+  }
+  return tabs;
+}
+
+export function patchScheduleParser(source) {
+  let next=String(source);
+  if(!next.includes("replace(/(?<=\\d)\\.(?=\\d{2}(?:\\D|$))/g, ':')")) {
+    const before="replace(/[－–—]/g, '-').replace(/：/g, ':');";
+    assert.ok(next.includes(before),'PARSER_TIME_PATCH_TARGET_MISSING');
+    next=next.replace(before,"replace(/[－–—]/g, '-').replace(/：/g, ':').replace(/(?<=\\d)\\.(?=\\d{2}(?:\\D|$))/g, ':');");
+  }
+  if(!next.includes('let closedByMarker = false;')) {
+    const dayRows='    const dayRows = [];\n';
+    const nameless="      if (!sourceName) fail('ATTENDANCE_WITHOUT_NAME', cell);";
+    const closure="    if (event === '公休') {";
+    assert.ok(next.includes(dayRows)&&next.includes(nameless)&&next.includes(closure),'PARSER_CLOSURE_PATCH_TARGET_MISSING');
+    next=next.replace(dayRows,dayRows+'    let closedByMarker = false;\n')
+      .replace(nameless,"      if (!sourceName) {\n        const marker = text(value, cell, 40);\n        if (marker === '公休') { closedByMarker = true; continue; }\n        fail('ATTENDANCE_WITHOUT_NAME', cell);\n      }")
+      .replace(closure,"    if (event === '公休' || closedByMarker) {");
+  }
+  return next;
+}
+
 export function validateRequest(request,now=Date.now()) {
   assert.equal(request.projectId,PROJECT,'WRONG_PROJECT');
   assert.match(request.expectedDeploymentId,/^dpl_[A-Za-z0-9]+$/);
@@ -65,6 +94,18 @@ async function publicJson(url) {
   const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(30000)});
   assert.equal(response.status,200,'PUBLIC_HTTP_FAILURE');
   return response.json();
+}
+async function publicJsonResponse(url) {
+  const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(30000)});
+  return {status:response.status,body:await response.json()};
+}
+async function publicText(url,maximum=2000000,accept='text/html,text/csv') {
+  const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(45000),headers:{Accept:accept}});
+  assert.equal(response.status,200,'SOURCE_METADATA_HTTP_FAILURE');
+  const reader=response.body.getReader();let bytes=0;const chunks=[];
+  try {while(true){const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>maximum){await reader.cancel();throw new Error('SOURCE_METADATA_TOO_LARGE');}chunks.push(value);}}
+  finally {reader.releaseLock();}
+  return Buffer.concat(chunks).toString('utf8');
 }
 async function run() {
   const token=process.env.VERCEL_TOKEN;
@@ -114,9 +155,45 @@ async function run() {
       await fs.mkdir(path.dirname(local),{recursive:true});await fs.writeFile(local,data,{mode:0o600});
       files.push({file:entry.file,data,encoding:'utf-8'});
     }
-    const config=JSON.parse(await fs.readFile(path.join(temp,'config.json'),'utf8'));
+    const parserPath=path.join(temp,'lib/schedule-parser.mjs');
+    const parserEntry=files.find(file=>file.file==='lib/schedule-parser.mjs');
+    parserEntry.data=patchScheduleParser(parserEntry.data);
+    await fs.writeFile(parserPath,parserEntry.data,{mode:0o600});
+    const configPath=path.join(temp,'config.json');
+    const config=JSON.parse(await fs.readFile(configPath,'utf8'));
     const monthKey=x=>`${x.year}-${String(x.month).padStart(2,'0')}`;
-    const actualMonths=config.sheets.map(monthKey).sort();
+    let actualMonths=config.sheets.map(monthKey).sort();
+    const missingMonths=request.publishedMonths.filter(month=>!actualMonths.includes(month));
+    if(missingMonths.length) {
+      const metadataUrl=`https://docs.google.com/spreadsheets/d/${encodeURIComponent(config.spreadsheetId)}/edit`;
+      const tabs=discoverSheetTabs(await publicText(metadataUrl));
+      assert.ok(tabs.length,'SOURCE_METADATA_TABS_MISSING');
+      const {parseCsv}=await import(pathToFileURL(path.join(temp,'lib/csv.mjs')));
+      const {parseScheduleGrid}=await import(pathToFileURL(parserPath));
+      const configured=new Set(config.sheets.map(sheet=>String(sheet.gid)));
+      for(const key of missingMonths) {
+        const match=key.match(/^(\d{4})-(\d{2})$/);assert.ok(match,'INVALID_PUBLISHED_MONTH');
+        const year=Number(match[1]),month=Number(match[2]),candidates=[];
+        for(const tab of tabs.filter(tab=>!configured.has(tab.gid))) {
+          const csvUrl=new URL(`https://docs.google.com/spreadsheets/d/${config.spreadsheetId}/export`);
+          csvUrl.searchParams.set('format','csv');csvUrl.searchParams.set('gid',tab.gid);
+          try {
+            const csv=await publicText(csvUrl,config.maxBodyBytes??400000,'text/csv');
+            parseScheduleGrid(parseCsv(csv),{year,month,updatedAt:request.sourceVerifiedAt,requireCompleteHeaders:true});
+            candidates.push(tab);
+          } catch(error) {
+            if(!['INVALID_YEAR_MONTH','MONTH_CONTEXT_MISMATCH','UNRECOGNIZED_LAYOUT','INCOMPLETE_DATE_HEADERS','NO_DATES'].includes(error.code))throw error;
+          }
+        }
+        assert.equal(candidates.length,1,`MONTH_METADATA_MATCH_COUNT:${key}:${candidates.length}`);
+        config.sheets.push({gid:candidates[0].gid,year,month});configured.add(candidates[0].gid);
+      }
+      config.sheets.sort((a,b)=>a.year-b.year||a.month-b.month);
+      const configText=JSON.stringify(config,null,2)+'\n';
+      await fs.writeFile(configPath,configText,{mode:0o600});
+      files.find(file=>file.file==='config.json').data=configText;
+      actualMonths=config.sheets.map(monthKey).sort();
+    }
     assert.deepEqual(actualMonths,[...request.publishedMonths].sort(),'MONTH_CONFIG_UPDATE_REQUIRED');
     const {createScheduleService,contentHash}=await import(pathToFileURL(path.join(temp,'lib/schedule-service.mjs')));
     const fallback=JSON.parse(await fs.readFile(path.join(temp,'fallback.json'),'utf8'));
@@ -126,7 +203,7 @@ async function run() {
     assert.equal(fresh.meta.currentWeekComplete,true,'CURRENT_WEEK_INCOMPLETE');
     const publicRows=filteredRows(fresh.rows,request.excludedNames);
     assert.equal(contentHash(publicRows),request.publicHash,'PUBLIC_PERSONNEL_MISMATCH');
-    const menuBefore=await publicJson(MAIN+'/api/menu');
+    const menuBefore=await publicJsonResponse(MAIN+'/api/menu');
     const menuContent=menu=>JSON.stringify({rows:menu.rows,data:menu.data,items:menu.items,fetchedAt:menu.fetchedAt,sourceHash:menu.sourceHash});
     const backup={...fallback,rows:fresh.rows,sourceHash:fresh.sourceHash,fetchedAt:fresh.fetchedAt,sourceVerifiedAt:fresh.sourceVerifiedAt,updatedAt:fresh.updatedAt,generatedAt:fresh.generatedAt,source:'原始 Google Sheets｜每日驗證備援',stale:true,dataState:'published',syncCode:'EMBEDDED_BACKUP_ONLY'};
     const text=JSON.stringify(backup,null,2)+'\n';
@@ -164,8 +241,10 @@ async function run() {
       catch {if(i===64)throw new Error('POST_DEPLOY_LIVE_PARITY_FAILED');await pause(5000);}
     }
     assert.ok(verified);
-    const health=await publicJson(MAIN+'/api/health');assert.equal(health.status,'healthy','SITE_NOT_HEALTHY');
-    const menuAfter=await publicJson(MAIN+'/api/menu');assert.equal(menuContent(menuAfter),menuContent(menuBefore),'MENU_CHANGED_DURING_RUN');
+    const health=await publicJsonResponse(MAIN+'/api/health');
+    receipt.siteHealth={httpStatus:health.status,status:health.body?.status??null};
+    const menuAfter=await publicJsonResponse(MAIN+'/api/menu');
+    assert.equal(menuContent(menuAfter.body),menuContent(menuBefore.body),'MENU_CHANGED_DURING_RUN');
     receipt.status='published-and-verified';receipt.finishedAt=new Date().toISOString();
     await fs.writeFile(output,JSON.stringify(receipt,null,2));
     console.log(JSON.stringify(receipt));
