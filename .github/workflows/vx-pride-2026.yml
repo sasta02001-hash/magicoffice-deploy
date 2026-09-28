@@ -1,0 +1,33 @@
+name: Publish VX PRIDE 2026 activity
+on:
+  push:
+    branches: [vx-maintenance]
+    paths: ['vx-pride-2026/**', '.github/workflows/vx-pride-2026.yml']
+permissions:
+  contents: read
+concurrency:
+  group: vx-website-maintenance
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Publish verified activity and homepage
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node vx-pride-2026/publish.mjs
+      - name: Save publication result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vx-pride-2026-receipt
+          path: vx-pride-2026/publication-receipt.json
+          if-no-files-found: error
+          retention-days: 30

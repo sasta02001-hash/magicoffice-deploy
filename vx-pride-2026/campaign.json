@@ -1,0 +1,31 @@
+{
+  "id": "triarch-pride-2026",
+  "title": "TRIARCH × PRIDE 2026",
+  "summary": "帶著你喜歡的樣子出門｜其他事情遊行結束再想",
+  "benefit": "COLOR｜染髮作品 NT$6,980\n色彩設計・精準剪裁・結構修護・專屬洗護・質感造型\n\nPERM｜燙髮作品 NT$7,980\n紋理塑形・精準剪裁・結構修護・專屬洗護・質感造型\n\nBLEACH｜漂染作品 NT$8,980\n明度建構・色彩上色・精準剪裁・結構修護・專屬洗護・質感造型\n\nPRIDE STYLING｜遊行前造型整理\n完成作品後，遊行前皆可預約造型整理\n\nDUO SESSION｜雙人作品席次\n伴侶或朋友皆可一起預約",
+  "startsAt": "2026-10-01T00:00:00+08:00",
+  "endsAt": "2026-11-01T00:00:00+08:00",
+  "displayPeriod": "2026.10.01（四）— 10.31（六）",
+  "audience": "伴侶或朋友皆可一起預約",
+  "services": "染髮作品、燙髮作品、漂染作品、遊行前造型整理、雙人作品席次",
+  "locations": "施作地點請透過 LINE 預約時確認",
+  "conditions": "服務前將依髮況與目標效果進行評估，並確認本次作品內容\n特殊色・多次漂髮・人工色素移除・特殊髮況，依實際需求另行評估\n期間限定開放作品席次",
+  "participation": "透過 LINE 提供活動名稱「TRIARCH × PRIDE 2026」詢問與預約",
+  "published": true,
+  "poster": "/activities/pride-2026.jpeg",
+  "posterAlt": "TRIARCH × PRIDE 2026 活動海報：10月1日至31日，染髮6,980元、燙髮7,980元、漂染8,980元",
+  "prices": [
+    {
+      "title": "COLOR｜染髮作品",
+      "price": "NT$6,980"
+    },
+    {
+      "title": "PERM｜燙髮作品",
+      "price": "NT$7,980"
+    },
+    {
+      "title": "BLEACH｜漂染作品",
+      "price": "NT$8,980"
+    }
+  ]
+}

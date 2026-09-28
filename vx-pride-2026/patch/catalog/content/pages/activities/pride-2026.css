@@ -1,0 +1,10 @@
+/* PRIDE 2026: preserve the full supplied poster at every viewport. */
+.vx-campaign{max-width:1040px;margin-inline:auto}
+.vx-campaign-poster{display:block;max-width:900px;margin:28px auto;background:#000}
+.vx-campaign-poster img{display:block;width:100%;max-width:100%;height:auto;object-fit:contain}
+.vx-campaign-prices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));list-style:none;padding:0;margin:24px 0;gap:20px}
+.vx-campaign-prices li{border-top:1px solid #c4b08a66;padding-top:16px;display:grid;gap:8px}
+.vx-campaign-prices span{font-size:16px;line-height:1.6}.vx-campaign-prices strong{font:400 clamp(24px,3vw,32px)/1.5 var(--serif)}
+.vx-campaign>.vx-meta{font-size:16px!important}.vx-campaign .vx-status{font-size:14px}
+.vx-campaign h2{font-size:clamp(25px,5vw,38px);overflow-wrap:anywhere}
+@media(max-width:600px){.vx-campaign-prices{grid-template-columns:1fr;gap:12px}.vx-campaign-prices li{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px}.vx-campaign-prices strong{font-size:26px}.vx-campaign-prices span{font-size:15px}}
