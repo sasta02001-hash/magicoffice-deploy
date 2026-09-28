@@ -1,0 +1,127 @@
+{
+  "date": "2026-09-28",
+  "checkedAt": "2026-09-28T01:12:44.949Z",
+  "site": "https://vxsagittarius.vercel.app/",
+  "overallStatus": "passed_with_visual_followup",
+  "requestCommit": "c5a98fdb745dad5924415b121a11eeef16939fe8",
+  "run": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36364584487",
+  "workflowStatus": "success",
+  "receipt": {
+    "artifactId": 10947076071,
+    "startedAt": "2026-09-28T01:05:07.230Z",
+    "finishedAt": "2026-09-28T01:05:15.052Z",
+    "status": "passed",
+    "contentRevision": "6ec153b15a806d2990ef222e46dc3dcb1a445a5b22bcc0228db7c029df943f02",
+    "privacyRevision": "16f708fbee71665a8ed747d373e4e94d3a36e14ac6dc7c89d250ac070f0444cb",
+    "works": 32,
+    "counts": {
+      "pages": 47,
+      "assets": 128,
+      "privacyRoutes": 24,
+      "ranges": 2
+    },
+    "errors": []
+  },
+  "production": {
+    "mainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
+    "contentDeploymentId": "dpl_4r4UGjvKKxeRqf45t3m4M7A5zkfG",
+    "privacyDeploymentId": "dpl_4k7WJp74ysc8Ut1uzPFkHc6kXdBu",
+    "unchangedFromExpected": true,
+    "health": {
+      "status": "healthy",
+      "service": "vx-content",
+      "count": 32,
+      "mode": "independent-content"
+    },
+    "sitemapUrls": 47
+  },
+  "browser": {
+    "device": "desktop browser",
+    "actualFlows": [
+      "Homepage to works via visible entry",
+      "Works load-more operated twice; final catalog exposed 32 distinct work routes",
+      "032 playback and replay operated",
+      "005 playback reached the end and replay operated",
+      "017 playback sampled for rotating visual review",
+      "Booking intake copy button changed to confirmed copied state",
+      "LINE short URL reached Add LINE friend for @605cwpgu"
+    ],
+    "mainPagesChecked": [
+      "/",
+      "/works/",
+      "/services/",
+      "/activities/",
+      "/nebula/",
+      "/about/",
+      "/booking/",
+      "/library/",
+      "/project-color/",
+      "/project-perm/",
+      "/project-bleach/",
+      "/project-triascend/",
+      "/project-trifusion/",
+      "/project-triform/",
+      "/project-trievolve/"
+    ],
+    "sampledWorks": [
+      {
+        "id": "032",
+        "duration": 1.566667,
+        "readyState": 4,
+        "error": null,
+        "replayOperated": true,
+        "visual": "exposed eyes/face remained obscured; surrounding hair retained"
+      },
+      {
+        "id": "005",
+        "duration": 9.766667,
+        "readyState": 4,
+        "error": null,
+        "endedObserved": true,
+        "replayOperated": true,
+        "visual": "mirror-area privacy coverage present in sampled views; hair remained readable"
+      },
+      {
+        "id": "017",
+        "duration": 8.1,
+        "readyState": 4,
+        "error": null,
+        "visual": "features obscured and hair retained, but the forehead/hairline transition remains visibly perceptible"
+      }
+    ],
+    "canonicalAndImages": "All checked pages exposed matching canonicals; the only zero-width image was an offscreen lazy-loaded work cover, not a broken resource.",
+    "javascript": "No site JavaScript error observed; repeated console errors came from the browser inspection extension.",
+    "screenshotsCaptured": true
+  },
+  "publicInformation": {
+    "activities": "No public activity currently listed; no deadline inconsistency found.",
+    "work009": "榛果棕 spelling present in the live catalog.",
+    "lineHref": "https://lin.ee/Roebk7r",
+    "lineDestination": "https://line.me/R/ti/p/@605cwpgu"
+  },
+  "deploymentLogs": {
+    "runtimeErrors": "No runtime errors found for main, content, or privacy projects in the last 24 hours.",
+    "warningErrorLogs": "No warning/error/fatal logs found for the three production deployments in the last 24 hours.",
+    "buildLogs": "Unverified: the Vercel connector returned Tool get_deployment_build_logs not found for all three deployments."
+  },
+  "issues": {
+    "new": [],
+    "ongoing": [
+      {
+        "type": "visual-quality",
+        "work": "017",
+        "url": "https://vxsagittarius.vercel.app/works/017/",
+        "impact": "Privacy coverage is present, but the mask transition remains perceptible near the forehead/hairline and does not fully meet the requested natural feathering.",
+        "action": "Keep for a dedicated reviewed mask-refinement run; routine check did not regenerate or publish media."
+      }
+    ],
+    "recovered": []
+  },
+  "repairs": [],
+  "unverified": [
+    "Physical iPhone/Android layout and mobile-menu operation",
+    "Manual visual review of every frame across all 24 privacy films",
+    "Private build logs because the Vercel build-log connector was unavailable",
+    "Submitting a real booking or LINE message"
+  ]
+}
