@@ -1,43 +1,50 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-09-27T01:15:09.723Z",
+  "requestedAt": "2026-09-28T01:03:24.657Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_J2fUFrwcShDqhZosnDmTNFjE2SHF",
+  "previousDeployment": "dpl_9BzsENQBpkFzVFzSw9vzdu3dhoFv",
   "diff": {
-    "added": 73,
-    "removed": 0,
+    "added": 0,
+    "removed": 1,
     "timeChanges": 1
   },
-  "verifiedAt": "2026-09-27T01:15:27.993Z",
-  "rows": 198,
-  "publicRows": 184,
-  "sourceHash": "071a3c3d9255759a45b2a2989b72d6903f1ea0ca5b635d247685ffccd9a1665b",
-  "publicHash": "cea95b7f0b33a572fba6e7c4aa0386b7eb8af937f0fcb3612bbf3273a0858eb2",
-  "fallbackSha256": "f24aa084ea12250cbf24aaea549fd1ce4af7569cfb8fb21d23e441f4eaf2903e",
+  "verifiedAt": "2026-09-28T01:04:32.572Z",
+  "rows": 197,
+  "publicRows": 183,
+  "sourceHash": "c12de5c94e81e97617695fa103a04fb6f81503689195246bc210deee473b4ffb",
+  "publicHash": "dcdf93e7734b826bb1a117d3551fb23723a725e085af6b9e8242f0d06cc60c94",
+  "fallbackSha256": "db110052de20ea340334bbdb50eec82d95f755094909f7cf730182dfe169c71d",
   "tests": "passed",
-  "deploymentId": "dpl_9BzsENQBpkFzVFzSw9vzdu3dhoFv",
-  "finishedAt": "2026-09-27T01:15:45.529Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36284968149",
-  "publisherCommit": "4b62d45806ed42771dad7fd5182249bcd7485585",
+  "deploymentId": "dpl_3tda1q4YKV1g5PSa1S9Nxb8FUKq6",
+  "finishedAt": "2026-09-28T01:04:48.410Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36364553867",
+  "publisherCommit": "ccd2c1d4cfee2d1188ac90243f0f2d4bff7ffc8e",
   "publisherTestsPassed": 8,
   "mainSiteModified": false,
   "secretName": "MAGICOFFICE",
+  "receiptArtifact": {
+    "id": 10947105975,
+    "digest": "sha256:cf1b639cd96ec43856f7e20ebba9da8e5174feee71473e6f502fa8fd10ad09be"
+  },
   "siteHealth": {
     "httpStatus": 503,
     "status": "degraded"
   },
   "inspection": {
-    "originalGridVerifiedAt": "2026-09-27T01:15:09.723Z",
-    "runnerNativeCsvVerifiedAt": "2026-09-27T01:15:27.993Z",
+    "originalGridVerifiedAt": "2026-09-28T01:03:24.657Z",
+    "runnerNativeCsvVerifiedAt": "2026-09-28T01:04:32.572Z",
     "postPublishIndependentParity": true,
-    "fullRows": 198,
-    "publicRows": 184,
+    "fullRows": 197,
+    "publicRows": 183,
     "hekRows": 21,
+    "currentWeekStart": "2026-09-28",
+    "currentWeekEnd": "2026-10-04",
     "currentWeekComplete": true,
-    "currentWeekRows": 28,
+    "currentWeekRows": 21,
     "homepageHttpStatus": 200,
     "healthHttpStatus": 503,
     "health": "degraded",
+    "healthCheckedAt": "2026-09-28T01:07:18.609Z",
     "scheduleState": "live",
     "scheduleStale": false,
     "scheduleSourceHttpStatus": 200,
@@ -50,7 +57,8 @@
     "nightCollectionVisibleItems": 12,
     "nightCollectionColor": "#F7E0B4",
     "runtimeErrorsAndWarningsLast24Hours": 0,
-    "browserSiteErrors": 0,
+    "browserSiteWarnings": 1,
+    "browserExtensionErrorsExcluded": 2,
     "mainDataBuild": "production-v4.3.45-hekiru-restored-20260918",
     "knownMetaBuildMismatch": "production-v4.3.41-personnel-graduated-20260917",
     "publishedMonths": [
@@ -61,13 +69,15 @@
     "unpublishedDates": [
       "2026-10-27"
     ],
+    "blankVisibleSheets": [
+      "工作表13"
+    ],
     "notes": [
-      "October was discovered from live spreadsheet metadata and added to the data-service configuration during publication without exposing source identifiers in public Git.",
-      "October contains 73 publishable rows; 2026-10-27 has no represented schedule row and was not guessed as a closure.",
-      "The main health endpoint is degraded because the 80-item published menu snapshot is stale and /api/menu returns HTTP503; no menu timestamp was refreshed.",
-      "The schedule remains live, non-stale, sourceHttpStatus200, and both APIs match the fresh source rows after their respective personnel filtering.",
-      "Browser extension errors excluded from website errors.",
-      "GitHub Actions Node/action deprecation warnings are workflow infrastructure warnings, not website runtime warnings."
+      "The new visible sheet 工作表13 is blank and was not included as a published month.",
+      "The main health endpoint remains degraded because the 80-item published menu snapshot is stale and /api/menu returns HTTP503; no menu timestamp was refreshed.",
+      "The site console warning is the expected menu fallback warning caused by HTTP503, while the schedule remains live and current.",
+      "The schedule service and main API match fresh source rows after their respective personnel filtering.",
+      "Browser extension errors excluded from website errors."
     ]
   }
 }
