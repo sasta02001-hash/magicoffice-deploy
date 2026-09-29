@@ -1,38 +1,39 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-09-28T01:03:24.657Z",
+  "requestedAt": "2026-09-29T01:00:33.952Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_9BzsENQBpkFzVFzSw9vzdu3dhoFv",
+  "previousDeployment": "dpl_3tda1q4YKV1g5PSa1S9Nxb8FUKq6",
   "diff": {
     "added": 0,
-    "removed": 1,
-    "timeChanges": 1
+    "removed": 0,
+    "timeChanges": 0
   },
-  "verifiedAt": "2026-09-28T01:04:32.572Z",
+  "verifiedAt": "2026-09-29T01:01:45.745Z",
   "rows": 197,
   "publicRows": 183,
   "sourceHash": "c12de5c94e81e97617695fa103a04fb6f81503689195246bc210deee473b4ffb",
   "publicHash": "dcdf93e7734b826bb1a117d3551fb23723a725e085af6b9e8242f0d06cc60c94",
-  "fallbackSha256": "db110052de20ea340334bbdb50eec82d95f755094909f7cf730182dfe169c71d",
+  "fallbackSha256": "01c181c6220d179395eec8103e3fc29d66c2ab1f17805dde5c98082f527b77e7",
   "tests": "passed",
-  "deploymentId": "dpl_3tda1q4YKV1g5PSa1S9Nxb8FUKq6",
-  "finishedAt": "2026-09-28T01:04:48.410Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36364553867",
-  "publisherCommit": "ccd2c1d4cfee2d1188ac90243f0f2d4bff7ffc8e",
+  "deploymentId": "dpl_BoZ5gW642EYRAuR8XNyx5u8bJYzC",
+  "finishedAt": "2026-09-29T01:02:03.318Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36505899832",
+  "jobId": 109207159452,
+  "publisherCommit": "bfd9bfab6bc3eb522642d810c26c92e57731e596",
   "publisherTestsPassed": 8,
   "mainSiteModified": false,
   "secretName": "MAGICOFFICE",
   "receiptArtifact": {
-    "id": 10947105975,
-    "digest": "sha256:cf1b639cd96ec43856f7e20ebba9da8e5174feee71473e6f502fa8fd10ad09be"
+    "id": 11007234053,
+    "digest": "sha256:785320685868ac6e9bd1f9ceccba30b275712c8741db7d65c59a34eaa5ee5fd9"
   },
   "siteHealth": {
     "httpStatus": 503,
     "status": "degraded"
   },
   "inspection": {
-    "originalGridVerifiedAt": "2026-09-28T01:03:24.657Z",
-    "runnerNativeCsvVerifiedAt": "2026-09-28T01:04:32.572Z",
+    "originalGridVerifiedAt": "2026-09-29T01:00:33.952Z",
+    "runnerNativeCsvVerifiedAt": "2026-09-29T01:01:45.745Z",
     "postPublishIndependentParity": true,
     "fullRows": 197,
     "publicRows": 183,
@@ -44,7 +45,7 @@
     "homepageHttpStatus": 200,
     "healthHttpStatus": 503,
     "health": "degraded",
-    "healthCheckedAt": "2026-09-28T01:07:18.609Z",
+    "healthCheckedAt": "2026-09-29T01:03:57.114Z",
     "scheduleState": "live",
     "scheduleStale": false,
     "scheduleSourceHttpStatus": 200,
@@ -73,10 +74,11 @@
       "工作表13"
     ],
     "notes": [
-      "The new visible sheet 工作表13 is blank and was not included as a published month.",
+      "工作表13 remains blank and was not included as a published month.",
       "The main health endpoint remains degraded because the 80-item published menu snapshot is stale and /api/menu returns HTTP503; no menu timestamp was refreshed.",
       "The site console warning is the expected menu fallback warning caused by HTTP503, while the schedule remains live and current.",
       "The schedule service and main API match fresh source rows after their respective personnel filtering.",
+      "No schedule content changed from the prior fallback, but a new genuinely verified backup was published as authorized.",
       "Browser extension errors excluded from website errors."
     ]
   }
