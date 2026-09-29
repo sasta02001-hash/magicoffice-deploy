@@ -1,0 +1,61 @@
+{
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36511913576",
+  "runId": 36511913576,
+  "jobId": 109225696238,
+  "requestCommit": "ee9f31cde9031bf37fa0d3ac5ceaaccaa2109525",
+  "artifactId": 11009229255,
+  "receipt": {
+    "status": "published-and-verified",
+    "projectId": "prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D",
+    "sourceVerifiedAt": "2026-09-29T02:10:38.746Z",
+    "worldsHash": "76971f4f80dbce102f88bb998bca9705b88b6458beb3d22d98f5c8a06145eb5c",
+    "previousDeployment": "dpl_ErH5zwjVmRswwGYMPx6QbVtv2XD7",
+    "tests": "passed",
+    "testCount": 0,
+    "deploymentId": "dpl_4Xhq8xVv7uPyeAiMFn8uSE6VFKc3",
+    "menu": {
+      "httpStatus": 200,
+      "items": 80,
+      "groups": 12,
+      "stale": false
+    },
+    "health": {
+      "httpStatus": 200,
+      "status": "healthy"
+    },
+    "finishedAt": "2026-09-29T02:19:20.352Z",
+    "snapshotSha256": "55eab1737fa9a926cf729d2fbeb91ee45cc7b391f8912f858cb7001fc1aa33c5",
+    "staticFilesPreserved": 228,
+    "version": "production-v4.3.46-menu-verified-20260929",
+    "scheduleRows": 183,
+    "scheduleHash": "dcdf93e7734b826bb1a117d3551fb23723a725e085af6b9e8242f0d06cc60c94"
+  },
+  "verification": {
+    "checkedAt": "2026-09-29T02:24:46.805Z",
+    "menuHttpStatus": 200,
+    "healthHttpStatus": 200,
+    "health": "healthy",
+    "independentWorldsHash": "76971f4f80dbce102f88bb998bca9705b88b6458beb3d22d98f5c8a06145eb5c",
+    "menuSourceDifferenceCount": 0,
+    "menuPublicItems": 80,
+    "hiddenItemsExcluded": 17,
+    "scheduleRows": 183,
+    "scheduleHash": "dcdf93e7734b826bb1a117d3551fb23723a725e085af6b9e8242f0d06cc60c94",
+    "scheduleLive": true,
+    "scheduleStale": false,
+    "hekiruRows": 21,
+    "nightCollectionVisibleItems": 12,
+    "nightCollectionTextColor": "#F7E0B4",
+    "buildMarker": "production-v4.3.46-menu-verified-20260929",
+    "metaBuildMarker": "production-v4.3.46-menu-verified-20260929",
+    "siteConsoleErrors": 0,
+    "extensionErrorsExcluded": true,
+    "runtimeErrorsPreviousHour": 0
+  },
+  "notes": [
+    "The current production source was restored; the repository main branch was not deployed.",
+    "The npm test process exited successfully. Receipt testCount 0 reflects the summary parser not recognizing the runner output; it is not a claim that zero tests were executed.",
+    "Source verification covered the full original menu sheet ranges; private source grids and source identifiers are excluded from this record.",
+    "Existing 14-day menu freshness protection remains enabled."
+  ]
+}
