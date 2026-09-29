@@ -1,0 +1,205 @@
+{
+  "checkedAt": "2026-09-29T02:05:28.797Z",
+  "deploymentId": "dpl_6PTiy8C4m9fXeY28iPD3FboTNTJV",
+  "projectId": "prj_lRkAvQWr9EaFNDqr2v1L6YYMUGTX",
+  "sourceFiles": [
+    {
+      "file": "404.html",
+      "uid": "faad814b8cf6254ea7b9314eb8a51b154563190a"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "uid": "d7ffafd62f3adc88802656d3ab72e8ccda3ded5b"
+    },
+    {
+      "file": "QA_BROWSER_VERIFICATION.json",
+      "uid": "afc77a79e00ea0b6730512e8bd1542d0d2d9ddba"
+    },
+    {
+      "file": "QA_REPORT.md",
+      "uid": "6326690e76da8da72adaf09d7759a2049f590d72"
+    },
+    {
+      "file": "README.md",
+      "uid": "ef83642b4739722477a54603d9f7c11b3e177d75"
+    },
+    {
+      "file": "app.js",
+      "uid": "1b8159ac50c74ad66f15d07f3adb485333cfe77f"
+    },
+    {
+      "file": "assets/anatomy-body.svg",
+      "uid": "fd1a47889bc6a352de7fd38b1fa88544265cb692"
+    },
+    {
+      "file": "assets/anatomy-chain.svg",
+      "uid": "ac2a813cdaa543d3f2cc4a7d34df9c874b686174"
+    },
+    {
+      "file": "assets/anatomy-leg.svg",
+      "uid": "bd759612b13ae0579d2685a6b24c1e91d0122e9e"
+    },
+    {
+      "file": "assets/anatomy-shoulder.svg",
+      "uid": "4d4e2c0e39d113097e7c3e8eb8d8d750aeb557d7"
+    },
+    {
+      "file": "assets/anatomy-spine.svg",
+      "uid": "0c379bbd2120296f4daf1b164d628a4bc532fc02"
+    },
+    {
+      "file": "assets/apple-touch-icon.png",
+      "uid": "705d95c0f7dd0713004efe10f1c381dd56ecdc7b"
+    },
+    {
+      "file": "assets/hero-moon.svg",
+      "uid": "a7032c5620b8c83a37fcb6afbbf4461c87329b55"
+    },
+    {
+      "file": "assets/icon-192.png",
+      "uid": "97355deefba7a2670fb1e4ed77a5e1ede3e73894"
+    },
+    {
+      "file": "assets/icon-512.png",
+      "uid": "28a5217fd0729c1472fed7725b9d8d9cf2f6a207"
+    },
+    {
+      "file": "assets/line-qr.png",
+      "uid": "ffee012225b4d8e82eeb006b5c7c09e870bab153"
+    },
+    {
+      "file": "assets/logo-on-dark.svg",
+      "uid": "453a5232d8a143eb74b69f9ac9d2542ec4a2d209"
+    },
+    {
+      "file": "assets/logo-on-light.svg",
+      "uid": "9ba0a323904e8fc77674db0998a48e39082ff6fc"
+    },
+    {
+      "file": "assets/mark-on-dark.svg",
+      "uid": "935c8a368a8ba8b8a9e02d25869208ddc6e283eb"
+    },
+    {
+      "file": "assets/mark-on-light.svg",
+      "uid": "6cf8ea0117981e3589c8eb8a995c19ddfa66f912"
+    },
+    {
+      "file": "assets/og-image.png",
+      "uid": "3e48a85b887f66aa54d1230cbbe91d27480cdba6"
+    },
+    {
+      "file": "assets/team/dayuan.jpg",
+      "uid": "55c6a7522c5bc876f466826e92b7e6c35ad57d25"
+    },
+    {
+      "file": "assets/team/xiaoyi.jpg",
+      "uid": "7f96188eb54011bfdb3c80ad395b0c192dd9931c"
+    },
+    {
+      "file": "assets/team/yuxuan.jpg",
+      "uid": "93b4be5b41dfa898b2d1d2f3bef7e613342aea4c"
+    },
+    {
+      "file": "assets/team/zheng-zhongyue.jpg",
+      "uid": "9fe758d6c00beb5e7490ad76f6bd3dab2f6a0a9e"
+    },
+    {
+      "file": "index.html",
+      "uid": "5416bc98de82dbb5fe1c8237ed01de517214082c"
+    },
+    {
+      "file": "privacy.html",
+      "uid": "9b8e2242911a25ea98a2e9e8a92835a39792a8e9"
+    },
+    {
+      "file": "robots.txt",
+      "uid": "6b2c6564f53c0c74cc2333d217d29a9f177ef2c0"
+    },
+    {
+      "file": "site-config.js",
+      "uid": "e07ff61067688feb068e84928d543413ba515383"
+    },
+    {
+      "file": "site.webmanifest",
+      "uid": "81372f4c2339e5a1b37aded4863e82adb3b83a86"
+    },
+    {
+      "file": "sitemap.xml",
+      "uid": "e55c8758257a29e9492601374047e91b26249043"
+    },
+    {
+      "file": "styles.css",
+      "uid": "a1357fac798b420339d046c604e70cefc01403b0"
+    },
+    {
+      "file": "vercel.json",
+      "uid": "e5c0182872afdd84b3d3bcb6c2e4202e7ac447ed"
+    }
+  ],
+  "settings": {
+    "buildCommand": null,
+    "devCommand": null,
+    "framework": null,
+    "commandForIgnoringBuildStep": null,
+    "installCommand": null,
+    "outputDirectory": null,
+    "speedInsights": {
+      "id": "XfJMxDjKkbGrBHsZzKdbOYEUYWS",
+      "hasData": false
+    },
+    "webAnalytics": {
+      "id": "LAQUNxThrEOt9kftMwcvMpqW2"
+    },
+    "nodeVersion": "24.x"
+  },
+  "vercel.json": {
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "headers": [
+      {
+        "source": "/(.*)",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          },
+          {
+            "key": "Permissions-Policy",
+            "value": "camera=(), microphone=(), geolocation=()"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "SAMEORIGIN"
+          },
+          {
+            "key": "Strict-Transport-Security",
+            "value": "max-age=63072000; includeSubDomains; preload"
+          }
+        ]
+      },
+      {
+        "source": "/assets/(.*)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=604800, stale-while-revalidate=86400"
+          }
+        ]
+      },
+      {
+        "source": "/sitemap.xml",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600, stale-while-revalidate=86400"
+          }
+        ]
+      }
+    ]
+  }
+}

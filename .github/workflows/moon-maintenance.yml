@@ -2,16 +2,16 @@ name: Verify and repair Moon website
 on:
   push:
     branches: [moon-maintenance]
-    paths: ['moon-maintenance/**', '.github/workflows/moon-maintenance.yml']
+    paths: ['moon-maintenance/*.mjs', 'moon-maintenance/baseline.json', '.github/workflows/moon-maintenance.yml']
 permissions:
   contents: read
 concurrency:
   group: moon-website-maintenance
   cancel-in-progress: false
 jobs:
-  verify:
+  repair:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,10 +19,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Inspect current Moon deployment
+      - name: Restore current source and patch navigation
         env:
           VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
-        run: node moon-maintenance/inspect.mjs
+        run: node moon-maintenance/repair.mjs prepare
+      - name: Install verification browser
+        run: |
+          npm install --no-save --ignore-scripts playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Verify desktop and responsive layout before publication
+        run: node moon-maintenance/verify.mjs local
+      - name: Publish only after validation and production baseline check
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node moon-maintenance/repair.mjs publish
+      - name: Verify original production URLs
+        run: node moon-maintenance/verify.mjs production
       - name: Save verification
         if: always()
         uses: actions/upload-artifact@v4
