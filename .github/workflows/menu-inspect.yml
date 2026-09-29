@@ -1,0 +1,27 @@
+name: Inspect current MagicOffice menu source
+on:
+  push:
+    branches: [schedule-maintenance]
+    paths: [menu-repair/inspect.mjs, .github/workflows/menu-inspect.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: menu-repair
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Read current deployment metadata
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node menu-repair/inspect.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: menu-source-inspection
+          path: menu-repair/inspection.json
+          retention-days: 7
