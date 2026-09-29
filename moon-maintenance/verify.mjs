@@ -37,7 +37,7 @@ try{
       if(mobile){assert.equal(await page.locator('[data-menu-button]').getAttribute('aria-expanded'),'false');assert.equal(await page.locator('[data-mobile-nav]').isVisible(),false);}
     }
     if(width===1366||width===390){
-      const faq=page.locator('.faq-item');assert.equal(await faq.count(),6);for(let n=0;n<6;n++){await faq.nth(n).locator('summary').click();assert(await faq.nth(n).evaluate(e=>e.open));assert.equal(await page.locator('.faq-item[open]').count(),1);}
+      const faq=page.locator('.faq-item');assert.equal(await faq.count(),6);for(let n=0;n<6;n++){await faq.nth(n).locator('summary').click();await page.waitForFunction(index=>document.querySelectorAll('.faq-item')[index].open&&document.querySelectorAll('.faq-item[open]').length===1,n);}
       const toggles=page.locator('[data-profile-toggle]');for(let n=0;n<await toggles.count();n++){await toggles.nth(n).click();assert.equal(await toggles.nth(n).getAttribute('aria-expanded'),'true');await toggles.nth(n).click();assert.equal(await toggles.nth(n).getAttribute('aria-expanded'),'false');}
       const imgs=page.locator('img');for(let n=0;n<await imgs.count();n++){if(await imgs.nth(n).isVisible())await imgs.nth(n).scrollIntoViewIfNeeded();}
       await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));layout.loadedImages=await imgs.count();
@@ -50,5 +50,5 @@ try{
     result.viewports.push({width,...layout,navigationLinks:hrefs.length});await context.close();
   }
   assert.equal(result.pageErrors.length,0,'Website JavaScript errors');assert.equal(result.failedSameOrigin.length,0,'Failed same-origin resources');result.status='passed';
-}catch(e){result.status='failed';result.error=e.message;process.exitCode=1;}
+}catch(e){result.status='failed';result.error=e.message;result.errorStack=e.stack;process.exitCode=1;}
 finally{await browser.close();if(server)server.close();result.completedAt=new Date().toISOString();await fs.writeFile(`evidence/${phase}-browser.json`,JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));}
