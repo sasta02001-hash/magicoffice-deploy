@@ -2,7 +2,7 @@
   "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36511913576",
   "runId": 36511913576,
   "jobId": 109225696238,
-  "requestCommit": "ee9f31cde9031bf37fa0d3ac5ceaaccaa2109525",
+  "requestCommit": "94c2b25c155d77d93c367144bd0181f16b58dee6",
   "artifactId": 11009229255,
   "receipt": {
     "status": "published-and-verified",
@@ -57,5 +57,6 @@
     "The npm test process exited successfully. Receipt testCount 0 reflects the summary parser not recognizing the runner output; it is not a claim that zero tests were executed.",
     "Source verification covered the full original menu sheet ranges; private source grids and source identifiers are excluded from this record.",
     "Existing 14-day menu freshness protection remains enabled."
-  ]
+  ],
+  "workflowCommit": "ee9f31cde9031bf37fa0d3ac5ceaaccaa2109525"
 }
