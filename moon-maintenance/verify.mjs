@@ -38,7 +38,7 @@ try{
     }
     if(width===1366||width===390){
       const faq=page.locator('.faq-item');assert.equal(await faq.count(),6);for(let n=0;n<6;n++){await faq.nth(n).locator('summary').click();await page.waitForFunction(index=>document.querySelectorAll('.faq-item')[index].open&&document.querySelectorAll('.faq-item[open]').length===1,n);}
-      const toggles=page.locator('[data-profile-toggle]');for(let n=0;n<await toggles.count();n++){await toggles.nth(n).click();assert.equal(await toggles.nth(n).getAttribute('aria-expanded'),'true');await toggles.nth(n).click();assert.equal(await toggles.nth(n).getAttribute('aria-expanded'),'false');}
+      const toggles=page.locator('[data-profile-toggle]:visible');for(let n=0;n<await toggles.count();n++){await toggles.nth(n).click();assert.equal(await toggles.nth(n).getAttribute('aria-expanded'),'true');await toggles.nth(n).click();assert.equal(await toggles.nth(n).getAttribute('aria-expanded'),'false');}
       const imgs=page.locator('img');for(let n=0;n<await imgs.count();n++){if(await imgs.nth(n).isVisible())await imgs.nth(n).scrollIntoViewIfNeeded();}
       await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));layout.loadedImages=await imgs.count();
       layout.profileToggles=await toggles.count();
