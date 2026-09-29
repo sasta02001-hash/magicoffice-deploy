@@ -1,0 +1,15 @@
+{
+  "sourceVerifiedAt": "2026-09-29T02:10:38.746Z",
+  "worldsHash": "76971f4f80dbce102f88bb998bca9705b88b6458beb3d22d98f5c8a06145eb5c",
+  "items": 80,
+  "groups": 12,
+  "worlds": 3,
+  "hiddenItemsExcluded": 17,
+  "contentDifferences": 0,
+  "fullSourceRangeChecked": true,
+  "projectId": "prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D",
+  "expectedDeploymentId": "dpl_ErH5zwjVmRswwGYMPx6QbVtv2XD7",
+  "expectedVersion": "production-v4.3.45-hekiru-restored-20260918",
+  "baselineManifestHash": "5aed586cee4d7f46d745a844f0e33a58571a729ac7a3ce2fa384b3433efa508a",
+  "version": "production-v4.3.46-menu-verified-20260929"
+}
