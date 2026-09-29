@@ -1,0 +1,32 @@
+name: Verify and repair Moon website
+on:
+  push:
+    branches: [moon-maintenance]
+    paths: ['moon-maintenance/**', '.github/workflows/moon-maintenance.yml']
+permissions:
+  contents: read
+concurrency:
+  group: moon-website-maintenance
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Inspect current Moon deployment
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node moon-maintenance/inspect.mjs
+      - name: Save verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: moon-maintenance-receipt
+          path: evidence/
+          retention-days: 30
