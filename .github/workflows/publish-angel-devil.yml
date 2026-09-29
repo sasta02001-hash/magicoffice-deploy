@@ -1,0 +1,33 @@
+name: Publish MagicOffice Angel and Devil event
+on:
+  push:
+    branches: [activity-angel-devil-20260929]
+    paths: [event-publish/**, .github/workflows/publish-angel-devil.yml]
+permissions:
+  contents: read
+concurrency:
+  group: magicoffice-main-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: event-publish
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Publish event while preserving current production source
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node event-publish/publish.mjs
+      - name: Save publication receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: angel-devil-publication-receipt
+          path: event-publish/receipt.json
+          retention-days: 30

@@ -1,0 +1,50 @@
+{
+  "projectId": "prj_JcF9cms6IGKkWJJsCaOWkwVVzA9D",
+  "expectedDeploymentId": "dpl_4Xhq8xVv7uPyeAiMFn8uSE6VFKc3",
+  "expectedVersion": "production-v4.3.46-menu-verified-20260929",
+  "baselineManifestSha256": "6cfb53b7bc679ceba3ef8fad5f997e205b80d6f3b15003dc43356cbe36f417c5",
+  "version": "production-v4.3.47-angel-devil-20260929",
+  "eventId": "angel-devil",
+  "changedExisting": [
+    "index.html",
+    "content/events.json",
+    "BUILD_VERSION.txt"
+  ],
+  "added": [
+    "assets/css/angel-devil-20260929.css",
+    "assets/images/events/angel-devil/website-16x9.webp",
+    "assets/images/events/angel-devil/ig-4x5.webp"
+  ],
+  "overlayFiles": [
+    {
+      "path": "BUILD_VERSION.txt",
+      "bytes": 40,
+      "sha256": "5a675fd0610a3ab7a71e5272890338a1a131a02340b722117b1c4a446e6c0397"
+    },
+    {
+      "path": "assets/css/angel-devil-20260929.css",
+      "bytes": 2414,
+      "sha256": "50eb82b768215d2550373c6cf8dea99cbebdb1a42199deb5a0363a2e1ad9c816"
+    },
+    {
+      "path": "assets/images/events/angel-devil/ig-4x5.webp",
+      "bytes": 543950,
+      "sha256": "a76e6e8f397e47682fb11e59f448b70dfc8ed82a84c6262e9267548b5fae438d"
+    },
+    {
+      "path": "assets/images/events/angel-devil/website-16x9.webp",
+      "bytes": 580968,
+      "sha256": "473693a1b44b424390a7fb1eebd58fa3b86727315b886eb2a9cb27a57ef2cb78"
+    },
+    {
+      "path": "content/events.json",
+      "bytes": 19319,
+      "sha256": "f2c89599914276874c795a6c3eb194e00933f6e64ae10420c45c9afdb6a7e7a8"
+    },
+    {
+      "path": "index.html",
+      "bytes": 128147,
+      "sha256": "b773300b5d1ee27b322b3add35c4ea40121249a7f0d2cc250102a90d096eaa3e"
+    }
+  ]
+}

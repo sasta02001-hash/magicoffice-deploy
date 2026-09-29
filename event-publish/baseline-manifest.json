@@ -1,0 +1,1163 @@
+{
+  "schemaVersion": "1.0",
+  "version": "production-v4.3.46-menu-verified-20260929",
+  "selfExcluded": true,
+  "totalPublishedFiles": 232,
+  "files": [
+    {
+      "path": "404.html",
+      "bytes": 442,
+      "sha256": "70d256b732fdbc4b3c769a336ab5065489df7e707e6bbfe25eb440c1af70a277"
+    },
+    {
+      "path": "assets/css/autumn-annex-20260917.css",
+      "bytes": 2212,
+      "sha256": "9697832e84fb26cba5b0480745d6acf3bec6f29cf6f7f1915b521e7169e95f0a"
+    },
+    {
+      "path": "assets/css/character-empty-20260912.css",
+      "bytes": 92,
+      "sha256": "57b578825d99affca3234d5225bad745c0d1f711e2183700ada56e4d9a6e10b6"
+    },
+    {
+      "path": "assets/css/character-fullscreen-20260911-v2.css",
+      "bytes": 4185,
+      "sha256": "00e21f49f05b76e64955fc4c5522d211c697c6040e9eb0470aa765fdffcad954"
+    },
+    {
+      "path": "assets/css/character-fullscreen-20260911-v3.css",
+      "bytes": 5071,
+      "sha256": "8065be9c9822fa11c150f0e338fcd94c22655fef18f583e9548bfbbc34d46e97"
+    },
+    {
+      "path": "assets/css/character-fullscreen-20260911.css",
+      "bytes": 2987,
+      "sha256": "d476a37baa7994779e9d0c4762d7ee93dc5182cb9efefede02e3b9a8fdaa3c7c"
+    },
+    {
+      "path": "assets/css/character-idle-20260911.css",
+      "bytes": 1733,
+      "sha256": "84656655420cdd314a9babb76bb3e174eaafe14aa76f745d6ef981e5a0542d33"
+    },
+    {
+      "path": "assets/css/character-idle-loop-20260917.css",
+      "bytes": 397,
+      "sha256": "d17e8d4aebe9cae153655f1659ee2cabae26116ad3ac842a24c76c3390add8ba"
+    },
+    {
+      "path": "assets/css/character-profiles-20260915.css",
+      "bytes": 943,
+      "sha256": "69cce96e330ede87479e735810bea352eb5b419d0f0d9bfced261b22cd4f0b2f"
+    },
+    {
+      "path": "assets/css/character-visual-20260911-v1.css",
+      "bytes": 1874,
+      "sha256": "4541423e3011ae04ec945f1a36a9e87ba2c07ba44a9d4d2a3a69ae9237c6b3f9"
+    },
+    {
+      "path": "assets/css/character-visual-20260911-v2.css",
+      "bytes": 2002,
+      "sha256": "6da31074d8491d12d2a25ca276b2e9bd7917d47657e55b8d05fe51102bc988a0"
+    },
+    {
+      "path": "assets/css/characters-20260910-v1.css",
+      "bytes": 8119,
+      "sha256": "cbb1ab51d45fe61198fe4544a40931113258f531a498ceb02953c950a884e058"
+    },
+    {
+      "path": "assets/css/civilization-20260915.css",
+      "bytes": 14665,
+      "sha256": "e5cc4e90e2acbcd5db0ad452856dd566fe3b5c8e455fbdb9db49c5c76945c1a9"
+    },
+    {
+      "path": "assets/css/civilization-entrance-art-20260915.css",
+      "bytes": 1352,
+      "sha256": "1cb003f2f01179ac3bd139a69775000075cbc45c97d412c103b336da14dd1da2"
+    },
+    {
+      "path": "assets/css/copyright-20260908.css",
+      "bytes": 405,
+      "sha256": "cb2239cbcf61fd21fc744049b532f3f7ddb14a74e2b37d991692afad672eec5b"
+    },
+    {
+      "path": "assets/css/hotfix-v4.3.14.css",
+      "bytes": 2663,
+      "sha256": "265e2cada082bebe94b5d34db343d62b9e548da3d01802d0ab9a7cd74ec36010"
+    },
+    {
+      "path": "assets/css/overview-v4.3.4.css",
+      "bytes": 4939,
+      "sha256": "465f1cfc531eb686dd3df240a6d4a8cc388fa355b82f8fcfa860e0c5fa8730ca"
+    },
+    {
+      "path": "assets/css/privacy-20260907.css",
+      "bytes": 1539,
+      "sha256": "f8a3e1d5995308a760ca140951ac795daf9b5426677e75794d35a10c341378a8"
+    },
+    {
+      "path": "assets/css/site.css",
+      "bytes": 66593,
+      "sha256": "4e1b11fee01b2fc2076f1a6a4621a71cac23cbf7c030fe1598c30ab4291db726"
+    },
+    {
+      "path": "assets/css/usability-v4.3.3.css",
+      "bytes": 13061,
+      "sha256": "13680e52afda5ec4247afe6e3acc7634f6eea1e6da6e7bce2e49bb8f32b0b24a"
+    },
+    {
+      "path": "assets/css/v4.3-design-locked.css",
+      "bytes": 31519,
+      "sha256": "a039456698e42616b17c340c73acfdee3ea74ff1c24755907325d25baa217bf0"
+    },
+    {
+      "path": "assets/css/video-audio-v4.3.11.css",
+      "bytes": 204,
+      "sha256": "1691b7ddfe88217486f4b644f03edd37f6c7166d846592547169e78028192228"
+    },
+    {
+      "path": "assets/css/video-autoplay-v4.3.8.css",
+      "bytes": 1129,
+      "sha256": "86af36ab08c255e210fa0400576123248c51590b7fad776252af111a8120af2c"
+    },
+    {
+      "path": "assets/css/video-caption-center-v4.3.10.css",
+      "bytes": 1179,
+      "sha256": "fd021c2655ba240920816b0525f557f254c8f00de90640188f6ea3cd0fbcdf30"
+    },
+    {
+      "path": "assets/css/video-muted-v4.3.12.css",
+      "bytes": 196,
+      "sha256": "5f25fcec8655d03f98b3f3d9ea48a5818c06ab9b7e02b7e79e3fcc758b098588"
+    },
+    {
+      "path": "assets/css/video-title-v4.3.7.css",
+      "bytes": 1239,
+      "sha256": "3c112e79d24dc7418d43c47d480ac9220f04027bffa6c8504d4227924e1fcbd8"
+    },
+    {
+      "path": "assets/css/video-v4.3.5.css",
+      "bytes": 457,
+      "sha256": "5cb152ae09eae795052fcd26cc84dc04e52e0b992fbe9190aff59e1c14034b35"
+    },
+    {
+      "path": "assets/css/world-entry-20260911.css",
+      "bytes": 103,
+      "sha256": "1537c19aad161bf8ee9a73fb92e7ba3a2961e89fda78e53759d40afd7b376159"
+    },
+    {
+      "path": "assets/css/world-film-20260915-auto.css",
+      "bytes": 3904,
+      "sha256": "b6b4311a72f2d776d45e4c2779705f27b981982fbb4b3d1fcaa79afc15c0a46b"
+    },
+    {
+      "path": "assets/css/world-film-20260915.css",
+      "bytes": 4427,
+      "sha256": "b6559d29f34003c75fbe2520e9f89471384916b7b0ad3a1645487a469d9ace39"
+    },
+    {
+      "path": "assets/css/world-film-controls-20260915.css",
+      "bytes": 2034,
+      "sha256": "26804c155d94f849668a89d852f851cc81f7b0e31d74e2fc06cedcdc9b228d54"
+    },
+    {
+      "path": "assets/css/world-story-20260911.css",
+      "bytes": 582,
+      "sha256": "fc1a8dfcdabdb811ddb1fc1644088f1126b3990e421ce26c0ce8a35b5aa7d0a1"
+    },
+    {
+      "path": "assets/images/characters/magic-idle-poster-20260917.webp",
+      "bytes": 579924,
+      "sha256": "9ce980836ba411623e81689c160186d0074b88944c896126a221e2685e7953aa"
+    },
+    {
+      "path": "assets/images/characters/magic-orbit-poster-20260917.webp",
+      "bytes": 184074,
+      "sha256": "3a665eb8be4a3869c386037831b99fa70c32c16243703140834c96e6b001b009"
+    },
+    {
+      "path": "assets/images/characters/magic-portrait-20260915.webp",
+      "bytes": 302222,
+      "sha256": "5a43d0ebd1508d0429096df744b3a80551ee1803b8ec7a1ad692da7ffbeb436f"
+    },
+    {
+      "path": "assets/images/characters/magic-thumb-20260915.webp",
+      "bytes": 84802,
+      "sha256": "a40e1c5bb0fd9b697977a374ed9b2f4c359e8e83cf36a089f65e6b6b48a07010"
+    },
+    {
+      "path": "assets/images/characters/momiji-idle-poster-20260917.webp",
+      "bytes": 601640,
+      "sha256": "c95900f361a844b27c712dfc1802141f559fada0a7695e10d4d1a906a4d36ff2"
+    },
+    {
+      "path": "assets/images/characters/momiji-orbit-poster-20260917.webp",
+      "bytes": 211748,
+      "sha256": "918d45a66db9af5645de194f156de484936e6d370cb27e184ab1954f5027d029"
+    },
+    {
+      "path": "assets/images/characters/momiji-portrait-20260915.webp",
+      "bytes": 297656,
+      "sha256": "239a3b3b749a3a1624c43333f9343b74c0236773ede622cfc9abd06b6bb8a126"
+    },
+    {
+      "path": "assets/images/characters/momiji-thumb-20260915.webp",
+      "bytes": 82830,
+      "sha256": "8a45e70c84e1f064db963b96de6cf325e23b7fb1d28edb38393e3882f5da6760"
+    },
+    {
+      "path": "assets/images/characters/sakuri-idle-poster-20260917.webp",
+      "bytes": 635326,
+      "sha256": "e81f27c15adace930c41c7ae86fad4205f3995de2be8c6193195fd33ec5a84d1"
+    },
+    {
+      "path": "assets/images/characters/sakuri-orbit-poster-20260917.webp",
+      "bytes": 190252,
+      "sha256": "09fc5e6aa994ee505e90e1ca008d8b6c632c7dd165bac596296c42ee4fa00c7b"
+    },
+    {
+      "path": "assets/images/characters/sakuri-portrait-20260915.webp",
+      "bytes": 318294,
+      "sha256": "44ae17784a9b760badc468077a9c1e35ffbe34871d303e2be02f1235100dfc7a"
+    },
+    {
+      "path": "assets/images/characters/sakuri-thumb-20260915.webp",
+      "bytes": 85814,
+      "sha256": "7aa75eca4800aaf01c4ad37f9e40389f699f1c7bf821d84e9fa729e045a814e6"
+    },
+    {
+      "path": "assets/images/characters/setsuka-idle-poster-20260917.webp",
+      "bytes": 573362,
+      "sha256": "ac8a28789140811c1f64f92382ca169f69b772ae4f82eab209b47d4f1a22d664"
+    },
+    {
+      "path": "assets/images/characters/setsuka-orbit-poster-20260917.webp",
+      "bytes": 217218,
+      "sha256": "a0399e235299a2dae4973ea014a2cf186df83ca956c80998a0a01be704e83dd1"
+    },
+    {
+      "path": "assets/images/characters/setsuka-portrait-20260915.webp",
+      "bytes": 327026,
+      "sha256": "21ed2fcbf54bfb3d455eca0fd04088127aa2063daef284fa614a4262e38821a7"
+    },
+    {
+      "path": "assets/images/characters/setsuka-thumb-20260915.webp",
+      "bytes": 89858,
+      "sha256": "66b19d2142266db31a10155e343665228cd6b2693ef508f33700046ea5876cde"
+    },
+    {
+      "path": "assets/images/characters/tsukuyomi-idle-poster-20260917.webp",
+      "bytes": 608134,
+      "sha256": "005b8ef569a999a1ecab5bf7aa60b2354b6255e1f4a1a1f5caf9d2b93ef67841"
+    },
+    {
+      "path": "assets/images/characters/tsukuyomi-orbit-poster-20260917.webp",
+      "bytes": 160858,
+      "sha256": "d529d08331de449ddfacad84477cc10a9a57d462e8a2cd21796649d33221520d"
+    },
+    {
+      "path": "assets/images/characters/tsukuyomi-portrait-20260915.webp",
+      "bytes": 311554,
+      "sha256": "9549424cb1e50fb028c3ed9e5286a56d3596249b5938bb92faca19256ea12423"
+    },
+    {
+      "path": "assets/images/characters/tsukuyomi-thumb-20260915.webp",
+      "bytes": 84022,
+      "sha256": "9622b0871d2ce6adba479a99ae821f3ad06546cacfafb82512ffc153a16b2c98"
+    },
+    {
+      "path": "assets/images/characters/yoshino-2d-20260911.png",
+      "bytes": 5849344,
+      "sha256": "0acdd4baf27c905d513e38e03822abd584d1b7c587fd1397eb43e1a9f0cd8963"
+    },
+    {
+      "path": "assets/images/characters/yoshino-idle-poster-20260911.jpg",
+      "bytes": 281059,
+      "sha256": "c96d729d959fe3f98765c9aff5e5c070e74039696d364e5fa98cb95a14259bf0"
+    },
+    {
+      "path": "assets/images/characters/yoshino-thumb-20260915.webp",
+      "bytes": 65004,
+      "sha256": "2c0539e93bb035f3b456233d3423743ed1739feb7f47ad14f9385d55bed9dccd"
+    },
+    {
+      "path": "assets/images/entrance/characters-symbolic-20260915.webp",
+      "bytes": 101040,
+      "sha256": "1795cdeb6cf50fb96b4abed83c1fb030f60f7bbf5cebc9accd06d4f82b4d9d12"
+    },
+    {
+      "path": "assets/images/entrance/stories-20260915.webp",
+      "bytes": 135306,
+      "sha256": "363314b7998a15d18f51076ea8e454004a60ec1a947f3047fe22549b77c42f93"
+    },
+    {
+      "path": "assets/images/entrance/world-20260915.webp",
+      "bytes": 116830,
+      "sha256": "df97a0db96e7dffe60b4b01b0cd7c0d6857109c453892b6bc2c5cd37a7351672"
+    },
+    {
+      "path": "assets/images/events/autumn-annex/banner-20260917.webp",
+      "bytes": 288192,
+      "sha256": "a090e94a30a68863589f18d2aa88bf8935e2074375e50e2014338246d8121c85"
+    },
+    {
+      "path": "assets/images/events/heartbeat/heartbeat-original-v7-228cfbf6.png",
+      "bytes": 126434,
+      "sha256": "228cfbf667e636dc95bb3b3195f8c9d43e168c573e6e10b463b306dfbfb1f6e3"
+    },
+    {
+      "path": "assets/images/events/heartbeat/heartbeat-support.svg",
+      "bytes": 5384,
+      "sha256": "ddf8294eb7420ca993bfb2df2885d71069a8743003de61b886c2b251cda4e2d4"
+    },
+    {
+      "path": "assets/images/events/jubi/auction.webp",
+      "bytes": 131922,
+      "sha256": "16dc7879b2e39480e29afa4497cc0d75cb3a3840d79c9d3ff35db56e92eef49f"
+    },
+    {
+      "path": "assets/images/events/jubi/cover.webp",
+      "bytes": 188526,
+      "sha256": "5ae3e8c7ae0835e247a64cdcd74cdad09ed87189ea327cb733d0906bc7d75ca2"
+    },
+    {
+      "path": "assets/images/events/jubi/merch.webp",
+      "bytes": 131320,
+      "sha256": "96ced8c443f3703d4b034a3be4fcc8a614cd82e550ccdc74e0de1b314144a457"
+    },
+    {
+      "path": "assets/images/events/jubi/schedule.webp",
+      "bytes": 278830,
+      "sha256": "30427b9954afb609b4ef7ea9b6245c5dc754bda9aae83632d56741ed77d118c0"
+    },
+    {
+      "path": "assets/images/events/mid-autumn.webp",
+      "bytes": 246568,
+      "sha256": "1644dfefdf178ebb14c72e40591b49bdf2edee2a628042f28157b43df8ff739a"
+    },
+    {
+      "path": "assets/images/events/summer-navy.webp",
+      "bytes": 213134,
+      "sha256": "954809a9fa3cdb3480f262b5c476d5d3a4b30a8c7701202d7ac653601bbd0e79"
+    },
+    {
+      "path": "assets/images/events/yuzu/card-01.webp",
+      "bytes": 38388,
+      "sha256": "8f5773ab9b47f7fdd89dae4d15d95fa7fe42632309cb42e2c0269efb28972884"
+    },
+    {
+      "path": "assets/images/events/yuzu/card-02.webp",
+      "bytes": 19222,
+      "sha256": "e66cf177174e7e857e6beb3169db5b576c7da9ddc37fc33aea5ca30e3335cc18"
+    },
+    {
+      "path": "assets/images/events/yuzu/card-03.webp",
+      "bytes": 29782,
+      "sha256": "e62cc47991e042e7ddeaccc23ea0e562ab76067962a8457ab246330bacbe334f"
+    },
+    {
+      "path": "assets/images/events/yuzu/champagne-photo.webp",
+      "bytes": 35082,
+      "sha256": "cad56f0f5c00d2147083f96ec4066614a52744aa200ce6f3f0f62f2577cfb166"
+    },
+    {
+      "path": "assets/images/events/yuzu/cover.webp",
+      "bytes": 239700,
+      "sha256": "2a756fe26738b15aea6e1a4701356703966c657d33fe492c6b4a17fa7f1976e8"
+    },
+    {
+      "path": "assets/images/events/yuzu/easycard.webp",
+      "bytes": 27706,
+      "sha256": "db8722bd0b1ecb592aea262a634260e88e8cb653e40cfd2086323ebf5485db8b"
+    },
+    {
+      "path": "assets/images/events/yuzu/entry-photo.webp",
+      "bytes": 32294,
+      "sha256": "3d2f420abe6b57ca2af58680d1b17c3cb2502a31549446ce75e8e733d11d3b0d"
+    },
+    {
+      "path": "assets/images/events/yuzu/lighter.webp",
+      "bytes": 13664,
+      "sha256": "f594315e08ef9812b6d36503ac77a7cb7be718c0d160312dabda418a3e025457"
+    },
+    {
+      "path": "assets/images/events/yuzu/magnet.webp",
+      "bytes": 34594,
+      "sha256": "8dccf0aa379525189d3e3f62f50662a08471c10a21d06e46957784323ce8e857"
+    },
+    {
+      "path": "assets/images/events/yuzu/pet-easycard.webp",
+      "bytes": 32846,
+      "sha256": "95a2b11275ae4e88c125c3ec973022434de283f9dba064144565e879873552ee"
+    },
+    {
+      "path": "assets/images/events/yuzu/quiz-badge.webp",
+      "bytes": 48118,
+      "sha256": "7a3ea449527c7d819b512722f3fb20b8be815dd242081c6732f92b86dd8bf3d6"
+    },
+    {
+      "path": "assets/images/events/yuzu/three-drinks.webp",
+      "bytes": 36270,
+      "sha256": "4519f62ac5a455ab6558c5fa25217874599cd269e09fa7618db876c1897f0843"
+    },
+    {
+      "path": "assets/images/hero/hero-background-desktop.webp",
+      "bytes": 383438,
+      "sha256": "b686fd4cbb9af386efb73dfc4a3cbfc94baf6baa2ac29f48d4748335d3d98807"
+    },
+    {
+      "path": "assets/images/hero/hero-background-mobile.webp",
+      "bytes": 245894,
+      "sha256": "7ca7f9b364dfff8449dd5817534c4c3606fa91d52cea3f9533a4a58ca08181ca"
+    },
+    {
+      "path": "assets/images/hero/hero-poster.webp",
+      "bytes": 70654,
+      "sha256": "f69fb516d01861fe28486ce14c536c5e2109846a0fcd757cbcdc1a0d04ec9d94"
+    },
+    {
+      "path": "assets/images/logo/apple-touch-icon.png",
+      "bytes": 12497,
+      "sha256": "fb666c8ff693ed8cc74ac6a80b66f737a058aca1ece4bc24298574ad4b7941b1"
+    },
+    {
+      "path": "assets/images/logo/favicon-64.png",
+      "bytes": 3004,
+      "sha256": "ffa21879e116ee1244bb54b1b3247bfd097897c535422348e11faed829621cbb"
+    },
+    {
+      "path": "assets/images/logo/icon-512.png",
+      "bytes": 48749,
+      "sha256": "d25d97d7ca9313f38340dc86c2b3f6501f2959850ea90bbc9814dbac85cc1cd7"
+    },
+    {
+      "path": "assets/images/logo/logo-gold.png",
+      "bytes": 28191,
+      "sha256": "05f19666ed49f368ccf3aa146e4f07f8ca6cf0da5c5b10dfd14502a30d08dc68"
+    },
+    {
+      "path": "assets/images/logo/logo-pink.png",
+      "bytes": 18732,
+      "sha256": "da930bd7fba6ff564b3ef56081a662163bfd25e2dddaf7d5542d8c7e47e37779"
+    },
+    {
+      "path": "assets/images/menu/bar.webp",
+      "bytes": 81856,
+      "sha256": "f12cf40a97634cc9f4c135abcaa7f94052919a467eeca2924f5fd152ef3b38a0"
+    },
+    {
+      "path": "assets/images/menu/cafe.webp",
+      "bytes": 53648,
+      "sha256": "441b778dda04820687bdace454fd83775f369d9f55e0e8654481e7a9a6e5b65b"
+    },
+    {
+      "path": "assets/images/menu/collection-ukiyoe-banner.webp",
+      "bytes": 195742,
+      "sha256": "c448f63357a02b63cdfdb9cccd7bf8e08887d205da8bab471083ffb14d007137"
+    },
+    {
+      "path": "assets/images/menu/collection.webp",
+      "bytes": 94108,
+      "sha256": "d9961b8b48fdb58765c41a601162c5f2bb1a0068458c63fb0a8cc9ce72f02881"
+    },
+    {
+      "path": "assets/images/og-card.webp",
+      "bytes": 189982,
+      "sha256": "7c3eecb1dc7c23d8a569553f9bc5d78b6ea57a824a0f8a53f7851501d076b709"
+    },
+    {
+      "path": "assets/images/patterns/asanoha.svg",
+      "bytes": 365,
+      "sha256": "8efff9cdb45cf2cbc34b7f5bbf966b1375f18771092f9ccc90defb9a6fdf2bc1"
+    },
+    {
+      "path": "assets/images/patterns/bar-night-crest.svg",
+      "bytes": 2601,
+      "sha256": "f6a6cf91625dd8eb24134a7323bdc2c4a3ad196ddbdf717ca77f55835e334682"
+    },
+    {
+      "path": "assets/images/patterns/cafe-wave-crest.svg",
+      "bytes": 2662,
+      "sha256": "e09317b1b3353d5ab31fe31458cc2986ff57611057ddc4a5c68c8d2432b66a94"
+    },
+    {
+      "path": "assets/images/patterns/collection-sakura-crest.svg",
+      "bytes": 2455,
+      "sha256": "95b0f03eee28cbae96800dfe243b1631852ca8fd4444400c2d1db7a4490b7e91"
+    },
+    {
+      "path": "assets/images/patterns/kumo.svg",
+      "bytes": 471,
+      "sha256": "66cc08fa1729d295b94ca2e486842d133650dcdb28bbdc3199e3c587cf66dc68"
+    },
+    {
+      "path": "assets/images/patterns/sakura-woodblock.svg",
+      "bytes": 1110,
+      "sha256": "a77eba44e7fd7fde3d4072dfc264654700a7610a18778d369f7d223f4503b7a2"
+    },
+    {
+      "path": "assets/images/patterns/sakura.svg",
+      "bytes": 657,
+      "sha256": "20ca5a64c18ec430cdfd9ceb45188bfae9643407324c4ee9d742649aa01e975a"
+    },
+    {
+      "path": "assets/images/patterns/seigaiha.svg",
+      "bytes": 1022,
+      "sha256": "090fc927f9e059d12d3ad9eeefa4dc95f96ab2220df70697dcebb1e83a9be18d"
+    },
+    {
+      "path": "assets/images/patterns/shippo.svg",
+      "bytes": 473,
+      "sha256": "c51cb44c9306e7d53a00b157d85904616342e01bb39f824da73ba3f9c321d44d"
+    },
+    {
+      "path": "assets/images/patterns/snow-wheel.svg",
+      "bytes": 550,
+      "sha256": "d6db6821dfb855fd742cdbfb8ad34c5465746315d2964a3849c1a84641a6365b"
+    },
+    {
+      "path": "assets/images/patterns/snow.svg",
+      "bytes": 594,
+      "sha256": "5cf7c175c2922075fb8b6ca9dec27a21975df54300b7f1f86af32be7f1e53f5d"
+    },
+    {
+      "path": "assets/images/patterns/washi.svg",
+      "bytes": 759,
+      "sha256": "e7cc34450abc43d4578df12d90eae67cdef7e0e04224d9f5b94c7fc444667d8a"
+    },
+    {
+      "path": "assets/images/patterns/wave.svg",
+      "bytes": 732,
+      "sha256": "845afcebe61981969563e0ed56fb018fcca241b02235b0625132530c52abd8be"
+    },
+    {
+      "path": "assets/images/roster/cara.webp",
+      "bytes": 129944,
+      "sha256": "6abf49f3aab3c50795ca3ba5c60a67962804c29b09bf149998a59bcfdcc783a4"
+    },
+    {
+      "path": "assets/images/roster/cc.webp",
+      "bytes": 131472,
+      "sha256": "815c2fdfd2a254ce874588670792853e85fee28943b81054145ff8ff38da61ef"
+    },
+    {
+      "path": "assets/images/roster/hekiru.webp",
+      "bytes": 243910,
+      "sha256": "617f58b1207050e6e69fc4958bce2273235e2c04919622eb789cd89d29623d38"
+    },
+    {
+      "path": "assets/images/roster/jubi.webp",
+      "bytes": 124176,
+      "sha256": "9cf5f3c7c8e43450aedec92f6a7740b97f158195ae595402bda0f49609a64598"
+    },
+    {
+      "path": "assets/images/roster/lele.webp",
+      "bytes": 138360,
+      "sha256": "1d6e303714642bf69ba6b5501de6ad11036e43547e2f63623c1c60989d092b95"
+    },
+    {
+      "path": "assets/images/roster/medamayaki.webp",
+      "bytes": 145684,
+      "sha256": "3241306c93000ad3455afefa9cb50896d0974b88f01261ecc94c8036513e52e3"
+    },
+    {
+      "path": "assets/images/roster/mibao.webp",
+      "bytes": 105470,
+      "sha256": "46a75e190baad8e8669b0662b8a07d9ede469f5ac106207a3c8311dfa3b96f20"
+    },
+    {
+      "path": "assets/images/roster/mika.webp",
+      "bytes": 162870,
+      "sha256": "d9800fa21c1b6e2e9602fe3743f9c0837bdf6bf3f221c06c623d5772d9f3d22b"
+    },
+    {
+      "path": "assets/images/roster/mona.webp",
+      "bytes": 159466,
+      "sha256": "59f9acb8861a65950a29ef4e798df3b2524900155fe3b402ebc36df28e35a26b"
+    },
+    {
+      "path": "assets/images/roster/nana.webp",
+      "bytes": 143116,
+      "sha256": "e404ebb20f7273f83e8dc3c6d85af1f53b688dcaed46b63bb2f4fd78fbf5d6f8"
+    },
+    {
+      "path": "assets/images/roster/naya.webp",
+      "bytes": 170024,
+      "sha256": "4fd4c223e064c15d7b6badaaefd26d00a5a7f55552f500e4f3b17c48ca4f0cde"
+    },
+    {
+      "path": "assets/images/roster/sakuri.webp",
+      "bytes": 145858,
+      "sha256": "8f1e2635714effb9e86009b3eaaef16507869380a8f2c14fbd5ee9ae45ea9d1d"
+    },
+    {
+      "path": "assets/images/roster/yuzu.webp",
+      "bytes": 118776,
+      "sha256": "e22350b8ec2d748a6e89cf9829a88b2a7e853c25a1bb1be787bc0c01b2690acd"
+    },
+    {
+      "path": "assets/images/venue/cafe-seat.webp",
+      "bytes": 112876,
+      "sha256": "49acafbeb1e4b6bbcf0e48231077b13a7df27e5d889fca4d7eb78be1f979363e"
+    },
+    {
+      "path": "assets/images/venue/night-bar.webp",
+      "bytes": 186900,
+      "sha256": "4739c5c2017c4c0e6efa6f3c6456f759f163a2c92437e287d6e87d0e5ada924d"
+    },
+    {
+      "path": "assets/images/venue/sakura-throne.webp",
+      "bytes": 212722,
+      "sha256": "d878f9472706fdbe31ce6e38bab59e1ce431df75bb63eeeb5d50e3b8f10d7fee"
+    },
+    {
+      "path": "assets/images/world/world-film-poster-20260915.webp",
+      "bytes": 492544,
+      "sha256": "df54d1758070bdefb02ae7a6d9c86a41e2305698baf1e262aa2a0efd6b70587a"
+    },
+    {
+      "path": "assets/images/worlds/world-bar.webp",
+      "bytes": 78856,
+      "sha256": "9cd0195859e334b15946c93aabc84bc212aff8d38a14f832d5760235f7af2944"
+    },
+    {
+      "path": "assets/images/worlds/world-cafe.webp",
+      "bytes": 50836,
+      "sha256": "af6242d6a64c39e59f20454e299e8c5f65ca42252e32b3bf48265861da376488"
+    },
+    {
+      "path": "assets/images/worlds/world-idol.webp",
+      "bytes": 90154,
+      "sha256": "ae037ec7a358d4302f5aa4483031d5b1a881057a1e345bba8a2f484c210761e2"
+    },
+    {
+      "path": "assets/js/app.js",
+      "bytes": 34414,
+      "sha256": "a1562cb2c35f453830ecf3930fe0172cb8535504a96f5e0595c9f386969e968a"
+    },
+    {
+      "path": "assets/js/character-empty-20260912.js",
+      "bytes": 1326,
+      "sha256": "b9e4dadfb575b1540278f2e7cfec693f8acc7699f3d920f492c00fbf6e173ae1"
+    },
+    {
+      "path": "assets/js/character-empty-20260917.js",
+      "bytes": 1371,
+      "sha256": "6e8e50427559a77eaa68b70a83054e22717f06ab553774ca09d41db62bcb1a47"
+    },
+    {
+      "path": "assets/js/character-fullscreen-20260911-v2.js",
+      "bytes": 7445,
+      "sha256": "c8055e13869bf8408a0e74015dba2b74af4bfd77bd60a9918d26e2a8775fca4d"
+    },
+    {
+      "path": "assets/js/character-fullscreen-20260911.js",
+      "bytes": 5210,
+      "sha256": "5f2892f5cc45f061395b4e661bbce931d3724b92cd62d4bc5d610a8c44ae3462"
+    },
+    {
+      "path": "assets/js/character-idle-20260911-v2.js",
+      "bytes": 8300,
+      "sha256": "6078d9210f259d7c81bce08c0d06df280b789819acbdfb778b52e10f430052fc"
+    },
+    {
+      "path": "assets/js/character-idle-20260911-v3.js",
+      "bytes": 8537,
+      "sha256": "f0f9e120b63f97e38fbf4f8252c543afa341e4ca3a36753cddc183615cd0340c"
+    },
+    {
+      "path": "assets/js/character-idle-20260911.js",
+      "bytes": 8298,
+      "sha256": "6cff8d202cad1e238af8d2a9f8bf4baea75c1339dbfd65959d2fe8e49c94aa1a"
+    },
+    {
+      "path": "assets/js/character-idle-loop-20260917.js",
+      "bytes": 5112,
+      "sha256": "617b2e5746b62c0a0ecbbbc2478114fcfea213efce35f562ef85ad447b33eb76"
+    },
+    {
+      "path": "assets/js/character-visual-20260911-v1.js",
+      "bytes": 3183,
+      "sha256": "025b027f65d65e83c9cd6dd7773936365b7739c07903cb2589bbf4ae1b92cb79"
+    },
+    {
+      "path": "assets/js/character-visual-20260911-v2.js",
+      "bytes": 6638,
+      "sha256": "c788ebf8d740f091e68d6b52f181fa26564b3f55a14e897cdd5be32ed2c00d26"
+    },
+    {
+      "path": "assets/js/character-visual-20260911-v3.js",
+      "bytes": 7021,
+      "sha256": "2778217150c0c7f9999ec6dd33d8b6e63baa0fcfafb609b784852702ffdd3ff8"
+    },
+    {
+      "path": "assets/js/character-visual-20260917.js",
+      "bytes": 7060,
+      "sha256": "ddd1dfe5ecc0dc501ac391766c06061870eb3dce6e2d626ebb0df19bd9fbc999"
+    },
+    {
+      "path": "assets/js/menu-view.js",
+      "bytes": 4258,
+      "sha256": "01c1cc0b32e9c082115a2a38f0f51b55c6a15aa2d2ebfbff7ad416f69bec7257"
+    },
+    {
+      "path": "assets/js/presentation-20260908.js",
+      "bytes": 4922,
+      "sha256": "730191a59c0e03f35352d0fa8b500d86a88af2d611abbc1fb50035b40f90f2ac"
+    },
+    {
+      "path": "assets/js/privacy-20260907.js",
+      "bytes": 2734,
+      "sha256": "807fcaeff27c3f88721c1b4ffc2656ea7536e375ab77770800b07897fd37a685"
+    },
+    {
+      "path": "assets/js/privacy-links-20260907b.js",
+      "bytes": 865,
+      "sha256": "3785f663701ec7ba3c7979ddd70221274f8175a57644f8acad8cbbc2e2974723"
+    },
+    {
+      "path": "assets/js/schedule-today-20260911.js",
+      "bytes": 3119,
+      "sha256": "c8c68862e4bafadd8816e0f2fd814233f214fa5aae8bcc626c80cb45048e914c"
+    },
+    {
+      "path": "assets/js/world-film-20260915-auto.js",
+      "bytes": 20303,
+      "sha256": "3179519ed21f1920d37e7fbc29deef4a412b78d58dbb53015c2ae5422876cdbd"
+    },
+    {
+      "path": "assets/js/world-film-20260915-single.js",
+      "bytes": 18274,
+      "sha256": "fb5596cceb57ab7ff8be2b505e6ce583967d0f4d57cc5becfa510562ce899802"
+    },
+    {
+      "path": "assets/js/world-film-20260915.js",
+      "bytes": 12600,
+      "sha256": "031c4becdc75d300bf5c00286e7f455b4ca6484d1f14ff187191e985c86f6765"
+    },
+    {
+      "path": "assets/js/world-film-controls-20260915.js",
+      "bytes": 11431,
+      "sha256": "21633136456891c42811bb8120d0617e00e6f25e4ae40ca8925d8b477b8799a8"
+    },
+    {
+      "path": "assets/video/characters/magic-idle-1080p-20260917.mp4",
+      "bytes": 2911162,
+      "sha256": "09987dd701a2d6d3ba8f7b1b8b73c5c085231ca4e78da5517a420756371d56a5"
+    },
+    {
+      "path": "assets/video/characters/magic-idle-2160p-20260917.mp4",
+      "bytes": 19663270,
+      "sha256": "cfadd6d1a90f56aafe79a26f6fa9d0f3362cf6c12f2818f652aea88be0ce6fd4"
+    },
+    {
+      "path": "assets/video/characters/magic-idle-720p-20260917.mp4",
+      "bytes": 1186759,
+      "sha256": "c991e57d6bc31729e749d0956faae6692784928fac83200a1ea7d2eba8722d86"
+    },
+    {
+      "path": "assets/video/characters/magic-orbit-1080p-20260917.mp4",
+      "bytes": 33799394,
+      "sha256": "63f978f8bf77c902151f493a70bd6b72657ec5c077cd87bc5cae060e122f0635"
+    },
+    {
+      "path": "assets/video/characters/magic-orbit-2160p-20260917.mp4",
+      "bytes": 182974988,
+      "sha256": "8dd62e11144dcbc10905ac6315bdece5add225f2bda729e7e3107c8498e5d3fd"
+    },
+    {
+      "path": "assets/video/characters/magic-orbit-720p-20260917.mp4",
+      "bytes": 17856233,
+      "sha256": "9911d7557b85150ebf8e3f8f2bdae62da3478028d0102c2b006958e5a04bb92f"
+    },
+    {
+      "path": "assets/video/characters/momiji-idle-1080p-20260917.mp4",
+      "bytes": 3558701,
+      "sha256": "5de692945d49839d4eeeee308d0cbb4ad57d76e2ca69aa63f63d7c11df26626a"
+    },
+    {
+      "path": "assets/video/characters/momiji-idle-2160p-20260917.mp4",
+      "bytes": 22230046,
+      "sha256": "a4ce014f5873a69f53fa67b898cc363909d39063fe62cbc989c474c56313e6fb"
+    },
+    {
+      "path": "assets/video/characters/momiji-idle-720p-20260917.mp4",
+      "bytes": 1519666,
+      "sha256": "6066691acce1fc1a5449b5d5d2e34fbf444990146eb21c3c64fab7f410159350"
+    },
+    {
+      "path": "assets/video/characters/momiji-orbit-1080p-20260917.mp4",
+      "bytes": 32476667,
+      "sha256": "06ee705ee8b35b6badc550c76500a91f060546d937b2b866d3232214eda546d6"
+    },
+    {
+      "path": "assets/video/characters/momiji-orbit-2160p-20260917.mp4",
+      "bytes": 126647628,
+      "sha256": "12b97861bea6e2575f11829c438a72f650011b575a7fc4875c50c6bae411eac7"
+    },
+    {
+      "path": "assets/video/characters/momiji-orbit-720p-20260917.mp4",
+      "bytes": 17769547,
+      "sha256": "edaf005c6e495f199c129ec5d7fa1617af6db36b2f238c167b5d1b9824d8ce38"
+    },
+    {
+      "path": "assets/video/characters/sakuri-idle-1080p-20260917.mp4",
+      "bytes": 3856332,
+      "sha256": "06b470598b88bb6bfa14ebdcde4f529b32202c72db997ef28b7d62032a65c7da"
+    },
+    {
+      "path": "assets/video/characters/sakuri-idle-2160p-20260917.mp4",
+      "bytes": 23178682,
+      "sha256": "d1a3e1f8250a9dc8a065ce9ebe2742d1be5c1641ca910254443c0e6f4108b907"
+    },
+    {
+      "path": "assets/video/characters/sakuri-idle-720p-20260917.mp4",
+      "bytes": 1709256,
+      "sha256": "d0e3bec920d78c8af3d44e042264ff8206f746058076ca7687c505d632522409"
+    },
+    {
+      "path": "assets/video/characters/sakuri-orbit-1080p-20260917.mp4",
+      "bytes": 46767255,
+      "sha256": "8e9403b8c92aeb948fbfbefdcf5672382252a00fca9ee06a8fac0b4d72c774a8"
+    },
+    {
+      "path": "assets/video/characters/sakuri-orbit-2160p-20260917.mp4",
+      "bytes": 331009197,
+      "sha256": "ca8f89782d192bc139355d60ff2cbff06a2347b2a01fda6b18f6aabed56a32ac"
+    },
+    {
+      "path": "assets/video/characters/sakuri-orbit-720p-20260917.mp4",
+      "bytes": 25146528,
+      "sha256": "4bf049029a67bbe88be6968a78d5954ce052deebf69ebd2afa53cb8d493e5ce4"
+    },
+    {
+      "path": "assets/video/characters/setsuka-idle-1080p-20260917.mp4",
+      "bytes": 2979311,
+      "sha256": "460af3d2b55fec2abad803bc1716c4a5a55cbd44c1f95edea2c570758e97aa9f"
+    },
+    {
+      "path": "assets/video/characters/setsuka-idle-2160p-20260917.mp4",
+      "bytes": 19020703,
+      "sha256": "5ac189a90121c5c6127bc4ba66f322556fd726065169bde6ca44ac62a62a45bc"
+    },
+    {
+      "path": "assets/video/characters/setsuka-idle-720p-20260917.mp4",
+      "bytes": 1213868,
+      "sha256": "209551b825ab33ea9f10c41466697b740384c0c1f5f776daf6b6d67a9edf6ab5"
+    },
+    {
+      "path": "assets/video/characters/setsuka-orbit-1080p-20260917.mp4",
+      "bytes": 29822271,
+      "sha256": "0e378ec145768014c0271e7978c7f2376a14136e9b65bedbf4280e5323267bc4"
+    },
+    {
+      "path": "assets/video/characters/setsuka-orbit-2160p-20260917.mp4",
+      "bytes": 109348182,
+      "sha256": "e1f1d1b683d1d2ca440fa94882c46a60683639471049d3007ecd4bd11af47e73"
+    },
+    {
+      "path": "assets/video/characters/setsuka-orbit-720p-20260917.mp4",
+      "bytes": 16351444,
+      "sha256": "48cd9a3e82c136b603e690324c00c710ca0131e947aa8d5bcb828e99e25edab1"
+    },
+    {
+      "path": "assets/video/characters/tsukuyomi-idle-1080p-20260917.mp4",
+      "bytes": 3242580,
+      "sha256": "267c88a7d2cd624c154b48cc6d0c4a6a8fd0653e42a0e57a4cf0fedfb8b89285"
+    },
+    {
+      "path": "assets/video/characters/tsukuyomi-idle-2160p-20260917.mp4",
+      "bytes": 20666009,
+      "sha256": "b343590b19c7ca764fa1f0cde9b8eff75359206ce7fea5862f726234e329b92d"
+    },
+    {
+      "path": "assets/video/characters/tsukuyomi-idle-720p-20260917.mp4",
+      "bytes": 1442371,
+      "sha256": "eeeb49571920d1c4e6ec37faa39aced1d712ba8f1db8c67f848a0e56a47b705e"
+    },
+    {
+      "path": "assets/video/characters/tsukuyomi-orbit-1080p-20260917.mp4",
+      "bytes": 28112496,
+      "sha256": "d3be77970f8df42f79a7d3c19f4f3dc50c05b935c6ec00d91248f9d600f4ee69"
+    },
+    {
+      "path": "assets/video/characters/tsukuyomi-orbit-2160p-20260917.mp4",
+      "bytes": 106884482,
+      "sha256": "f0a926ec383efc1d14adce63fe8ce3fa72a6a2afbba9bf7093347dfd14ed91bc"
+    },
+    {
+      "path": "assets/video/characters/tsukuyomi-orbit-720p-20260917.mp4",
+      "bytes": 14727878,
+      "sha256": "05deae1758d109524f04e30f1cc4f2329396350614f61b6a8ab6255c7267a1aa"
+    },
+    {
+      "path": "assets/video/MagicOffice_World_Characters_1080p48_20260910.mp4",
+      "bytes": 480191997,
+      "sha256": "eb93b9251c58fff56d04d0d41f8e94aea457acacaa9f7c6b429a03ecbacf26f3"
+    },
+    {
+      "path": "assets/video/world-film-ja-1080p-20260915.mp4",
+      "bytes": 374462711,
+      "sha256": "16de0731cf0559bb930c56b2f41a397baedc33ed1b74f2d6f91a7755ce725e66"
+    },
+    {
+      "path": "assets/video/world-film-ja-2160p-20260915.mp4",
+      "bytes": 827813245,
+      "sha256": "90aa2b45a318405fd39765e79119d16679b3c75b7b2f811efe7b8747d1a3929d"
+    },
+    {
+      "path": "assets/video/world-film-ja-720p-20260915.mp4",
+      "bytes": 216188219,
+      "sha256": "8b66427f4a8233185a2f7de42de4c76921406e06fa6f2066db131cf36480aa1c"
+    },
+    {
+      "path": "assets/video/yoshino-3d-1080p48-20260911-v2.mp4",
+      "bytes": 12541036,
+      "sha256": "09912000e8f1ec5d01a2a05621b73b81481dcbc0b23fc64089e35d811c4db617"
+    },
+    {
+      "path": "assets/video/yoshino-3d-2160p48-20260911-v2.mp4",
+      "bytes": 41220476,
+      "sha256": "f0640efdade8e23bd91e4731e3141f8423d8d815eb805ccf3fdbf277a77e1af8"
+    },
+    {
+      "path": "assets/video/yoshino-3d-480p48-20260911-v2.mp4",
+      "bytes": 2517043,
+      "sha256": "3f8602ed9c7a7c625195287b22a496db8ec275b207ee8400e8ec207bbe5671c4"
+    },
+    {
+      "path": "assets/video/yoshino-3d-4k48-20260911.mp4",
+      "bytes": 240942329,
+      "sha256": "ec5d99d2a345c2e174f481fa68d2f67a2e732c96938dfbe5f353d05775b458e0"
+    },
+    {
+      "path": "assets/video/yoshino-3d-720p48-20260911-v2.mp4",
+      "bytes": 6378415,
+      "sha256": "85d289abf117ac21bf67efc72699694b889e8fc7342eb747296583e0e39aab4b"
+    },
+    {
+      "path": "assets/video/yoshino-idle-a-1080p24-20260911.mp4",
+      "bytes": 3202241,
+      "sha256": "7882eda43d895eead83e2c8d9a9d8c26bd3593fedce2dad93858e482fe3c339e"
+    },
+    {
+      "path": "assets/video/yoshino-idle-a-2160p24-20260911.mp4",
+      "bytes": 19446631,
+      "sha256": "16afea831072d51ce71c9e718ce215bdad287e0d20e93c7a8390bcb7a9891750"
+    },
+    {
+      "path": "assets/video/yoshino-idle-a-480p24-20260911.mp4",
+      "bytes": 728692,
+      "sha256": "991f312c87e44b469e8f856750ee578faeaac88e4f2d46a611c9fa56f11cee48"
+    },
+    {
+      "path": "assets/video/yoshino-idle-a-720p24-20260911.mp4",
+      "bytes": 1578192,
+      "sha256": "294eaa30d00c6a29c762b8b6135ef66a3fd4345b9f90fae4ffb6038c6e4fcdea"
+    },
+    {
+      "path": "assets/video/yoshino-idle-b-1080p24-20260911.mp4",
+      "bytes": 4959285,
+      "sha256": "d793733725dceb4655834bb52a43f79cb0bc9902704d6d60f37b1d64091e6439"
+    },
+    {
+      "path": "assets/video/yoshino-idle-b-2160p24-20260911.mp4",
+      "bytes": 26226585,
+      "sha256": "299d0401db71edc94c5e02e5a74e183e59091a223bd06df4909cd288787a88d9"
+    },
+    {
+      "path": "assets/video/yoshino-idle-b-480p24-20260911.mp4",
+      "bytes": 1169564,
+      "sha256": "ec051359d0e52e0715683c26599615559769ce8ae800445712677b7fb4763248"
+    },
+    {
+      "path": "assets/video/yoshino-idle-b-720p24-20260911.mp4",
+      "bytes": 2559041,
+      "sha256": "0ded62575334b535141ff4310d315f788e0642c8f4a83fe93b1bb4276764d39a"
+    },
+    {
+      "path": "assets/video/yoshino-idle-c-1080p24-20260911.mp4",
+      "bytes": 4060354,
+      "sha256": "4ebed865f9d3e3f668fdedefd9e12b466adbad965b665142073d9068c813d2dd"
+    },
+    {
+      "path": "assets/video/yoshino-idle-c-2160p24-20260911.mp4",
+      "bytes": 23435156,
+      "sha256": "a35b662515ce973a7620ca7e5f5e82b31116c549bcd4608cadf5155e2d1b138c"
+    },
+    {
+      "path": "assets/video/yoshino-idle-c-480p24-20260911.mp4",
+      "bytes": 978506,
+      "sha256": "71a9b5c281215068fa58e0ef2313c2a7a1b7f0bccdfb1ee4734fd08fdd8b4dd3"
+    },
+    {
+      "path": "assets/video/yoshino-idle-c-720p24-20260911.mp4",
+      "bytes": 2121977,
+      "sha256": "5e064c5d3b14f5e4cf350d7beecfd4f3d40de04ab115bf20729bf0f97c9e1509"
+    },
+    {
+      "path": "assets/video/yoshino-idle-d-1080p24-20260911.mp4",
+      "bytes": 7219441,
+      "sha256": "410215de4992731c177fc3a9ac980933acd2ce040b4b558a987983adf35c41ce"
+    },
+    {
+      "path": "assets/video/yoshino-idle-d-2160p24-20260911.mp4",
+      "bytes": 42064047,
+      "sha256": "a4e754bdaab4bfe2410667fd03bc6a1246c5a8399fb8da2435d9ea85a65e9047"
+    },
+    {
+      "path": "assets/video/yoshino-idle-d-480p24-20260911.mp4",
+      "bytes": 1685936,
+      "sha256": "6eae9c6a0cf04db05405c3d9ad27103a129c14d089fa3a9c4cfc9bde9812fcb0"
+    },
+    {
+      "path": "assets/video/yoshino-idle-d-720p24-20260911.mp4",
+      "bytes": 3707354,
+      "sha256": "0c1efa503718dd853ee9f207360fbc1705a7faed831ecb1a1f95ae149f3a9479"
+    },
+    {
+      "path": "assets/video/yoshino-idle-e-1080p24-20260911.mp4",
+      "bytes": 8294085,
+      "sha256": "d5b0b20c11dc60de6c66c553fadcf581ae2236d560c656eab62ee3a6d33bfd81"
+    },
+    {
+      "path": "assets/video/yoshino-idle-e-2160p24-20260911.mp4",
+      "bytes": 50560515,
+      "sha256": "ecce3eb5706ef25f52ecf36c0d651d4703271ff901389833ce899b9c96b9bc26"
+    },
+    {
+      "path": "assets/video/yoshino-idle-e-480p24-20260911.mp4",
+      "bytes": 1701846,
+      "sha256": "8539b9a6374e4dc11607942eb5a696608721038db979d55f9bb3bcbd02a72666"
+    },
+    {
+      "path": "assets/video/yoshino-idle-e-720p24-20260911.mp4",
+      "bytes": 3778622,
+      "sha256": "e05fe5406b1042a064e90b938a192afeb329fbd521023ab8195d8f3daba68f34"
+    },
+    {
+      "path": "BUILD_VERSION.txt",
+      "bytes": 42,
+      "sha256": "cf5c8c42839592d5a606c9436969147c46425c4f492e71caa6005e714099640c"
+    },
+    {
+      "path": "characters/index.html",
+      "bytes": 5703,
+      "sha256": "8a8e2417a9071b572641d4062c95e90c1fdf366d51ae5547f2cce5a6e2da192b"
+    },
+    {
+      "path": "characters/magic.html",
+      "bytes": 8895,
+      "sha256": "d3bc04d85d94ae2e0565fdd30538c4e3713cb1399a46cda38e869d6b12ce07c2"
+    },
+    {
+      "path": "characters/momiji.html",
+      "bytes": 8919,
+      "sha256": "0960563cb4e526de1592a5e9848892c26744d8a155a3a540f965c6be2ba124e3"
+    },
+    {
+      "path": "characters/sakuri.html",
+      "bytes": 8919,
+      "sha256": "295131801acaf86419c913794366ba2eecd630f71aaa3a30390d2c394a2a1936"
+    },
+    {
+      "path": "characters/setsuka.html",
+      "bytes": 8925,
+      "sha256": "b1464295fdeec4f6e34072daec84dc358b79c7cc982d9ca2cdf42a7792cb2efa"
+    },
+    {
+      "path": "characters/tsukuyomi.html",
+      "bytes": 8949,
+      "sha256": "1f592df0c606a188f43b93827f1685e46e7898ccf8b54e78185d5b0cdf21dbed"
+    },
+    {
+      "path": "characters/yoshino.html",
+      "bytes": 9864,
+      "sha256": "f8fdd4f2e76956faf88d7b9aa4882f44ce24e8dec34a04865de3655e28ec1f37"
+    },
+    {
+      "path": "content/events.json",
+      "bytes": 17775,
+      "sha256": "2c2f8bce7fd0ac79a84a37bb859f4716c09a92f2015a3d062f2fb61c3fce9c1c"
+    },
+    {
+      "path": "content/hero-video-source.json",
+      "bytes": 573,
+      "sha256": "e8cd9deeb9650029b4ac158e12aa91ac3bcdd7650925361fddaa9b44d8a72e66"
+    },
+    {
+      "path": "content/menu-fallback.json",
+      "bytes": 27846,
+      "sha256": "55eab1737fa9a926cf729d2fbeb91ee45cc7b391f8912f858cb7001fc1aa33c5"
+    },
+    {
+      "path": "content/roster.json",
+      "bytes": 5763,
+      "sha256": "8d0496f89e0179bf4a5a0ac4dffc8ed7a0a2ee7038415815ca3b8d656863e944"
+    },
+    {
+      "path": "content/schedule-fallback.json",
+      "bytes": 17494,
+      "sha256": "2078f49d1a0e1c07ac72e7cc0e4c7d8f73a5d5f239868806121c0b2c8e109aff"
+    },
+    {
+      "path": "content/site.json",
+      "bytes": 4764,
+      "sha256": "31d427f758cf9f2dde78701900c2fa08fa0b9f892b6a8761d8d16d751e60cf2b"
+    },
+    {
+      "path": "content/snapshot-sync-report.json",
+      "bytes": 1076,
+      "sha256": "675f88843ccd8908b329123cb4c33b4ff94d4170f443125ce69dc7fc183f0688"
+    },
+    {
+      "path": "content/world-film.json",
+      "bytes": 604,
+      "sha256": "5b108f28dd016039e4445297aa5597d8bc5023605e4ac7e4c33135ac425916ac"
+    },
+    {
+      "path": "copyright.html",
+      "bytes": 5340,
+      "sha256": "eea9fa72d3ade0f145d4b3f30e04bbd4d71af9f027c04f149c31ca208058f851"
+    },
+    {
+      "path": "favicon.ico",
+      "bytes": 32038,
+      "sha256": "8618e0f7af48579184017f48b67e7180480abc0229e3cf632fe9e84a526595de"
+    },
+    {
+      "path": "index.html",
+      "bytes": 122928,
+      "sha256": "baaa4a0c3ac44893815304624e344cf171a981f6a18c43dc8de244de4333b96d"
+    },
+    {
+      "path": "privacy.html",
+      "bytes": 5067,
+      "sha256": "928aaed1187064fcf2e98511f115a3377de4d592fb6ee4f36de1e4e1c20e3b02"
+    },
+    {
+      "path": "robots.txt",
+      "bytes": 75,
+      "sha256": "45b84a98bd3d71653ac9a1d66e497439d13b4aab0bde6b79b3e5d030082d09c6"
+    },
+    {
+      "path": "site.webmanifest",
+      "bytes": 450,
+      "sha256": "32faade63ac7d684c798fa793859c229c6ef944cc185f83529a8a25c76196d9b"
+    },
+    {
+      "path": "sitemap.xml",
+      "bytes": 244,
+      "sha256": "45a2854292864d7c7c1ace6b5539079dfb21dfdf58c70221f36af0e51c9e229d"
+    },
+    {
+      "path": "stories/index.html",
+      "bytes": 2612,
+      "sha256": "5dc1316de02236a0e6cb9621f11764f7d17938e13837a784904bf93e54dc6d97"
+    },
+    {
+      "path": "world/index.html",
+      "bytes": 8494,
+      "sha256": "6a05c0c1bb4b7392146c57cf949e857d36fff599552f4caf4362a353861c5793"
+    }
+  ]
+}
