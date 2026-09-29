@@ -1,0 +1,33 @@
+name: Publish verified MagicOffice menu repair
+on:
+  push:
+    branches: [schedule-maintenance]
+    paths: [menu-repair/request.json, menu-repair/publish.mjs, menu-repair/preserve-build.mjs, .github/workflows/menu-repair.yml]
+permissions:
+  contents: read
+concurrency:
+  group: magicoffice-main-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: menu-repair
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Publish freshly verified menu and preserve current site
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node menu-repair/publish.mjs
+      - name: Save sanitized menu repair receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: menu-repair-receipt
+          path: menu-repair/receipt.json
+          retention-days: 30
