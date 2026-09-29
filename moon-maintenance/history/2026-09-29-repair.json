@@ -1,0 +1,181 @@
+{
+  "site": "https://moon-tau-sandy.vercel.app/",
+  "verifiedAt": "2026-09-29T02:22:19.930Z",
+  "timezone": "Asia/Taipei",
+  "status": "passed-in-tested-scope",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36512174749",
+  "commitSha": "4caa7f4d5028acd15ab5252885d57216e09a6899",
+  "deployment": {
+    "at": "2026-09-29T02:22:00.095Z",
+    "baselineDeploymentId": "dpl_4P9XUySeQkPaBoSMTwQJKhHvpypm",
+    "deploymentId": "dpl_9qQfsb3UdmvXu32hmLtuAyLsAQkL",
+    "url": "moon-144ay9wrq-magicoffice.vercel.app",
+    "changedFiles": [
+      "styles.css"
+    ],
+    "status": "ready",
+    "verifiedAt": "2026-09-29T02:22:03.988Z"
+  },
+  "fixed": [
+    "Homepage header now has a dark background before scrolling and opaque navigation text.",
+    "Mobile fixed-menu backdrop now covers the viewport below the header; removed header backdrop-filter only at mobile widths."
+  ],
+  "changedProductionFiles": [
+    "styles.css"
+  ],
+  "preservation": "Other 32 production source files hash-identical to baseline; service copy, assets, links and prices unchanged.",
+  "verification": {
+    "checkedAt": "2026-09-29T02:22:04.351Z",
+    "phase": "production",
+    "origin": "https://moon-tau-sandy.vercel.app",
+    "status": "passed",
+    "viewports": [
+      {
+        "width": 1366,
+        "background": "rgba(4, 10, 18, 0.9)",
+        "foreground": "rgb(245, 238, 223)",
+        "viewport": 1366,
+        "scrollWidth": 1366,
+        "headerHeight": 92,
+        "worstCaseContrast": 13.77,
+        "loadedImages": 14,
+        "profileToggles": 0,
+        "externalLinks": [
+          "https://lin.ee/tf6pZ93",
+          "https://www.instagram.com/yue_healthy/"
+        ],
+        "faqToggles": 6,
+        "privacy": true,
+        "navigationLinks": 6
+      },
+      {
+        "width": 1024,
+        "background": "rgba(4, 10, 18, 0.9)",
+        "foreground": "rgb(245, 238, 223)",
+        "viewport": 1024,
+        "scrollWidth": 1024,
+        "headerHeight": 92,
+        "worstCaseContrast": 13.77,
+        "navigationLinks": 6
+      },
+      {
+        "width": 1020,
+        "background": "rgba(4, 10, 18, 0.9)",
+        "foreground": "rgb(245, 238, 223)",
+        "viewport": 1020,
+        "scrollWidth": 1020,
+        "headerHeight": 82,
+        "worstCaseContrast": 13.77,
+        "mobileOverlay": {
+          "top": 82,
+          "bottom": 900,
+          "width": 1020,
+          "height": 818,
+          "background": "rgba(4, 10, 18, 0.98)",
+          "viewportHeight": 900,
+          "headerBottom": 82
+        },
+        "navigationLinks": 6
+      },
+      {
+        "width": 768,
+        "background": "rgba(4, 10, 18, 0.9)",
+        "foreground": "rgb(245, 238, 223)",
+        "viewport": 768,
+        "scrollWidth": 768,
+        "headerHeight": 82,
+        "worstCaseContrast": 13.77,
+        "mobileOverlay": {
+          "top": 82,
+          "bottom": 900,
+          "width": 768,
+          "height": 818,
+          "background": "rgba(4, 10, 18, 0.98)",
+          "viewportHeight": 900,
+          "headerBottom": 82
+        },
+        "navigationLinks": 6
+      },
+      {
+        "width": 390,
+        "background": "rgba(4, 10, 18, 0.9)",
+        "foreground": "rgb(245, 238, 223)",
+        "viewport": 390,
+        "scrollWidth": 390,
+        "headerHeight": 74,
+        "worstCaseContrast": 13.77,
+        "mobileOverlay": {
+          "top": 74,
+          "bottom": 900,
+          "width": 390,
+          "height": 826,
+          "background": "rgba(4, 10, 18, 0.98)",
+          "viewportHeight": 900,
+          "headerBottom": 74
+        },
+        "loadedImages": 14,
+        "profileToggles": 4,
+        "externalLinks": [
+          "https://lin.ee/tf6pZ93",
+          "https://www.instagram.com/yue_healthy/"
+        ],
+        "faqToggles": 6,
+        "privacy": true,
+        "navigationLinks": 6
+      },
+      {
+        "width": 320,
+        "background": "rgba(4, 10, 18, 0.9)",
+        "foreground": "rgb(245, 238, 223)",
+        "viewport": 320,
+        "scrollWidth": 320,
+        "headerHeight": 74,
+        "worstCaseContrast": 13.77,
+        "mobileOverlay": {
+          "top": 74,
+          "bottom": 900,
+          "width": 320,
+          "height": 826,
+          "background": "rgba(4, 10, 18, 0.98)",
+          "viewportHeight": 900,
+          "headerBottom": 74
+        },
+        "navigationLinks": 6
+      }
+    ],
+    "pageErrors": [],
+    "failedSameOrigin": [],
+    "unverified": [
+      "physical mobile devices",
+      "Instagram account editing",
+      "sending a LINE message"
+    ],
+    "publicCssSha1": "51607a4e9e1d1b1f3dfee394bd308297419d521c",
+    "completedAt": "2026-09-29T02:22:19.930Z"
+  },
+  "remainingIssues": [
+    {
+      "url": "https://www.instagram.com/yue_healthy/",
+      "issue": "Previously confirmed public service wording differs from website; no authenticated Instagram editing access in this session, not changed."
+    }
+  ],
+  "limitations": [
+    "Responsive Chromium viewport testing, not physical phone testing.",
+    "Vercel build log connector returned tool-not-found; no assertion that complete private logs contain no errors.",
+    "No LINE message or appointment was sent."
+  ],
+  "runtimeLogs": {
+    "checkedAt": "2026-09-29T02:13:48.366Z",
+    "window": "24h",
+    "errorFatal": "No matching accessible runtime logs"
+  },
+  "screenshots": [
+    "production-home-1366.png",
+    "production-home-390.png",
+    "production-menu-390.png"
+  ],
+  "intermediateDeployment": {
+    "id": "dpl_4P9XUySeQkPaBoSMTwQJKhHvpypm",
+    "finding": "Navigation contrast repair exposed fixed-position containing-block issue on mobile; corrected in final deployment, with overlay rectangle assertions and screenshot verification."
+  }
+}
