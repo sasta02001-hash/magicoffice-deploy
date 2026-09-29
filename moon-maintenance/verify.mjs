@@ -32,7 +32,14 @@ try{
     if(width===1366||width===390)await page.screenshot({path:`evidence/${phase}-home-${width}.png`});
     const nav=mobile?'[data-mobile-nav]':'.desktop-nav';const hrefs=await page.locator(nav+' a[href^="#"]').evaluateAll(xs=>xs.map(x=>x.getAttribute('href')));assert(hrefs.length>=6);
     for(const [n,href] of hrefs.entries()){
-      if(mobile){await page.locator('[data-menu-button]').click();assert.equal(await page.locator('[data-menu-button]').getAttribute('aria-expanded'),'true');if(width===390&&n===0)await page.screenshot({path:`evidence/${phase}-menu-390.png`});}
+      if(mobile){
+        await page.locator('[data-menu-button]').click();assert.equal(await page.locator('[data-menu-button]').getAttribute('aria-expanded'),'true');
+        const overlay=await page.locator('[data-mobile-nav]').evaluate(e=>{const r=e.getBoundingClientRect();const s=getComputedStyle(e);return {top:r.top,bottom:r.bottom,width:r.width,height:r.height,background:s.backgroundColor,viewportHeight:innerHeight,headerBottom:document.querySelector('.site-header').getBoundingClientRect().bottom};});
+        assert(Math.abs(overlay.top-overlay.headerBottom)<=1&&Math.abs(overlay.bottom-overlay.viewportHeight)<=1&&overlay.width===width,'Mobile navigation must cover entire viewport below header: '+JSON.stringify(overlay));
+        assert.equal(overlay.background,'rgba(4, 10, 18, 0.98)');
+        layout.mobileOverlay=overlay;
+        if(width===390&&n===0)await page.screenshot({path:`evidence/${phase}-menu-390.png`});
+      }
       await page.locator(nav+` a[href="${href}"]`).click();assert.equal(new URL(page.url()).hash,href);
       if(mobile){assert.equal(await page.locator('[data-menu-button]').getAttribute('aria-expanded'),'false');assert.equal(await page.locator('[data-mobile-nav]').isVisible(),false);}
     }

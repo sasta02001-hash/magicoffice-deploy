@@ -24,11 +24,16 @@ if(command==='prepare'){
   }
   const cssPath='work/site/styles.css';let css=await fs.readFile(cssPath,'utf8');
   const before=`  border-bottom: 1px solid transparent;\n  transition: background .35s ease, border-color .35s ease, backdrop-filter .35s ease;`;
-  assert.equal(css.split(before).length,2,'Header patch context mismatch');
-  css=css.replace(before,`  background: rgba(4, 10, 18, .9);\n  border-bottom: 1px solid rgba(210, 173, 115, .13);\n  backdrop-filter: blur(18px) saturate(125%);\n  transition: background .35s ease, border-color .35s ease, backdrop-filter .35s ease;`);
-  assert(css.includes('background: rgba(4, 10, 18, .82);'));css=css.replace('background: rgba(4, 10, 18, .82);','background: rgba(4, 10, 18, .94);');
+  if(css.includes(before)){
+    assert.equal(css.split(before).length,2,'Header patch context mismatch');
+    css=css.replace(before,`  background: rgba(4, 10, 18, .9);\n  border-bottom: 1px solid rgba(210, 173, 115, .13);\n  backdrop-filter: blur(18px) saturate(125%);\n  transition: background .35s ease, border-color .35s ease, backdrop-filter .35s ease;`);
+    assert(css.includes('background: rgba(4, 10, 18, .82);'));css=css.replace('background: rgba(4, 10, 18, .82);','background: rgba(4, 10, 18, .94);');
+  }else assert(css.includes('background: rgba(4, 10, 18, .9);')&&css.includes('background: rgba(4, 10, 18, .94);'));
   const nav=`.desktop-nav a {\n  position: relative;\n  padding: 8px 0;\n  color: rgba(245, 238, 223, .78);`;
-  assert(css.includes(nav));css=css.replace(nav,nav.replace('rgba(245, 238, 223, .78)','#f5eedf'));
+  if(css.includes(nav))css=css.replace(nav,nav.replace('rgba(245, 238, 223, .78)','#f5eedf'));else assert(css.includes(nav.replace('rgba(245, 238, 223, .78)','#f5eedf')));
+  const mobile='@media (max-width: 1020px) {\n  :root { --header-height: 82px; }';
+  assert.equal(css.split(mobile).length,2,'Mobile header patch context mismatch');
+  css=css.replace(mobile,mobile+'\n  /* Keep fixed mobile navigation relative to the viewport. */\n  .site-header, .site-header.is-scrolled { backdrop-filter: none; -webkit-backdrop-filter: none; }');
   await fs.writeFile(cssPath,css);
   for(const f of files){f.after=hash(await fs.readFile('work/site/'+f.file));if(f.file!=='styles.css')assert.equal(f.before,f.after,'Unrelated file changed');}
   await save('prepared',{at:new Date().toISOString(),baselineDeploymentId:baseline.deploymentId,changedFiles:files.filter(f=>f.before!==f.after),files});
