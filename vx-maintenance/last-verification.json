@@ -1,17 +1,17 @@
 {
   "status": "verified",
-  "verifiedAt": "2026-09-28T01:05:15.052Z",
-  "browserCheckedAt": "2026-09-28T01:12:44.949Z",
-  "recordedAt": "2026-09-28T01:13:09.327Z",
+  "verifiedAt": "2026-09-30T01:03:36.487Z",
+  "browserCheckedAt": "2026-09-30T01:09:03.658Z",
+  "recordedAt": "2026-09-30T01:09:03.658Z",
   "site": "https://vxsagittarius.vercel.app",
   "request": "Daily production health check; no repair requested.",
-  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36364584487",
-  "verificationCommit": "c5a98fdb745dad5924415b121a11eeef16939fe8",
-  "historyRecord": "vx-maintenance/history/2026-09-28-check.json",
-  "mainDeploymentId": "dpl_EKxT52NtX61YzRszzjwThd92Fqy7",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36653255257",
+  "verificationCommit": "b4eb5cdf245d19835d26003d1d4d28ac53e19679",
+  "historyRecord": "vx-maintenance/history/2026-09-30-check.json",
+  "mainDeploymentId": "dpl_2nTa9uDrjwvhaNHzyhTEKysZXjVa",
   "mainProductionUnchanged": true,
-  "contentDeploymentId": "dpl_4r4UGjvKKxeRqf45t3m4M7A5zkfG",
-  "contentRevision": "6ec153b15a806d2990ef222e46dc3dcb1a445a5b22bcc0228db7c029df943f02",
+  "contentDeploymentId": "dpl_Ht3hgnoWZSTy9BDpSxM5pPJ19Toq",
+  "contentRevision": "73bb5bf50e71dbe24cdddd9af67494ac3a5b76ae19559b85f6cb6a7eee7bbe76",
   "privacyDeploymentId": "dpl_4k7WJp74ysc8Ut1uzPFkHc6kXdBu",
   "privacyRevision": "16f708fbee71665a8ed747d373e4e94d3a36e14ac6dc7c89d250ac070f0444cb",
   "works": 32,
@@ -24,7 +24,7 @@
   "errors": [],
   "fixes": [],
   "browser": {
-    "checkedAt": "2026-09-28T01:12:44.949Z",
+    "checkedAt": "2026-09-30T01:09:03.658Z",
     "device": "desktop browser",
     "mainPagesChecked": [
       "/",
@@ -34,14 +34,7 @@
       "/nebula/",
       "/about/",
       "/booking/",
-      "/library/",
-      "/project-color/",
-      "/project-perm/",
-      "/project-bleach/",
-      "/project-triascend/",
-      "/project-trifusion/",
-      "/project-triform/",
-      "/project-trievolve/"
+      "/library/"
     ],
     "sampledWorks": [
       "032",
@@ -56,7 +49,7 @@
         "readyState": 4,
         "error": null,
         "replayOperated": true,
-        "visual": "Exposed eyes and face obscured; surrounding hair retained in sampled view."
+        "visual": "Exposed eyes and face obscured above the physical mask; surrounding hair retained in sampled view."
       },
       {
         "id": "005",
@@ -64,9 +57,8 @@
         "duration": 9.766667,
         "readyState": 4,
         "error": null,
-        "endedObserved": true,
         "replayOperated": true,
-        "visual": "Mirror-area privacy coverage present in sampled views; hair retained."
+        "visual": "Mirror-area privacy coverage present in sampled view; hair retained."
       },
       {
         "id": "017",
@@ -74,22 +66,25 @@
         "duration": 8.1,
         "readyState": 4,
         "error": null,
-        "visual": "Features obscured and hair retained; transition remains perceptible near forehead/hairline."
+        "replayOperated": true,
+        "visual": "Facial features obscured and hair retained; transition remains visibly perceptible around the forehead/hairline and face edge."
       }
     ],
     "worksFlow": "Homepage works entry opened; load-more operated twice; 32 distinct work routes present.",
-    "bookingFlow": "Copy button confirmed copied state; no real booking submitted.",
-    "screenshotsCaptured": true,
+    "bookingFlow": "Copy button changed to confirmed copied state; no real booking submitted.",
     "lineHref": "https://lin.ee/Roebk7r",
-    "lineDestination": "https://line.me/R/ti/p/@605cwpgu",
-    "javascript": "No site JavaScript error observed; browser-extension telemetry errors were separated from site behavior."
+    "lineDestination": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
+    "activity": "TRIARCH × PRIDE 2026 shows 2026-10-01 through 2026-10-31 and '即將開始', consistent on 2026-09-30.",
+    "canonical": "Direct /works/032/ load exposed the correct work canonical.",
+    "javascript": "No VX site JavaScript error observed; browser-extension metadata errors were separated from site behavior.",
+    "screenshotsCaptured": true
   },
   "openObservations": [
     {
       "severity": "visual-quality",
       "work": "017",
       "url": "https://vxsagittarius.vercel.app/works/017/",
-      "finding": "Privacy coverage is complete in the sampled view, but the forehead/hairline feather remains visibly perceptible and does not fully meet the requested natural transition.",
+      "finding": "Privacy coverage is complete in the sampled view, but the blur transition remains visibly perceptible around the forehead/hairline and face edge and still does not fully meet the requested natural transition.",
       "changedThisRun": false
     }
   ],
@@ -104,6 +99,6 @@
     "No physical iPhone/Android layout or mobile-menu test.",
     "Visual privacy review sampled 032, 005, and 017; not every frame of all 24 films.",
     "Private build logs were unavailable through the connector.",
-    "No real booking submission or LINE message was sent."
+    "No real booking submission, map destination confirmation, or LINE message was sent."
   ]
 }
