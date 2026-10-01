@@ -1,0 +1,28 @@
+{
+  "reviewedAt": "2026-10-01T14:51:08.357Z",
+  "previewRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36878275750",
+  "scope": [
+    "017",
+    "019"
+  ],
+  "maskedFramesReviewed": {
+    "017": 173,
+    "019": 160
+  },
+  "method": "Every masked frame inspected in ordered crop sheets; representative full frames checked at source dimensions. Browser local-file playback was unavailable; production playback will be verified after publication.",
+  "changes": [
+    "Graduated fine/medium/strong Gaussian compositing for facial-feature and peripheral regions.",
+    "Wider smooth facial transition without widening the hair interior mask.",
+    "Reduced flat filled-face appearance by retaining local light/shadow.",
+    "Targeted 017 crop-edge seam at frames 137–139 found during review and queued for correction."
+  ],
+  "preserved": [
+    "Original frame size, frame count, frame rate, and copied audio.",
+    "The other 22 published privacy films retained byte-for-byte.",
+    "Existing main site, covers, prices, copy and activities."
+  ],
+  "finalPreviewRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36879373331",
+  "approvedPrivacyRevision": "ce39cfb717a409b6a094f935c86ae3740c1c209980586d6b539d19b0e8eae7ab",
+  "finalReviewedAt": "2026-10-01T14:54:12.364Z",
+  "seamCorrection": "017 frames 137–139 rechecked at full resolution and within continuous frames 130–159. Crop boundary now tapers instead of truncating."
+}
