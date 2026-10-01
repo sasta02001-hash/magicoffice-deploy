@@ -1,12 +1,5 @@
 {
-  "mode": "publish-refinement",
-  "requestedAt": "2026-10-01T14:54:12.364Z",
-  "expectedDeploymentId": "dpl_Ht3hgnoWZSTy9BDpSxM5pPJ19Toq",
-  "expectedMainDeploymentId": "dpl_2nTa9uDrjwvhaNHzyhTEKysZXjVa",
-  "expectedPrivacyDeploymentId": "dpl_4k7WJp74ysc8Ut1uzPFkHc6kXdBu",
-  "expectedRevision": "73bb5bf50e71dbe24cdddd9af67494ac3a5b76ae19559b85f6cb6a7eee7bbe76",
-  "reason": "Publish reviewed targeted 017/019 graduated blur repair. All masked frames reviewed in ordered sheets; 017 crop-window seam corrected and affected interval reviewed again. Retain the other 22 exact published files.",
-  "refinementRunId": 36879373331,
-  "refinementCommitSha": "e34d9a38169eee54765288208db690609cefb4c5",
-  "approvedPrivacyRevision": "ce39cfb717a409b6a094f935c86ae3740c1c209980586d6b539d19b0e8eae7ab"
+  "mode": "inspect",
+  "requestedAt": "2026-10-01T14:58:24.404Z",
+  "reason": "Inspect current source paths after guarded content restore rejected the old 18-file baseline; preserve the already published privacy deployment dpl_CxZNk7rK4b5PYVKP126gwWBYZqMJ."
 }
