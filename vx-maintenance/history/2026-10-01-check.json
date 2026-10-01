@@ -1,0 +1,131 @@
+{
+  "status": "verified",
+  "verifiedAt": "2026-10-01T00:57:36.362Z",
+  "browserCheckedAt": "2026-10-01T01:04:05.526Z",
+  "recordedAt": "2026-10-01T01:04:05.526Z",
+  "site": "https://vxsagittarius.vercel.app",
+  "request": "Daily production health check; no repair requested.",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36798724077",
+  "verificationCommit": "ef6813deb5525382c907ce9cf372df93cc007202",
+  "mainDeploymentId": "dpl_2nTa9uDrjwvhaNHzyhTEKysZXjVa",
+  "mainProductionUnchanged": true,
+  "contentDeploymentId": "dpl_Ht3hgnoWZSTy9BDpSxM5pPJ19Toq",
+  "contentRevision": "73bb5bf50e71dbe24cdddd9af67494ac3a5b76ae19559b85f6cb6a7eee7bbe76",
+  "privacyDeploymentId": "dpl_4k7WJp74ysc8Ut1uzPFkHc6kXdBu",
+  "privacyRevision": "16f708fbee71665a8ed747d373e4e94d3a36e14ac6dc7c89d250ac070f0444cb",
+  "works": 32,
+  "counts": {
+    "pages": 47,
+    "assets": 128,
+    "privacyRoutes": 24,
+    "ranges": 2
+  },
+  "errors": [],
+  "fixes": [],
+  "browser": {
+    "device": "desktop browser",
+    "mainPagesChecked": [
+      "/",
+      "/works/",
+      "/services/",
+      "/activities/",
+      "/nebula/",
+      "/about/",
+      "/booking/",
+      "/library/"
+    ],
+    "sampledWorks": [
+      "032",
+      "007",
+      "019",
+      "017"
+    ],
+    "sampleResults": [
+      {
+        "id": "032",
+        "url": "https://vxsagittarius.vercel.app/works/032/",
+        "duration": 1.566667,
+        "readyState": 4,
+        "error": null,
+        "replayOperated": true,
+        "visual": "Sampled view did not expose readable facial identity features; surrounding hair retained."
+      },
+      {
+        "id": "007",
+        "url": "https://vxsagittarius.vercel.app/works/007/",
+        "duration": 8.9,
+        "readyState": 4,
+        "error": null,
+        "replayOperated": true,
+        "visual": "Playback and replay completed; sampled frames showed no readable facial identity features."
+      },
+      {
+        "id": "019",
+        "url": "https://vxsagittarius.vercel.app/works/019/",
+        "duration": 6.3,
+        "readyState": 4,
+        "error": null,
+        "replayOperated": false,
+        "visual": "Facial features obscured and hair retained, but the blur boundary is visibly hard around the face."
+      },
+      {
+        "id": "017",
+        "url": "https://vxsagittarius.vercel.app/works/017/",
+        "duration": 8.1,
+        "readyState": 4,
+        "error": null,
+        "replayOperated": false,
+        "visual": "Facial features obscured and hair retained; the transition remains visibly perceptible around the forehead, hairline and face edge."
+      }
+    ],
+    "worksFlow": "Homepage works entry opened; load-more operated twice; 32 distinct work routes present.",
+    "bookingFlow": "Copy button changed to confirmed copied state; no real booking submitted.",
+    "lineHref": "https://lin.ee/Roebk7r",
+    "lineDestination": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
+    "activity": "TRIARCH × PRIDE 2026 shows 2026-10-01 through 2026-10-31 and is correctly marked '進行中' on 2026-10-01.",
+    "javascript": "No VX-origin JavaScript error observed; recorded console errors originated from the browser extension.",
+    "screenshotsCaptured": true
+  },
+  "comparison": {
+    "previousRecord": "vx-maintenance/history/2026-09-30-check.json",
+    "newIssues": [
+      "019 was newly sampled and shows the same visible hard blur boundary class as the ongoing 017 visual-quality issue."
+    ],
+    "continuingIssues": [
+      "017 blur transition remains visibly perceptible."
+    ],
+    "recovered": [
+      "Activity status changed from '即將開始' on 2026-09-30 to '進行中' on 2026-10-01 as expected."
+    ]
+  },
+  "openObservations": [
+    {
+      "severity": "visual-quality",
+      "work": "017",
+      "url": "https://vxsagittarius.vercel.app/works/017/",
+      "finding": "Privacy coverage is complete in the sampled view, but the blur transition is visibly hard around the forehead/hairline and face edge.",
+      "changedThisRun": false
+    },
+    {
+      "severity": "visual-quality",
+      "work": "019",
+      "url": "https://vxsagittarius.vercel.app/works/019/",
+      "finding": "Privacy coverage is complete and hair is retained, but the face blur boundary is visibly hard and not naturally feathered.",
+      "changedThisRun": "newly confirmed by rotating browser sample"
+    }
+  ],
+  "runtime": {
+    "range001": "206 bytes 0-1023/1641423 on first attempt",
+    "range032": "206 bytes 0-1023/748873 on first attempt",
+    "runtimeErrorsLast24h": "none for main/content/privacy projects",
+    "warningErrorFatalLogsLast24h": "none for main and privacy; content 24h query timed out, then the same production deployment returned none when narrowed to 1h",
+    "buildLogs": "unverified because the Vercel build-log connector returned Tool get_deployment_build_logs not found"
+  },
+  "limitations": [
+    "No physical iPhone/Android layout or mobile-menu test.",
+    "Visual privacy review sampled 032, 007, 019 and 017; not every frame of all 24 films.",
+    "Mirror-reflection coverage in 007 was not exhaustively checked frame by frame.",
+    "Private build logs were unavailable through the connector.",
+    "No real booking submission, map destination confirmation, or LINE message was sent."
+  ]
+}
