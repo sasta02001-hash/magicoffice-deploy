@@ -20,7 +20,7 @@ jobs:
           node <<'JS'
           const fs=require('fs');
           const {mode}=JSON.parse(fs.readFileSync('vx-maintenance/request.json'));
-          if(!['check','repair','inspect','refine-preview','publish-refinement'].includes(mode))throw Error('Unknown mode');
+          if(!['check','repair','inspect','refine-preview','publish-refinement','resume-content'].includes(mode))throw Error('Unknown mode');
           fs.appendFileSync(process.env.GITHUB_OUTPUT,'mode='+mode+'\n');
           JS
   maintain:
@@ -44,15 +44,16 @@ jobs:
           import fs from 'node:fs';
           import {verifyRefinementRun} from './vx-maintenance/refinement-guard.mjs';
           const r=JSON.parse(fs.readFileSync('vx-maintenance/request.json'));
-          if(!['check','repair','inspect','refine-preview','publish-refinement'].includes(r.mode))throw Error('Unknown mode');
-          if(r.mode==='publish-refinement')await verifyRefinementRun(r,process.env.GITHUB_REPOSITORY,process.env.GITHUB_TOKEN);
+          if(r.mode==='resume-content'&&(!Number.isSafeInteger(r.resumeRunId)||r.resumeRunId<=0))throw Error('Invalid resume receipt run');
+          if(!['check','repair','inspect','refine-preview','publish-refinement','resume-content'].includes(r.mode))throw Error('Unknown mode');
+          if(['publish-refinement','resume-content'].includes(r.mode))await verifyRefinementRun(r,process.env.GITHUB_REPOSITORY,process.env.GITHUB_TOKEN);
           if(r.mode==='refine-preview'&&r.refinementBaseRunId)await verifyRefinementRun({...r,refinementRunId:r.refinementBaseRunId,refinementCommitSha:r.refinementBaseCommitSha},process.env.GITHUB_REPOSITORY,process.env.GITHUB_TOKEN);
-          fs.appendFileSync(process.env.GITHUB_OUTPUT,'mode='+r.mode+'\nrefinementRunId='+(r.refinementRunId||'')+'\nrefinementBaseRunId='+(r.refinementBaseRunId||'')+'\n');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT,'mode='+r.mode+'\nrefinementRunId='+(r.refinementRunId||'')+'\nrefinementBaseRunId='+(r.refinementBaseRunId||'')+'\nresumeRunId='+(r.resumeRunId||'')+'\n');
           JS
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Verify maintenance safeguards
-        run: node --test vx-maintenance/repair.test.mjs vx-maintenance/refinement.test.mjs vx-maintenance/range-check.test.mjs
+        run: node --test vx-maintenance/repair.test.mjs vx-maintenance/refinement.test.mjs vx-maintenance/range-check.test.mjs vx-maintenance/resume.test.mjs
       - name: Inspect current VX source and staged privacy files
         if: steps.request.outputs.mode == 'inspect'
         env:
@@ -130,13 +131,24 @@ jobs:
           JS
           if ! command -v ffmpeg; then sudo apt-get update && sudo apt-get install -y ffmpeg; fi
           python3 vx-maintenance/tag-refinement-color.py /tmp/vx-privacy
+      - name: Retrieve published media receipt for content-only resume
+        if: steps.request.outputs.mode == 'resume-content'
+        uses: actions/download-artifact@v4
+        with:
+          name: vx-maintenance-receipt
+          path: vx-maintenance
+          run-id: ${{ steps.request.outputs.resumeRunId }}
+          github-token: ${{ github.token }}
+      - name: Verify already published media receipt
+        if: steps.request.outputs.mode == 'resume-content'
+        run: node vx-maintenance/validate-resume.mjs
       - name: Publish complete verified privacy media
         if: steps.request.outputs.mode == 'repair' || steps.request.outputs.mode == 'publish-refinement'
         env:
           VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
         run: node vx-maintenance/upload-media.mjs /tmp/vx-privacy
       - name: Switch verified content routes and correct copy
-        if: steps.request.outputs.mode == 'repair' || steps.request.outputs.mode == 'publish-refinement'
+        if: steps.request.outputs.mode == 'repair' || steps.request.outputs.mode == 'publish-refinement' || steps.request.outputs.mode == 'resume-content'
         env:
           VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
         run: |

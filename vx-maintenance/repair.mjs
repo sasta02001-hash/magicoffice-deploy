@@ -18,6 +18,7 @@ export const SOURCE_PATHS = Object.freeze([
   'package.json','vercel.json','build.mjs','catalog.mjs','templates/works.html',
   'content/works.json','content/media.json','content/site-routes.json',
   'content/pages/404.html','content/pages/activities/index.html','content/pages/services/index.html',
+  'content/pages/activities/operations.js','content/pages/activities/pride-2026.css','content/pages/activities/pride-2026.jpeg',
   ...['color','perm','bleach','triascend','trifusion','triform','trievolve'].map(s => `content/pages/project-${s}/index.html`),
 ]);
 const DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -167,22 +168,32 @@ async function deployment(api,id,project) {
   assert(info.projectId===project || info.project?.id===project,'Deployment belongs to a different project');
   return info;
 }
-async function getSourceText(api,deploymentId,entry) {
+async function getSourceBytes(api,deploymentId,entry) {
   if(entry.size!==null)assert(Number(entry.size)<=2_000_000,'Source text exceeds size limit');
   const file=await api(`/v8/deployments/${deploymentId}/files/${entry.uid}`);
   assert(typeof file==='string' || file.encoding==='base64' || file.encoding===undefined,'Unsupported source encoding');
   const data=typeof file==='string'?file:(file.data??file.content);
   assert(typeof data==='string'&&/^[A-Za-z0-9+/]*={0,2}$/.test(data),'Invalid base64 source file');
   const bytes=Buffer.from(data,'base64'); assert(bytes.length<=2_000_000,'Source text exceeds size limit');
+  return bytes;
+}
+async function getSourceText(api,deploymentId,entry) {
+  const bytes=await getSourceBytes(api,deploymentId,entry);
   const text=bytes.toString('utf8');assert(Buffer.from(text).equals(bytes),'Source is not UTF-8');return text;
+}
+export function encodeSourceFile(file,bytes) {
+  assert(SOURCE_PATHS.includes(file),'Unexpected source file for publication');
+  if(file==='content/pages/activities/pride-2026.jpeg')return {file,data:bytes.toString('base64'),encoding:'base64'};
+  const data=bytes.toString('utf8');assert(Buffer.from(data).equals(bytes),'Source is not UTF-8');
+  return {file,data,encoding:'utf-8'};
 }
 async function restoreContent(api,id,temp) {
   await deployment(api,id,PROJECT);
   const entries=validateSourceSet(flattenTree(await api(`/v6/deployments/${id}/files?base=src`)));
   const result=await parallel(entries,3,async entry=>{
-    const text=await getSourceText(api,id,entry);const dest=path.join(temp,entry.file);
-    await fs.mkdir(path.dirname(dest),{recursive:true});await fs.writeFile(dest,text,{mode:0o600});
-    return {...entry,bytes:Buffer.byteLength(text),sha256:hash(text)};
+    const bytes=await getSourceBytes(api,id,entry);encodeSourceFile(entry.file,bytes);const dest=path.join(temp,entry.file);
+    await fs.mkdir(path.dirname(dest),{recursive:true});await fs.writeFile(dest,bytes,{mode:0o600});
+    return {...entry,bytes:bytes.length,sha256:hash(bytes)};
   });return result;
 }
 async function publicBytes(url,{maxBytes=200_000_000,timeoutMs=90_000}={}) {
@@ -278,7 +289,7 @@ export async function run() {
   try {
     await save();
     const request=parseJson(await fs.readFile(path.join(DIR,'request.json'),'utf8'),'request');
-    assert(['inspect','repair','publish-refinement'].includes(request.mode),'Unknown publication operation');
+    assert(['inspect','repair','publish-refinement','resume-content'].includes(request.mode),'Unknown publication operation');
     receipt.mode=request.mode;
     const expected=request.expectedDeploymentId??BASELINE;
     assert(typeof expected==='string'&&/^dpl_[a-zA-Z0-9]+$/.test(expected),'Invalid baseline deployment ID');
@@ -321,7 +332,7 @@ export async function run() {
     for(const entry of entries.filter(e=>!['content/works.json','content/media.json','vercel.json'].includes(e.file)))assert(hash(await fs.readFile(path.join(temp,entry.file)))===entry.sha256,'Unrelated source file changed');
     const builtHealth=parseJson(await fs.readFile(path.join(temp,'public/health.json'),'utf8'),'built health');
     assert(builtHealth.count===32&&/^[a-f0-9]{64}$/.test(builtHealth.revision),'Invalid built health');receipt.expectedNewRevision=builtHealth.revision;
-    const files=await Promise.all(SOURCE_PATHS.map(async file=>({file,data:await fs.readFile(path.join(temp,file),'utf8'),encoding:'utf-8'})));
+    const files=await Promise.all(SOURCE_PATHS.map(async file=>encodeSourceFile(file,await fs.readFile(path.join(temp,file)))));
     assert(Buffer.byteLength(JSON.stringify(files))<1_000_000,'Content deployment payload too large');
     receipt.stage='concurrency-check';await save();
     await mainUnchanged();

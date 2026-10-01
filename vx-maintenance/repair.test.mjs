@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {flattenTree,validateSourceSet,SOURCE_PATHS,validatePrivacyManifest,PRIVACY_ORIGIN,repairMetadata,assertRewrites,assertConfigPreserved} from './repair.mjs';
+import {flattenTree,validateSourceSet,encodeSourceFile,SOURCE_PATHS,validatePrivacyManifest,PRIVACY_ORIGIN,repairMetadata,assertRewrites,assertConfigPreserved} from './repair.mjs';
 
 const assets=()=>Array.from({length:24},(_,i)=>({path:`assets/works/${String(i+1).padStart(3,'0')}/film.mp4`,bytes:1234,sha256:'a'.repeat(64)}));
 const inputs=()=>{
@@ -12,7 +12,7 @@ const rewrites=media=>Object.entries(media.works).flatMap(([id,w])=>Object.entri
 
 test('current source restoration rejects traversal, duplicate paths, symlinks and unapproved files',()=>{
   const entries=flattenTree([{name:'src',type:'directory',children:SOURCE_PATHS.map((file,i)=>({name:file,type:'file',uid:`uid${i}`}))}]);
-  assert.equal(validateSourceSet(entries).length,18);
+  assert.equal(validateSourceSet(entries).length,21);
   for(const name of ['../.env','/etc/passwd','foo\\bar','content/../.env'])assert.throws(()=>flattenTree([{name,type:'file',uid:'x'}]));
   assert.throws(()=>flattenTree([{name:'.env',type:'symlink',uid:'x'}]));
   assert.throws(()=>flattenTree([{name:'package.json',uid:'a'},{name:'package.json',uid:'b'}]));
@@ -43,4 +43,12 @@ test('nonmedia deployment settings are preserved while revision header may chang
   const before={version:2,redirects:[{source:'/old',destination:'/works'}],headers:[{source:'/(.*)',headers:[{key:'X-VX-Content-Revision',value:'old'},{key:'Cache-Control',value:'max-age=0'}]}],rewrites:[]};
   const after=structuredClone(before);after.headers[0].headers[0].value='new';assertConfigPreserved(before,after);
   after.redirects=[];assert.throws(()=>assertConfigPreserved(before,after));
+});
+
+test('current activity image is restored and published without UTF-8 corruption',()=>{
+  const jpeg=Buffer.from([255,216,255,224,0,16,74,70,73,70,0,255,217]);
+  const result=encodeSourceFile('content/pages/activities/pride-2026.jpeg',jpeg);
+  assert.equal(result.encoding,'base64');assert.deepEqual(Buffer.from(result.data,'base64'),jpeg);
+  assert.throws(()=>encodeSourceFile('catalog.mjs',jpeg));
+  assert.throws(()=>encodeSourceFile('.env',Buffer.from('private')));
 });

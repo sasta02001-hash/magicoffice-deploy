@@ -18,7 +18,7 @@ The live content health endpoint is `/health.json`; `/api/health` is not this si
 
 The repair path is explicit and guarded by current main/content/media deployment IDs and content revision. It reuses the original 24 tracked face masks, with additional mirror-edge corrections for works 005 and 007. It accepts only known source hashes. The renderer validates original resolution, frame count, frame rate, full decoding and copied audio.
 
-Media uploads use the platform file API, then one complete media deployment. The content publisher restores the exact current 18 source files, modifies only the 24 film overrides plus work 009's 榛果粽 → 榛果棕 typo, and preserves approved covers. It checks source paths, media hashes, catalogue/build behavior, concurrency, production aliases, final file hashes and all work pages.
+Media uploads use the platform file API, then one complete media deployment. The content publisher restores the exact current allowlisted source files, modifies only the 24 film overrides plus work 009's 榛果粽 → 榛果棕 typo, and preserves approved covers. It checks source paths, media hashes, catalogue/build behavior, concurrency, production aliases, final file hashes and all work pages.
 
 The existing Actions secret `MAGICOFFICE` is used only in publishing steps. Do not print credentials or commit original video files. Only sanitized receipts are artifacts. The root `vercel.json` disables unrelated automatic Git deployment.
 
@@ -41,3 +41,11 @@ The v2 preview widens the inward and feature-edge feather, antialiases the hair 
 When reliable features are available, v2 builds the feather outward from those features instead of retaining a full-opacity whole-face base. This keeps the forehead/cheek transition gradual. Preview jobs have their own cancelable concurrency group and no publishing credentials; production/check jobs retain the serialized maintenance group and are never automatically canceled.
 
 019's early profile tracking was also corrected during the second visual review. The previous overlapping, low-positioned tracker/manual region missed visible nose/mouth while drawing a block below the face. The new source-bound trajectory uses one reviewed region and a compact, feathered profile feature core when landmarks are unavailable; other 23 v2 outputs are reused byte-for-byte from the successful complete preview.
+
+## Focused edge repair and safe publication resume (2026-10-01)
+
+017/019 use graduated fine/medium/strong blur and a wider face transition, while preserving the existing hair protection. 017 additionally tapers at the processing-window boundary to remove a rectangular seam during its return turn. A focused preview can restore an expired base from the exact published privacy manifest revision, requiring the plan's approved hashes, original geometry and full decoding. Only selected original films are re-rendered; the other published files remain byte-for-byte identical, including color metadata.
+
+The current content source set has 21 files. The existing activity operations.js, pride-2026.css and pride-2026.jpeg are explicitly preserved; the JPEG is restored and published as binary/base64, never through UTF-8 conversion. Unknown source files still fail the allowlist guard.
+
+If media publication succeeds but content synchronization fails, use `resume-content` with the original successful refinement run/commit, the published receipt's run ID, exact media deployment ID/revision, and fresh main/content deployment IDs and content revision. The workflow retrieves and validates the published receipt and public manifest, then resumes only content synchronization and verification. It does not render or upload media again. Keep failed-stage receipts and new deployment IDs in history.
