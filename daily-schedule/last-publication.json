@@ -1,51 +1,51 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-09-30T01:04:26.331Z",
+  "requestedAt": "2026-10-01T01:00:51.743Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_BoZ5gW642EYRAuR8XNyx5u8bJYzC",
+  "previousDeployment": "dpl_BBYAMBWG5MMqKRtAfKoMgUSHvJiT",
   "diff": {
-    "added": 1,
+    "added": 22,
     "removed": 1,
-    "timeChanges": 0
+    "timeChanges": 1
   },
-  "verifiedAt": "2026-09-30T01:05:01.697Z",
-  "rows": 197,
-  "publicRows": 183,
-  "sourceHash": "465099b45bb667aff36c5d04d1d5347fb513342a0c7aa43e9d60cd27b91bce44",
-  "publicHash": "52f1e6b1e5c9b87fdaaaf4870a81f5e59f2ff7b875a2621edfda716ce2439492",
-  "fallbackSha256": "a3002d343605b6639ac1e9207def59f38ed057d296c26b714e70ef20a4f92ffb",
+  "verifiedAt": "2026-10-01T01:02:46.261Z",
+  "rows": 218,
+  "publicRows": 204,
+  "sourceHash": "50059439395a906fb9100ad6a0db9ed5e088a791a9438d46dcf39f28b787ece6",
+  "publicHash": "289ee483fad5050829aa337e552ee560e0516472afe307cac88ac3c923afa9eb",
+  "fallbackSha256": "ff461e9a39ece7e38eea3589243b483864b8693ca0cfa321fc9c528655b560a7",
   "tests": "passed",
-  "deploymentId": "dpl_BBYAMBWG5MMqKRtAfKoMgUSHvJiT",
-  "finishedAt": "2026-09-30T01:05:18.352Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36653376391",
-  "jobId": 109692323631,
-  "publisherCommit": "2ee938b4a52482996235d9f47b1d73713d8907ea",
+  "deploymentId": "dpl_F1ghQiVrB3yzsQtci978qLwZJMwj",
+  "finishedAt": "2026-10-01T01:03:07.411Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36799159379",
+  "jobId": 110169380843,
+  "publisherCommit": "d624024aada36ecff017bebf7b0b37e52e6df60d",
   "publisherTestsPassed": 8,
   "mainSiteModified": false,
   "secretName": "MAGICOFFICE",
   "receiptArtifact": {
-    "id": 11071027886,
-    "digest": "sha256:938e725a11939907d9ed7d7b58ae100e2cc92d6ceda0ed57280b30cf208846bf"
+    "id": 11134353500,
+    "digest": "sha256:39d1e4947883e8cdc2d58f4fe8ab4f876fdc76cb06a2c4a4957a464aa210f5de"
   },
   "siteHealth": {
     "httpStatus": 200,
     "status": "healthy"
   },
   "inspection": {
-    "originalGridVerifiedAt": "2026-09-30T01:04:26.331Z",
-    "runnerNativeCsvVerifiedAt": "2026-09-30T01:05:01.697Z",
+    "originalGridVerifiedAt": "2026-10-01T01:00:51.743Z",
+    "runnerNativeCsvVerifiedAt": "2026-10-01T01:02:46.261Z",
     "postPublishIndependentParity": true,
-    "fullRows": 197,
-    "publicRows": 183,
+    "fullRows": 218,
+    "publicRows": 204,
     "hekRows": 20,
     "currentWeekStart": "2026-09-28",
     "currentWeekEnd": "2026-10-04",
     "currentWeekComplete": true,
-    "currentWeekRows": 21,
+    "currentWeekRows": 25,
     "homepageHttpStatus": 200,
     "healthHttpStatus": 200,
     "health": "healthy",
-    "healthCheckedAt": "2026-09-30T01:06:25.888Z",
+    "healthCheckedAt": "2026-10-01T01:04:06.068Z",
     "scheduleState": "live",
     "scheduleStale": false,
     "scheduleSourceHttpStatus": 200,
@@ -63,16 +63,13 @@
       "2026-10"
     ],
     "octoberHeaderDays": 31,
-    "unpublishedDates": [
-      "2026-10-27"
-    ],
-    "blankVisibleSheets": [
-      "工作表13"
-    ],
+    "unpublishedDates": [],
+    "blankVisibleSheets": [],
     "notes": [
-      "工作表13 remains blank and was not included as a published month.",
+      "The formerly blank 工作表13 is no longer present in current spreadsheet metadata.",
+      "October 27 now has two valid published roster rows; no date is silently inferred as a closure.",
       "The schedule service and main API match fresh source rows after their respective personnel filtering.",
-      "One row was added and one row removed relative to the prior verified fallback; no time change was detected.",
+      "Relative to the prior verified fallback, 22 rows were added, one removed, and one time change was detected.",
       "The menu remains a valid non-stale 80-item published snapshot from the genuine 2026-09-29 source verification.",
       "The 12 night collection items were visibly rendered in the browser.",
       "The routine run updated only the schedule data service; the main site was not deployed."
