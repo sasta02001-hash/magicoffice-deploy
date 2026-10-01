@@ -1,19 +1,19 @@
 {
   "status": "verified",
-  "verifiedAt": "2026-10-01T00:57:36.362Z",
-  "browserCheckedAt": "2026-10-01T01:04:05.526Z",
-  "recordedAt": "2026-10-01T01:04:05.526Z",
+  "verifiedAt": "2026-10-01T15:03:10.299Z",
+  "browserCheckedAt": "2026-10-01T15:07:25.430Z",
+  "recordedAt": "2026-10-01T15:07:25.430Z",
   "site": "https://vxsagittarius.vercel.app",
-  "request": "Daily production health check; no repair requested.",
-  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36798724077",
-  "verificationCommit": "ef6813deb5525382c907ce9cf372df93cc007202",
-  "historyRecord": "vx-maintenance/history/2026-10-01-check.json",
+  "request": "User-authorized repair of hard privacy-mask edges, focused on works 017 and 019.",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36881140515",
+  "verificationCommit": "d487efebb7f4ad89926d459f0bd67c510271eeb5",
+  "historyRecord": "vx-maintenance/history/2026-10-01-edge-repair-verified.json",
   "mainDeploymentId": "dpl_2nTa9uDrjwvhaNHzyhTEKysZXjVa",
   "mainProductionUnchanged": true,
-  "contentDeploymentId": "dpl_Ht3hgnoWZSTy9BDpSxM5pPJ19Toq",
-  "contentRevision": "73bb5bf50e71dbe24cdddd9af67494ac3a5b76ae19559b85f6cb6a7eee7bbe76",
-  "privacyDeploymentId": "dpl_4k7WJp74ysc8Ut1uzPFkHc6kXdBu",
-  "privacyRevision": "16f708fbee71665a8ed747d373e4e94d3a36e14ac6dc7c89d250ac070f0444cb",
+  "contentDeploymentId": "dpl_HqFCCUK7JHndSPhgZBBFwyQjJzW2",
+  "contentRevision": "1aadb63fb2bb827c1545102e0da221851fec39b30d8574a8eab31ba2d6eae369",
+  "privacyDeploymentId": "dpl_CxZNk7rK4b5PYVKP126gwWBYZqMJ",
+  "privacyRevision": "cfa3bc597250a026df01ea5b75129024b0c9c1a837c2ce20443c5d02308cf1e5",
   "works": 32,
   "counts": {
     "pages": 47,
@@ -22,100 +22,218 @@
     "ranges": 2
   },
   "errors": [],
-  "fixes": [],
-  "browser": {
-    "checkedAt": "2026-10-01T01:04:05.526Z",
-    "device": "desktop browser",
-    "mainPagesChecked": [
-      "/",
-      "/works/",
-      "/services/",
-      "/activities/",
-      "/nebula/",
-      "/about/",
-      "/booking/",
-      "/library/"
+  "openObservations": [],
+  "fixes": [
+    {
+      "works": [
+        "017",
+        "019"
+      ],
+      "finding": "Hard face-mask transitions",
+      "change": "Graduated blur and broader smooth transition; preserve hair, original dimensions, 30fps, frame count and copied audio.",
+      "result": "Published and visually verified at the original production URLs."
+    },
+    {
+      "work": "017",
+      "finding": "Rectangular crop-window seam on return turn around 4.6s",
+      "change": "Taper the mask at processing-region edges.",
+      "result": "Affected consecutive frames rechecked; seam no longer visible."
+    },
+    {
+      "finding": "Maintenance restore rejected the current 21-source-file content deployment",
+      "change": "Explicitly preserve 3 existing activity resources and binary JPEG bytes; add guarded content-only resume.",
+      "result": "Six focused local tests and workflow safeguard tests passed; current activities and all unrelated source files preserved."
+    }
+  ],
+  "mediaPreservation": {
+    "changed": [
+      "017",
+      "019"
     ],
+    "unchangedPublishedFilms": 22,
+    "unchangedHashesConfirmed": true,
+    "metadataNormalization": "No re-encoding; identical decoded pixels and audio.",
+    "geometry": {
+      "017": {
+        "width": 590,
+        "height": 1068,
+        "frames": 243,
+        "fps": 30
+      },
+      "019": {
+        "width": 700,
+        "height": 1248,
+        "frames": 189,
+        "fps": 30
+      }
+    }
+  },
+  "browser": {
+    "device": "desktop cloud browser",
     "sampledWorks": [
-      "032",
-      "007",
-      "019",
-      "017"
+      "017",
+      "019"
     ],
     "sampleResults": [
       {
-        "id": "032",
-        "url": "https://vxsagittarius.vercel.app/works/032/",
-        "duration": 1.566667,
+        "id": "017",
+        "url": "https://vxsagittarius.vercel.app/works/017/",
+        "duration": 8.1,
+        "width": 590,
+        "height": 1068,
         "readyState": 4,
         "error": null,
+        "ended": true,
         "replayOperated": true,
-        "visual": "Sampled view did not expose readable facial identity features; surrounding hair retained."
-      },
-      {
-        "id": "007",
-        "url": "https://vxsagittarius.vercel.app/works/007/",
-        "duration": 8.9,
-        "readyState": 4,
-        "error": null,
-        "replayOperated": true,
-        "visual": "Playback and replay completed; sampled frames showed no readable facial identity features."
+        "visual": "Face features obscured; hair details retained; smoother forehead/hairline and face-edge transition."
       },
       {
         "id": "019",
         "url": "https://vxsagittarius.vercel.app/works/019/",
         "duration": 6.3,
+        "width": 700,
+        "height": 1248,
         "readyState": 4,
         "error": null,
-        "replayOperated": false,
-        "visual": "Facial features obscured and hair retained, but the blur boundary is visibly hard around the face."
-      },
-      {
-        "id": "017",
-        "url": "https://vxsagittarius.vercel.app/works/017/",
-        "duration": 8.1,
-        "readyState": 4,
-        "error": null,
-        "replayOperated": false,
-        "visual": "Facial features obscured and hair retained; the transition remains visibly perceptible around the forehead, hairline and face edge."
+        "ended": true,
+        "replayOperated": true,
+        "visual": "Profile face features obscured; hair detail retained and mask transition softened."
       }
     ],
-    "worksFlow": "Homepage works entry opened; load-more operated twice; 32 distinct work routes present.",
-    "bookingFlow": "Copy button changed to confirmed copied state; no real booking submitted.",
     "lineHref": "https://lin.ee/Roebk7r",
-    "lineDestination": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
-    "activity": "TRIARCH × PRIDE 2026 is marked '進行中' for 2026-10-01 through 2026-10-31.",
-    "javascript": "No VX-origin JavaScript error observed; browser-extension metadata errors were separated from site behavior.",
-    "screenshotsCaptured": true
+    "screenshots": [
+      "vx-maintenance/history/2026-10-01-017-edge-fixed.jpg",
+      "vx-maintenance/history/2026-10-01-019-edge-fixed.jpg"
+    ]
   },
-  "openObservations": [
+  "recoveredDuringVerification": [
     {
-      "severity": "visual-quality",
-      "work": "017",
-      "url": "https://vxsagittarius.vercel.app/works/017/",
-      "finding": "Privacy coverage is complete in the sampled view, but the blur transition remains visibly perceptible around the forehead/hairline and face edge and does not meet the requested natural transition.",
-      "changedThisRun": false
+      "item": "017 initial browser load failed",
+      "evidence": "Full bytes matched the published SHA-256 at both main and privacy origins. Reload on original URL recovered; playback completed twice with readyState 4 and error null. Root cause not established; no permanent site fault asserted."
     },
     {
-      "severity": "visual-quality",
-      "work": "019",
-      "url": "https://vxsagittarius.vercel.app/works/019/",
-      "finding": "Privacy coverage is complete and hair is retained, but the face blur boundary is visibly hard and not naturally feathered.",
-      "changedThisRun": "newly confirmed by rotating browser sample"
+      "item": "019 first bounded Range probe returned a larger range",
+      "evidence": "Second read of the original URL returned exactly 206 bytes 0-1023/2098919; browser playback completed."
     }
   ],
-  "runtime": {
-    "range001": "206 bytes 0-1023/1641423 on first attempt",
-    "range032": "206 bytes 0-1023/748873 on first attempt",
-    "runtimeErrorsLast24h": "none for main/content/privacy projects",
-    "warningErrorFatalLogsLast24h": "none for main and privacy; content 24h query timed out, then the same production deployment returned none when narrowed to 1h",
-    "buildLogs": "unverified because the Vercel build-log connector returned Tool get_deployment_build_logs not found"
-  },
   "limitations": [
-    "No physical iPhone/Android layout or mobile-menu test.",
-    "Visual privacy review sampled 032, 007, 019 and 017; not every frame of all 24 films.",
-    "Mirror-reflection coverage in 007 was not exhaustively checked frame by frame.",
-    "Private build logs were unavailable through the connector.",
-    "No real booking submission, map destination confirmation, or LINE message was sent."
+    "No physical iPhone/Android verification in this focused repair.",
+    "All masked frames of the first targeted candidate were reviewed in ordered sheets; the corrected 017 interval was reviewed again. Other 22 films were preserved by exact hash and were not visually re-reviewed in full.",
+    "Browser local-file video playback unavailable; production playback and replay verified after publishing.",
+    "Private runtime/build logs were not newly audited in this focused repair; Actions receipts and deployment verification were obtained."
+  ],
+  "runHistory": {
+    "firstPreview": 36878275750,
+    "finalPreview": 36879373331,
+    "mediaPublication": 36880070059,
+    "sourceInspection": 36880592060,
+    "contentResume": 36881140515
+  },
+  "sourceFilesPreserved": [
+    {
+      "file": "build.mjs",
+      "bytes": 2895,
+      "sha256": "2b08b80f97a2aeb9a52681aa5c7aaf7b93684d35d1846887f505bf322510ab00"
+    },
+    {
+      "file": "catalog.mjs",
+      "bytes": 9974,
+      "sha256": "497b3bab218c57eac819259a8a6329db7f9726d37ec8f242f11f51f7ccf5f0ff"
+    },
+    {
+      "file": "content/media.json",
+      "bytes": 28063,
+      "sha256": "7cb5ede1b9f8f0334d30766031b0056fa95f0f0b4f23d48f5b3d6ecdfcf625af"
+    },
+    {
+      "file": "content/pages/404.html",
+      "bytes": 8444,
+      "sha256": "ed0e7f149016ec8809eb984b0cf6474d72e02c7d7fdd4d229d1a767bf76efa78"
+    },
+    {
+      "file": "content/pages/activities/index.html",
+      "bytes": 13566,
+      "sha256": "4123aa020de896255e93b71d56fe7cecf825cc56ecf115a83c1769b4b613d92c"
+    },
+    {
+      "file": "content/pages/activities/operations.js",
+      "bytes": 5548,
+      "sha256": "f38fe3a9fcee2886343878c0450abb9c22143cfa1ed9f541e0362333bf835d2f"
+    },
+    {
+      "file": "content/pages/activities/pride-2026.css",
+      "bytes": 1067,
+      "sha256": "ce7164492dac7444a303c2c439cc9279a9feea5445e9c2882e83386397e4a065"
+    },
+    {
+      "file": "content/pages/activities/pride-2026.jpeg",
+      "bytes": 316853,
+      "sha256": "bcb5b6312cd39a9356c03192c4ca050f784e5eb4ac0b6dfda40db8baecd7c3be"
+    },
+    {
+      "file": "content/pages/project-bleach/index.html",
+      "bytes": 12228,
+      "sha256": "6a7bb8ba67b08e39c266523d9fdd9846f69ae503af9ddabd3798cf2f8cbf2193"
+    },
+    {
+      "file": "content/pages/project-color/index.html",
+      "bytes": 12218,
+      "sha256": "17525e37a173beba9a3c8ef336e75d0b4482dda769025768f5001a6b5826827b"
+    },
+    {
+      "file": "content/pages/project-perm/index.html",
+      "bytes": 12114,
+      "sha256": "61205980997cc62e8854cdfadd645cf42bf4fbd68725cb24db4d57aa93bc7248"
+    },
+    {
+      "file": "content/pages/project-triascend/index.html",
+      "bytes": 13255,
+      "sha256": "33906eb2e68725f4f69e687bb2b8768b242d5894bb7959d1cc9918000665a33f"
+    },
+    {
+      "file": "content/pages/project-trievolve/index.html",
+      "bytes": 13648,
+      "sha256": "bbbdeb33d88b2ad40d1e4fd687d742e6ddc96b762a26b359f2eddddc13bfee73"
+    },
+    {
+      "file": "content/pages/project-triform/index.html",
+      "bytes": 13297,
+      "sha256": "0c60aed8af3b082a9663d29fff30a7f1f1ac8ba23074b34e8d10196219426a48"
+    },
+    {
+      "file": "content/pages/project-trifusion/index.html",
+      "bytes": 13358,
+      "sha256": "163f12c872750120e44bcf358b62cc6f205cf3f39d0e90fa733ee91bc57af1ed"
+    },
+    {
+      "file": "content/pages/services/index.html",
+      "bytes": 16385,
+      "sha256": "1ab02526715223a10d09c60f7a3379d1dff881b03da666d68da9ab2ce830eb65"
+    },
+    {
+      "file": "content/site-routes.json",
+      "bytes": 710,
+      "sha256": "78f2ace3e03cf19c1c3529866710475bd634bb858fd7f320c786640d823ba4f8"
+    },
+    {
+      "file": "content/works.json",
+      "bytes": 14942,
+      "sha256": "78d7594fa0727151b34ec0ec22d198bd6d7ff6b6bd308a38c724003a1104ec5f"
+    },
+    {
+      "file": "package.json",
+      "bytes": 181,
+      "sha256": "0a38e9de11de49de032bc3c514b391ffaaaf8dfd6f788136fcfbc8fc5524d52d"
+    },
+    {
+      "file": "templates/works.html",
+      "bytes": 20576,
+      "sha256": "1d6e876b965638a831c827fc2044c97376ab67e08334136a5455ce4a662c977c"
+    },
+    {
+      "file": "vercel.json",
+      "bytes": 21732,
+      "sha256": "cad1f01b072c4723503b2db45ada5005788dd1703c985bcc807e844699769ddd"
+    }
   ]
 }
