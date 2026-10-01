@@ -1,14 +1,14 @@
 {
   "mode": "refine-preview",
-  "requestedAt": "2026-10-01T14:40:30.605Z",
+  "requestedAt": "2026-10-01T14:49:01.773Z",
   "refinementIds": [
-    "017",
-    "019"
+    "017"
   ],
-  "refinementProductionBaseRevision": "16f708fbee71665a8ed747d373e4e94d3a36e14ac6dc7c89d250ac070f0444cb",
   "expectedDeploymentId": "dpl_Ht3hgnoWZSTy9BDpSxM5pPJ19Toq",
   "expectedMainDeploymentId": "dpl_2nTa9uDrjwvhaNHzyhTEKysZXjVa",
   "expectedPrivacyDeploymentId": "dpl_4k7WJp74ysc8Ut1uzPFkHc6kXdBu",
   "expectedRevision": "73bb5bf50e71dbe24cdddd9af67494ac3a5b76ae19559b85f6cb6a7eee7bbe76",
-  "reason": "User-authorized focused graduated blur edge refinement for 017/019; retain other 22 reviewed published files byte-for-byte."
+  "reason": "Remove truncated processing-region seam at 017 return turn; retain the reviewed 019 and other 22 artifact bytes.",
+  "refinementBaseRunId": 36878275750,
+  "refinementBaseCommitSha": "14cd321917ab695b9d38d3180bd0b3dfd72f76f2"
 }

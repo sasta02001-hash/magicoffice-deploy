@@ -256,6 +256,19 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
             alpha=np.clip(alpha*gate,0,1)
             alpha[labels==17]=0
             alpha=np.maximum(alpha,verified_alpha)
+            # The crop boundary is not a face contour. Fade to the original
+            # within the outer context so truncated regions cannot draw a
+            # rectangular seam (017's return turn around frame 138).
+            yy,xx=np.mgrid[0:d-b,0:c-a]
+            margin=max(6,size*.12)
+            distances=[]
+            if a>0:distances.append(xx)
+            if b>0:distances.append(yy)
+            if c<w:distances.append(c-a-1-xx)
+            if d<h:distances.append(d-b-1-yy)
+            if distances:
+                edge=np.clip(np.minimum.reduce(distances)/margin,0,1)
+                alpha*=edge*edge*(3-2*edge)
         sigma=max(12,size*.11) if edge_refinement else max(9,size*.18)
         patch=frame[b:d,a:c].astype(np.float32)
         dims=(max(16,(c-a)//4),max(16,(d-b)//4))
