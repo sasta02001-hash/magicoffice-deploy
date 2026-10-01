@@ -111,7 +111,7 @@ def boxes_for(plan,wid,index):
             result.append([x0*width,y0*height,(x1-x0)*width,(y1-y0)*height])
     return result
 
-def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priority=False,profile_core=False):
+def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priority=False,profile_core=False,edge_refinement=False):
     h,w=frame.shape[:2]
     output=frame.astype(np.float32)
     combined=np.zeros((h,w),np.float32)
@@ -241,7 +241,22 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
             ramp=np.clip(1-distance/max(6,size*.22),0,1)
             gate=np.maximum(hair_gate,np.exp(-.5*(distance/max(2,size*.045))**2))
             alpha=np.maximum(alpha,ramp*ramp*(3-2*ramp)*gate)
-        sigma=max(9,size*.18)
+        if edge_refinement:
+            # A broad, inward hair-protected transition plus progressively
+            # stronger blur avoids a flat opaque cutout at the face contour.
+            # Features remain fully protected; feathering affects skin only.
+            verified_alpha=alpha.copy()
+            if core.any():
+                outside=cv2.distanceTransform((~core).astype(np.uint8),cv2.DIST_L2,5)
+                t=np.clip(1-outside/max(8,size*.38),0,1)
+                alpha=t*t*t*(t*(t*6-15)+10)
+            skin_distance=cv2.distanceTransform((labels!=17).astype(np.uint8),cv2.DIST_L2,5)
+            gate=np.clip(skin_distance/max(3,size*.10),0,1)
+            gate=gate*gate*(3-2*gate)
+            alpha=np.clip(alpha*gate,0,1)
+            alpha[labels==17]=0
+            alpha=np.maximum(alpha,verified_alpha)
+        sigma=max(12,size*.11) if edge_refinement else max(9,size*.18)
         patch=frame[b:d,a:c].astype(np.float32)
         dims=(max(16,(c-a)//4),max(16,(d-b)//4))
         # Normalized convolution excludes hair colors instead of
@@ -256,9 +271,22 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
         normalized=color/np.maximum(bwgt[...,None],1e-5)
         ordinary=cv2.GaussianBlur(cv2.resize(patch,dims,interpolation=cv2.INTER_AREA),(0,0),sigma/4)
         normalized=np.where((bwgt>.02)[...,None],normalized,ordinary)
-        blend=0.0 if eyes_only else .70
+        blend=0.0 if eyes_only else (.35 if edge_refinement else .70)
         texture=normalized*blend+ordinary*(1-blend)
         soft=cv2.resize(texture,(c-a,d-b),interpolation=cv2.INTER_CUBIC).astype(np.float32)
+        if edge_refinement:
+            # Keep local light and shadow at the boundary. Strong texture is
+            # applied only in the feature core; medium and fine scales meet
+            # it continuously without dragging one flat color to the hairline.
+            fine=cv2.GaussianBlur(patch,(0,0),max(1.5,size*.025))
+            medium=cv2.GaussianBlur(patch,(0,0),max(4,size*.075))
+            q=np.clip(alpha,0,1)
+            strong_mix=np.clip((q-.40)/.60,0,1)
+            strong_mix=strong_mix*strong_mix*(3-2*strong_mix)
+            medium_mix=np.clip(q/.65,0,1)
+            medium_mix=medium_mix*medium_mix*(3-2*medium_mix)
+            local=fine*(1-medium_mix[...,None])+medium*medium_mix[...,None]
+            soft=local*(1-strong_mix[...,None])+soft*strong_mix[...,None]
         # Blend overlapping blur textures continuously before applying the union
         # mask. Picking a different texture at alpha ties created hard color
         # seams across the face despite individually feathered masks.
@@ -286,7 +314,7 @@ def main():
     if hashlib.sha256(source.read_bytes()).hexdigest()!=plan['works'][a.id]['source']['originalSha256']:raise RuntimeError('Source hash mismatch')
     cap=cv2.VideoCapture(str(source));cap.set(cv2.CAP_PROP_POS_FRAMES,a.frame);ok,frame=cap.read();cap.release()
     if not ok:raise RuntimeError('Frame missing')
-    parser=Parser(a.model);t=time.time();boxes=boxes_for(plan,a.id,a.frame);out,alpha,labels,audit=apply(frame,boxes,parser,eyes_only=a.id=='032',hair_priority=a.id=='017',profile_core=a.id=='019' and a.frame>=36)
+    parser=Parser(a.model);t=time.time();boxes=boxes_for(plan,a.id,a.frame);out,alpha,labels,audit=apply(frame,boxes,parser,eyes_only=a.id=='032',hair_priority=a.id=='017',profile_core=a.id=='019' and a.frame>=36,edge_refinement=a.id in ['017','019'])
     oldboxes=[]
     for x,y,w,h in boxes:oldboxes.append([x-.12*w,y-.06*h,w*1.24,h*1.15])
     old=legacy.blur(frame.copy(),oldboxes)
@@ -300,3 +328,4 @@ def main():
     print(json.dumps({'id':a.id,'frame':a.frame,'seconds':time.time()-t,'regions':audit}))
 
 if __name__=='__main__':main()
+

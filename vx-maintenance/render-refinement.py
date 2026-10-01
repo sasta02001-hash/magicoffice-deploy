@@ -37,7 +37,7 @@ def render(wid,plan,source_root,output,parser):
             if not ok:break
             boxes=r.boxes_for(plan,wid,index)
             if boxes:
-                result,alpha,labels,regions=r.apply(frame,boxes,parser,eyes_only=wid=='032',temporal_support=wid=='026',hair_priority=wid=='017',profile_core=wid=='019' and index>=36)
+                result,alpha,labels,regions=r.apply(frame,boxes,parser,eyes_only=wid=='032',temporal_support=wid=='026',hair_priority=wid=='017',profile_core=wid=='019' and index>=36,edge_refinement=wid in ['017','019'])
                 proofs.append({'frame':index,'regions':regions})
                 if index%15==0 or index==expected['frames']-1:
                     thumb=cv2.resize(result,(216,384))
@@ -86,3 +86,4 @@ def main():
     (a.output/'privacy-validation.json').write_text(json.dumps(assets,indent=2)+'\n')
 
 if __name__=='__main__':main()
+

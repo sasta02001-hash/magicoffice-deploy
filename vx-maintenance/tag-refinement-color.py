@@ -27,6 +27,15 @@ for asset in manifest['assets']:
     before=probe(p);video=next(s for s in before if s['codec_type']=='video');assert video['codec_name']=='h264'
     rgb_before=payload(p,'0:v:0',True)
     audio_before=[payload(p,f'0:a:{i}') for i,s in enumerate(s for s in before if s['codec_type']=='audio')]
+    if asset.get('restoredFromProduction'):
+        # A previously published file already has these reviewed color tags.
+        # Preserve its bytes exactly instead of remuxing unrelated media.
+        assert video.get('color_space')=='smpte170m'
+        assert video.get('color_primaries')=='bt709' and video.get('color_transfer')=='bt709'
+        proofs.append({'id':asset['id'],'inputSha256':asset['sha256'],'outputSha256':asset['sha256'],
+            'decodedPixelHashBefore':rgb_before,'decodedPixelHashAfter':rgb_before,
+            'audioUnchanged':True,'geometryUnchanged':True,'unchangedPublishedBytes':True})
+        continue
     temp=p.with_name('color-tagging.mp4')
     subprocess.run(['ffmpeg','-v','error','-y','-i',str(p),'-map','0','-c','copy',
         '-bsf:v','h264_metadata=matrix_coefficients=6:colour_primaries=1:transfer_characteristics=1:video_full_range_flag=0',
@@ -44,3 +53,4 @@ manifest['colorNormalization']=proofs
 manifest_path.write_text(json.dumps(manifest,indent=2)+'\n')
 Path('vx-maintenance/refinement-normalization.json').write_text(json.dumps(proofs,indent=2)+'\n')
 print(json.dumps({'normalized':len(proofs),'decodedPixelsIdentical':True,'reencoded':False,'audioUnchanged':True}))
+

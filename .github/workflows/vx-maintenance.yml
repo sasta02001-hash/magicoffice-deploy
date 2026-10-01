@@ -96,10 +96,13 @@ jobs:
           import json,subprocess
           request=json.load(open('vx-maintenance/request.json'))
           ids=request.get('refinementIds',[])
-          if ids and not request.get('refinementBaseRunId'):raise ValueError('Partial refinement requires a verified complete base')
+          production_base=request.get('refinementProductionBaseRevision')
+          if production_base:
+              subprocess.run(['python','vx-maintenance/restore-reviewed.py','--output','/tmp/vx-refined-media','--revision',production_base],check=True)
+          if ids and not (request.get('refinementBaseRunId') or production_base):raise ValueError('Partial refinement requires a verified complete base')
           args=['--ids',*ids] if ids else []
           subprocess.run(['python','vx-maintenance/download-originals.py',*args],check=True)
-          subprocess.run(['python','vx-maintenance/render-refinement.py','--source','work/sources','--output','/tmp/vx-refined-media','--model','work/models/resnet18.onnx',*args,*(['--keep-existing'] if request.get('refinementBaseRunId') else [])],check=True)
+          subprocess.run(['python','vx-maintenance/render-refinement.py','--source','work/sources','--output','/tmp/vx-refined-media','--model','work/models/resnet18.onnx',*args,*(['--keep-existing'] if request.get('refinementBaseRunId') or production_base else [])],check=True)
           PY
       - name: Save refinement for visual review without publishing
         if: steps.request.outputs.mode == 'refine-preview'
@@ -156,3 +159,4 @@ jobs:
             vx-maintenance/refinement-normalization.json
           if-no-files-found: warn
           retention-days: 30
+
