@@ -1,13 +1,13 @@
 {
   "status": "verified",
-  "verifiedAt": "2026-09-30T01:03:36.487Z",
-  "browserCheckedAt": "2026-09-30T01:09:03.658Z",
-  "recordedAt": "2026-09-30T01:09:03.658Z",
+  "verifiedAt": "2026-10-01T00:57:36.362Z",
+  "browserCheckedAt": "2026-10-01T01:04:05.526Z",
+  "recordedAt": "2026-10-01T01:04:05.526Z",
   "site": "https://vxsagittarius.vercel.app",
   "request": "Daily production health check; no repair requested.",
-  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36653255257",
-  "verificationCommit": "b4eb5cdf245d19835d26003d1d4d28ac53e19679",
-  "historyRecord": "vx-maintenance/history/2026-09-30-check.json",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/36798724077",
+  "verificationCommit": "ef6813deb5525382c907ce9cf372df93cc007202",
+  "historyRecord": "vx-maintenance/history/2026-10-01-check.json",
   "mainDeploymentId": "dpl_2nTa9uDrjwvhaNHzyhTEKysZXjVa",
   "mainProductionUnchanged": true,
   "contentDeploymentId": "dpl_Ht3hgnoWZSTy9BDpSxM5pPJ19Toq",
@@ -24,7 +24,7 @@
   "errors": [],
   "fixes": [],
   "browser": {
-    "checkedAt": "2026-09-30T01:09:03.658Z",
+    "checkedAt": "2026-10-01T01:04:05.526Z",
     "device": "desktop browser",
     "mainPagesChecked": [
       "/",
@@ -38,7 +38,8 @@
     ],
     "sampledWorks": [
       "032",
-      "005",
+      "007",
+      "019",
       "017"
     ],
     "sampleResults": [
@@ -49,16 +50,25 @@
         "readyState": 4,
         "error": null,
         "replayOperated": true,
-        "visual": "Exposed eyes and face obscured above the physical mask; surrounding hair retained in sampled view."
+        "visual": "Sampled view did not expose readable facial identity features; surrounding hair retained."
       },
       {
-        "id": "005",
-        "url": "https://vxsagittarius.vercel.app/works/005/",
-        "duration": 9.766667,
+        "id": "007",
+        "url": "https://vxsagittarius.vercel.app/works/007/",
+        "duration": 8.9,
         "readyState": 4,
         "error": null,
         "replayOperated": true,
-        "visual": "Mirror-area privacy coverage present in sampled view; hair retained."
+        "visual": "Playback and replay completed; sampled frames showed no readable facial identity features."
+      },
+      {
+        "id": "019",
+        "url": "https://vxsagittarius.vercel.app/works/019/",
+        "duration": 6.3,
+        "readyState": 4,
+        "error": null,
+        "replayOperated": false,
+        "visual": "Facial features obscured and hair retained, but the blur boundary is visibly hard around the face."
       },
       {
         "id": "017",
@@ -66,17 +76,16 @@
         "duration": 8.1,
         "readyState": 4,
         "error": null,
-        "replayOperated": true,
-        "visual": "Facial features obscured and hair retained; transition remains visibly perceptible around the forehead/hairline and face edge."
+        "replayOperated": false,
+        "visual": "Facial features obscured and hair retained; the transition remains visibly perceptible around the forehead, hairline and face edge."
       }
     ],
     "worksFlow": "Homepage works entry opened; load-more operated twice; 32 distinct work routes present.",
     "bookingFlow": "Copy button changed to confirmed copied state; no real booking submitted.",
     "lineHref": "https://lin.ee/Roebk7r",
     "lineDestination": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
-    "activity": "TRIARCH × PRIDE 2026 shows 2026-10-01 through 2026-10-31 and '即將開始', consistent on 2026-09-30.",
-    "canonical": "Direct /works/032/ load exposed the correct work canonical.",
-    "javascript": "No VX site JavaScript error observed; browser-extension metadata errors were separated from site behavior.",
+    "activity": "TRIARCH × PRIDE 2026 is marked '進行中' for 2026-10-01 through 2026-10-31.",
+    "javascript": "No VX-origin JavaScript error observed; browser-extension metadata errors were separated from site behavior.",
     "screenshotsCaptured": true
   },
   "openObservations": [
@@ -84,20 +93,28 @@
       "severity": "visual-quality",
       "work": "017",
       "url": "https://vxsagittarius.vercel.app/works/017/",
-      "finding": "Privacy coverage is complete in the sampled view, but the blur transition remains visibly perceptible around the forehead/hairline and face edge and still does not fully meet the requested natural transition.",
+      "finding": "Privacy coverage is complete in the sampled view, but the blur transition remains visibly perceptible around the forehead/hairline and face edge and does not meet the requested natural transition.",
       "changedThisRun": false
+    },
+    {
+      "severity": "visual-quality",
+      "work": "019",
+      "url": "https://vxsagittarius.vercel.app/works/019/",
+      "finding": "Privacy coverage is complete and hair is retained, but the face blur boundary is visibly hard and not naturally feathered.",
+      "changedThisRun": "newly confirmed by rotating browser sample"
     }
   ],
   "runtime": {
     "range001": "206 bytes 0-1023/1641423 on first attempt",
     "range032": "206 bytes 0-1023/748873 on first attempt",
     "runtimeErrorsLast24h": "none for main/content/privacy projects",
-    "warningErrorFatalLogsLast24h": "none for the three production deployments",
+    "warningErrorFatalLogsLast24h": "none for main and privacy; content 24h query timed out, then the same production deployment returned none when narrowed to 1h",
     "buildLogs": "unverified because the Vercel build-log connector returned Tool get_deployment_build_logs not found"
   },
   "limitations": [
     "No physical iPhone/Android layout or mobile-menu test.",
-    "Visual privacy review sampled 032, 005, and 017; not every frame of all 24 films.",
+    "Visual privacy review sampled 032, 007, 019 and 017; not every frame of all 24 films.",
+    "Mirror-reflection coverage in 007 was not exhaustively checked frame by frame.",
     "Private build logs were unavailable through the connector.",
     "No real booking submission, map destination confirmation, or LINE message was sent."
   ]
