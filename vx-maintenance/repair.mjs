@@ -19,6 +19,9 @@ export const SOURCE_PATHS = Object.freeze([
   'content/works.json','content/media.json','content/site-routes.json',
   'content/pages/404.html','content/pages/activities/index.html','content/pages/services/index.html',
   'content/pages/activities/operations.js','content/pages/activities/pride-2026.css','content/pages/activities/pride-2026.jpeg',
+  'content/pages/activities/opening-2026.css',
+  'content/pages/activities/opening-2026-desktop.webp',
+  'content/pages/activities/opening-2026-mobile.webp',
   ...['color','perm','bleach','triascend','trifusion','triform','trievolve'].map(s => `content/pages/project-${s}/index.html`),
 ]);
 const DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -183,7 +186,7 @@ async function getSourceText(api,deploymentId,entry) {
 }
 export function encodeSourceFile(file,bytes) {
   assert(SOURCE_PATHS.includes(file),'Unexpected source file for publication');
-  if(file==='content/pages/activities/pride-2026.jpeg')return {file,data:bytes.toString('base64'),encoding:'base64'};
+  if(['content/pages/activities/pride-2026.jpeg','content/pages/activities/opening-2026-desktop.webp','content/pages/activities/opening-2026-mobile.webp'].includes(file))return {file,data:bytes.toString('base64'),encoding:'base64'};
   const data=bytes.toString('utf8');assert(Buffer.from(data).equals(bytes),'Source is not UTF-8');
   return {file,data,encoding:'utf-8'};
 }

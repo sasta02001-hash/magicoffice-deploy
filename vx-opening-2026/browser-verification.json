@@ -1,0 +1,41 @@
+{
+  "results": [
+    {
+      "label": "desktop",
+      "status": 200,
+      "title": "星域開幕慶｜VX SAGITTARIUS",
+      "cards": 1,
+      "id": "starfield-opening-2026",
+      "overflow": false,
+      "img": {
+        "src": "http://127.0.0.1:8123/activities/opening-2026-desktop.webp",
+        "width": 1920
+      },
+      "oldPoster": false,
+      "line": 2,
+      "details": true,
+      "filters": true,
+      "home": true,
+      "errors": []
+    },
+    {
+      "label": "mobile",
+      "status": 200,
+      "title": "星域開幕慶｜VX SAGITTARIUS",
+      "cards": 1,
+      "id": "starfield-opening-2026",
+      "overflow": false,
+      "img": {
+        "src": "http://127.0.0.1:8123/activities/opening-2026-mobile.webp",
+        "width": 1080
+      },
+      "oldPoster": false,
+      "line": 2,
+      "details": true,
+      "filters": true,
+      "home": true,
+      "errors": []
+    }
+  ],
+  "noJavaScript": true
+}

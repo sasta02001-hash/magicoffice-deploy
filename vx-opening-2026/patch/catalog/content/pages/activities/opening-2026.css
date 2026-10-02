@@ -1,0 +1,21 @@
+/* Starfield opening campaign; preserve complete artwork proportions. */
+.vx-opening-picture{display:block;width:100%;overflow:hidden;background:#1a100c}
+.vx-opening-picture img{display:block;width:100%;height:auto;object-fit:contain}
+.vx-opening-home{margin:0 0 24px}.vx-opening-home img{max-height:none}
+.vx-opening-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:28px}
+.vx-opening-heading h2{margin:14px 0 6px;font-size:clamp(30px,4vw,46px)}
+.vx-opening-heading .vx-meta{margin:0}.vx-opening-tagline{font:400 24px/1.6 var(--serif);letter-spacing:.12em}
+.vx-opening-intro{display:flex;justify-content:space-between;align-items:center;gap:30px;padding:26px 0 32px}
+.vx-opening-intro p{font-size:16px;margin:0;max-width:700px}.vx-opening-intro .btn{flex-shrink:0}
+.vx-opening-benefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-block:1px solid #c4b08a55}
+.vx-opening-benefits section{padding:28px 25px}.vx-opening-benefits section+section{border-left:1px solid #c4b08a33}
+.vx-opening-benefits span{font-size:12px;letter-spacing:.08em;color:#d4bd93}
+.vx-opening h3{font:400 24px/1.5 var(--serif);margin:12px 0}
+.vx-opening-benefits p{font-size:15px;margin:0}.vx-opening strong{color:#e8d1a9;font-weight:500}
+.vx-opening-details{padding-top:44px}.vx-opening-detail{border-bottom:1px solid #c4b08a33}
+.vx-opening-detail summary{padding:20px 0;font-size:17px;line-height:1.6}
+.vx-opening-detail-copy{white-space:pre-line;color:#cbc4b8;line-height:2;font-size:16px;padding:0 0 26px;max-width:850px}
+.vx-opening-location{padding:38px 0 8px;display:flex;justify-content:space-between;align-items:center;gap:25px}
+.vx-opening-location .button-row{flex-shrink:0;flex-wrap:wrap}.vx-opening-location p{margin:6px 0}
+@media(max-width:900px){.vx-opening-intro,.vx-opening-location{align-items:flex-start;flex-direction:column}.vx-opening-benefits section{padding:22px 15px}.vx-opening h3{font-size:22px}}
+@media(max-width:720px){.vx-opening-heading{display:block;margin-bottom:20px}.vx-opening-tagline{display:none}.vx-opening-benefits{grid-template-columns:1fr}.vx-opening-benefits section{padding:23px 0}.vx-opening-benefits section+section{border-left:0;border-top:1px solid #c4b08a33}.vx-opening-intro{gap:18px;padding:22px 0 28px}.vx-opening-intro .btn{width:100%}.vx-opening-details{padding-top:28px}.vx-opening-detail summary{font-size:16px}.vx-opening-detail-copy{font-size:15px}.vx-opening-location .button-row{width:100%;margin-top:0}.vx-opening-location .btn{flex:1;padding-inline:12px}.vx-opening-location p{overflow-wrap:anywhere}.vx-opening-home{max-width:420px}}

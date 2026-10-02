@@ -1,5 +1,13 @@
 # VX website maintenance
 
+## Starfield Opening campaign (2026-10-02)
+
+`vx-opening-2026/` replaces the standalone PRIDE homepage promotion and activity card with the approved 星域開幕慶 campaign. The existing October PRIDE service packages remain within the new campaign's stackable-offer details. Opening dates are October–December; The Money accrual is October only and issuance is November.
+
+The publisher restores the exact current main and content deployments, checks source hashes, applies only the homepage/activity overlay, and preserves all works, media metadata, routes and security settings. Desktop/mobile WebP artwork is transferred once. After publication, future content maintenance preserves the three explicitly added opening assets and their binary encoding. The previous PRIDE artwork remains unlinked for historical source preservation.
+
+Do not rerun a completed publication against its old baseline. Read the receipt and current production IDs first. Browser verification covers desktop/mobile picture selection, activity filters, expandable terms, LINE links, homepage replacement and the no-JavaScript fallback.
+
 This branch maintains https://vxsagittarius.vercel.app/ without rebuilding its main site or transporting unchanged media.
 
 ## Daily check
