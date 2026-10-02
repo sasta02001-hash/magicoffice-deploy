@@ -1,9 +1,9 @@
 {
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "expectedDeploymentId": "dpl_BBYAMBWG5MMqKRtAfKoMgUSHvJiT",
-  "sourceVerifiedAt": "2026-10-01T01:00:51.743Z",
-  "sourceHash": "50059439395a906fb9100ad6a0db9ed5e088a791a9438d46dcf39f28b787ece6",
-  "publicHash": "289ee483fad5050829aa337e552ee560e0516472afe307cac88ac3c923afa9eb",
+  "expectedDeploymentId": "dpl_F1ghQiVrB3yzsQtci978qLwZJMwj",
+  "sourceVerifiedAt": "2026-10-02T01:05:14.139Z",
+  "sourceHash": "baae9e840335a660cb5d40e013729aff460bfaa79fecd0999c305641e8e19636",
+  "publicHash": "e65b636614decc65faf0f2a863ef96f6e6a1665a4e84d8c9caff7eb2625a221d",
   "publishedMonths": [
     "2026-09",
     "2026-10"
