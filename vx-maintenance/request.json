@@ -1,14 +1,4 @@
 {
-  "mode": "resume-content",
-  "requestedAt": "2026-10-01T15:02:11.874Z",
-  "expectedDeploymentId": "dpl_Ht3hgnoWZSTy9BDpSxM5pPJ19Toq",
-  "expectedMainDeploymentId": "dpl_2nTa9uDrjwvhaNHzyhTEKysZXjVa",
-  "expectedPrivacyDeploymentId": "dpl_CxZNk7rK4b5PYVKP126gwWBYZqMJ",
-  "expectedRevision": "73bb5bf50e71dbe24cdddd9af67494ac3a5b76ae19559b85f6cb6a7eee7bbe76",
-  "reason": "Resume only content metadata synchronization after source-count guard blocked current 21-file production source. Preserve 3 existing activity resources byte-for-byte. Never reupload the already published reviewed privacy media.",
-  "refinementRunId": 36879373331,
-  "refinementCommitSha": "e34d9a38169eee54765288208db690609cefb4c5",
-  "approvedPrivacyRevision": "ce39cfb717a409b6a094f935c86ae3740c1c209980586d6b539d19b0e8eae7ab",
-  "resumeRunId": 36880070059,
-  "expectedPrivacyRevision": "cfa3bc597250a026df01ea5b75129024b0c9c1a837c2ce20443c5d02308cf1e5"
+  "mode": "check",
+  "requestedAt": "2026-10-02T01:00:18.783Z"
 }
