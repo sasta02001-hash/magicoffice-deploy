@@ -1,0 +1,70 @@
+{
+  "status": "verified",
+  "stage": "complete",
+  "startedAt": "2026-10-02T12:30:30.129Z",
+  "deployments": {
+    "catalog": {
+      "id": "dpl_DPQRVwwA5Q7mKYCxkVftYoKtNbru",
+      "url": "vxsagittarius-content-h81bwg2mh-magicoffice.vercel.app",
+      "baseline": "dpl_HqFCCUK7JHndSPhgZBBFwyQjJzW2"
+    },
+    "main": {
+      "id": "dpl_2KRTNGzuVPY7RY2LzGXhQSR5vUgo",
+      "url": "vxsagittarius-hpycx7cua-magicoffice.vercel.app",
+      "baseline": "dpl_2nTa9uDrjwvhaNHzyhTEKysZXjVa"
+    }
+  },
+  "originalPosterSha256": "55cf306ac9bd5eafada77754863d8182b676ce67faec5efbdb6258ee5d369eb6",
+  "worksPreserved": 32,
+  "mediaRoutesPreserved": 128,
+  "dateBoundariesPassed": true,
+  "revision": "31e101f5db3e560ade48ccf9321ccb1c92c6f65c6e77926e1f1c0a71f88850fd",
+  "publicChecks": 8,
+  "finishedAt": "2026-10-02T12:31:04.974Z",
+  "sourceCommit": "58e873e875c707a318b26807a66a7391169d5dd8",
+  "workflowRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37007077600",
+  "maintenanceRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37007077462",
+  "maintenanceStatus": "success",
+  "browserVerification": {
+    "results": [
+      {
+        "label": "desktop",
+        "status": 200,
+        "title": "星域開幕慶｜VX SAGITTARIUS",
+        "cards": 1,
+        "id": "starfield-opening-2026",
+        "overflow": false,
+        "img": {
+          "src": "https://vxsagittarius.vercel.app/activities/opening-2026-desktop.webp",
+          "width": 1920
+        },
+        "oldPoster": false,
+        "line": 2,
+        "details": true,
+        "filters": true,
+        "home": true,
+        "errors": []
+      },
+      {
+        "label": "mobile",
+        "status": 200,
+        "title": "星域開幕慶｜VX SAGITTARIUS",
+        "cards": 1,
+        "id": "starfield-opening-2026",
+        "overflow": false,
+        "img": {
+          "src": "https://vxsagittarius.vercel.app/activities/opening-2026-mobile.webp",
+          "width": 1080
+        },
+        "oldPoster": false,
+        "line": 2,
+        "details": true,
+        "filters": true,
+        "home": true,
+        "errors": []
+      }
+    ],
+    "noJavaScript": true,
+    "note": "Desktop 1440px and mobile 390px, automated Chromium viewport checks; no physical-device claim. HTTPS verified separately with system trust."
+  }
+}
