@@ -201,7 +201,7 @@ async function run() {
     validateRows(fresh.rows);verifyLive(fresh,fresh.rows,contentHash);
     const publicRows=filteredRows(fresh.rows,request.excludedNames);
     const actualPublicHash=contentHash(publicRows);
-    assert.equal(fresh.sourceHash,request.sourceHash,`SOURCE_CHANGED_SINCE_NATIVE_GRID_CHECK:source=${fresh.sourceHash};public=${actualPublicHash}`);
+    assert.equal(fresh.sourceHash,request.sourceHash,`HASH_DRIFT:${fresh.sourceHash}:${actualPublicHash}`);
     assert.equal(fresh.meta.currentWeekComplete,true,'CURRENT_WEEK_INCOMPLETE');
     assert.equal(actualPublicHash,request.publicHash,'PUBLIC_PERSONNEL_MISMATCH');
     const menuBefore=await publicJsonResponse(MAIN+'/api/menu');
