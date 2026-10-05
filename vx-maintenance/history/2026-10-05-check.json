@@ -1,0 +1,166 @@
+{
+  "status": "verified",
+  "checkedAt": "2026-10-05T01:14:45Z",
+  "site": "https://vxsagittarius.vercel.app/",
+  "requestMode": "check",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37250099836",
+  "verificationCommit": "7f1f879d33707af718ba04101308be5c6edc7eca",
+  "artifact": {
+    "name": "vx-maintenance-receipt",
+    "id": "11320657253",
+    "result": "passed",
+    "startedAt": "2026-10-05T01:06:49.153Z",
+    "finishedAt": "2026-10-05T01:06:53.438Z"
+  },
+  "production": {
+    "mainDeploymentId": "dpl_2KRTNGzuVPY7RY2LzGXhQSR5vUgo",
+    "contentDeploymentId": "dpl_DPQRVwwA5Q7mKYCxkVftYoKtNbru",
+    "privacyDeploymentId": "dpl_CxZNk7rK4b5PYVKP126gwWBYZqMJ",
+    "contentRevision": "31e101f5db3e560ade48ccf9321ccb1c92c6f65c6e77926e1f1c0a71f88850fd",
+    "privacyRevision": "cfa3bc597250a026df01ea5b75129024b0c9c1a837c2ce20443c5d02308cf1e5",
+    "works": 32,
+    "counts": {
+      "pages": 47,
+      "assets": 128,
+      "privacyRoutes": 24,
+      "ranges": 2
+    }
+  },
+  "automated": {
+    "result": "passed",
+    "errors": [],
+    "rangeSamples": [
+      {
+        "id": "001",
+        "status": 206,
+        "contentRange": "bytes 0-1023/1641423"
+      },
+      {
+        "id": "032",
+        "status": 206,
+        "contentRange": "bytes 0-1023/748873"
+      }
+    ]
+  },
+  "browser": {
+    "device": "desktop cloud browser",
+    "routesChecked": [
+      "/",
+      "/works/",
+      "/services/",
+      "/activities/",
+      "/nebula/",
+      "/about/",
+      "/booking/",
+      "/library/",
+      "/project-color/",
+      "/project-perm/",
+      "/project-bleach/",
+      "/project-triascend/",
+      "/project-trifusion/",
+      "/project-triform/",
+      "/project-trievolve/"
+    ],
+    "operations": [
+      "Homepage work entry",
+      "Load-more to 32 works",
+      "Work playback and replay",
+      "Activity details and status filters",
+      "Booking checklist copy",
+      "LINE official-account redirect"
+    ],
+    "sampledWorks": [
+      {
+        "id": "032",
+        "duration": 1.566667,
+        "width": 700,
+        "height": 1280,
+        "readyState": 4,
+        "error": null,
+        "ended": true,
+        "replayOperated": true,
+        "visual": "Masked face/eye area remained obscured and surrounding hair was retained."
+      },
+      {
+        "id": "007",
+        "duration": 8.9,
+        "width": 720,
+        "height": 1280,
+        "readyState": 4,
+        "error": null,
+        "ended": true,
+        "visual": "Sampled playback showed no readable facial identity; full-frame mirror review not repeated."
+      },
+      {
+        "id": "005",
+        "duration": 9.766667,
+        "width": 720,
+        "height": 1280,
+        "readyState": 4,
+        "error": null,
+        "visual": "Sampled playback showed no obvious readable facial identity; full-frame review not repeated."
+      },
+      {
+        "id": "017",
+        "duration": 8.1,
+        "width": 590,
+        "height": 1068,
+        "readyState": 4,
+        "error": null,
+        "visual": "Face features obscured; hair retained; prior rectangular seam and hard transition were not visible in the sampled interval."
+      },
+      {
+        "id": "019",
+        "duration": 6.3,
+        "width": 700,
+        "height": 1248,
+        "readyState": 4,
+        "error": null,
+        "visual": "Profile features obscured; hair retained; blur transition appeared soft without the prior hard edge."
+      }
+    ],
+    "lineInput": "https://lin.ee/Roebk7r",
+    "lineResolved": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
+    "javascriptErrors": [],
+    "toolErrors": [
+      "Chrome extension metadata errors only; no page-origin error recorded."
+    ]
+  },
+  "activities": {
+    "title": "星域開幕慶",
+    "status": "進行中",
+    "visiblePeriod": "2026年10月－12月",
+    "filterAndDisclosureOperated": true
+  },
+  "deploymentsAndLogs": {
+    "main": "READY",
+    "content": "READY",
+    "privacy": "READY",
+    "runtimeErrorsLast24h": {
+      "main": 0,
+      "content": 0,
+      "privacy": 0
+    },
+    "buildResult": "completed",
+    "buildWarnings": [
+      "package.json uses node >=22 and may auto-upgrade on a future Node major; no current production impact observed."
+    ]
+  },
+  "comparison": {
+    "newIssues": [],
+    "ongoingIssues": [],
+    "recovered": [
+      "Works 017 and 019: earlier hard-edged face-mask transitions remain resolved in current production samples.",
+      "Work 009 continues to display the corrected wording 榛果棕."
+    ],
+    "repairsPerformedThisRun": []
+  },
+  "unresolved": [],
+  "unverified": [
+    "Physical iPhone/Android layout and real mobile menu operation.",
+    "Visual privacy masking across every frame of all 24 masked films; this run used automated route/version checks and rotating browser samples.",
+    "Full mirror/reflection sequence review for works 005 and 007.",
+    "Actual booking submission and LINE message delivery.",
+    "Private logs outside the connected Vercel project scopes."
+  ]
+}
