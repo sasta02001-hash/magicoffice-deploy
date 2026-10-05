@@ -1,4 +1,10 @@
 {
-  "mode": "check",
-  "requestedAt": "2026-10-05T01:06:32.969Z"
+  "mode": "refine-preview",
+  "requestedAt": "2026-10-05T04:08:31.416Z",
+  "refinementBaseRunId": 36879373331,
+  "refinementBaseCommitSha": "e34d9a38169eee54765288208db690609cefb4c5",
+  "refinementIds": [
+    "005"
+  ],
+  "reason": "Confirmed exposed clipped nose/mouth in left mirror around 2–5 seconds; narrowly scoped hair-protected feature core, preview only."
 }

@@ -111,7 +111,7 @@ def boxes_for(plan,wid,index):
             result.append([x0*width,y0*height,(x1-x0)*width,(y1-y0)*height])
     return result
 
-def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priority=False,profile_core=False,edge_refinement=False):
+def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priority=False,profile_core=False,edge_refinement=False,clipped_mirror_core=False):
     h,w=frame.shape[:2]
     output=frame.astype(np.float32)
     combined=np.zeros((h,w),np.float32)
@@ -208,6 +208,16 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
                 edge=np.clip(hair_distance/max(2,min(bw,bh)*.035),0,1)
                 t*=edge
             alpha=np.maximum(alpha,t*t*(3-2*t))
+        # 005's reflected face crosses the left frame edge. The parser can
+        # see skin but miss its clipped nose/mouth, so its ordinary fallback
+        # is not activated. Keep a reviewed compact feature core, bound to
+        # that existing left-edge region and the hash-pinned 005 source.
+        clipped_core=np.zeros(alpha.shape,np.uint8)
+        if clipped_mirror_core and x<0 and 0<x+bw<w*.1:
+            center=(int(x+bw*.44-a),int(y+bh*.57-b))
+            axes=(max(2,int(bw*.22)),max(2,int(bh*.20)))
+            cv2.ellipse(clipped_core,center,axes,0,0,360,1,-1)
+            clipped_core[labels==17]=0
         fallback=False
         if alpha.max()<.1:
             # Tiny/partially clipped mirror faces can defeat semantic parsing.
@@ -227,7 +237,7 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
         # follows wispy edge pixels instead of binary jagged cutouts.
         hair_depth=cv2.distanceTransform(hair,cv2.DIST_L2,5)
         hair_gate[hair_depth>max(2,size*.035)]=0
-        core=((landmark_mask>0)|features)&(labels!=17)
+        core=((landmark_mask>0)|features|(clipped_core>0))&(labels!=17)
         smooth=cv2.GaussianBlur(alpha,(0,0),max(1,size*.045))
         if core.any():
             outside=cv2.distanceTransform((~core).astype(np.uint8),cv2.DIST_L2,5)
@@ -307,7 +317,7 @@ def apply(frame,boxes,parser,eyes_only=False,temporal_support=False,hair_priorit
         texture_weight[b:d,a:c]+=alpha
         combined[b:d,a:c]=np.maximum(combined[b:d,a:c],alpha)
         full_labels[b:d,a:c]=np.maximum(full_labels[b:d,a:c],labels)
-        audit.append({'box':[round(v,1) for v in box],'alphaPixels':int((alpha>.01).sum()),'featurePixels':int(features.sum()),'featuresFullyMasked':bool(np.all(alpha[features]>.99)) if features.any() else None,'hairMaskedPixels':int(((alpha>.01)&(labels==17)).sum()),'landmarkFeaturePixels':int(landmark_mask.sum()),'fallback':fallback,'reviewedProfileCore':used_profile_core})
+        audit.append({'box':[round(v,1) for v in box],'alphaPixels':int((alpha>.01).sum()),'featurePixels':int(features.sum()),'featuresFullyMasked':bool(np.all(alpha[features]>.99)) if features.any() else None,'hairMaskedPixels':int(((alpha>.01)&(labels==17)).sum()),'landmarkFeaturePixels':int(landmark_mask.sum()),'fallback':fallback,'reviewedProfileCore':used_profile_core,'reviewedClippedMirrorCorePixels':int(clipped_core.sum())})
     if temporal_support:
         faces=observed or propagated
         parser.previous_faces=[]
@@ -327,7 +337,7 @@ def main():
     if hashlib.sha256(source.read_bytes()).hexdigest()!=plan['works'][a.id]['source']['originalSha256']:raise RuntimeError('Source hash mismatch')
     cap=cv2.VideoCapture(str(source));cap.set(cv2.CAP_PROP_POS_FRAMES,a.frame);ok,frame=cap.read();cap.release()
     if not ok:raise RuntimeError('Frame missing')
-    parser=Parser(a.model);t=time.time();boxes=boxes_for(plan,a.id,a.frame);out,alpha,labels,audit=apply(frame,boxes,parser,eyes_only=a.id=='032',hair_priority=a.id=='017',profile_core=a.id=='019' and a.frame>=36,edge_refinement=a.id in ['017','019'])
+    parser=Parser(a.model);t=time.time();boxes=boxes_for(plan,a.id,a.frame);out,alpha,labels,audit=apply(frame,boxes,parser,eyes_only=a.id=='032',hair_priority=a.id=='017',profile_core=a.id=='019' and a.frame>=36,edge_refinement=a.id in ['017','019'],clipped_mirror_core=a.id=='005')
     oldboxes=[]
     for x,y,w,h in boxes:oldboxes.append([x-.12*w,y-.06*h,w*1.24,h*1.15])
     old=legacy.blur(frame.copy(),oldboxes)

@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-05T04:08:31.420Z",
+  "status": "visual-privacy-issue-confirmed",
+  "work": "005",
+  "page": "https://vxsagittarius.vercel.app/works/005/",
+  "source": "https://vxsagittarius.vercel.app/assets/works/005/film.mp4",
+  "sha256": "6878d20084a07ae93d68908b0ce6d75f20559b75952f257831d736fada4ca5f2",
+  "confirmation": "Two independent media downloads from original production URL were byte-identical; 4fps full-duration sampling and original-resolution frames at 2.75 and 4 seconds show exposed partial nose/mouth at left mirror edge.",
+  "previousAutomatedCheckRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37250099836",
+  "automatedCoverageRemainsValid": true,
+  "visualPrivacyPassed": false,
+  "scope": "005 and 007 dense mirror review; 007 had no obvious exposed features in 4fps samples, not a full-frame certification.",
+  "limitations": [
+    "Mobile browser/device viewport unavailable; source review is not mobile UI verification.",
+    "All-film frame-by-frame privacy inspection remains unverified."
+  ]
+}
