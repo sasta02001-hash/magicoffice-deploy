@@ -9,7 +9,13 @@ const origin=process.argv[2]||'http://127.0.0.1:4173';
 const browser=await chromium.launch({headless:true,executablePath:process.env.VX_BROWSER_EXECUTABLE||undefined,args:['--no-sandbox']});
 const result={origin,checkedAt:new Date().toISOString(),viewports:[],errors:[],failedRequests:[],filters:{}};
 try{
- const page=await browser.newPage({viewport:{width:1440,height:1000},deviceScaleFactor:1});
+ const page=await browser.newPage({viewport:{width:1440,height:1000},deviceScaleFactor:1,reducedMotion:'reduce'});
+ const capture=async(selector,name)=>{
+  await page.evaluate(sel=>{const el=document.querySelector(sel);scrollTo({top:el.getBoundingClientRect().top+scrollY-100,behavior:'instant'});},selector);
+  await page.evaluate(()=>document.fonts.ready);
+  await page.waitForTimeout(700);
+  await page.screenshot({path:'/tmp/vx-activities-'+name+'.png',animations:'disabled'});
+ };
  page.on('pageerror',e=>result.errors.push(e.message));
  page.on('response',r=>{if(r.status()>=400&&r.url().startsWith(origin))result.failedRequests.push({url:r.url(),status:r.status()});});
  await page.goto(origin+'/activities/',{waitUntil:'networkidle',timeout:90000});
@@ -18,9 +24,9 @@ try{
  await page.locator('[data-reward-points] img').evaluateAll(images=>images.forEach(i=>i.loading='eager'));
  await page.waitForFunction(()=>Array.from(document.querySelectorAll('[data-reward-points] img')).every(i=>i.complete&&i.naturalWidth>0),{},{timeout:60000});
  assert.equal(await page.locator('h1').innerText(),'最新活動');
- await page.screenshot({path:'/tmp/vx-activities-desktop-top.png'});
- await page.locator('#rewards-2026').scrollIntoViewIfNeeded();
- await page.screenshot({path:'/tmp/vx-activities-desktop-rewards.png'});
+ await capture('body','desktop-top');
+ await capture('#rewards-2026','desktop-rewards');
+ await capture('.vx-reward-grid','desktop-gifts');
  for(const [score,count] of [['10',2],['15',2],['25',2],['35',2],['40',3],['50',4],['all',15]]){
   await page.locator(`[data-reward-filter="${score}"]`).click();
   assert.equal(await page.locator('[data-reward-points]:visible').count(),count);
@@ -36,10 +42,10 @@ try{
   result.viewports.push(dims);
  }
  await page.setViewportSize({width:390,height:844});
- await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:'/tmp/vx-activities-mobile-top.png'});
- await page.locator('#rewards-2026').scrollIntoViewIfNeeded();await page.screenshot({path:'/tmp/vx-activities-mobile-rules.png'});
+ await capture('body','mobile-top');
+ await capture('#rewards-2026','mobile-rules');
  await page.locator('[data-reward-filter="35"]').click();
- await page.locator('.vx-reward-grid').scrollIntoViewIfNeeded();await page.screenshot({path:'/tmp/vx-activities-mobile-gifts.png'});
+ await capture('.vx-reward-grid','mobile-gifts');
  await page.locator('[data-reward-filter="all"]').click();
  for(const anchor of ['online-booking','the-money','pride-2026','rewards-2026']){
   await page.locator(`.vx-activity-index a[href="#${anchor}"]`).click();assert(page.url().endsWith('#'+anchor));

@@ -22,7 +22,10 @@ jobs:
       - name: Verify activity rules and preservation safeguards
         run: node --test vx-activities-20261005/activities.test.mjs vx-maintenance/repair.test.mjs vx-maintenance/refinement.test.mjs vx-maintenance/range-check.test.mjs vx-maintenance/resume.test.mjs
       - name: Install isolated browser verification dependency
-        run: npm install --prefix "$RUNNER_TEMP/vx-browser" --no-audit --no-fund playwright@1.58.2
+        run: |
+          npm install --prefix "$RUNNER_TEMP/vx-browser" --no-audit --no-fund playwright@1.58.2
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
       - name: Verify responsive layout and complete activity journey
         run: |
           export CODEX_PRIMARY_RUNTIME_NODE_MODULES="$RUNNER_TEMP/vx-browser/node_modules"
