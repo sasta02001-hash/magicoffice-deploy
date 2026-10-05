@@ -1,1 +1,1 @@
-{"publish":false,"reason":"Render and inspect review screenshots before publishing to the existing official site."}
+{"publish":true,"reason":"Approved desktop and mobile review after passing all responsive, rewards-filter and navigation tests; publish to the existing VX official projects only.","reviewRun":37270714193,"reviewedAt":"2026-10-05"}
