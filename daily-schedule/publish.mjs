@@ -14,6 +14,31 @@ export const FILES=['package.json','config.json','fallback.json','vercel.json','
 const FIELDS=['date','name','startTime','endTime','shift','costume','event','sort','updatedAt'];
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+export function summarizeRows(rows,weekStart,weekEnd) {
+  const start=Date.parse(weekStart+'T00:00:00Z');
+  assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(weekStart)&&Number.isFinite(start),'INVALID_WEEK_START');
+  assert.equal(new Date(start).toISOString().slice(0,10),weekStart,'INVALID_WEEK_START');
+  const dates=Array.from({length:7},(_,i)=>new Date(start+i*86400000).toISOString().slice(0,10));
+  assert.equal(dates[6],weekEnd,'INVALID_WEEK_END');
+  const counts=items=>{
+    const closureRows=items.filter(r=>r.event==='公休'&&!r.name).length;
+    const timedRows=items.filter(r=>r.startTime&&r.endTime).length;
+    const undeterminedRows=items.filter(r=>r.name&&r.shift==='未定'&&!r.startTime&&!r.endTime).length;
+    assert.equal(timedRows+undeterminedRows+closureRows,items.length,'UNCLASSIFIED_PUBLIC_ROW');
+    return {rows:items.length,timedRows,undeterminedRows,closureRows};
+  };
+  const daily=dates.map(date=>({date,...counts(rows.filter(r=>r.date===date))}));
+  const current=counts(rows.filter(r=>r.date>=weekStart&&r.date<=weekEnd));
+  assert.equal(daily.reduce((sum,day)=>sum+day.rows,0),current.rows,'WEEK_TOTAL_MISMATCH');
+  const missingDates=daily.filter(day=>day.rows===0).map(day=>day.date);
+  return {...counts(rows),hekRows:rows.filter(r=>/^(碧瑠|へきる)$/.test(r.name)).length,
+    week:{start:weekStart,end:weekEnd,...current,complete:missingDates.length===0,missingDates,daily}};
+}
+export function verifyCoverage(meta,summary) {
+  assert.equal(meta.currentWeekRowCount,summary.week.rows,'WEEK_METADATA_COUNT_MISMATCH');
+  assert.equal(meta.currentWeekComplete,summary.week.complete,'WEEK_METADATA_COMPLETENESS_MISMATCH');
+  assert.deepEqual(meta.currentWeekMissingDates,summary.week.missingDates,'WEEK_METADATA_DATES_MISMATCH');
+}
 export function rosterDiff(before,after) {
   const grouped=rows=>{const m=new Map();for(const r of rows){const k=JSON.stringify([r.date,r.name]);const a=m.get(k)||[];a.push(JSON.stringify([r.startTime,r.endTime]));m.set(k,a);}return m;};
   const old=grouped(before), next=grouped(after);let added=0,removed=0,timeChanges=0;
@@ -89,6 +114,7 @@ export function verifyLive(body,expectedRows,contentHash) {
   const clean=rows=>rows.map(({updatedAt,...r})=>r);
   assert.deepEqual(clean(body.rows),clean(expectedRows),'ROW_MISMATCH');
   assert.equal(body.sourceHash,contentHash(expectedRows),'HASH_MISMATCH');
+  if(body.meta)verifyCoverage(body.meta,summarizeRows(body.rows,body.meta.currentWeekStart,body.meta.currentWeekEnd));
 }
 async function publicJson(url) {
   const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(30000)});
@@ -216,6 +242,8 @@ async function run() {
     receipt.diff=rosterDiff(fallback.rows,fresh.rows);
     receipt.verifiedAt=fresh.sourceVerifiedAt;receipt.rows=fresh.rows.length;receipt.publicRows=publicRows.length;
     receipt.sourceHash=fresh.sourceHash;receipt.publicHash=contentHash(publicRows);
+    receipt.summary={source:summarizeRows(fresh.rows,fresh.meta.currentWeekStart,fresh.meta.currentWeekEnd),
+      public:summarizeRows(publicRows,fresh.meta.currentWeekStart,fresh.meta.currentWeekEnd)};
     receipt.fallbackSha256=hash(text);receipt.tests='passed';
     const deployed=await api('/v13/deployments','POST',{name:'magicoffice-data',project:PROJECT,target:'production',files,projectSettings:{framework:null,buildCommand:'npm test',installCommand:'echo No external dependencies',outputDirectory:'public',nodeVersion:'24.x'},meta:{scheduleRequest:request.sourceVerifiedAt,githubRunId:process.env.GITHUB_RUN_ID||'manual'}});
     assert.ok(deployed.id,'NO_DEPLOYMENT_ID');receipt.deploymentId=deployed.id;receipt.status='building';

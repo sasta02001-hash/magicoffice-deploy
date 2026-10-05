@@ -45,7 +45,7 @@
     "currentWeekStart": "2026-10-05",
     "currentWeekEnd": "2026-10-11",
     "currentWeekComplete": true,
-    "currentWeekRows": 20,
+    "currentWeekRows": 23,
     "homepageHttpStatus": 200,
     "healthHttpStatus": 200,
     "health": "healthy",
@@ -78,6 +78,205 @@
       "The menu remains a valid non-stale 80-item published snapshot from the genuine 2026-09-29 source verification.",
       "The 12 night collection items were visibly rendered in the browser.",
       "The routine run updated only the schedule data service; the main site was not deployed."
+    ],
+    "currentWeekAttendanceRows": 22,
+    "currentWeekClosureRows": 1,
+    "currentWeekDaily": [
+      {
+        "date": "2026-10-05",
+        "rows": 3,
+        "timedRows": 2,
+        "undeterminedRows": 1,
+        "closureRows": 0
+      },
+      {
+        "date": "2026-10-06",
+        "rows": 2,
+        "timedRows": 1,
+        "undeterminedRows": 1,
+        "closureRows": 0
+      },
+      {
+        "date": "2026-10-07",
+        "rows": 5,
+        "timedRows": 4,
+        "undeterminedRows": 1,
+        "closureRows": 0
+      },
+      {
+        "date": "2026-10-08",
+        "rows": 2,
+        "timedRows": 1,
+        "undeterminedRows": 1,
+        "closureRows": 0
+      },
+      {
+        "date": "2026-10-09",
+        "rows": 5,
+        "timedRows": 4,
+        "undeterminedRows": 1,
+        "closureRows": 0
+      },
+      {
+        "date": "2026-10-10",
+        "rows": 1,
+        "timedRows": 0,
+        "undeterminedRows": 0,
+        "closureRows": 1
+      },
+      {
+        "date": "2026-10-11",
+        "rows": 5,
+        "timedRows": 4,
+        "undeterminedRows": 1,
+        "closureRows": 0
+      }
     ]
+  },
+  "summary": {
+    "source": {
+      "rows": 219,
+      "timedRows": 167,
+      "undeterminedRows": 46,
+      "closureRows": 6,
+      "hekRows": 20,
+      "week": {
+        "start": "2026-10-05",
+        "end": "2026-10-11",
+        "rows": 23,
+        "timedRows": 16,
+        "undeterminedRows": 6,
+        "closureRows": 1,
+        "complete": true,
+        "missingDates": [],
+        "daily": [
+          {
+            "date": "2026-10-05",
+            "rows": 3,
+            "timedRows": 2,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          },
+          {
+            "date": "2026-10-06",
+            "rows": 2,
+            "timedRows": 1,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          },
+          {
+            "date": "2026-10-07",
+            "rows": 5,
+            "timedRows": 4,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          },
+          {
+            "date": "2026-10-08",
+            "rows": 2,
+            "timedRows": 1,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          },
+          {
+            "date": "2026-10-09",
+            "rows": 5,
+            "timedRows": 4,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          },
+          {
+            "date": "2026-10-10",
+            "rows": 1,
+            "timedRows": 0,
+            "undeterminedRows": 0,
+            "closureRows": 1
+          },
+          {
+            "date": "2026-10-11",
+            "rows": 5,
+            "timedRows": 4,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          }
+        ]
+      }
+    },
+    "public": {
+      "rows": 205,
+      "timedRows": 153,
+      "undeterminedRows": 46,
+      "closureRows": 6,
+      "hekRows": 20,
+      "week": {
+        "start": "2026-10-05",
+        "end": "2026-10-11",
+        "rows": 23,
+        "timedRows": 16,
+        "undeterminedRows": 6,
+        "closureRows": 1,
+        "complete": true,
+        "missingDates": [],
+        "daily": [
+          {
+            "date": "2026-10-05",
+            "rows": 3,
+            "timedRows": 2,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          },
+          {
+            "date": "2026-10-06",
+            "rows": 2,
+            "timedRows": 1,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          },
+          {
+            "date": "2026-10-07",
+            "rows": 5,
+            "timedRows": 4,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          },
+          {
+            "date": "2026-10-08",
+            "rows": 2,
+            "timedRows": 1,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          },
+          {
+            "date": "2026-10-09",
+            "rows": 5,
+            "timedRows": 4,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          },
+          {
+            "date": "2026-10-10",
+            "rows": 1,
+            "timedRows": 0,
+            "undeterminedRows": 0,
+            "closureRows": 1
+          },
+          {
+            "date": "2026-10-11",
+            "rows": 5,
+            "timedRows": 4,
+            "undeterminedRows": 1,
+            "closureRows": 0
+          }
+        ]
+      }
+    }
+  },
+  "reportingCorrection": {
+    "correctedAt": "2026-10-05T04:04:03.814Z",
+    "originalGridRecheckedAt": "2026-10-05T03:58:04.429Z",
+    "field": "inspection.currentWeekRows",
+    "previousValue": 20,
+    "correctValue": 23,
+    "reason": "Manual weekly count did not match seven daily totals. Current parser and both live APIs verify 23 rows, including one closure. Published roster contents and hashes were already correct."
   }
 }
