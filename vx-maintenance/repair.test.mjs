@@ -12,7 +12,7 @@ const rewrites=media=>Object.entries(media.works).flatMap(([id,w])=>Object.entri
 
 test('current source restoration rejects traversal, duplicate paths, symlinks and unapproved files',()=>{
   const entries=flattenTree([{name:'src',type:'directory',children:SOURCE_PATHS.map((file,i)=>({name:file,type:'file',uid:`uid${i}`}))}]);
-  assert.equal(validateSourceSet(entries).length,24);
+  assert.equal(validateSourceSet(entries).length,39);
   for(const name of ['../.env','/etc/passwd','foo\\bar','content/../.env'])assert.throws(()=>flattenTree([{name,type:'file',uid:'x'}]));
   assert.throws(()=>flattenTree([{name:'.env',type:'symlink',uid:'x'}]));
   assert.throws(()=>flattenTree([{name:'package.json',uid:'a'},{name:'package.json',uid:'b'}]));

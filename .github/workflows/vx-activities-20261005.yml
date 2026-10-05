@@ -1,0 +1,57 @@
+name: Publish VX Activities and Points Rewards
+on:
+  push:
+    branches: [vx-maintenance]
+    paths: ['vx-activities-20261005/**', '.github/workflows/vx-activities-20261005.yml']
+permissions:
+  contents: read
+concurrency:
+  group: vx-website-maintenance
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify activity rules and preservation safeguards
+        run: node --test vx-activities-20261005/activities.test.mjs vx-maintenance/repair.test.mjs vx-maintenance/refinement.test.mjs vx-maintenance/range-check.test.mjs vx-maintenance/resume.test.mjs
+      - name: Install isolated browser verification dependency
+        run: npm install --prefix "$RUNNER_TEMP/vx-browser" --no-audit --no-fund playwright@1.58.2
+      - name: Verify responsive layout and complete activity journey
+        run: |
+          export CODEX_PRIMARY_RUNTIME_NODE_MODULES="$RUNNER_TEMP/vx-browser/node_modules"
+          export VX_BROWSER_EXECUTABLE="$(command -v google-chrome)"
+          test -x "$VX_BROWSER_EXECUTABLE"
+          node vx-activities-20261005/preview.mjs > "$RUNNER_TEMP/vx-preview.log" 2>&1 &
+          node vx-activities-20261005/verify-browser.mjs
+      - name: Read release decision
+        id: release
+        run: node -e 'const fs=require("fs");fs.appendFileSync(process.env.GITHUB_OUTPUT,"publish="+JSON.parse(fs.readFileSync("vx-activities-20261005/release.json")).publish+"\n")'
+      - name: Publish approved activity collection to existing VX projects
+        if: steps.release.outputs.publish == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node vx-activities-20261005/publish.mjs
+      - name: Verify live official activity experience
+        if: steps.release.outputs.publish == 'true'
+        run: |
+          export CODEX_PRIMARY_RUNTIME_NODE_MODULES="$RUNNER_TEMP/vx-browser/node_modules"
+          export VX_BROWSER_EXECUTABLE="$(command -v google-chrome)"
+          node vx-activities-20261005/verify-browser.mjs https://vxsagittarius.vercel.app
+      - name: Save publication receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vx-activities-20261005-receipt
+          path: |
+            vx-activities-20261005/*verification.json
+            vx-activities-20261005/publication-receipt.json
+            /tmp/vx-activities-*.png
+          if-no-files-found: warn
+          retention-days: 30

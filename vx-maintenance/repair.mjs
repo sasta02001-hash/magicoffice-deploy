@@ -22,6 +22,7 @@ export const SOURCE_PATHS = Object.freeze([
   'content/pages/activities/opening-2026.css',
   'content/pages/activities/opening-2026-desktop.webp',
   'content/pages/activities/opening-2026-mobile.webp',
+  ...['flower-light','pen','coffee-cups','whisky-glasses','fruit-wine','lifestyle-set','airpods-5','portrait','instax','dior','medicube','philips','dyson','electrolux','disney'].map(s => `content/pages/activities/rewards-2026/${s}.webp`),
   ...['color','perm','bleach','triascend','trifusion','triform','trievolve'].map(s => `content/pages/project-${s}/index.html`),
 ]);
 const DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -186,7 +187,7 @@ async function getSourceText(api,deploymentId,entry) {
 }
 export function encodeSourceFile(file,bytes) {
   assert(SOURCE_PATHS.includes(file),'Unexpected source file for publication');
-  if(['content/pages/activities/pride-2026.jpeg','content/pages/activities/opening-2026-desktop.webp','content/pages/activities/opening-2026-mobile.webp'].includes(file))return {file,data:bytes.toString('base64'),encoding:'base64'};
+  if(/\.(jpeg|webp)$/.test(file))return {file,data:bytes.toString('base64'),encoding:'base64'};
   const data=bytes.toString('utf8');assert(Buffer.from(data).equals(bytes),'Source is not UTF-8');
   return {file,data,encoding:'utf-8'};
 }

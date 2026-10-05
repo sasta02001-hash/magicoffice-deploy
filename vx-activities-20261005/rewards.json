@@ -1,0 +1,17 @@
+[
+  {"id":"flower-light","points":10,"name":"懸浮永生花夜燈","subtitle":"花光相伴・珍藏心意","note":"商品示意"},
+  {"id":"pen","points":10,"name":"鋼筆禮盒","subtitle":"BAOKE 書寫禮遇","note":"商品示意"},
+  {"id":"coffee-cups","points":15,"name":"咖啡杯禮盒","subtitle":"客製刻字禮遇","note":"商品示意"},
+  {"id":"whisky-glasses","points":15,"name":"威士忌杯禮盒","subtitle":"客製刻字禮遇","note":"商品示意"},
+  {"id":"fruit-wine","points":25,"name":"客製果實酒禮盒","subtitle":"開幕限定禮遇","note":"商品示意・內容依實際提供"},
+  {"id":"lifestyle-set","points":25,"name":"質感生活三件禮盒","subtitle":"精選生活禮遇","note":"商品示意・內容依實際提供"},
+  {"id":"airpods-5","points":35,"name":"AirPods 5 無線耳機","subtitle":"Apple","note":"商品示意"},
+  {"id":"portrait","points":35,"name":"主題攝影體驗","subtitle":"把自己，拍成故事的主角","note":"AI 情境示意・非廠商實拍作品"},
+  {"id":"instax","points":40,"name":"富士拍立得","subtitle":"FUJIFILM instax mini Evo","note":"單台兌換・顏色依實際提供"},
+  {"id":"dior","points":40,"name":"Dior 香氛任選","subtitle":"香水任選一款","note":"瓶身為款式示意"},
+  {"id":"medicube","points":40,"name":"medicube 美容儀","subtitle":"AGE-R Booster Pro","note":"商品示意"},
+  {"id":"philips","points":50,"name":"飛利浦智慧萬用鍋","subtitle":"PHILIPS HD2195","note":"商品示意"},
+  {"id":"dyson","points":50,"name":"Dyson 二合一空氣清淨機","subtitle":"居家清淨禮遇","note":"商品示意"},
+  {"id":"electrolux","points":50,"name":"Electrolux 掃地機器人","subtitle":"智慧居家禮遇","note":"商品示意"},
+  {"id":"disney","points":50,"name":"上海迪士尼套票","subtitle":"單人樂園體驗","note":"景觀示意・票券內容依活動方案"}
+]
