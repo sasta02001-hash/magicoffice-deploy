@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {flattenTree,validateSourceSet,encodeSourceFile,SOURCE_PATHS,validatePrivacyManifest,PRIVACY_ORIGIN,repairMetadata,assertRewrites,assertConfigPreserved} from './repair.mjs';
+import {flattenTree,validateSourceSet,encodeSourceFile,prepareContentFiles,SOURCE_PATHS,validatePrivacyManifest,PRIVACY_ORIGIN,repairMetadata,assertRewrites,assertConfigPreserved} from './repair.mjs';
 
 const assets=()=>Array.from({length:24},(_,i)=>({path:`assets/works/${String(i+1).padStart(3,'0')}/film.mp4`,bytes:1234,sha256:'a'.repeat(64)}));
 const inputs=()=>{
@@ -51,4 +51,25 @@ test('current activity image is restored and published without UTF-8 corruption'
   assert.equal(result.encoding,'base64');assert.deepEqual(Buffer.from(result.data,'base64'),jpeg);
   assert.throws(()=>encodeSourceFile('catalog.mjs',jpeg));
   assert.throws(()=>encodeSourceFile('.env',Buffer.from('private')));
+});
+
+test('approved campaign binaries use exact content-addressed uploads while deployment JSON stays bounded',async()=>{
+  const names=['content/pages/activities/pride-2026.jpeg','content/pages/activities/opening-2026-desktop.webp','content/pages/activities/opening-2026-mobile.webp'];
+  const sources=names.map((file,i)=>({file,bytes:Buffer.alloc([316853,240374,215952][i],255-i)}));
+  sources.push({file:'package.json',bytes:Buffer.from('{"private":true}')});
+  const calls=[];const files=await prepareContentFiles(sources,async(route,options)=>{calls.push({route,...options});return {};});
+  assert.equal(calls.length,3);
+  for(let i=0;i<3;i++){
+    assert.equal(calls[i].route,'/v2/files');assert.equal(calls[i].method,'POST');
+    assert.deepEqual(calls[i].body,sources[i].bytes);
+    assert.equal(calls[i].headers['Content-Type'],'application/octet-stream');
+    assert.equal(files[i].sha,calls[i].headers['x-vercel-digest']);
+    assert.equal(files[i].size,sources[i].bytes.length);
+    assert.equal(files[i].data,undefined);
+  }
+  assert.equal(files[3].data,'{"private":true}');
+  assert(Buffer.byteLength(JSON.stringify(files))<1_000_000);
+  let uploads=0;
+  await assert.rejects(()=>prepareContentFiles([...sources,{file:'.env',bytes:Buffer.from('blocked')}],async()=>{uploads++;}));
+  assert.equal(uploads,0);
 });

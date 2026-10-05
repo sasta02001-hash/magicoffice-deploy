@@ -152,10 +152,10 @@ function createAPI(token) {
     const url=new URL(route,'https://api.vercel.com');url.searchParams.set('teamId',TEAM);
     for(let attempt=0;attempt<3;attempt++){
       let response;
-      try { response=await fetch(url,{...options,headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},signal:AbortSignal.timeout(45_000),redirect:'error'}); }
+      try { response=await fetch(url,{...options,headers:{'Content-Type':'application/json',...options.headers,Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(45_000),redirect:'error'}); }
       catch { if(attempt<2&&(!options.method||options.method==='GET')){await pause(1500);continue;}throw new Error('Vercel API request failed'); }
       if(!response.ok){if(attempt<2&&[429,500,502,503,504].includes(response.status)&&(!options.method||options.method==='GET')){await pause(1500);continue;}throw new Error(`Vercel API HTTP ${response.status}`);}
-      return parseJson(await response.text(),'Vercel response');
+      const body=await response.text();return body?parseJson(body,'Vercel response'):{};
     }
   };
 }
@@ -189,6 +189,26 @@ export function encodeSourceFile(file,bytes) {
   if(['content/pages/activities/pride-2026.jpeg','content/pages/activities/opening-2026-desktop.webp','content/pages/activities/opening-2026-mobile.webp'].includes(file))return {file,data:bytes.toString('base64'),encoding:'base64'};
   const data=bytes.toString('utf8');assert(Buffer.from(data).equals(bytes),'Source is not UTF-8');
   return {file,data,encoding:'utf-8'};
+}
+export async function prepareContentFiles(sourceFiles,api) {
+  // Validate the complete allowlist before any upload. Binary campaign artwork
+  // uses content-addressed file references so base64 growth cannot overflow the
+  // bounded deployment JSON or corrupt otherwise unchanged approved images.
+  const checked=sourceFiles.map(({file,bytes})=>{
+    assert(Buffer.isBuffer(bytes)&&bytes.length<=2_000_000,'Source exceeds size limit');
+    return {file,bytes,encoded:encodeSourceFile(file,bytes)};
+  });
+  const files=[];
+  for(const {file,bytes,encoded} of checked) {
+    if(encoded.encoding==='base64') {
+      const sha=createHash('sha1').update(bytes).digest('hex');
+      await api('/v2/files',{method:'POST',body:bytes,headers:{
+        'Content-Type':'application/octet-stream','Content-Length':String(bytes.length),'x-vercel-digest':sha
+      }});
+      files.push({file,sha,size:bytes.length});
+    } else files.push(encoded);
+  }
+  return files;
 }
 async function restoreContent(api,id,temp) {
   await deployment(api,id,PROJECT);
@@ -335,7 +355,7 @@ export async function run() {
     for(const entry of entries.filter(e=>!['content/works.json','content/media.json','vercel.json'].includes(e.file)))assert(hash(await fs.readFile(path.join(temp,entry.file)))===entry.sha256,'Unrelated source file changed');
     const builtHealth=parseJson(await fs.readFile(path.join(temp,'public/health.json'),'utf8'),'built health');
     assert(builtHealth.count===32&&/^[a-f0-9]{64}$/.test(builtHealth.revision),'Invalid built health');receipt.expectedNewRevision=builtHealth.revision;
-    const files=await Promise.all(SOURCE_PATHS.map(async file=>encodeSourceFile(file,await fs.readFile(path.join(temp,file)))));
+    const files=await prepareContentFiles(await Promise.all(SOURCE_PATHS.map(async file=>({file,bytes:await fs.readFile(path.join(temp,file))}))),api);
     assert(Buffer.byteLength(JSON.stringify(files))<1_000_000,'Content deployment payload too large');
     receipt.stage='concurrency-check';await save();
     await mainUnchanged();

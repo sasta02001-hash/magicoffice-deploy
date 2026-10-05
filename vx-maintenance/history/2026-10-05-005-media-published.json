@@ -1,0 +1,11 @@
+{
+  "recordedAt": "2026-10-05T04:24:18.901Z",
+  "status": "media-published-content-resuming",
+  "publicationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37262949735",
+  "mediaDeploymentId": "dpl_EKZSaxFJLM7CwQLTxcnvfmRmRgME",
+  "mediaRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
+  "failedStage": "content build / payload-size guard",
+  "reason": "Approved Starfield Opening binary artwork increased inline base64 content request beyond 1MB. Published privacy media is verified; content production remains prior deployment.",
+  "correction": "Exact approved binary bytes uploaded via content-addressed Vercel file API; fixed allowlist, size bounds, hash guards, concurrent deployment guards remain enforced.",
+  "tests": "6 repair tests passed locally, including exact binary transfer and unknown-file rejection before upload."
+}
