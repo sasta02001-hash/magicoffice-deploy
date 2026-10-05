@@ -1736,8 +1736,8 @@
         "frames": 291,
         "width": 720,
         "height": 1280,
-        "bytes": 4412262,
-        "sha256": "6878d20084a07ae93d68908b0ce6d75f20559b75952f257831d736fada4ca5f2",
+        "bytes": 4408726,
+        "sha256": "63d59870260b8b8148cb47877ce87e9ac103c2c79dc54217a557cf0a2bc9190b",
         "originalSha256": "b2b2eba40e15a1ebe32cc2cc498db9c95a0ad0952b32ee28c1446d36021f12b4",
         "allowApprovedPassthrough": true,
         "refinementRequired": true

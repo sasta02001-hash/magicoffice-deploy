@@ -57,3 +57,10 @@ When reliable features are available, v2 builds the feather outward from those f
 The current content source set has 21 files. The existing activity operations.js, pride-2026.css and pride-2026.jpeg are explicitly preserved; the JPEG is restored and published as binary/base64, never through UTF-8 conversion. Unknown source files still fail the allowlist guard.
 
 If media publication succeeds but content synchronization fails, use `resume-content` with the original successful refinement run/commit, the published receipt's run ID, exact media deployment ID/revision, and fresh main/content deployment IDs and content revision. The workflow retrieves and validates the published receipt and public manifest, then resumes only content synchronization and verification. It does not render or upload media again. Keep failed-stage receipts and new deployment IDs in history.
+
+
+## Clipped mirror follow-up (2026-10-05)
+
+Dense verification found 005's partially off-screen mirror nose/mouth was still visible around 2–5 seconds. A source-bound clipped feature core now supplements parsing only in that existing left-edge box, preserving hair and a soft transition. All 291 frames of the repaired left-edge region were reviewed; original resolution and audio were retained. Other 23 published files remain byte-identical. The small `vx-refinement-review` artifact carries selected films and review evidence within transfer limits; the full exact `vx-refined-media` artifact remains the publication source.
+
+Content publication now uploads the allowlisted campaign JPEG/WebP files through content-addressed file references, preserving bytes and the 1MB deployment JSON guard. The initial attempt published media successfully but hit that payload guard; content-only resume run 37263370426 completed and verified the original production URLs. See the focused verification history for scope and mobile/every-film limitations.

@@ -77,7 +77,5 @@
     "007 mirror coverage was sampled at 4 fps, not every frame.",
     "Actual LINE messaging and booking submission were not performed."
   ],
-  "supersedes": "Morning automated receipt remains valid for its scope; additional visual verification discovered and repaired 005, so morning sparse sampling must not be treated as a whole-film privacy pass.",
-  "recordedAt": "2026-10-05T04:27:34.109Z",
-  "historyRecord": "vx-maintenance/history/2026-10-05-focused-005-verified.json"
+  "supersedes": "Morning automated receipt remains valid for its scope; additional visual verification discovered and repaired 005, so morning sparse sampling must not be treated as a whole-film privacy pass."
 }

@@ -1,14 +1,5 @@
 {
-  "mode": "resume-content",
-  "requestedAt": "2026-10-05T04:24:18.900Z",
-  "expectedDeploymentId": "dpl_DPQRVwwA5Q7mKYCxkVftYoKtNbru",
-  "expectedMainDeploymentId": "dpl_2KRTNGzuVPY7RY2LzGXhQSR5vUgo",
-  "expectedPrivacyDeploymentId": "dpl_EKZSaxFJLM7CwQLTxcnvfmRmRgME",
-  "expectedRevision": "31e101f5db3e560ade48ccf9321ccb1c92c6f65c6e77926e1f1c0a71f88850fd",
-  "expectedPrivacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
-  "resumeRunId": 37262949735,
-  "refinementRunId": 37262606346,
-  "refinementCommitSha": "135f6a04bf3c06e6b0a2394552da4626b59f8cd6",
-  "approvedPrivacyRevision": "aaca91271dfb3f729bf7137fdaf66bdfdb0dec44acea93ae0a8f6b69af5bd1e9",
-  "reason": "Resume metadata only for already verified media deployment. Send approved campaign binary source via exact content-addressed file API; preserve 1MB deployment JSON guard and all source hashes."
+  "mode": "check",
+  "requestedAt": "2026-10-05T04:27:34.109Z",
+  "reason": "Verify updated approved 005 hash baseline after successful targeted publication; return normal maintenance to check mode."
 }
