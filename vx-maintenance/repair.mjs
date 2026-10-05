@@ -22,6 +22,8 @@ export const SOURCE_PATHS = Object.freeze([
   'content/pages/activities/opening-2026.css',
   'content/pages/activities/opening-2026-desktop.webp',
   'content/pages/activities/opening-2026-mobile.webp',
+  'content/pages/activities/vx-art-map.css',
+  'content/pages/activities/vx-art-neighborhood-map.jpeg',
   ...['flower-light','pen','coffee-cups','whisky-glasses','fruit-wine','lifestyle-set','airpods-5','portrait','instax','dior','medicube','philips','dyson','electrolux','disney'].map(s => `content/pages/activities/rewards-2026/${s}.webp`),
   ...['color','perm','bleach','triascend','trifusion','triform','trievolve'].map(s => `content/pages/project-${s}/index.html`),
 ]);
