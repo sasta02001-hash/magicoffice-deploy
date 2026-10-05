@@ -1,10 +1,12 @@
 {
-  "mode": "refine-preview",
-  "requestedAt": "2026-10-05T04:13:56.661Z",
-  "refinementBaseRunId": 36879373331,
-  "refinementBaseCommitSha": "e34d9a38169eee54765288208db690609cefb4c5",
-  "refinementIds": [
-    "005"
-  ],
-  "reason": "Reproduce unchanged 005 focused fix with a small visual review artifact to satisfy transfer size limit before publication."
+  "mode": "publish-refinement",
+  "requestedAt": "2026-10-05T04:18:40.091Z",
+  "expectedDeploymentId": "dpl_DPQRVwwA5Q7mKYCxkVftYoKtNbru",
+  "expectedMainDeploymentId": "dpl_2KRTNGzuVPY7RY2LzGXhQSR5vUgo",
+  "expectedPrivacyDeploymentId": "dpl_CxZNk7rK4b5PYVKP126gwWBYZqMJ",
+  "expectedRevision": "31e101f5db3e560ade48ccf9321ccb1c92c6f65c6e77926e1f1c0a71f88850fd",
+  "refinementRunId": 37262606346,
+  "refinementCommitSha": "135f6a04bf3c06e6b0a2394552da4626b59f8cd6",
+  "approvedPrivacyRevision": "aaca91271dfb3f729bf7137fdaf66bdfdb0dec44acea93ae0a8f6b69af5bd1e9",
+  "reason": "Publish reviewed focused 005 clipped mirror nose/mouth fix. Examined all 291 left-edge crops and full-resolution representative frame; source-bound 720x1280, frame count and audio unchanged. Reuse other reviewed videos, preserve hair and approved site content."
 }
