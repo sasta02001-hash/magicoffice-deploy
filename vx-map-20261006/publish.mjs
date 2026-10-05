@@ -11,8 +11,8 @@ const TEAM='team_44tkvxP20I5s9SUmlxfUEQM1';
 const ORIGIN='https://vxsagittarius.vercel.app';
 const NEW_FILES=['content/pages/activities/vx-art-map.css','content/pages/activities/vx-art-neighborhood-map.jpeg'];
 const modules={
- catalog:{project:'prj_CbkfJKuRbzmjT4IsWAitQ3K0oAsE',name:'vxsagittarius-content',host:'vxsagittarius-content.vercel.app',baseline:'dpl_8gcjo3V9RvLucuYukBxtnHqPvFtE',paths:SOURCE_PATHS.filter(p=>!NEW_FILES.includes(p))},
- main:{project:'prj_bh5zjYhzdYkITXrIJ7vSSA2ua9lI',name:'vxsagittarius',host:'vxsagittarius.vercel.app',baseline:'dpl_9dLBVuPDCoqsh15PdSge9KapKssL',paths:['package.json','vercel.json','build.mjs','main.mjs','source-manifest.json',...['404.html','about/index.html','assets/home-catalog.css','assets/motion.js','assets/operations.css','assets/operations.js','assets/repairs.css','assets/site.css','assets/site.js','assets/works/folio-reveal.js','assets/works/work-navigation.js','assets/works/works.css','assets/works/works.js','booking/index.html','index.html','library/index.html','nebula/index.html','robots.txt'].map(p=>'source/'+p)]}
+ catalog:{project:'prj_CbkfJKuRbzmjT4IsWAitQ3K0oAsE',name:'vxsagittarius-content',host:'vxsagittarius-content.vercel.app',baseline:'dpl_5pTCWTrVX4HpF5ETeL7gP95edHxD',paths:SOURCE_PATHS},
+ main:{project:'prj_bh5zjYhzdYkITXrIJ7vSSA2ua9lI',name:'vxsagittarius',host:'vxsagittarius.vercel.app',baseline:'dpl_DwAxSzWsyt8WFo7vTFy6RsCdA4pz',paths:['package.json','vercel.json','build.mjs','main.mjs','source-manifest.json',...['404.html','about/index.html','assets/home-catalog.css','assets/motion.js','assets/operations.css','assets/operations.js','assets/repairs.css','assets/site.css','assets/site.js','assets/works/folio-reveal.js','assets/works/work-navigation.js','assets/works/works.css','assets/works/works.js','booking/index.html','index.html','library/index.html','nebula/index.html','robots.txt'].map(p=>'source/'+p)]}
 };
 const hash=x=>createHash('sha256').update(x).digest('hex');
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
@@ -82,7 +82,7 @@ try{
  const normalize=c=>{c=structuredClone(c);for(const rule of c.headers??[])for(const h of rule.headers??[])if(h.key.toLowerCase()==='x-vx-content-revision')h.value='<revision>';return c;};
  assert.deepEqual(normalize(afterConfig),normalize(beforeConfig),'Routing or security changed');
  for(const [key,original] of Object.entries(originals)){
-  const allowed=new Set(key==='catalog'?['content/pages/activities/index.html','content/pages/activities/operations.js','vercel.json']:['source/booking/index.html','source-manifest.json']);
+  const allowed=new Set(key==='catalog'?['content/pages/activities/index.html','content/pages/activities/operations.js','content/pages/activities/vx-art-map.css','vercel.json']:['source/booking/index.html','source-manifest.json']);
   for(const [file,sha] of original)if(!allowed.has(file))assert.equal(hash(await fs.readFile(path.join(temp,key,file))),sha,'Unrelated source changed: '+file);
  }
  const health=await json(path.join(cat,'public/health.json'));
@@ -90,7 +90,7 @@ try{
  for(const [key,m] of Object.entries(modules)){
   receipt.stage='publish-'+key;await save();assert.equal(await live(m),m.baseline,'Concurrent production change');
   if(key==='main')assert.equal(await live(modules.catalog),receipt.deployments.catalog.id,'Content changed during map publication');
-  const names=[...m.paths,...(key==='catalog'?NEW_FILES:[])];
+  const names=[...new Set([...m.paths,...(key==='catalog'?NEW_FILES:[])])];
   const source=await Promise.all(names.map(async file=>({file,bytes:await fs.readFile(path.join(temp,key,file))})));
   const files=key==='catalog'?await prepareContentFiles(source,api):source.map(({file,bytes})=>({file,data:bytes.toString('utf8'),encoding:'utf-8'}));
   const d=await api('/v13/deployments',{method:'POST',body:JSON.stringify({name:m.name,project:m.project,target:'production',files,projectSettings:{framework:null,buildCommand:'npm run build',installCommand:'echo No external dependencies',outputDirectory:'public'},meta:{reason:'Add supplied VX ART location illustration to booking and activities',baselineDeploymentId:m.baseline,githubCommitSha:process.env.GITHUB_SHA}})});
