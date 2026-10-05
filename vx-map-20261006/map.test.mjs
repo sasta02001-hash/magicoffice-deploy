@@ -13,7 +13,7 @@ test('both map modules preserve original artwork, navigation and accessible enla
   assert.equal((html.match(/id="vx-art-map"/g)||[]).length,1);
   for(const text of ['vx-art-map.css','vx-art-neighborhood-map.jpeg','非等比例','Google 地圖導航','點圖放大查看','width="1254" height="1254"','target="_blank" rel="noopener"'])assert(html.includes(text),text);
  }
- assert(booking.includes('href="#vx-art-map"'));
+ assert(booking.match(/<section class="page-hero">[\s\S]*?<\/section>/)[0].includes('href="#vx-art-map"'));
  for(const text of ['黑盒髮廊','私座髮藝','DC Hair','訂金','取消與改期'])assert(booking.includes(text),text);
 });
 test('dynamic activity rerender retains the map and all 15 current rewards',async()=>{

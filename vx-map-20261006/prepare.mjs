@@ -23,7 +23,8 @@ const bookingMarker='<section class="section section--radiant">';
 assert.equal(bookingBefore.split(bookingMarker).length,2);
 let booking=bookingBefore.replace(bookingMarker,'<section class="section"><div class="shell">'+map('h2')+'</div></section>\n'+bookingMarker).replace('</head>',cssLink+'</head>');
 const heroEnd='<a class="btn" href="/works/">瀏覽作品目錄</a>';
-assert(booking.includes(heroEnd));booking=booking.replace(heroEnd,heroEnd+'<a class="btn" href="#vx-art-map">VX ART 到店地圖 ↓</a>');
+const hero=booking.match(/<section class="page-hero">[\s\S]*?<\/section>/)?.[0];
+assert(hero?.includes(heroEnd));booking=booking.replace(hero,hero.replace(heroEnd,heroEnd+'<a class="btn" href="#vx-art-map">VX ART 到店地圖 ↓</a>'));
 const files={
  'catalog/content/pages/activities/index.html':activities,
  'catalog/content/pages/activities/operations.js':ops,
