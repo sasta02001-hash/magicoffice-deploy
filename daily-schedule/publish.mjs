@@ -199,10 +199,11 @@ async function run() {
     const fallback=JSON.parse(await fs.readFile(path.join(temp,'fallback.json'),'utf8'));
     const fresh=await createScheduleService({config,fallback}).getSchedule();
     validateRows(fresh.rows);verifyLive(fresh,fresh.rows,contentHash);
-    assert.equal(fresh.sourceHash,request.sourceHash,'SOURCE_CHANGED_SINCE_NATIVE_GRID_CHECK');
-    assert.equal(fresh.meta.currentWeekComplete,true,'CURRENT_WEEK_INCOMPLETE');
     const publicRows=filteredRows(fresh.rows,request.excludedNames);
-    assert.equal(contentHash(publicRows),request.publicHash,'PUBLIC_PERSONNEL_MISMATCH');
+    const actualPublicHash=contentHash(publicRows);
+    assert.equal(fresh.sourceHash,request.sourceHash,`SOURCE_CHANGED_SINCE_NATIVE_GRID_CHECK:source=${fresh.sourceHash};public=${actualPublicHash}`);
+    assert.equal(fresh.meta.currentWeekComplete,true,'CURRENT_WEEK_INCOMPLETE');
+    assert.equal(actualPublicHash,request.publicHash,'PUBLIC_PERSONNEL_MISMATCH');
     const menuBefore=await publicJsonResponse(MAIN+'/api/menu');
     const menuContent=menu=>JSON.stringify({rows:menu.rows,data:menu.data,items:menu.items,fetchedAt:menu.fetchedAt,sourceHash:menu.sourceHash});
     const backup={...fallback,rows:fresh.rows,sourceHash:fresh.sourceHash,fetchedAt:fresh.fetchedAt,sourceVerifiedAt:fresh.sourceVerifiedAt,updatedAt:fresh.updatedAt,generatedAt:fresh.generatedAt,source:'原始 Google Sheets｜每日驗證備援',stale:true,dataState:'published',syncCode:'EMBEDDED_BACKUP_ONLY'};
