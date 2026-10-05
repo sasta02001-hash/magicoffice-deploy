@@ -1,0 +1,26 @@
+{
+  "status": "published-and-verified",
+  "verifiedAt": "2026-10-05T06:09:42.051Z",
+  "origin": "https://vxsagittarius.vercel.app",
+  "activities": "https://vxsagittarius.vercel.app/activities/",
+  "sourceCommit": "50a4b8e1eec601eab0fcce26678987440e578fdc",
+  "workflowRun": 37270911953,
+  "contentDeployment": "dpl_8gcjo3V9RvLucuYukBxtnHqPvFtE",
+  "mainDeployment": "dpl_9dLBVuPDCoqsh15PdSge9KapKssL",
+  "contentRevision": "0b00e2d2082271d7d3dbc473acba383bbf55062febf8b1337998a944a62d6da5",
+  "worksPreserved": 32,
+  "mediaRoutesPreserved": 128,
+  "rewardCount": 15,
+  "publicChecksPassed": 21,
+  "browser": {
+    "status": "passed",
+    "viewportWidths": [1440, 768, 390, 375, 320],
+    "horizontalOverflow": false,
+    "errors": [],
+    "failedRequests": [],
+    "rewardFilterCounts": {"10": 2, "15": 2, "25": 2, "35": 2, "40": 3, "50": 4, "all": 15},
+    "loadedRewardImages": 15,
+    "homepageEntryAndMobileNavigation": "passed"
+  },
+  "scope": "Activities, points rules, approved reward artwork and homepage entry only; works, media and routing retained."
+}
