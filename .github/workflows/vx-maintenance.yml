@@ -113,6 +113,33 @@ jobs:
           path: /tmp/vx-refined-media
           if-no-files-found: error
           retention-days: 7
+      - name: Package focused visual review
+        if: steps.request.outputs.mode == 'refine-preview'
+        run: |
+          python3 - <<'PY'
+          import json,pathlib,shutil
+          r=json.load(open('vx-maintenance/request.json'))
+          root=pathlib.Path('/tmp/vx-refined-media')
+          dest=pathlib.Path('/tmp/vx-refinement-review')
+          dest.mkdir(parents=True,exist_ok=True)
+          shutil.copy2(root/'assets.json',dest/'assets.json')
+          for wid in r.get('refinementIds',[]):
+              assert len(wid)==3 and wid.isdigit()
+              for rel in [f'assets/works/{wid}/film.mp4',f'review/{wid}-mask-audit.json',f'review/{wid}-contact.jpg']:
+                  src=root/rel
+                  assert src.is_file()
+                  target=dest/rel
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  shutil.copy2(src,target)
+          PY
+      - name: Save focused visual review
+        if: steps.request.outputs.mode == 'refine-preview'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vx-refinement-review
+          path: /tmp/vx-refinement-review
+          if-no-files-found: error
+          retention-days: 7
       - name: Retrieve exact reviewed refinement artifact
         if: steps.request.outputs.mode == 'publish-refinement'
         uses: actions/download-artifact@v4
