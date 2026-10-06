@@ -1,0 +1,803 @@
+[
+  {
+    "id": "001",
+    "title": "冷霧棕 × 大波紋電棒燙",
+    "cardTitle": "冷霧棕 × 大波紋電棒燙",
+    "cardInfo": "染髮＋燙髮",
+    "description": "冷霧棕的沉靜色澤，搭配從髮中展開的大幅波紋，呈現柔和而有份量的長髮輪廓。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIFUSION｜星雲畫染拓樸藝作"
+      ],
+      [
+        "工藝組合",
+        "染髮＋燙髮"
+      ],
+      [
+        "髮色",
+        "冷霧棕"
+      ],
+      [
+        "燙髮",
+        "大波紋電棒燙"
+      ]
+    ],
+    "alt": "冷霧棕長髮與大幅波紋的背面輪廓",
+    "width": 600,
+    "height": 900,
+    "duration": 7,
+    "poster": "poster.png",
+    "category": "trifusion"
+  },
+  {
+    "id": "002",
+    "title": "漸層藍 × 巴黎畫染",
+    "cardTitle": "漸層藍 × 巴黎畫染",
+    "cardInfo": "漂髮＋上色",
+    "description": "深色髮根向藍色髮中與髮尾漸層延伸，順直長髮呈現沉靜的藍色層次。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIASCEND｜七維虹彩釉光品藏"
+      ],
+      [
+        "工藝組合",
+        "漂髮＋上色"
+      ],
+      [
+        "髮色",
+        "漸層藍"
+      ],
+      [
+        "技術",
+        "巴黎畫染"
+      ]
+    ],
+    "alt": "深色髮根向藍色髮中與髮尾延伸的長髮輪廓",
+    "width": 720,
+    "height": 1280,
+    "duration": 8.269,
+    "poster": "poster.webp",
+    "category": "triascend"
+  },
+  {
+    "id": "003",
+    "title": "冷萃茶棕 × 絲絨電棒捲",
+    "cardTitle": "冷萃茶棕 × 絲絨電棒捲",
+    "cardInfo": "染髮＋燙髮",
+    "description": "冷萃茶棕搭配髮中向下展開的飽滿波紋，讓長髮呈現柔和、蓬鬆的流動感。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIFUSION｜星雲畫染拓樸藝作"
+      ],
+      [
+        "工藝組合",
+        "染髮＋燙髮"
+      ],
+      [
+        "髮色",
+        "冷萃茶棕"
+      ],
+      [
+        "造型",
+        "絲絨電棒捲"
+      ]
+    ],
+    "alt": "冷萃茶棕長髮與飽滿柔和波紋的背面輪廓",
+    "width": 720,
+    "height": 1280,
+    "duration": 6.367,
+    "poster": "poster.webp",
+    "category": "trifusion"
+  },
+  {
+    "id": "004",
+    "title": "絲絨電棒燙",
+    "cardTitle": "絲絨電棒燙",
+    "cardInfo": "燙髮",
+    "description": "平順髮根銜接寬幅波紋，髮尾以自然彎度收束，呈現柔和的長髮輪廓。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "燙髮"
+      ],
+      [
+        "燙髮",
+        "絲絨電棒燙"
+      ]
+    ],
+    "alt": "平順髮根銜接寬幅波紋與自然彎曲髮尾的長髮輪廓",
+    "width": 720,
+    "height": 1280,
+    "duration": 7.6,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "005",
+    "title": "煙晶緞帶",
+    "cardTitle": "煙晶緞帶",
+    "cardInfo": "工藝分類待確認",
+    "description": "以煙晶冷棕為深色層次，霧岩米棕線條隨波紋交錯，呈現絲帶般的明暗與立體感。",
+    "details": [
+      [
+        "工藝分類",
+        "待確認"
+      ],
+      [
+        "髮色",
+        "煙晶冷棕 × 霧岩米棕"
+      ],
+      [
+        "技術",
+        "歐美絲帶線條染"
+      ]
+    ],
+    "alt": "煙晶冷棕與霧岩米棕線條隨波紋交錯的長髮輪廓",
+    "width": 720,
+    "height": 1280,
+    "duration": 9.733,
+    "poster": "poster.webp",
+    "category": "pending"
+  },
+  {
+    "id": "006",
+    "title": "奶霜粉",
+    "cardTitle": "奶霜粉",
+    "cardInfo": "漂髮",
+    "description": "奶霜柔粉搭配俐落短髮，呈現柔和粉色與整齊的髮尾輪廓。",
+    "details": [
+      [
+        "工藝分類",
+        "BLEACH｜單項漂髮工藝"
+      ],
+      [
+        "工藝組合",
+        "漂髮"
+      ],
+      [
+        "髮色",
+        "奶霜柔粉"
+      ],
+      [
+        "技術",
+        "漂髮"
+      ]
+    ],
+    "alt": "奶霜柔粉短髮與整齊髮尾的背面輪廓",
+    "duration": 8.466667,
+    "width": 720,
+    "height": 1280,
+    "poster": "poster.webp",
+    "category": "bleach"
+  },
+  {
+    "id": "007",
+    "title": "霧棕 × 鬆軟燙",
+    "cardTitle": "霧棕 × 鬆軟燙",
+    "cardInfo": "染髮＋燙髮",
+    "description": "柔霧棕搭配柔弧鬆軟燙，從髮中延伸的波紋呈現蓬鬆柔和的長髮輪廓。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIFUSION｜星雲畫染拓樸藝作"
+      ],
+      [
+        "工藝組合",
+        "染髮＋燙髮"
+      ],
+      [
+        "髮色",
+        "柔霧棕"
+      ],
+      [
+        "燙髮",
+        "柔弧鬆軟燙"
+      ]
+    ],
+    "alt": "柔霧棕長髮與柔弧鬆軟燙波紋的背面輪廓",
+    "duration": 8.9,
+    "width": 720,
+    "height": 1280,
+    "poster": "poster.webp",
+    "category": "trifusion"
+  },
+  {
+    "id": "008",
+    "title": "亞麻灰 × 縮毛矯正",
+    "cardTitle": "亞麻灰 × 縮毛矯正",
+    "cardInfo": "染髮＋燙髮／縮毛矯正",
+    "description": "煙感亞麻灰搭配絲緞縮毛矯正，順直髮絲呈現細緻光澤與平整的長髮輪廓。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIFUSION｜星雲畫染拓樸藝作"
+      ],
+      [
+        "工藝組合",
+        "染髮＋燙髮／縮毛矯正"
+      ],
+      [
+        "髮色",
+        "煙感亞麻灰"
+      ],
+      [
+        "技術",
+        "絲緞縮毛矯正"
+      ]
+    ],
+    "alt": "煙感亞麻灰與絲緞縮毛矯正的順直長髮輪廓",
+    "duration": 7.566667,
+    "width": 720,
+    "height": 1280,
+    "poster": "poster.webp",
+    "category": "trifusion"
+  },
+  {
+    "id": "009",
+    "title": "歐美線條",
+    "cardTitle": "歐美線條",
+    "cardInfo": "工藝分類待確認",
+    "description": "光影線條，榛果棕·米灰。細緻的明暗線條沿著順直髮絲延伸。",
+    "details": [
+      [
+        "工藝分類",
+        "待確認"
+      ],
+      [
+        "髮色",
+        "榛果棕·米灰"
+      ],
+      [
+        "技術",
+        "光影線條"
+      ]
+    ],
+    "alt": "榛果棕與米灰光影線條沿順直長髮延伸的背面輪廓",
+    "duration": 8.8,
+    "width": 720,
+    "height": 1280,
+    "poster": "poster.webp",
+    "category": "pending"
+  },
+  {
+    "id": "010",
+    "title": "輕羽層次燙",
+    "cardTitle": "輕羽層次燙",
+    "cardInfo": "剪髮＋燙髮",
+    "description": "輕羽層次燙以層次與柔和捲度，呈現蓬鬆、有流動感的長髮輪廓。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "剪髮＋燙髮"
+      ],
+      [
+        "燙髮",
+        "輕羽層次燙"
+      ]
+    ],
+    "alt": "輕羽層次燙的層次與蓬鬆捲度背面輪廓",
+    "duration": 3.333333,
+    "width": 720,
+    "height": 1280,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "011",
+    "title": "絲絨大波燙",
+    "cardTitle": "絲絨大波燙",
+    "cardInfo": "燙髮",
+    "description": "柔亮大波自然延伸，呈現飽滿又流動的線條",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "燙髮"
+      ]
+    ],
+    "alt": "絲絨大波燙的髮型封套",
+    "width": 712,
+    "height": 1280,
+    "duration": 9.666667,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "012",
+    "title": "冷霧深棕 × 復古短波燙",
+    "cardTitle": "冷霧深棕 × 復古短波燙",
+    "cardInfo": "染髮＋燙髮",
+    "description": "深棕配上飽滿短波，輪廓俐落又帶復古感",
+    "details": [
+      [
+        "工藝分類",
+        "TRIFUSION｜星雲畫染拓樸藝作"
+      ],
+      [
+        "工藝組合",
+        "染髮＋燙髮"
+      ]
+    ],
+    "alt": "冷霧深棕 × 復古短波燙的髮型封套",
+    "width": 714,
+    "height": 1280,
+    "duration": 4.666667,
+    "poster": "poster.webp",
+    "category": "trifusion"
+  },
+  {
+    "id": "013",
+    "title": "霧灰線條 × 柔波燙",
+    "cardTitle": "霧灰線條 × 柔波燙",
+    "cardInfo": "挑漂＋上色＋燙髮",
+    "description": "明暗線條藏進波紋裡，讓髮色更有立體感。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIEVOLVE｜進化交響視界藝品"
+      ],
+      [
+        "工藝組合",
+        "挑漂＋上色＋燙髮"
+      ]
+    ],
+    "alt": "霧灰線條 × 柔波燙的髮型封套",
+    "width": 720,
+    "height": 1246,
+    "duration": 8.733333,
+    "poster": "poster.webp",
+    "category": "trievolve"
+  },
+  {
+    "id": "014",
+    "title": "彈力大波燙",
+    "cardTitle": "彈力大波燙",
+    "cardInfo": "燙髮",
+    "description": "飽滿大波紋集中在中後段，捲度更有彈性。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "燙髮"
+      ]
+    ],
+    "alt": "彈力大波燙的髮型封套",
+    "width": 708,
+    "height": 1280,
+    "duration": 8.4,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "015",
+    "title": "紅茶棕 × 輕盈波紋燙",
+    "cardTitle": "紅茶棕 × 輕盈波紋燙",
+    "cardInfo": "染髮＋燙髮",
+    "description": "溫柔紅茶棕搭配鬆散波紋，柔和又有層次。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIFUSION｜星雲畫染拓樸藝作"
+      ],
+      [
+        "工藝組合",
+        "染髮＋燙髮"
+      ]
+    ],
+    "alt": "紅茶棕 × 輕盈波紋燙的髮型封套",
+    "width": 704,
+    "height": 1280,
+    "duration": 3.966667,
+    "poster": "poster.webp",
+    "category": "trifusion"
+  },
+  {
+    "id": "016",
+    "title": "法式柔波燙",
+    "cardTitle": "法式柔波燙",
+    "cardInfo": "燙髮",
+    "description": "鬆軟波紋增加空氣感，保留自然慵懶的輪廓。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "燙髮"
+      ]
+    ],
+    "alt": "法式柔波燙的髮型封套",
+    "width": 710,
+    "height": 1280,
+    "duration": 11.866667,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "017",
+    "title": "玫瑰奶金",
+    "cardTitle": "玫瑰奶金",
+    "cardInfo": "漂髮＋上色",
+    "description": "奶金揉進柔粉色調，輕透又不過甜。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIASCEND｜七維虹彩釉光品藏"
+      ],
+      [
+        "工藝組合",
+        "漂髮＋上色"
+      ]
+    ],
+    "alt": "玫瑰奶金的髮型封套",
+    "width": 590,
+    "height": 1068,
+    "duration": 8.1,
+    "poster": "poster.webp",
+    "category": "triascend"
+  },
+  {
+    "id": "018",
+    "title": "層次大波燙",
+    "cardTitle": "層次大波燙",
+    "cardInfo": "燙髮",
+    "description": "用長層次拉開大波紋，增加流動與輕盈感。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "燙髮"
+      ]
+    ],
+    "alt": "層次大波燙的髮型封套",
+    "width": 698,
+    "height": 1280,
+    "duration": 6.5,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "019",
+    "title": "輪廓 C 彎燙",
+    "cardTitle": "輪廓 C 彎燙",
+    "cardInfo": "剪髮＋燙髮",
+    "description": "圓潤 C 彎修飾輪廓，簡單卻有完整線條。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "剪髮＋燙髮"
+      ]
+    ],
+    "alt": "輪廓 C 彎燙的髮型封套",
+    "width": 700,
+    "height": 1248,
+    "duration": 6.3,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "020",
+    "title": "輕羽外翹燙",
+    "cardTitle": "輕羽外翹燙",
+    "cardInfo": "剪髮＋燙髮",
+    "description": "輕層次配外翹弧度，更輕盈俐落。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "剪髮＋燙髮"
+      ]
+    ],
+    "alt": "輕羽外翹燙的髮型封套",
+    "width": 700,
+    "height": 1278,
+    "duration": 5.3,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "021",
+    "title": "冷霧可可 × 柔波燙",
+    "cardTitle": "冷霧可可 × 柔波燙",
+    "cardInfo": "染髮＋燙髮",
+    "description": "冷霧棕搭配鬆軟大彎，柔和又有線條感。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIFUSION｜星雲畫染拓樸藝作"
+      ],
+      [
+        "工藝組合",
+        "染髮＋燙髮"
+      ]
+    ],
+    "alt": "冷霧可可 × 柔波燙的髮型封套",
+    "width": 704,
+    "height": 1280,
+    "duration": 8.166667,
+    "poster": "poster.webp",
+    "category": "trifusion"
+  },
+  {
+    "id": "022",
+    "title": "霧茶棕 × 鏡面縮毛矯正",
+    "cardTitle": "霧茶棕 × 鏡面縮毛矯正",
+    "cardInfo": "染髮＋燙髮／縮毛矯正",
+    "description": "收整毛躁與自然彎度，留下柔亮乾淨髮面。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIFUSION｜星雲畫染拓樸藝作"
+      ],
+      [
+        "工藝組合",
+        "染髮＋燙髮／縮毛矯正"
+      ]
+    ],
+    "alt": "霧茶棕 × 鏡面縮毛矯正的髮型封套",
+    "width": 700,
+    "height": 1278,
+    "duration": 8.2,
+    "poster": "poster.webp",
+    "category": "trifusion"
+  },
+  {
+    "id": "023",
+    "title": "霧灰可可 × 彈力波紋燙",
+    "cardTitle": "霧灰可可 × 彈力波紋燙",
+    "cardInfo": "染髮＋燙髮",
+    "description": "冷霧可可搭配彈力波紋，層次更立體。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIFUSION｜星雲畫染拓樸藝作"
+      ],
+      [
+        "工藝組合",
+        "染髮＋燙髮"
+      ]
+    ],
+    "alt": "霧灰可可 × 彈力波紋燙的髮型封套",
+    "width": 704,
+    "height": 1280,
+    "duration": 12,
+    "poster": "poster.webp",
+    "category": "trifusion"
+  },
+  {
+    "id": "024",
+    "title": "鬆弛波紋燙",
+    "cardTitle": "鬆弛波紋燙",
+    "cardInfo": "燙髮",
+    "description": "鬆而不散，保留慵懶又乾淨的波紋感。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "燙髮"
+      ]
+    ],
+    "alt": "鬆弛波紋燙的髮型封套",
+    "width": 590,
+    "height": 1068,
+    "duration": 8.766667,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "025",
+    "title": "輪廓大彎燙",
+    "cardTitle": "輪廓大彎燙",
+    "cardInfo": "燙髮",
+    "description": "用大彎撐起輪廓，讓髮型更有份量。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "燙髮"
+      ]
+    ],
+    "alt": "輪廓大彎燙的髮型封套",
+    "width": 700,
+    "height": 1278,
+    "duration": 10.7,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "026",
+    "title": "霧茶棕 × 柔弧鬆軟燙",
+    "cardTitle": "霧茶棕 × 柔弧鬆軟燙",
+    "cardInfo": "染髮＋燙髮",
+    "description": "霧茶棕配上柔弧大彎，呈現輕鬆的電棒感。",
+    "details": [
+      [
+        "工藝分類",
+        "TRIFUSION｜星雲畫染拓樸藝作"
+      ],
+      [
+        "工藝組合",
+        "染髮＋燙髮"
+      ]
+    ],
+    "alt": "霧茶棕 × 柔弧鬆軟燙的髮型封套",
+    "width": 702,
+    "height": 1280,
+    "duration": 10.366667,
+    "poster": "poster.webp",
+    "category": "trifusion"
+  },
+  {
+    "id": "027",
+    "title": "層次柔波燙",
+    "cardTitle": "層次柔波燙",
+    "cardInfo": "燙髮",
+    "description": "用層次帶出輕盈，讓長髮更有線條。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "燙髮"
+      ]
+    ],
+    "alt": "層次柔波燙的髮型封套",
+    "width": 702,
+    "height": 1280,
+    "duration": 13.366667,
+    "poster": "poster.webp",
+    "category": "perm"
+  },
+  {
+    "id": "028",
+    "title": "鈷藍",
+    "cardTitle": "鈷藍",
+    "cardInfo": "漂髮",
+    "description": "高飽和冷藍，俐落、鮮明、有存在感。",
+    "details": [
+      [
+        "工藝分類",
+        "BLEACH｜單項漂髮工藝"
+      ],
+      [
+        "工藝組合",
+        "漂髮"
+      ]
+    ],
+    "alt": "鈷藍的髮型封套",
+    "width": 702,
+    "height": 1280,
+    "duration": 3.733333,
+    "poster": "poster.webp",
+    "category": "bleach"
+  },
+  {
+    "id": "029",
+    "title": "煙藕粉紫",
+    "cardTitle": "煙藕粉紫",
+    "cardInfo": "漂髮",
+    "description": "藕粉揉進霧紫，柔霧中帶一點冷感。",
+    "details": [
+      [
+        "工藝分類",
+        "BLEACH｜單項漂髮工藝"
+      ],
+      [
+        "工藝組合",
+        "漂髮"
+      ]
+    ],
+    "alt": "煙藕粉紫的髮型封套",
+    "width": 702,
+    "height": 1280,
+    "duration": 4.766667,
+    "poster": "poster.webp",
+    "category": "bleach"
+  },
+  {
+    "id": "030",
+    "title": "奶金無痕接髮",
+    "cardTitle": "奶金無痕接髮",
+    "cardInfo": "接髮",
+    "description": "延伸長度，也延續奶金的輕透感。",
+    "details": [
+      [
+        "工藝分類",
+        "GENERAL SERVICES｜接髮"
+      ],
+      [
+        "工藝組合",
+        "接髮"
+      ]
+    ],
+    "alt": "奶金無痕接髮的髮型封套",
+    "width": 698,
+    "height": 1280,
+    "duration": 7.3,
+    "poster": "poster.webp",
+    "category": "general"
+  },
+  {
+    "id": "031",
+    "title": "裸霧粉",
+    "cardTitle": "裸霧粉",
+    "cardInfo": "漂髮",
+    "description": "低飽和裸粉，乾淨柔霧",
+    "details": [
+      [
+        "工藝分類",
+        "BLEACH｜單項漂髮工藝"
+      ],
+      [
+        "工藝組合",
+        "漂髮"
+      ]
+    ],
+    "alt": "裸霧粉的髮型封套",
+    "width": 702,
+    "height": 1280,
+    "duration": 6.366667,
+    "poster": "poster.webp",
+    "category": "bleach"
+  },
+  {
+    "id": "032",
+    "title": "緞面柔波燙",
+    "cardTitle": "緞面柔波燙",
+    "cardInfo": "燙髮",
+    "description": "柔亮大彎，讓長髮更有流動感。",
+    "details": [
+      [
+        "工藝分類",
+        "PERM｜單項燙髮工藝"
+      ],
+      [
+        "工藝組合",
+        "燙髮"
+      ]
+    ],
+    "alt": "緞面柔波燙的髮型封套",
+    "width": 700,
+    "height": 1280,
+    "duration": 1.566667,
+    "poster": "poster.webp",
+    "category": "perm"
+  }
+]
+

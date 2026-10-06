@@ -1,0 +1,12 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+const ROOT=path.dirname(fileURLToPath(import.meta.url));
+const checkout=path.resolve(process.argv[2]);
+const hash=x=>createHash('sha256').update(x).digest('hex');
+const baseline={'catalog/catalog.mjs':'e4b58fd1c9cd6e8bddab7656b44fe67ce0c2e5e91709a17b319ea6a7aeb258e9','catalog/content/works.json':'571ed0dbcee131b92f7bcc7a46398b65b5c046014eaee4d30b8502d659d2d737'};
+for(const [file,sha] of Object.entries(baseline))assert.equal(hash(await fs.readFile(path.join(checkout,file))),sha,'Current classification source changed: '+file);
+for(const file of Object.keys(baseline))await fs.copyFile(path.join(ROOT,'patch',file),path.join(checkout,file));
+console.log('Updated only 005 and 009 classifications; removed the empty pending filter.');
