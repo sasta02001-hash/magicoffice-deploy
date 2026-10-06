@@ -1,0 +1,11 @@
+function classificationControls(works) {
+  const labels = {bleach:'漂髮',color:'染髮',perm:'燙髮',triascend:'漂・染',trifusion:'染・燙',triform:'漂・燙',trievolve:'漂・染・燙',general:'接髮'};
+  const categories = [{id:'all',code:'ALL WORKS',name:'全部作品'},...CRAFT_CATEGORIES];
+  const links = categories.map(c => {
+    const count = c.id==='all' ? works.length : works.filter(w=>w.category===c.id).length;
+    const code = c.id==='general' ? 'EXTENSIONS' : c.code;
+    const label = labels[c.id] || c.name;
+    return '<button type="button" class="vx-craft-link" data-vx-craft="'+c.id+'" aria-pressed="'+(c.id==='all')+'" aria-controls="vx-craft-results" aria-label="'+escape(c.code+'｜'+c.name+'，'+count+' 件作品')+'"><span class="vx-craft-link-code">'+escape(code)+'</span><span class="vx-craft-link-label">'+escape(label)+'</span><span class="vx-craft-link-number" aria-hidden="true">'+String(count).padStart(2,'0')+'</span></button>';
+  }).join('');
+  return '<div class="vx-craft-browser" data-vx-craft-controls hidden><nav class="vx-craft-nav" aria-label="依工藝瀏覽作品">'+links+'</nav><div class="vx-craft-selection"><div><p class="vx-craft-selection-code" data-vx-craft-code>ALL WORKS</p><h2 data-vx-craft-title>全部作品</h2><p id="vx-craft-summary" class="vx-craft-summary">髮色、線條與質地的工藝典藏。</p></div><p class="vx-craft-total"><span data-vx-craft-count-number>'+String(works.length).padStart(2,'0')+'</span><span>PIECES</span></p><span class="vx-sr-only" data-vx-craft-count role="status">'+works.length+' 件作品</span></div></div>';
+}

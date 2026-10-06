@@ -1,0 +1,78 @@
+name: Review and Publish VX Craft Navigation
+on:
+  push:
+    branches: [vx-maintenance]
+    paths: ['vx-craft-navigation-20261006/**', '.github/workflows/vx-craft-navigation.yml']
+permissions:
+  contents: read
+concurrency:
+  group: vx-website-maintenance
+  cancel-in-progress: false
+jobs:
+  classification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Read release mode
+        id: release
+        run: node -e "const m=require('./vx-craft-navigation-20261006/release.json').mode;if(!['review','publish'].includes(m))throw Error('Invalid release mode');require('node:fs').appendFileSync(process.env.GITHUB_OUTPUT,'mode='+m+'\\n')"
+      - name: Verify approved classifications and preservation safeguards
+        run: node --test vx-maintenance/repair.test.mjs vx-maintenance/refinement.test.mjs vx-maintenance/range-check.test.mjs vx-maintenance/resume.test.mjs
+      - name: Restore verified current production source
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node vx-craft-navigation-20261006/snapshot.mjs
+      - name: Build the proposed update
+        run: |
+          node vx-craft-navigation-20261006/apply-update.mjs vx-craft-navigation-20261006/snapshot
+          node vx-craft-navigation-20261006/snapshot/catalog/build.mjs
+          node vx-craft-navigation-20261006/snapshot/main/build.mjs
+      - name: Install isolated browser verification dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/vx-browser" --no-audit --no-fund playwright@1.58.2 agent-browser@0.38.2
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+      - name: Verify portfolio before publishing
+        run: |
+          export CODEX_PRIMARY_RUNTIME_NODE_MODULES="$RUNNER_TEMP/vx-browser/node_modules"
+          export VX_BROWSER_EXECUTABLE="$(command -v google-chrome)"
+          test -x "$VX_BROWSER_EXECUTABLE"
+          node vx-craft-navigation-20261006/preview.mjs > "$RUNNER_TEMP/vx-classification-preview.log" 2>&1 &
+          "$RUNNER_TEMP/vx-browser/node_modules/.bin/agent-browser" --executable-path "$VX_BROWSER_EXECUTABLE" open http://127.0.0.1:4173/works/
+          "$RUNNER_TEMP/vx-browser/node_modules/.bin/agent-browser" wait --load networkidle
+          "$RUNNER_TEMP/vx-browser/node_modules/.bin/agent-browser" screenshot /tmp/vx-boutique-agent-initial.png
+          "$RUNNER_TEMP/vx-browser/node_modules/.bin/agent-browser" snapshot -i
+          "$RUNNER_TEMP/vx-browser/node_modules/.bin/agent-browser" errors
+          "$RUNNER_TEMP/vx-browser/node_modules/.bin/agent-browser" close
+          node vx-craft-navigation-20261006/verify-browser.mjs
+      - name: Publish approved classification to existing VX projects
+        if: steps.release.outputs.mode == 'publish'
+        env:
+          VERCEL_TOKEN: ${{ secrets.MAGICOFFICE }}
+        run: node vx-craft-navigation-20261006/publish.mjs
+      - name: Verify live official portfolio
+        if: steps.release.outputs.mode == 'publish'
+        run: |
+          export CODEX_PRIMARY_RUNTIME_NODE_MODULES="$RUNNER_TEMP/vx-browser/node_modules"
+          export VX_BROWSER_EXECUTABLE="$(command -v google-chrome)"
+          node vx-craft-navigation-20261006/verify-browser.mjs https://vxsagittarius.vercel.app
+      - name: Save classification verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vx-craft-navigation-20261006-receipt
+          path: |
+            vx-craft-navigation-20261006/*verification.json
+            vx-craft-navigation-20261006/publication-receipt.json
+            /tmp/vx-boutique-*.png
+          if-no-files-found: warn
+          retention-days: 30
+
+
+
