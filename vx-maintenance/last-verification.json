@@ -1,20 +1,18 @@
 {
   "status": "verified-with-limitations",
-  "verifiedAt": "2026-10-05T04:27:34.109Z",
+  "verifiedAt": "2026-10-06T01:11:28.448Z",
   "site": "https://vxsagittarius.vercel.app/",
-  "request": "User-requested follow-up verification and previously authorized technical/privacy corrections.",
-  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37263370426",
-  "verificationCommit": "3ef7710daeb0b181ec9f8d4594c0d78d16754135",
-  "previewRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37262606346",
-  "publicationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37262949735",
-  "mainDeploymentId": "dpl_2KRTNGzuVPY7RY2LzGXhQSR5vUgo",
-  "contentDeploymentId": "dpl_57vVHvLNZhaSGBoroj4eEQvz5VVv",
+  "request": "Daily production verification; check mode only.",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37396853560",
+  "verificationCommit": "1330a6aafaa203154421d00a094d0669c03e3645",
+  "mainDeploymentId": "dpl_3a3zJg8VigF5QrByCQeGfte9gKce",
+  "contentDeploymentId": "dpl_HtfAjVeZfSJzofmzuqBWCnML7qcX",
   "privacyDeploymentId": "dpl_EKZSaxFJLM7CwQLTxcnvfmRmRgME",
-  "contentRevision": "41ea5ec42a1b8bf640dcd66868f78af15f2226391402377016ba7cae1c33c554",
+  "contentRevision": "e92a872ad37f5084e88aed19ab688a2a27c92cfc4d167cda43a5272e75a3585e",
   "privacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
   "automated": {
     "status": "passed",
-    "finishedAt": "2026-10-05T04:25:07.253Z",
+    "finishedAt": "2026-10-06T00:59:44.231Z",
     "works": 32,
     "counts": {
       "pages": 47,
@@ -24,60 +22,69 @@
     },
     "errors": []
   },
-  "repairsPerformed": [
-    {
-      "work": "005",
-      "page": "https://vxsagittarius.vercel.app/works/005/",
-      "problem": "Partial nose/mouth remained visible at extreme left mirror edge around 2–5 seconds.",
-      "confirmation": "Two original-URL downloads matched SHA256 6878d20084a07ae93d68908b0ce6d75f20559b75952f257831d736fada4ca5f2.",
-      "correction": "A compact reviewed clipped-feature core restricted to the existing source-bound left-mirror box; hair exclusion and smooth peripheral feather retained.",
-      "review": "All 291 frames of the left-edge region reviewed in six sequential sheets; representative full-resolution frames reviewed before and after publication.",
-      "publishedSha256": "63d59870260b8b8148cb47877ce87e9ac103c2c79dc54217a557cf0a2bc9190b",
-      "bytes": 4408726,
-      "width": 720,
-      "height": 1280,
-      "frames": 291,
-      "audioUnchanged": true,
-      "productionOriginalUrlHashMatched": true,
-      "browserPlaybackAndReplay": true
-    },
-    {
-      "component": "Content publication",
-      "problem": "Approved opening campaign images caused inline base64 deployment JSON to exceed its existing 1MB guard.",
-      "correction": "Upload only allowlisted binary source files by content-addressed file API; retain exact bytes, size bounds, 1MB payload guard, and concurrency guards.",
-      "tests": "Six repair tests passed locally, full workflow safeguards passed.",
-      "recovery": "Media deployment was retained; content-only resume completed without rerendering or reuploading media."
-    }
-  ],
-  "unchanged": "Other 23 privacy media SHA256 values identical to previous approved privacy plan. Main deployment unchanged. Approved covers, campaign artwork, pricing and copy preserved by source-hash/configuration guards.",
+  "repairsPerformed": [],
+  "comparison": {
+    "previousVerifiedAt": "2026-10-05T04:27:34.109Z",
+    "contentRevisionChanged": true,
+    "privacyRevisionChanged": false,
+    "newProblems": [],
+    "continuingProblems": [],
+    "recoveredProblems": [],
+    "note": "Current main/content production deployments are newer than the previous baseline; today's exact-commit workflow and production browser checks passed."
+  },
   "browser": {
     "device": "1363x936 desktop cloud browser",
+    "checked": [
+      "home",
+      "works load-more to 32",
+      "services",
+      "activities",
+      "nebula",
+      "about",
+      "booking",
+      "library",
+      "work 005 play/replay",
+      "work 031 play",
+      "work 032 play",
+      "booking checklist copy UI",
+      "LINE redirect"
+    ],
     "sampledWorks": [
       "005",
-      "007"
+      "031",
+      "032"
     ],
-    "work007": "Whole duration sampled at 4 fps including mirrors; no obvious exposed identifying features in reviewed samples; not every frame.",
-    "work005": "Original public URL after publication returned exact approved byte hash. Replay advanced to 8.487915 seconds with readyState 4 and no media error.",
-    "lineHref": "https://lin.ee/Roebk7r"
+    "work005": "Played and replayed from original production URL with readyState 4 and no media error; sampled mirror area showed no obvious exposed identifying features.",
+    "work031": "Played from original production URL with readyState 4 and no media error; ending side-face sample was obscured while hair remained visible.",
+    "work032": "Played from original production URL with no media error.",
+    "lineFinalUrl": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
+    "layout": "Desktop pages inspected without horizontal overflow or broken loaded images.",
+    "console": "Only cloud-browser extension metadata errors were present; no error entries from the VX origin."
   },
   "runtimeLogs": {
-    "checkedAt": "2026-10-05T04:27:34.109Z",
+    "checkedAt": "2026-10-06T01:11:28.448Z",
     "window": "24h",
     "scope": [
-      "main",
-      "content",
-      "privacy"
+      "main latest production deployment",
+      "content latest production deployment",
+      "privacy production deployment"
     ],
-    "result": "Connected production error/fatal log queries returned no entries; this is not proof about inaccessible private logs."
+    "result": "Connected error/fatal queries returned no entries; inaccessible private logs remain outside this conclusion."
+  },
+  "publicData": {
+    "healthStatus": "healthy",
+    "healthRevision": "e92a872ad37f5084e88aed19ab688a2a27c92cfc4d167cda43a5272e75a3585e",
+    "catalogCount": 32,
+    "sitemapUrls": 47,
+    "work009Copy": "榛果棕"
   },
   "openObservations": [],
   "limitations": [
-    "No physical mobile device or mobile-sized browser/selector operation was available; responsive code inspection is not a mobile UI pass.",
-    "Only 005 left-edge mirror correction was visually reviewed for every frame; every face/reflection across all films has not been re-certified.",
-    "007 mirror coverage was sampled at 4 fps, not every frame.",
-    "Actual LINE messaging and booking submission were not performed."
+    "No physical iPhone/Android or mobile-sized browser operation was available.",
+    "Today's visual privacy review sampled 005, 031 and 032; it did not re-certify every frame of all 24 privacy films.",
+    "Actual LINE message transmission, booking submission and Google Maps destination arrival were not performed.",
+    "Private logs beyond the connected production log scope were not available."
   ],
-  "supersedes": "Morning automated receipt remains valid for its scope; additional visual verification discovered and repaired 005, so morning sparse sampling must not be treated as a whole-film privacy pass.",
-  "recordedAt": "2026-10-05T04:27:34.109Z",
-  "historyRecord": "vx-maintenance/history/2026-10-05-focused-005-verified.json"
+  "recordedAt": "2026-10-06T01:11:28.448Z",
+  "historyRecord": "vx-maintenance/history/2026-10-06-check.json"
 }
