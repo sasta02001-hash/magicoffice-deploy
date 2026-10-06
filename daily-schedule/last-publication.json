@@ -1,30 +1,30 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-10-05T03:58:04.429Z",
+  "requestedAt": "2026-10-06T01:05:02.700Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_G3QT9dnZHGsJyCmvpvPw9vVt8YeR",
+  "previousDeployment": "dpl_Dt1KQwZvJqRyQCdsqeViS4q1JVek",
   "diff": {
-    "added": 0,
-    "removed": 0,
+    "added": 2,
+    "removed": 3,
     "timeChanges": 0
   },
-  "verifiedAt": "2026-10-05T04:04:38.102Z",
-  "rows": 219,
-  "publicRows": 205,
-  "sourceHash": "3a9da0f85dfc46ec154ff6cf9a9ab30daa66999b5c51ca1dc1b965ab87ba7e9c",
-  "publicHash": "c64ec1f4dcef61200341396cc81a82c930cc3c0df052cce06d00447b5f1c1426",
+  "verifiedAt": "2026-10-06T01:06:28.926Z",
+  "rows": 218,
+  "publicRows": 204,
+  "sourceHash": "4aca292e0c12a68b01b38e470b2971b589b18f6189905305a3a4e3b3caee8bb7",
+  "publicHash": "3d4ae75106d961259be08054f15dce634d6090b7000692135b171237ba851d9f",
   "summary": {
     "source": {
-      "rows": 219,
-      "timedRows": 167,
+      "rows": 218,
+      "timedRows": 166,
       "undeterminedRows": 46,
       "closureRows": 6,
-      "hekRows": 20,
+      "hekRows": 19,
       "week": {
         "start": "2026-10-05",
         "end": "2026-10-11",
-        "rows": 23,
-        "timedRows": 16,
+        "rows": 22,
+        "timedRows": 15,
         "undeterminedRows": 6,
         "closureRows": 1,
         "complete": true,
@@ -46,8 +46,8 @@
           },
           {
             "date": "2026-10-07",
-            "rows": 5,
-            "timedRows": 4,
+            "rows": 4,
+            "timedRows": 3,
             "undeterminedRows": 1,
             "closureRows": 0
           },
@@ -83,16 +83,16 @@
       }
     },
     "public": {
-      "rows": 205,
-      "timedRows": 153,
+      "rows": 204,
+      "timedRows": 152,
       "undeterminedRows": 46,
       "closureRows": 6,
-      "hekRows": 20,
+      "hekRows": 19,
       "week": {
         "start": "2026-10-05",
         "end": "2026-10-11",
-        "rows": 23,
-        "timedRows": 16,
+        "rows": 22,
+        "timedRows": 15,
         "undeterminedRows": 6,
         "closureRows": 1,
         "complete": true,
@@ -114,8 +114,8 @@
           },
           {
             "date": "2026-10-07",
-            "rows": 5,
-            "timedRows": 4,
+            "rows": 4,
+            "timedRows": 3,
             "undeterminedRows": 1,
             "closureRows": 0
           },
@@ -151,98 +151,37 @@
       }
     }
   },
-  "fallbackSha256": "3130079ba6aec70d942ee6fa0375adfef988a626e2bf28d3c5922df1d10fed3f",
+  "fallbackSha256": "3d77c25b36314a2dd1a43abc160cf6c6f85dc807562e5872fe8327cf5b49cf91",
   "tests": "passed",
-  "deploymentId": "dpl_Dt1KQwZvJqRyQCdsqeViS4q1JVek",
+  "deploymentId": "dpl_7fqrc4hT12ZDUc1KPbd3pqoMVhDb",
   "siteHealth": {
     "httpStatus": 200,
     "status": "healthy"
   },
-  "finishedAt": "2026-10-05T04:04:54.371Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37261940597",
-  "jobId": 111610799796,
-  "requestCommit": "d706e4469630753affa52153400d9c422e3251c8",
+  "finishedAt": "2026-10-06T01:06:45.680Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37397444831",
+  "jobId": 112056675758,
+  "requestCommit": "61423159efb17f15b8d84b162f35b82f30fffbf5",
   "publisherTestsPassed": 11,
   "mainSiteModified": false,
   "secretName": "MAGICOFFICE",
-  "reportingCorrection": {
-    "correctedAt": "2026-10-05T04:04:03.814Z",
-    "originalGridRecheckedAt": "2026-10-05T03:58:04.429Z",
-    "field": "inspection.currentWeekRows",
-    "previousValue": 20,
-    "correctValue": 23,
-    "reason": "Manual weekly count did not match seven daily totals. Current parser and both live APIs verify 23 rows, including one closure. Published roster contents and hashes were already correct."
-  },
   "inspection": {
-    "originalGridVerifiedAt": "2026-10-05T03:58:04.429Z",
-    "runnerNativeCsvVerifiedAt": "2026-10-05T04:04:38.102Z",
+    "originalGridVerifiedAt": "2026-10-06T01:05:02.700Z",
     "postPublishIndependentParity": true,
-    "fullRows": 219,
-    "publicRows": 205,
-    "hekRows": 20,
-    "timedRows": 167,
-    "undeterminedRows": 46,
-    "closureRows": 6,
-    "currentWeekStart": "2026-10-05",
-    "currentWeekEnd": "2026-10-11",
-    "currentWeekRows": 23,
-    "currentWeekAttendanceRows": 22,
-    "currentWeekClosureRows": 1,
-    "currentWeekComplete": true,
-    "currentWeekDaily": [
-      {
-        "date": "2026-10-05",
-        "rows": 3,
-        "timedRows": 2,
-        "undeterminedRows": 1,
-        "closureRows": 0
-      },
-      {
-        "date": "2026-10-06",
-        "rows": 2,
-        "timedRows": 1,
-        "undeterminedRows": 1,
-        "closureRows": 0
-      },
-      {
-        "date": "2026-10-07",
-        "rows": 5,
-        "timedRows": 4,
-        "undeterminedRows": 1,
-        "closureRows": 0
-      },
-      {
-        "date": "2026-10-08",
-        "rows": 2,
-        "timedRows": 1,
-        "undeterminedRows": 1,
-        "closureRows": 0
-      },
-      {
-        "date": "2026-10-09",
-        "rows": 5,
-        "timedRows": 4,
-        "undeterminedRows": 1,
-        "closureRows": 0
-      },
-      {
-        "date": "2026-10-10",
-        "rows": 1,
-        "timedRows": 0,
-        "undeterminedRows": 0,
-        "closureRows": 1
-      },
-      {
-        "date": "2026-10-11",
-        "rows": 5,
-        "timedRows": 4,
-        "undeterminedRows": 1,
-        "closureRows": 0
-      }
+    "publishedMonths": [
+      "2026-09",
+      "2026-10"
     ],
+    "metadataSheetCount": 8,
+    "originalGridRanges": [
+      "玖月!A1:AG1004",
+      "十月!A1:AG1003"
+    ],
+    "parserBytesMatchedCurrentDeployment": true,
+    "summaryGeneratedByPublisher": true,
     "healthHttpStatus": 200,
     "health": "healthy",
-    "healthCheckedAt": "2026-10-05T04:06:10.148Z",
+    "healthCheckedAt": "2026-10-06T01:08:04.119Z",
     "scheduleState": "live",
     "scheduleStale": false,
     "scheduleSourceHttpStatus": 200,
@@ -254,12 +193,9 @@
     "menuFetchedAt": "2026-09-29T02:10:38.746Z",
     "menuUnchanged": true,
     "nightCollectionVisibleItems": 12,
-    "runtimeErrorsLastHour": 0,
+    "nightCollectionTextColor": "#F7E0B4",
+    "runtimeErrorsWarningsLast24Hours": 0,
     "browserSiteErrors": 0,
-    "publishedMonths": [
-      "2026-09",
-      "2026-10"
-    ],
-    "summaryGeneratedByPublisher": true
+    "mainBuild": "production-v4.3.47-angel-devil-20260929"
   }
 }
