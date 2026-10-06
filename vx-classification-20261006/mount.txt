@@ -1,0 +1,44 @@
+  function mount(root) {
+    const grid = root?.querySelector('[data-vx-work-grid]');
+    if (!grid || grid.dataset.mounted) return;
+    grid.dataset.mounted = 'true';
+    const controls = root.querySelector('[data-vx-craft-controls]');
+    const select = root.querySelector('#vx-craft-filter');
+    const summary = root.querySelector('#vx-craft-summary');
+    const counts = root.querySelectorAll('[data-vx-work-count], [data-vx-craft-count]');
+    const more = root.querySelector('[data-vx-works-more]');
+    let filtered = works, visibleCount = 0;
+    const requested = new URL(location.href).searchParams.get('craft');
+    let activeCategory = categories.some(c => c.id === requested) ? requested : 'all';
+    function renderSelection() {
+      const category = categories.find(c => c.id === activeCategory);
+      filtered = category ? works.filter(w => w.category === category.id) : works;
+      visibleCount = Math.min(12, filtered.length);
+      grid.innerHTML = filtered.length ? filtered.slice(0, visibleCount).map(card).join('') : '<div class="vx-craft-empty"><p>此分類尚無作品</p><button type="button" class="vx-works-more" data-vx-show-all>瀏覽全部作品</button></div>';
+      counts.forEach(count => { count.textContent = filtered.length + ' 件作品'; });
+      if (summary) summary.textContent = category ? category.id === 'pending' ? '005 煙晶緞帶、009 歐美線條：工藝分類待確認。' : category.code + '｜' + category.name + ' · ' + category.combination + (category.id === 'general' ? '，獨立於 TRIARCH 工藝系列。' : '') : '依實際施作工藝分類，從漂、染、燙到複合工藝。';
+      if (more) more.hidden = visibleCount >= filtered.length;
+      if (select) select.value = activeCategory;
+    }
+    function changeCategory(value) {
+      activeCategory = categories.some(c => c.id === value) ? value : 'all';
+      const url = new URL(location.href);
+      if (activeCategory === 'all') url.searchParams.delete('craft');
+      else url.searchParams.set('craft', activeCategory);
+      history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+      renderSelection();
+    }
+    if (controls) controls.hidden = false;
+    select?.addEventListener('change', () => changeCategory(select.value));
+    grid.addEventListener('click', event => {
+      if (event.target.closest('[data-vx-show-all]')) { changeCategory('all'); select?.focus({preventScroll:true}); }
+    });
+    more?.addEventListener('click', () => {
+      const start = visibleCount;
+      visibleCount = Math.min(visibleCount + 12, filtered.length);
+      grid.insertAdjacentHTML('beforeend', filtered.slice(start, visibleCount).map((work, index) => card(work, start + index)).join(''));
+      more.hidden = visibleCount >= filtered.length;
+      grid.querySelector('[data-vx-work="' + filtered[start]?.id + '"]')?.focus({preventScroll:true});
+    });
+    renderSelection();
+  }

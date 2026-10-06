@@ -49,3 +49,4 @@ const out=path.join(ROOT,'snapshot');
 for(const [key,m] of Object.entries(modules))await restore(m,path.join(out,key));
 await fs.writeFile(path.join(out,'baselines.json'),JSON.stringify(modules,null,2));
 console.log('Restored only allowlisted source files from verified production deployments.');
+

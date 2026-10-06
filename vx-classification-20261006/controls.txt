@@ -1,0 +1,4 @@
+function classificationControls(works) {
+  const count = id => works.filter(w => w.category === id).length;
+  return '<div class="vx-craft-browser" data-vx-craft-controls hidden><div class="vx-craft-toolbar"><label for="vx-craft-filter"><span>CRAFT INDEX</span>依工藝瀏覽</label><select id="vx-craft-filter" aria-describedby="vx-craft-summary"><option value="all">全部作品 · '+works.length+'</option>'+CRAFT_CATEGORIES.map(c=>'<option value="'+c.id+'">'+escape(c.code+(c.id==='pending'?'':'｜'+c.name))+' · '+count(c.id)+'</option>').join('')+'</select><span data-vx-craft-count role="status">'+works.length+' 件作品</span></div><p id="vx-craft-summary" class="vx-craft-summary">依實際施作工藝分類，從漂、染、燙到複合工藝。</p></div>';
+}

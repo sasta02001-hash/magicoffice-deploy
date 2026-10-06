@@ -1,0 +1,7 @@
+{
+  "patch/catalog/content/works.json": "571ed0dbcee131b92f7bcc7a46398b65b5c046014eaee4d30b8502d659d2d737",
+  "patch/catalog/catalog.mjs": "e4b58fd1c9cd6e8bddab7656b44fe67ce0c2e5e91709a17b319ea6a7aeb258e9",
+  "patch/main/source/assets/works/works.js": "9c36a0dab1aac1257e65203f9ec2e21fe0374e27c4c357662d5931d5fceb353e",
+  "patch/main/source/assets/works/works.css": "e4f7952644dc1c044e8f3aedcf87df780e6c6d9fcd0ea698c46192aed32b23e0",
+  "patch/main/source/index.html": "b4c7b7135a339ef9072170cf56f8128b8eeb0182625e52fa1b90cf76e7cf20e3"
+}

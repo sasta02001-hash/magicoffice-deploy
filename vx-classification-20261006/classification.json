@@ -1,0 +1,253 @@
+{
+  "source": "VX_Sagittarius_作品工藝分類_最終校稿版.pdf",
+  "categories": [
+    {
+      "id": "bleach",
+      "code": "BLEACH",
+      "name": "單項漂髮工藝",
+      "combination": "漂髮"
+    },
+    {
+      "id": "color",
+      "code": "COLOR",
+      "name": "單項染髮工藝",
+      "combination": "染髮"
+    },
+    {
+      "id": "perm",
+      "code": "PERM",
+      "name": "單項燙髮工藝",
+      "combination": "燙髮"
+    },
+    {
+      "id": "triascend",
+      "code": "TRIASCEND",
+      "name": "七維虹彩釉光品藏",
+      "combination": "漂髮＋染髮"
+    },
+    {
+      "id": "trifusion",
+      "code": "TRIFUSION",
+      "name": "星雲畫染拓樸藝作",
+      "combination": "染髮＋燙髮"
+    },
+    {
+      "id": "triform",
+      "code": "TRIFORM",
+      "name": "維娜建構恆熵典藝",
+      "combination": "漂髮＋燙髮"
+    },
+    {
+      "id": "trievolve",
+      "code": "TRIEVOLVE",
+      "name": "進化交響視界藝品",
+      "combination": "漂髮＋染髮＋燙髮"
+    },
+    {
+      "id": "general",
+      "code": "GENERAL SERVICES",
+      "name": "接髮",
+      "combination": "接髮"
+    },
+    {
+      "id": "pending",
+      "code": "待確認",
+      "name": "工藝分類待確認",
+      "combination": "實際施作工藝確認後歸類"
+    }
+  ],
+  "works": [
+    {
+      "id": "032",
+      "title": "緞面柔波燙",
+      "category": "perm",
+      "technique": "燙髮"
+    },
+    {
+      "id": "031",
+      "title": "裸霧粉",
+      "category": "bleach",
+      "technique": "漂髮"
+    },
+    {
+      "id": "030",
+      "title": "奶金無痕接髮",
+      "category": "general",
+      "technique": "接髮"
+    },
+    {
+      "id": "029",
+      "title": "煙藕粉紫",
+      "category": "bleach",
+      "technique": "漂髮"
+    },
+    {
+      "id": "028",
+      "title": "鈷藍",
+      "category": "bleach",
+      "technique": "漂髮"
+    },
+    {
+      "id": "027",
+      "title": "層次柔波燙",
+      "category": "perm",
+      "technique": "燙髮"
+    },
+    {
+      "id": "026",
+      "title": "霧茶棕 × 柔弧鬆軟燙",
+      "category": "trifusion",
+      "technique": "染髮＋燙髮"
+    },
+    {
+      "id": "025",
+      "title": "輪廓大彎燙",
+      "category": "perm",
+      "technique": "燙髮"
+    },
+    {
+      "id": "024",
+      "title": "鬆弛波紋燙",
+      "category": "perm",
+      "technique": "燙髮"
+    },
+    {
+      "id": "023",
+      "title": "霧灰可可 × 彈力波紋燙",
+      "category": "trifusion",
+      "technique": "染髮＋燙髮"
+    },
+    {
+      "id": "022",
+      "title": "霧茶棕 × 鏡面縮毛矯正",
+      "category": "trifusion",
+      "technique": "染髮＋燙髮／縮毛矯正"
+    },
+    {
+      "id": "021",
+      "title": "冷霧可可 × 柔波燙",
+      "category": "trifusion",
+      "technique": "染髮＋燙髮"
+    },
+    {
+      "id": "020",
+      "title": "輕羽外翹燙",
+      "category": "perm",
+      "technique": "剪髮＋燙髮"
+    },
+    {
+      "id": "019",
+      "title": "輪廓 C 彎燙",
+      "category": "perm",
+      "technique": "剪髮＋燙髮"
+    },
+    {
+      "id": "018",
+      "title": "層次大波燙",
+      "category": "perm",
+      "technique": "燙髮"
+    },
+    {
+      "id": "017",
+      "title": "玫瑰奶金",
+      "category": "triascend",
+      "technique": "漂髮＋上色"
+    },
+    {
+      "id": "016",
+      "title": "法式柔波燙",
+      "category": "perm",
+      "technique": "燙髮"
+    },
+    {
+      "id": "015",
+      "title": "紅茶棕 × 輕盈波紋燙",
+      "category": "trifusion",
+      "technique": "染髮＋燙髮"
+    },
+    {
+      "id": "014",
+      "title": "彈力大波燙",
+      "category": "perm",
+      "technique": "燙髮"
+    },
+    {
+      "id": "013",
+      "title": "霧灰線條 × 柔波燙",
+      "category": "trievolve",
+      "technique": "挑漂＋上色＋燙髮"
+    },
+    {
+      "id": "012",
+      "title": "冷霧深棕 × 復古短波燙",
+      "category": "trifusion",
+      "technique": "染髮＋燙髮"
+    },
+    {
+      "id": "011",
+      "title": "絲絨大波燙",
+      "category": "perm",
+      "technique": "燙髮"
+    },
+    {
+      "id": "010",
+      "title": "輕羽層次燙",
+      "category": "perm",
+      "technique": "剪髮＋燙髮"
+    },
+    {
+      "id": "009",
+      "title": "歐美線條",
+      "category": "pending",
+      "technique": "實際施作工藝確認後歸類"
+    },
+    {
+      "id": "008",
+      "title": "亞麻灰 × 縮毛矯正",
+      "category": "trifusion",
+      "technique": "染髮＋燙髮／縮毛矯正"
+    },
+    {
+      "id": "007",
+      "title": "霧棕 × 鬆軟燙",
+      "category": "trifusion",
+      "technique": "染髮＋燙髮"
+    },
+    {
+      "id": "006",
+      "title": "奶霜粉",
+      "category": "bleach",
+      "technique": "漂髮"
+    },
+    {
+      "id": "005",
+      "title": "煙晶緞帶",
+      "category": "pending",
+      "technique": "實際施作工藝確認後歸類"
+    },
+    {
+      "id": "004",
+      "title": "絲絨電棒燙",
+      "category": "perm",
+      "technique": "燙髮"
+    },
+    {
+      "id": "003",
+      "title": "冷萃茶棕 × 絲絨電棒捲",
+      "category": "trifusion",
+      "technique": "染髮＋燙髮"
+    },
+    {
+      "id": "002",
+      "title": "漸層藍 × 巴黎畫染",
+      "category": "triascend",
+      "technique": "漂髮＋上色"
+    },
+    {
+      "id": "001",
+      "title": "冷霧棕 × 大波紋電棒燙",
+      "category": "trifusion",
+      "technique": "染髮＋燙髮"
+    }
+  ]
+}
