@@ -1,0 +1,99 @@
+{
+  "status": "verified-with-limitations",
+  "verifiedAt": "2026-10-07T01:08:12.313Z",
+  "site": "https://vxsagittarius.vercel.app/",
+  "request": "Daily production verification; check mode only.",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37555064839",
+  "verificationCommit": "d71d6c9bd69929093f82174fb87db0f659d47626",
+  "mainDeploymentId": "dpl_21LrdDDFj1J5izpfE8iX2pmy515q",
+  "contentDeploymentId": "dpl_3RqHyxvWkRviNmm8fz2tHQT39mqz",
+  "privacyDeploymentId": "dpl_EKZSaxFJLM7CwQLTxcnvfmRmRgME",
+  "contentRevision": "ee2268486cd327a9078765b1117d744ecbdf2c6147b7be2053bcb7a61c297b85",
+  "privacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
+  "automated": {
+    "status": "passed",
+    "finishedAt": "2026-10-07T01:02:39.228Z",
+    "works": 32,
+    "counts": {
+      "pages": 47,
+      "assets": 128,
+      "privacyRoutes": 24,
+      "ranges": 2
+    },
+    "errors": []
+  },
+  "repairsPerformed": [],
+  "comparison": {
+    "previousVerifiedAt": "2026-10-06T01:11:28.448Z",
+    "contentRevisionChanged": true,
+    "privacyRevisionChanged": false,
+    "newProblems": [],
+    "continuingProblems": [],
+    "recoveredProblems": [],
+    "note": "Main and content deployments and content revision changed since the previous verified baseline; exact-commit workflow and production browser checks passed. Privacy deployment and revision were unchanged."
+  },
+  "browser": {
+    "device": "1363x936 desktop cloud browser",
+    "checked": [
+      "home",
+      "works load-more to 32",
+      "services",
+      "activities",
+      "nebula",
+      "about",
+      "booking",
+      "library",
+      "work 005 play/replay and mirror sample",
+      "work 007 play",
+      "work 019 profile sample",
+      "work 032 play and masked-eye sample",
+      "booking checklist copy UI",
+      "LINE redirect"
+    ],
+    "sampledWorks": [
+      "005",
+      "007",
+      "019",
+      "032"
+    ],
+    "work005": "Played and replayed from the original production URL with readyState 4 and no media error; sampled mirror areas showed blurred identifying features while hair remained visible.",
+    "work007": "Played from start to finish from the original production URL with readyState 4 and no media error; sampled frames showed preserved hair and no obvious exposed identifying facial features.",
+    "work019": "Played from the original production URL with readyState 4 and no media error; sampled side profile was obscured while hair remained visible.",
+    "work032": "Played from the original production URL with readyState 4 and no media error; the sample with a physical face mask retained the mask and hair while obscuring the eye/forehead identity region.",
+    "lineFinalUrl": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
+    "layout": "Desktop pages inspected without horizontal overflow or broken loaded images.",
+    "console": "Only cloud-browser extension metadata errors were present; no error entries from the VX origin."
+  },
+  "runtimeLogs": {
+    "checkedAt": "2026-10-07T01:08:12.313Z",
+    "window": "24h",
+    "scope": [
+      "main latest production deployment",
+      "content latest production deployment",
+      "privacy production deployment"
+    ],
+    "result": "Connected error/fatal and grouped runtime-error queries returned no entries; inaccessible private logs remain outside this conclusion."
+  },
+  "deploymentLogs": {
+    "result": "All three latest production deployments are READY and their build logs end with Deployment completed.",
+    "warnings": [
+      "Main and content builds warn that package.json uses node >=22, which may auto-upgrade on a future major Node.js release; this was non-blocking and no current failure was observed."
+    ]
+  },
+  "publicData": {
+    "healthStatus": "healthy",
+    "healthRevision": "ee2268486cd327a9078765b1117d744ecbdf2c6147b7be2053bcb7a61c297b85",
+    "catalogCount": 32,
+    "sitemapUrls": 47,
+    "work009Copy": "榛果棕"
+  },
+  "openObservations": [],
+  "limitations": [
+    "No physical iPhone/Android or mobile-sized browser operation was available.",
+    "Today's visual privacy review sampled 005, 007, 019 and 032; it did not re-certify every frame of all 24 privacy films.",
+    "Actual LINE message transmission, booking submission and Google Maps destination arrival were not performed.",
+    "Private logs beyond the connected production log scope were not available."
+  ],
+  "recordedAt": "2026-10-07T01:08:12.313Z",
+  "historyRecord": "vx-maintenance/history/2026-10-07-check.json"
+}
