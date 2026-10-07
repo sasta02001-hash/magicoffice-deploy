@@ -1,25 +1,25 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-10-06T01:05:02.700Z",
+  "requestedAt": "2026-10-07T00:57:14.211Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_Dt1KQwZvJqRyQCdsqeViS4q1JVek",
+  "previousDeployment": "dpl_7fqrc4hT12ZDUc1KPbd3pqoMVhDb",
   "diff": {
     "added": 2,
-    "removed": 3,
+    "removed": 1,
     "timeChanges": 0
   },
-  "verifiedAt": "2026-10-06T01:06:28.926Z",
-  "rows": 218,
-  "publicRows": 204,
-  "sourceHash": "4aca292e0c12a68b01b38e470b2971b589b18f6189905305a3a4e3b3caee8bb7",
-  "publicHash": "3d4ae75106d961259be08054f15dce634d6090b7000692135b171237ba851d9f",
+  "verifiedAt": "2026-10-07T00:58:03.674Z",
+  "rows": 219,
+  "publicRows": 205,
+  "sourceHash": "216f630708fe5474cc43f8872017f25c117d9c1ada453c8a8ab6048d66c3e4d1",
+  "publicHash": "065f0ddd8eaa49101eaf1fedbe5b784ffbcfe138e968b1bfec2c4492aa5d7fe4",
   "summary": {
     "source": {
-      "rows": 218,
-      "timedRows": 166,
+      "rows": 219,
+      "timedRows": 167,
       "undeterminedRows": 46,
       "closureRows": 6,
-      "hekRows": 19,
+      "hekRows": 18,
       "week": {
         "start": "2026-10-05",
         "end": "2026-10-11",
@@ -83,11 +83,11 @@
       }
     },
     "public": {
-      "rows": 204,
-      "timedRows": 152,
+      "rows": 205,
+      "timedRows": 153,
       "undeterminedRows": 46,
       "closureRows": 6,
-      "hekRows": 19,
+      "hekRows": 18,
       "week": {
         "start": "2026-10-05",
         "end": "2026-10-11",
@@ -151,22 +151,22 @@
       }
     }
   },
-  "fallbackSha256": "3d77c25b36314a2dd1a43abc160cf6c6f85dc807562e5872fe8327cf5b49cf91",
+  "fallbackSha256": "afa6d659a98045476b7e34e8f1c36fe8f8a26b8a28d0bd7f77c353ecfebee841",
   "tests": "passed",
-  "deploymentId": "dpl_7fqrc4hT12ZDUc1KPbd3pqoMVhDb",
+  "deploymentId": "dpl_G2iRkFJq7iokRqufDP8DiapMkcGR",
   "siteHealth": {
     "httpStatus": 200,
     "status": "healthy"
   },
-  "finishedAt": "2026-10-06T01:06:45.680Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37397444831",
-  "jobId": 112056675758,
-  "requestCommit": "61423159efb17f15b8d84b162f35b82f30fffbf5",
+  "finishedAt": "2026-10-07T00:58:19.371Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37554676072",
+  "jobId": 112578064841,
+  "requestCommit": "d4849107bc4fd596cfeb161fd68b79fad228ff4c",
   "publisherTestsPassed": 11,
   "mainSiteModified": false,
   "secretName": "MAGICOFFICE",
   "inspection": {
-    "originalGridVerifiedAt": "2026-10-06T01:05:02.700Z",
+    "originalGridVerifiedAt": "2026-10-07T00:57:14.211Z",
     "postPublishIndependentParity": true,
     "publishedMonths": [
       "2026-09",
@@ -181,7 +181,7 @@
     "summaryGeneratedByPublisher": true,
     "healthHttpStatus": 200,
     "health": "healthy",
-    "healthCheckedAt": "2026-10-06T01:08:04.119Z",
+    "healthCheckedAt": "2026-10-07T00:59:46.660Z",
     "scheduleState": "live",
     "scheduleStale": false,
     "scheduleSourceHttpStatus": 200,
