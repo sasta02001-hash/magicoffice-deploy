@@ -1,18 +1,18 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-10-08T00:58:42.167Z",
+  "requestedAt": "2026-10-09T01:00:12.655Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_G2iRkFJq7iokRqufDP8DiapMkcGR",
+  "previousDeployment": "dpl_BLfqMoCMe84aEUtYumDz3nCijceF",
   "diff": {
-    "added": 0,
-    "removed": 0,
-    "timeChanges": 2
+    "added": 1,
+    "removed": 1,
+    "timeChanges": 0
   },
-  "verifiedAt": "2026-10-08T01:03:26.570Z",
+  "verifiedAt": "2026-10-09T01:03:07.894Z",
   "rows": 219,
   "publicRows": 205,
-  "sourceHash": "a2e189cd3d5c106305aa7c4f36468215fd7d20cf995e34766e9afb143f462b59",
-  "publicHash": "e20082b4d874e4e333c01eb229c3f187590c767b69ef0896d7bbc380782706dd",
+  "sourceHash": "9a9905b45795ea5074fb16b09ea35f9f77d2b7a2f3dd7f86673a27ae1de3447b",
+  "publicHash": "829c605e2422a715ceee32fbec7e05414d36a71bfffd4e1c58d437d5c3eaf160",
   "summary": {
     "source": {
       "rows": 219,
@@ -151,22 +151,22 @@
       }
     }
   },
-  "fallbackSha256": "e5fe7b8202339cd69f8ce683ae0b9573f0799800e98715945bcf898859e10b6e",
+  "fallbackSha256": "e5603ecd3dbbec4655be0d4a940dc58df691bcfa04fe046cf54aacfc6860ec4c",
   "tests": "passed",
-  "deploymentId": "dpl_BLfqMoCMe84aEUtYumDz3nCijceF",
+  "deploymentId": "dpl_7d3AV8ByEACQA2kR9VNb9tiCvQoC",
   "siteHealth": {
     "httpStatus": 200,
     "status": "healthy"
   },
-  "finishedAt": "2026-10-08T01:03:41.490Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37710958791",
-  "jobId": 113096512776,
-  "requestCommit": "f969d6145a6eb7ed498bab36563ede1a0fbed44b",
+  "finishedAt": "2026-10-09T01:03:30.060Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37867835708",
+  "jobId": 113618740224,
+  "requestCommit": "3d8b348976619608480494fca837f0900de15353",
   "publisherTestsPassed": 11,
   "mainSiteModified": false,
   "secretName": "MAGICOFFICE",
   "inspection": {
-    "originalGridVerifiedAt": "2026-10-08T00:58:42.167Z",
+    "originalGridVerifiedAt": "2026-10-09T01:00:12.655Z",
     "postPublishIndependentParity": true,
     "publishedMonths": [
       "2026-09",
@@ -181,7 +181,7 @@
     "summaryGeneratedByPublisher": true,
     "healthHttpStatus": 200,
     "health": "healthy",
-    "healthCheckedAt": "2026-10-08T01:05:17.888Z",
+    "healthCheckedAt": "2026-10-09T01:04:27.248Z",
     "scheduleState": "live",
     "scheduleStale": false,
     "scheduleSourceHttpStatus": 200,
