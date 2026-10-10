@@ -1,30 +1,30 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-10-09T01:00:12.655Z",
+  "requestedAt": "2026-10-10T01:06:33.337Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_BLfqMoCMe84aEUtYumDz3nCijceF",
+  "previousDeployment": "dpl_7d3AV8ByEACQA2kR9VNb9tiCvQoC",
   "diff": {
-    "added": 1,
+    "added": 0,
     "removed": 1,
     "timeChanges": 0
   },
-  "verifiedAt": "2026-10-09T01:03:07.894Z",
-  "rows": 219,
-  "publicRows": 205,
-  "sourceHash": "9a9905b45795ea5074fb16b09ea35f9f77d2b7a2f3dd7f86673a27ae1de3447b",
-  "publicHash": "829c605e2422a715ceee32fbec7e05414d36a71bfffd4e1c58d437d5c3eaf160",
+  "verifiedAt": "2026-10-10T01:09:27.983Z",
+  "rows": 218,
+  "publicRows": 204,
+  "sourceHash": "62cac923682a36b4c31b6dbcb9ef0622614d0e69ee20f4d0d61db6be888e56b2",
+  "publicHash": "a7b4b897395a9ed6fff24e01be971d72a5fa25ee50d4fa90d02d20f4c0e3168c",
   "summary": {
     "source": {
-      "rows": 219,
-      "timedRows": 167,
+      "rows": 218,
+      "timedRows": 166,
       "undeterminedRows": 46,
       "closureRows": 6,
       "hekRows": 18,
       "week": {
         "start": "2026-10-05",
         "end": "2026-10-11",
-        "rows": 22,
-        "timedRows": 15,
+        "rows": 21,
+        "timedRows": 14,
         "undeterminedRows": 6,
         "closureRows": 1,
         "complete": true,
@@ -60,8 +60,8 @@
           },
           {
             "date": "2026-10-09",
-            "rows": 5,
-            "timedRows": 4,
+            "rows": 4,
+            "timedRows": 3,
             "undeterminedRows": 1,
             "closureRows": 0
           },
@@ -83,16 +83,16 @@
       }
     },
     "public": {
-      "rows": 205,
-      "timedRows": 153,
+      "rows": 204,
+      "timedRows": 152,
       "undeterminedRows": 46,
       "closureRows": 6,
       "hekRows": 18,
       "week": {
         "start": "2026-10-05",
         "end": "2026-10-11",
-        "rows": 22,
-        "timedRows": 15,
+        "rows": 21,
+        "timedRows": 14,
         "undeterminedRows": 6,
         "closureRows": 1,
         "complete": true,
@@ -128,8 +128,8 @@
           },
           {
             "date": "2026-10-09",
-            "rows": 5,
-            "timedRows": 4,
+            "rows": 4,
+            "timedRows": 3,
             "undeterminedRows": 1,
             "closureRows": 0
           },
@@ -151,22 +151,22 @@
       }
     }
   },
-  "fallbackSha256": "e5603ecd3dbbec4655be0d4a940dc58df691bcfa04fe046cf54aacfc6860ec4c",
+  "fallbackSha256": "06f9a1d8252cfba99fe3c176f65e41612c1d1308c912b7be2d1ca5adcfd1d2df",
   "tests": "passed",
-  "deploymentId": "dpl_7d3AV8ByEACQA2kR9VNb9tiCvQoC",
+  "deploymentId": "dpl_81FBgoePWUdPQJV7UjEtL8hbj471",
   "siteHealth": {
     "httpStatus": 200,
     "status": "healthy"
   },
-  "finishedAt": "2026-10-09T01:03:30.060Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/37867835708",
-  "jobId": 113618740224,
-  "requestCommit": "3d8b348976619608480494fca837f0900de15353",
+  "finishedAt": "2026-10-10T01:09:43.432Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38012049293",
+  "jobId": 114094008129,
+  "requestCommit": "79a6aaf5ecd8a8c25abbd3fcc1868e4d6b948f4b",
   "publisherTestsPassed": 11,
   "mainSiteModified": false,
   "secretName": "MAGICOFFICE",
   "inspection": {
-    "originalGridVerifiedAt": "2026-10-09T01:00:12.655Z",
+    "originalGridVerifiedAt": "2026-10-10T01:06:33.337Z",
     "postPublishIndependentParity": true,
     "publishedMonths": [
       "2026-09",
@@ -181,7 +181,7 @@
     "summaryGeneratedByPublisher": true,
     "healthHttpStatus": 200,
     "health": "healthy",
-    "healthCheckedAt": "2026-10-09T01:04:27.248Z",
+    "healthCheckedAt": "2026-10-10T01:10:37.605Z",
     "scheduleState": "live",
     "scheduleStale": false,
     "scheduleSourceHttpStatus": 200,
