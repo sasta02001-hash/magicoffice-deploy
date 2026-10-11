@@ -1,0 +1,131 @@
+{
+  "status": "verified-with-limitations",
+  "verifiedAt": "2026-10-11T01:12:42.000Z",
+  "site": "https://vxsagittarius.vercel.app/",
+  "request": "Daily production verification; check mode only.",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38100469395",
+  "verificationCommit": "304a564ea8a1e8850bfdd059ebaf4da4b11d96d1",
+  "verificationJobs": {
+    "operation": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38100469395/job/114355180825",
+    "maintain": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38100469395/job/114355207267",
+    "artifactName": "vx-maintenance-receipt",
+    "artifactId": 11687960964,
+    "artifactDigest": "sha256:19b6fa1fa86c3cdc23213c0518c697a8d322885a0d4cd36a7a21486455a7409e"
+  },
+  "mainDeploymentId": "dpl_21LrdDDFj1J5izpfE8iX2pmy515q",
+  "contentDeploymentId": "dpl_3RqHyxvWkRviNmm8fz2tHQT39mqz",
+  "privacyDeploymentId": "dpl_EKZSaxFJLM7CwQLTxcnvfmRmRgME",
+  "contentRevision": "ee2268486cd327a9078765b1117d744ecbdf2c6147b7be2053bcb7a61c297b85",
+  "privacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
+  "automated": {
+    "status": "passed",
+    "startedAt": "2026-10-11T01:02:40.880Z",
+    "finishedAt": "2026-10-11T01:02:45.828Z",
+    "works": 32,
+    "counts": {
+      "pages": 47,
+      "assets": 128,
+      "privacyRoutes": 24,
+      "ranges": 2
+    },
+    "rangeChecks": [
+      {
+        "work": "001",
+        "status": 206,
+        "contentRange": "bytes 0-1023/1641423"
+      },
+      {
+        "work": "032",
+        "status": 206,
+        "contentRange": "bytes 0-1023/748873"
+      }
+    ],
+    "tests": {
+      "passed": 11,
+      "failed": 0
+    },
+    "errors": []
+  },
+  "repairsPerformed": [],
+  "comparison": {
+    "previousVerifiedAt": "2026-10-09T01:04:16.107Z",
+    "deploymentsChanged": false,
+    "contentRevisionChanged": false,
+    "privacyRevisionChanged": false,
+    "newProblems": [],
+    "continuingProblems": [],
+    "recoveredProblems": [],
+    "note": "No reliable 2026-10-10 history record was present, so this comparison uses the latest verified 2026-10-09 baseline. Production deployments and content/privacy revisions are unchanged; exact-commit workflow and current browser checks passed."
+  },
+  "browser": {
+    "device": "1363x936 desktop cloud browser",
+    "checked": [
+      "home navigation, canonical, layout and loaded images",
+      "works load-more from 12 to 24 to all 32 works",
+      "services and all seven current project routes",
+      "activities and status filter interaction",
+      "nebula",
+      "about",
+      "booking checklist copy UI",
+      "library",
+      "work 005 playback and mirror-scene privacy sample",
+      "work 017 playback and fringe/hair-boundary privacy sample",
+      "work 031 playback and side-profile soft-edge privacy sample",
+      "work 032 playback, replay and masked-eye privacy sample",
+      "LINE redirect"
+    ],
+    "sampledWorks": [
+      "005",
+      "017",
+      "031",
+      "032"
+    ],
+    "work005": "Played from the original production URL with readyState 4 and no media error; sampled mirror/background faces were obscured and surrounding hair remained visible.",
+    "work017": "Played from the original production URL with readyState 4 and no media error; sampled fringe and hair remained clear with no exposed identity region observed.",
+    "work031": "Played from the original production URL with readyState 4 and no media error; sampled side-profile facial identity was softly obscured without a hard mask edge or broad hair blur.",
+    "work032": "Played and replayed from the original production URL with readyState 4 and no media error; the physical mask and hair remained visible while the eye/forehead identity region was obscured.",
+    "lineFinalUrl": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
+    "bookingChecklist": "Button changed to 已複製資料清單 after activation.",
+    "layout": "Inspected desktop pages had no horizontal overflow or broken loaded images.",
+    "console": "Only cloud-browser extension metadata errors were present; no warning/error entry originated from the VX site."
+  },
+  "runtimeLogs": {
+    "checkedAt": "2026-10-11T01:12:42.000Z",
+    "window": "24h",
+    "scope": [
+      "main production",
+      "content production",
+      "privacy-media production"
+    ],
+    "result": "Connected grouped runtime-error and error/fatal queries returned no entries; this does not cover unavailable private logs."
+  },
+  "deploymentLogs": {
+    "result": "All three current production deployments are READY and their build logs end with Deployment completed.",
+    "warnings": [
+      "Main and content builds warn that package.json uses node >=22, which may auto-upgrade on a future major Node.js release; non-blocking, with no current failure observed.",
+      "The maintenance workflow reports that Node.js 20 actions are being forced onto Node.js 24; the run still completed successfully."
+    ]
+  },
+  "publicData": {
+    "checkedAt": "2026-10-11T01:12:31.000Z",
+    "healthStatus": "healthy",
+    "healthRevision": "ee2268486cd327a9078765b1117d744ecbdf2c6147b7be2053bcb7a61c297b85",
+    "catalogCount": 32,
+    "sitemapUrls": 47,
+    "work009Copy": "榛果棕"
+  },
+  "evidenceNotes": [
+    "The downloaded check-result.json receipt matched the successful exact-commit run, artifact ID and digest.",
+    "Public health.json, catalog.json and sitemap.xml were fetched through the connected Vercel route because direct JSON navigation was blocked by the browser client; this was a tool limitation, not a site failure.",
+    "Browser console errors were generated by the cloud-browser extension rather than the VX origin."
+  ],
+  "openObservations": [],
+  "limitations": [
+    "No physical iPhone/Android or mobile-sized browser operation was available.",
+    "Today's visual privacy review sampled 005, 017, 031 and 032; it did not re-certify every frame of all 24 privacy films.",
+    "Actual LINE message transmission, booking submission and Google Maps destination arrival were not performed.",
+    "Private logs beyond the connected production log scope were not available."
+  ],
+  "recordedAt": "2026-10-11T01:12:42.000Z",
+  "historyRecord": "vx-maintenance/history/2026-10-11-check.json"
+}
