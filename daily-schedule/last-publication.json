@@ -1,14 +1,14 @@
 {
   "status": "published-and-verified",
-  "requestedAt": "2026-10-10T01:06:33.337Z",
+  "requestedAt": "2026-10-11T01:02:03.906Z",
   "projectId": "prj_C4Gll6J7LNgmwPoOg6Qf1nABUn0A",
-  "previousDeployment": "dpl_7d3AV8ByEACQA2kR9VNb9tiCvQoC",
+  "previousDeployment": "dpl_81FBgoePWUdPQJV7UjEtL8hbj471",
   "diff": {
     "added": 0,
-    "removed": 1,
+    "removed": 0,
     "timeChanges": 0
   },
-  "verifiedAt": "2026-10-10T01:09:27.983Z",
+  "verifiedAt": "2026-10-11T01:05:07.166Z",
   "rows": 218,
   "publicRows": 204,
   "sourceHash": "62cac923682a36b4c31b6dbcb9ef0622614d0e69ee20f4d0d61db6be888e56b2",
@@ -151,22 +151,22 @@
       }
     }
   },
-  "fallbackSha256": "06f9a1d8252cfba99fe3c176f65e41612c1d1308c912b7be2d1ca5adcfd1d2df",
+  "fallbackSha256": "54e4590e42f7b536f205fbb8bd4dbdcefa464613c974997e3ff2fd7f6fc0e24e",
   "tests": "passed",
-  "deploymentId": "dpl_81FBgoePWUdPQJV7UjEtL8hbj471",
+  "deploymentId": "dpl_HXSv6xgpNUL2bPDLuoeArYu2G6t1",
   "siteHealth": {
     "httpStatus": 200,
     "status": "healthy"
   },
-  "finishedAt": "2026-10-10T01:09:43.432Z",
-  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38012049293",
-  "jobId": 114094008129,
-  "requestCommit": "79a6aaf5ecd8a8c25abbd3fcc1868e4d6b948f4b",
+  "finishedAt": "2026-10-11T01:05:23.004Z",
+  "runUrl": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38100613135",
+  "jobId": 114355604518,
+  "requestCommit": "f458043afb2afb81a6130d2a1ed7701fdebcc7e6",
   "publisherTestsPassed": 11,
   "mainSiteModified": false,
   "secretName": "MAGICOFFICE",
   "inspection": {
-    "originalGridVerifiedAt": "2026-10-10T01:06:33.337Z",
+    "originalGridVerifiedAt": "2026-10-11T01:02:03.906Z",
     "postPublishIndependentParity": true,
     "publishedMonths": [
       "2026-09",
@@ -181,7 +181,7 @@
     "summaryGeneratedByPublisher": true,
     "healthHttpStatus": 200,
     "health": "healthy",
-    "healthCheckedAt": "2026-10-10T01:10:37.605Z",
+    "healthCheckedAt": "2026-10-11T01:06:07.448Z",
     "scheduleState": "live",
     "scheduleStale": false,
     "scheduleSourceHttpStatus": 200,
@@ -196,6 +196,9 @@
     "nightCollectionTextColor": "#F7E0B4",
     "runtimeErrorsWarningsLast24Hours": 0,
     "browserSiteErrors": 0,
-    "mainBuild": "production-v4.3.47-angel-devil-20260929"
+    "mainBuild": "production-v4.3.48-operations-links-20261010",
+    "mainMetaBuild": "production-v4.3.47-angel-devil-20260929",
+    "mainBuildMetaMatched": false,
+    "mainDeploymentId": "dpl_EXrASjTfMa1BeBACoRaywTGuAni3"
   }
 }
