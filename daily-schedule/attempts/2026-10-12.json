@@ -1,0 +1,129 @@
+{
+  "status": "source-validation-failed",
+  "checkedAt": "2026-10-12T01:12:56.550Z",
+  "source": {
+    "firstReadAt": "2026-10-12T01:08:58.958Z",
+    "finalReadAt": "2026-10-12T01:12:56.550Z",
+    "metadataSheetCount": 8,
+    "checkedRanges": [
+      "玖月!A1:AG1004",
+      "十月!A1:AG1003"
+    ],
+    "dateHeaders": {
+      "2026-09": 30,
+      "2026-10": 31
+    },
+    "parserSourceMatchedProductionSha1": true,
+    "error": {
+      "code": "UNKNOWN_SHIFT",
+      "sheet": "十月",
+      "cell": "O28",
+      "detail": "請假標記缺少右括號"
+    }
+  },
+  "publication": {
+    "created": false,
+    "requestUpdated": false,
+    "previousDeploymentId": "dpl_HXSv6xgpNUL2bPDLuoeArYu2G6t1",
+    "reason": "source-validation-failed"
+  },
+  "scheduleApis": {
+    "data": {
+      "httpStatus": 503,
+      "status": "degraded",
+      "dataState": "published",
+      "stale": true,
+      "code": "UNKNOWN_SHIFT",
+      "rows": 218,
+      "sourceVerifiedAt": "2026-10-11T01:05:07.166Z"
+    },
+    "main": {
+      "httpStatus": 200,
+      "dataState": "published",
+      "stale": true,
+      "code": "UNKNOWN_SHIFT",
+      "rows": 204,
+      "renderedWeek": "2026-10-12/2026-10-18",
+      "renderedWeekRows": 25,
+      "coverageDays": 7
+    }
+  },
+  "mainSite": {
+    "deploymentId": "dpl_5gcn287q5NRKF9XSUq5qkP5AsBEx",
+    "ready": true,
+    "productionAlias": true,
+    "build": "production-v4.3.76-staff-areas-launch-20261012",
+    "metaBuild": "production-v4.3.47-angel-devil-20260929",
+    "checkedPaths": {
+      "/": 200,
+      "/admin": 200,
+      "/cashier": 200,
+      "/magic": 200,
+      "/book?brand=vx": 200,
+      "/book?brand=era": 200,
+      "/magic/photos": 200,
+      "/api/health": 200,
+      "/api/menu": 200,
+      "/api/schedule": 200
+    },
+    "anonymousWorkApi": "not-verified-client-block"
+  },
+  "operations": {
+    "checkedAt": "2026-10-12T01:04:27.730Z",
+    "status": "attention",
+    "database": "ok",
+    "adminProtection": "ok",
+    "mail": "ok",
+    "notifications": "ok",
+    "pendingNotifications": 0,
+    "maintenance": {
+      "lastRunAt": "2026-10-12T00:04:09.788Z",
+      "lastRunOk": true,
+      "failures": 0
+    },
+    "knownNotImplemented": [
+      "printing-device",
+      "official-invoice"
+    ],
+    "recovery": "attention-offsite-and-key-package-drill-pending"
+  },
+  "lineWebhooks": {
+    "magic": {
+      "checkedAt": "2026-10-12T01:04:26.981Z",
+      "state": "ok",
+      "configured": true,
+      "endpointMatches": true,
+      "webhookActive": true,
+      "usesLegacyForwarder": false,
+      "callbackTestedNow": false,
+      "lastVerifiedCallbackAt": "2026-10-11T23:32:55.880Z"
+    },
+    "vx": {
+      "checkedAt": "2026-10-12T01:04:27.440Z",
+      "state": "ok",
+      "configured": true,
+      "endpointMatches": true,
+      "webhookActive": true,
+      "usesLegacyForwarder": false,
+      "callbackTestedNow": false,
+      "lastVerifiedCallbackAt": "2026-10-11T18:02:09.060Z"
+    },
+    "era": {
+      "checkedAt": "2026-10-12T01:04:27.899Z",
+      "state": "ok",
+      "configured": true,
+      "endpointMatches": true,
+      "webhookActive": true,
+      "usesLegacyForwarder": false,
+      "callbackTestedNow": false,
+      "lastVerifiedCallbackAt": "2026-10-11T15:54:38.605Z"
+    }
+  },
+  "logs": {
+    "window": "24h",
+    "mainRuntimeErrorClusters": 0,
+    "dataRuntimeErrorClusters": 0,
+    "lineRouteApplicationEntries": 0,
+    "caveat": "No matching line-route application log entries were available, so zero 5xx was not independently established from logs."
+  }
+}
