@@ -1,16 +1,16 @@
 {
   "status": "verified-with-limitations",
-  "verifiedAt": "2026-10-12T01:06:18.000Z",
+  "verifiedAt": "2026-10-13T01:11:13.000Z",
   "site": "https://vxsagittarius.vercel.app/",
   "request": "Daily production verification; check mode only.",
-  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38190042524",
-  "verificationCommit": "6dc0b3b753044053ddf2945d75495d236412f5f9",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38330185784",
+  "verificationCommit": "feec4ee66f9906de198d419d7175a75c25b1b42e",
   "verificationJobs": {
-    "operation": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38190042524/job/114620626606",
-    "maintain": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38190042524/job/114620655283",
+    "operation": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38330185784/job/115077942982",
+    "maintain": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38330185784/job/115077966906",
     "artifactName": "vx-maintenance-receipt",
-    "artifactId": 11720826932,
-    "artifactDigest": "sha256:68d96b3876f5a7b48112e1bfc3f50715cc07747b20d777b231d8deb4220d1f26"
+    "artifactId": 11782324677,
+    "artifactDigest": "sha256:b42ac5bd2aa458b3d776d896c1b1a52f2d7973c260722a4be6e0993fbdd383f2"
   },
   "mainDeploymentId": "dpl_21LrdDDFj1J5izpfE8iX2pmy515q",
   "contentDeploymentId": "dpl_3RqHyxvWkRviNmm8fz2tHQT39mqz",
@@ -19,8 +19,8 @@
   "privacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
   "automated": {
     "status": "passed",
-    "startedAt": "2026-10-12T00:58:26.113Z",
-    "finishedAt": "2026-10-12T00:58:34.418Z",
+    "startedAt": "2026-10-13T01:02:28.547Z",
+    "finishedAt": "2026-10-13T01:02:39.000Z",
     "works": 32,
     "counts": {
       "pages": 47,
@@ -40,22 +40,18 @@
         "contentRange": "bytes 0-1023/748873"
       }
     ],
-    "tests": {
-      "passed": 11,
-      "failed": 0
-    },
     "errors": []
   },
   "repairsPerformed": [],
   "comparison": {
-    "previousVerifiedAt": "2026-10-11T01:12:42.000Z",
+    "previousVerifiedAt": "2026-10-12T01:06:18.000Z",
     "deploymentsChanged": false,
     "contentRevisionChanged": false,
     "privacyRevisionChanged": false,
     "newProblems": [],
     "continuingProblems": [],
     "recoveredProblems": [],
-    "note": "Compared with the latest reliable 2026-10-11 record. Production deployments and content/privacy revisions are unchanged; the exact-commit workflow and current browser checks passed."
+    "note": "Compared with the latest reliable 2026-10-12 record. Production deployments and content/privacy revisions are unchanged; the exact-commit workflow and current browser checks passed."
   },
   "browser": {
     "device": "1363x936 desktop cloud browser",
@@ -63,17 +59,17 @@
       "home navigation, canonical, layout and loaded images",
       "works load-more from 12 to 24 to all 32 works",
       "services and all seven current project routes",
-      "activities status and 50-point reward filter interaction",
+      "activities date/status and 50-point reward filter interaction",
       "nebula",
       "about",
       "booking checklist copy UI",
       "library",
-      "work 005 playback and mirror-scene privacy sample",
-      "work 007 playback and mirror-edge/back-view privacy sample",
-      "work 019 playback and side/back-view privacy sample",
+      "work 005 playback and mirror/background privacy sample",
+      "work 007 playback and back/mirror-edge sample",
+      "work 019 playback and side-profile soft-edge privacy sample",
       "work 026 playback and full-face soft-edge privacy sample",
       "work 031 playback and side-profile soft-edge privacy sample",
-      "work 032 playback, replay and masked-eye privacy sample",
+      "work 032 playback and replay",
       "LINE redirect"
     ],
     "sampledWorks": [
@@ -84,19 +80,19 @@
       "031",
       "032"
     ],
-    "work005": "Played from the original production URL with readyState 4 and no media error; sampled mirror/background faces were obscured and surrounding hair remained visible.",
-    "work007": "Played from the original production URL with readyState 4 and no media error; sampled back and mirror-edge scenes showed no exposed identifying face.",
-    "work019": "Played from the original production URL with readyState 4 and no media error; sampled side/back view showed no exposed identifying facial region.",
-    "work026": "Played from the original production URL with readyState 4 and no media error; full facial identity was softly obscured without a hard mask edge, while surrounding hair remained visible.",
-    "work031": "Played from the original production URL with readyState 4 and no media error; side-profile facial identity was softly obscured without a hard mask edge or broad hair blur.",
-    "work032": "Played and replayed from the original production URL with readyState 4 and no media error; the physical mask and hair remained visible while the eye/forehead identity region was softly obscured.",
+    "work005": "Played and replayed from the original production URL; sampled mirror/background scene showed no exposed identifying face and the main hairstyle remained clear.",
+    "work007": "Played and replayed from the original production URL; sampled back and mirror-edge scene showed no exposed identifying face.",
+    "work019": "Played and replayed from the original production URL; sampled side-profile identity region was softly obscured while the haircut silhouette remained visible.",
+    "work026": "Played and replayed from the original production URL; full facial identity was softly obscured without a hard boundary across the main surrounding hair.",
+    "work031": "Played and replayed from the original production URL; side-profile facial identity was softly obscured and the main pink hairstyle remained clear.",
+    "work032": "Played and replayed from the original production URL without a playback error; the sampled one-second clip showed a back view, so no facial privacy judgment was made for that clip.",
     "lineFinalUrl": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
     "bookingChecklist": "Button changed to 已複製資料清單 after activation.",
-    "layout": "Eight principal desktop pages showed no horizontal overflow or broken loaded images.",
-    "console": "Only cloud-browser extension metadata errors were present; no warning/error entry originated from the VX site."
+    "layout": "Eight principal desktop pages showed no horizontal overflow or broken immediately loaded images.",
+    "console": "No user-visible JavaScript failure occurred during the tested interactions; full console export was not available from the browser tool."
   },
   "runtimeLogs": {
-    "checkedAt": "2026-10-12T01:00:20.000Z",
+    "checkedAt": "2026-10-13T01:00:20.000Z",
     "window": "24h",
     "scope": [
       "main production",
@@ -108,12 +104,11 @@
   "deploymentLogs": {
     "result": "All three current production deployments are READY and their build logs end with Deployment completed.",
     "warnings": [
-      "Main and content builds warn that package.json uses node >=22, which may auto-upgrade on a future major Node.js release; non-blocking, with no current failure observed.",
-      "The maintenance workflow reports that Node.js 20 actions are being forced onto Node.js 24; the run still completed successfully."
+      "Main and content builds warn that package.json uses node >=22, which may auto-upgrade on a future major Node.js release; non-blocking, with no current failure observed."
     ]
   },
   "publicData": {
-    "checkedAt": "2026-10-12T01:00:20.000Z",
+    "checkedAt": "2026-10-13T01:00:20.000Z",
     "healthStatus": "healthy",
     "healthRevision": "ee2268486cd327a9078765b1117d744ecbdf2c6147b7be2053bcb7a61c297b85",
     "catalogCount": 32,
@@ -121,17 +116,20 @@
     "work009Copy": "榛果棕"
   },
   "evidenceNotes": [
-    "The downloaded check-result.json receipt matched the successful exact-commit run, artifact ID and digest.",
+    "Downloaded check-result.json matched the successful exact-commit run, artifact ID and digest.",
     "Public health.json, catalog.json and sitemap.xml were fetched through the connected Vercel route; live browser operation covered user-visible flows.",
-    "Browser console errors were generated by the cloud-browser extension rather than the VX origin."
+    "The previously reported work 031 exposed side profile did not reproduce; the current production clip showed a soft facial privacy treatment."
   ],
-  "openObservations": [],
+  "openObservations": [
+    "Main and content builds still carry the non-blocking Node >=22 future-major auto-upgrade warning."
+  ],
   "limitations": [
     "No physical iPhone/Android or mobile-sized browser operation was available.",
     "Today's visual privacy review sampled 005, 007, 019, 026, 031 and 032; it did not re-certify every frame of all 24 privacy films.",
+    "A masked-eye frame did not appear in today's sampled clips and is unverified.",
     "Actual LINE message transmission, booking submission and Google Maps destination arrival were not performed.",
-    "Private logs beyond the connected production log scope were not available."
+    "Full browser console export and private logs beyond the connected production log scope were not available."
   ],
-  "recordedAt": "2026-10-12T01:06:18.000Z",
-  "historyRecord": "vx-maintenance/history/2026-10-12-check.json"
+  "recordedAt": "2026-10-13T01:11:13.000Z",
+  "historyRecord": "vx-maintenance/history/2026-10-13-check.json"
 }
