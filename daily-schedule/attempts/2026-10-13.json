@@ -1,0 +1,216 @@
+{
+  "date": "2026-10-13",
+  "status": "source-validation-failed",
+  "source": {
+    "readAt": "2026-10-13T01:03:44.204Z",
+    "metadataSheetCount": 8,
+    "publishedMonths": [
+      "2026-09",
+      "2026-10"
+    ],
+    "ranges": [
+      "玖月!A1:AG1004",
+      "十月!A1:AG1003"
+    ],
+    "headerDays": {
+      "2026-09": 30,
+      "2026-10": 31
+    },
+    "parserModules": {
+      "matchedProductionBytes": true,
+      "csvSha1": "0d10abb2a6e0a1441028a5c9446d8e6283380490",
+      "parserSha1": "efc2ef9072c3896b75b778fb079f1a98804f6b03",
+      "serviceSha1": "e2fba3aa636b41bdcb6bff44e3f27a1820471c93"
+    },
+    "validation": {
+      "ok": false,
+      "code": "UNKNOWN_SHIFT",
+      "sheet": "十月",
+      "cell": "O28",
+      "detail": "請假標記缺少右括號"
+    }
+  },
+  "publication": {
+    "requestUpdated": false,
+    "workflowTriggered": false,
+    "deploymentCreated": false,
+    "reason": "原始班表未通過現行正式解析器；不得靜默漏人或人工修補來源",
+    "currentVerifiedDeploymentId": "dpl_HXSv6xgpNUL2bPDLuoeArYu2G6t1",
+    "lastVerifiedSourceAt": "2026-10-11T01:05:07.166Z"
+  },
+  "dataService": {
+    "checkedAt": "2026-10-13T01:08:38.749Z",
+    "healthHttpStatus": 503,
+    "status": "degraded",
+    "code": "UNKNOWN_SHIFT",
+    "scheduleHttpStatus": 200,
+    "rowCount": 218,
+    "stale": true,
+    "currentWeek": {
+      "start": "2026-10-12",
+      "end": "2026-10-18",
+      "rowCount": 25,
+      "dailyRows": [
+        2,
+        2,
+        5,
+        5,
+        6,
+        3,
+        2
+      ],
+      "complete": true
+    }
+  },
+  "website": {
+    "deploymentId": "dpl_CL9DEqUGgokykYUmYwtd6sRQA8sK",
+    "ready": true,
+    "target": "production",
+    "routesHttp200": [
+      "/",
+      "/admin",
+      "/cashier",
+      "/magic",
+      "/book?brand=vx",
+      "/book?brand=era",
+      "/magic/photos",
+      "/api/health",
+      "/api/menu",
+      "/api/schedule"
+    ],
+    "health": {
+      "httpStatus": 200,
+      "status": "ok"
+    },
+    "menu": {
+      "httpStatus": 200,
+      "itemCount": 80,
+      "dataState": "published",
+      "stale": false,
+      "valid": true,
+      "fetchedAt": "2026-09-29T02:10:38.746Z"
+    },
+    "schedule": {
+      "httpStatus": 200,
+      "schemaVersion": "3.0",
+      "authority": "system",
+      "deliveryMode": "system-published",
+      "dataState": "published",
+      "stale": false,
+      "rowCount": 121,
+      "currentWeekRowCount": 13,
+      "currentWeekDailyRows": [
+        1,
+        1,
+        2,
+        2,
+        3,
+        3,
+        1
+      ],
+      "updatedAt": "2026-10-12T23:55:52.372Z",
+      "note": "官網已改為系統正式班表，非獨立資料服務備援；本次不能宣稱與未通過驗證的原表逐列一致"
+    },
+    "build": {
+      "dataBuild": "production-v4.3.103-pos-entry-links-20261013",
+      "metaBuild": "production-v4.3.47-angel-devil-20260929",
+      "markerMismatch": true
+    },
+    "rendered": {
+      "weeklySevenDays": true,
+      "currentWeekRowCount": 13,
+      "nightCollectionItemCount": 12,
+      "nightItemColor": "#F7E0B4",
+      "ownConsoleErrorsObserved": false
+    },
+    "anonymousWorkApi": {
+      "verified": false,
+      "reason": "公開讀取工具拒絕存取，瀏覽器回 ERR_BLOCKED_BY_CLIENT；未使用保護繞過"
+    }
+  },
+  "operations": {
+    "checkedAt": "2026-10-13T01:09:14.588Z",
+    "status": "attention",
+    "database": "ok",
+    "highestAdminProtection": "ok",
+    "mail": "ok",
+    "notifications": "ok",
+    "line": "ok",
+    "signedWebhook": "ok",
+    "backup": "ok",
+    "maintenance": {
+      "lastRunAt": "2026-10-13T00:20:01.054Z",
+      "lastRunOk": true,
+      "failures": 0,
+      "backupVerified": true,
+      "isolatedRestore": true
+    },
+    "pendingNotifications": 0,
+    "waiting": {
+      "print": 2
+    },
+    "printing": {
+      "state": "ok",
+      "devicesOnline": "1/1",
+      "actualTestPrintRequired": true
+    },
+    "knownAttention": [
+      "專加店內程式尚無連線回報",
+      "正式電子發票尚未啟用",
+      "復原金鑰套件待下載與重新選檔驗證",
+      "異地環境切換尚未實測",
+      "NAS 異地副本尚無校驗回報"
+    ]
+  },
+  "lineWebhooks": [
+    {
+      "account": "magic",
+      "checkedAt": "2026-10-13T01:09:13.792Z",
+      "configured": true,
+      "state": "ok",
+      "reason": "current_settings_verified",
+      "endpointMatches": true,
+      "webhookActive": true,
+      "usesLegacyForwarder": false,
+      "lastVerifiedCallbackAt": "2026-10-13T01:03:22.993Z",
+      "callbackTestedNow": false
+    },
+    {
+      "account": "vx",
+      "checkedAt": "2026-10-13T01:09:13.782Z",
+      "configured": true,
+      "state": "ok",
+      "reason": "current_settings_verified",
+      "endpointMatches": true,
+      "webhookActive": true,
+      "usesLegacyForwarder": false,
+      "lastVerifiedCallbackAt": "2026-10-12T12:24:32.342Z",
+      "callbackTestedNow": false
+    },
+    {
+      "account": "era",
+      "checkedAt": "2026-10-13T01:09:13.786Z",
+      "configured": true,
+      "state": "ok",
+      "reason": "current_settings_verified",
+      "endpointMatches": true,
+      "webhookActive": true,
+      "usesLegacyForwarder": false,
+      "lastVerifiedCallbackAt": "2026-10-12T15:38:25.422Z",
+      "callbackTestedNow": false
+    }
+  ],
+  "runtime": {
+    "window": "2026-10-12T01:09:07.429Z/2026-10-13T01:09:07.429Z",
+    "mainRuntimeErrorClusters": 0,
+    "dataRuntimeErrorClusters": 0,
+    "webhookApplicationLogEntries": 0,
+    "caveat": "指定 LINE 路徑無可用 application log entries；不能據此證明零 5xx"
+  },
+  "boundaries": {
+    "mainSiteDeployedByThisRun": false,
+    "lineTestMessageSent": false,
+    "lineSettingsChanged": false,
+    "customerOrPayrollDetailsRead": false
+  }
+}
