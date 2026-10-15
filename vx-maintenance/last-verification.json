@@ -1,14 +1,16 @@
 {
   "status": "verified-with-limitations",
-  "verifiedAt": "2026-10-14T02:11:44Z",
+  "verifiedAt": "2026-10-15T02:12:28Z",
   "site": "https://vxsagittarius.vercel.app/",
   "request": "Daily production verification; check mode only.",
-  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38498430380",
-  "verificationCommit": "34fee526cb3b0f5c6907be099ca76edff3708030",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38668553892",
+  "verificationCommit": "f95ebccc115a09ddada27d15707ce01cd914acd0",
   "verificationJobs": {
     "artifactName": "vx-maintenance-receipt",
-    "artifactId": 11864806821,
-    "artifactDigest": "sha256:de2db621b77677f8315e15865a4f9774a42f3be529058a6b35b10e8187438363"
+    "artifactId": 11943267858,
+    "artifactDigest": "sha256:91bf4bd499dc312ce028c4c44f064ec5d138054a1c027f8358aac046d5a5bbb3",
+    "operationJob": 116205997151,
+    "maintainJob": 116206038231
   },
   "mainDeploymentId": "dpl_21LrdDDFj1J5izpfE8iX2pmy515q",
   "contentDeploymentId": "dpl_3RqHyxvWkRviNmm8fz2tHQT39mqz",
@@ -17,8 +19,8 @@
   "privacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
   "automated": {
     "status": "passed",
-    "startedAt": "2026-10-14T01:57:06.833Z",
-    "finishedAt": "2026-10-14T01:57:14.369Z",
+    "startedAt": "2026-10-15T01:59:15.444Z",
+    "finishedAt": "2026-10-15T01:59:21.518Z",
     "works": 32,
     "counts": {
       "pages": 47,
@@ -42,57 +44,55 @@
   },
   "repairsPerformed": [],
   "comparison": {
-    "previousVerifiedAt": "2026-10-13T01:11:13.000Z",
+    "previousVerifiedAt": "2026-10-14T02:11:44Z",
     "deploymentsChanged": false,
     "contentRevisionChanged": false,
     "privacyRevisionChanged": false,
     "newProblems": [],
     "continuingProblems": [],
     "recoveredProblems": [],
-    "note": "Compared with 2026-10-13 reliable record; current main/content/privacy deployments READY and public aliases verified. Automated scope passed."
+    "note": "Compared with 2026-10-14 reliable record. All three production deployments READY with expected public aliases. No confirmed new website fault."
   },
   "browser": {
-    "device": "1348x926 desktop cloud browser",
+    "device": "1363x936 desktop cloud browser",
     "checked": [
-      "home navigation and layout",
-      "works load-more 12 to 24 to 32",
-      "005, 031, 032 playback; 005 and 032 replay",
-      "032 exposed eyes above physical mask softly obscured in sampled frame",
-      "005 sampled mirror/background facial regions obscured; full 2–5 second clipped-edge interval not re-certified",
-      "031 sampled side profile softly obscured",
-      "services and seven project service pages",
-      "activities current Oct-Dec dates and 50-point filter returned 4 gifts",
-      "nebula, about, booking, library",
-      "booking copy checklist changed to 已複製資料清單",
-      "LINE redirect"
+      "Home works entry; works load-more 12 to 24 to 32",
+      "005 and 032 played to end; 032 replay started",
+      "032 sampled exposed eye region softly obscured; 005 sampled mirror/background faces obscured",
+      "030 first replay stopped around 1.0s; after one reopen/retry completed 7.3s, readyState 4, ended true, no MediaError",
+      "Services and all seven linked project service pages",
+      "Activities, nebula, about, booking, library",
+      "LINE redirect verified; no messages sent"
     ],
     "sampledWorks": [
       "005",
-      "031",
+      "030",
       "032"
     ],
     "lineFinalUrl": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
-    "layout": "No horizontal overflow or broken immediately loaded images found on inspected main and service pages.",
-    "console": "Captured errors were browser-extension metadata errors; no user-visible VX application failure in tested interactions."
+    "layout": "No horizontal overflow or broken immediately loaded images on inspected pages.",
+    "console": "Captured errors originated from browser-extension metadata, not confirmed VX application errors."
   },
   "runtimeLogs": {
-    "checkedAt": "2026-10-14T02:11:44Z",
+    "checkedAt": "2026-10-15T02:12:28Z",
     "window": "24h",
     "scope": [
       "main production",
-      "content production"
+      "content production",
+      "privacy-media production"
     ],
-    "result": "Connected error/fatal queries returned no entries; does not establish complete private log coverage."
+    "result": "Connected error/fatal queries returned no entries; not proof of complete private log coverage."
   },
   "openObservations": [
-    "Prior record's Node >=22 future-major build warning was not re-audited today; retained as an observation, not a new failure."
+    "030 transient initial playback interruption recovered on the one browser retry; media URL independently returned 206.",
+    "Prior Node >=22 future-major build warning was not re-audited today; observation only."
   ],
   "limitations": [
-    "No mobile-sized browser or physical iPhone/Android verification available.",
-    "Visual samples do not re-certify every frame of all 24 privacy films; 005 clipped mirror edge over full 2–5s interval remains unverified.",
-    "No LINE messages, booking submissions or Maps arrival test performed.",
-    "Privacy-media runtime logs and fresh build-warning audit not obtained."
+    "No mobile-sized browser or physical phone verification.",
+    "Visual sampling does not certify every frame of 24 privacy films; full 005 2–5s clipped-mirror-edge interval not re-certified.",
+    "No LINE messages, booking submission, or Maps arrival test.",
+    "Private runtime log completeness and fresh build warning audit not established."
   ],
-  "recordedAt": "2026-10-14T02:11:44Z",
-  "historyRecord": "vx-maintenance/history/2026-10-14-check.json"
+  "recordedAt": "2026-10-15T02:12:28Z",
+  "historyRecord": "vx-maintenance/history/2026-10-15-check.json"
 }
