@@ -1,16 +1,16 @@
 {
   "status": "verified-with-limitations",
-  "verifiedAt": "2026-10-15T02:12:28Z",
+  "verifiedAt": "2026-10-18T01:15:10.708Z",
   "site": "https://vxsagittarius.vercel.app/",
-  "request": "Daily production verification; check mode only.",
-  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/38668553892",
-  "verificationCommit": "f95ebccc115a09ddada27d15707ce01cd914acd0",
+  "request": "Daily integrated production verification; check mode only.",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/39085220264",
+  "verificationCommit": "bc1731c53f27800aceeccbd548c054e873bf27a5",
   "verificationJobs": {
     "artifactName": "vx-maintenance-receipt",
-    "artifactId": 11943267858,
-    "artifactDigest": "sha256:91bf4bd499dc312ce028c4c44f064ec5d138054a1c027f8358aac046d5a5bbb3",
-    "operationJob": 116205997151,
-    "maintainJob": 116206038231
+    "artifactId": 12119788909,
+    "artifactDigest": "sha256:e535ba9628fc8ad0d9041ea06f92d8e07ec55ea9903aa2549aa4a0bb002a8ee2",
+    "operationJob": 117550224446,
+    "maintainJob": 117550253229
   },
   "mainDeploymentId": "dpl_21LrdDDFj1J5izpfE8iX2pmy515q",
   "contentDeploymentId": "dpl_3RqHyxvWkRviNmm8fz2tHQT39mqz",
@@ -19,8 +19,8 @@
   "privacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
   "automated": {
     "status": "passed",
-    "startedAt": "2026-10-15T01:59:15.444Z",
-    "finishedAt": "2026-10-15T01:59:21.518Z",
+    "startedAt": "2026-10-18T01:06:11.971Z",
+    "finishedAt": "2026-10-18T01:06:21.269Z",
     "works": 32,
     "counts": {
       "pages": 47,
@@ -44,55 +44,56 @@
   },
   "repairsPerformed": [],
   "comparison": {
-    "previousVerifiedAt": "2026-10-14T02:11:44Z",
+    "previousVerifiedAt": "2026-10-15T02:12:28Z",
     "deploymentsChanged": false,
     "contentRevisionChanged": false,
     "privacyRevisionChanged": false,
     "newProblems": [],
     "continuingProblems": [],
     "recoveredProblems": [],
-    "note": "Compared with 2026-10-14 reliable record. All three production deployments READY with expected public aliases. No confirmed new website fault."
+    "note": "Compared with reliable 2026-10-15 record. Production deployments READY, current public health/catalog/sitemap match revisions. No confirmed new website fault."
   },
   "browser": {
-    "device": "1363x936 desktop cloud browser",
+    "device": "1348x926 desktop cloud browser",
     "checked": [
-      "Home works entry; works load-more 12 to 24 to 32",
-      "005 and 032 played to end; 032 replay started",
-      "032 sampled exposed eye region softly obscured; 005 sampled mirror/background faces obscured",
-      "030 first replay stopped around 1.0s; after one reopen/retry completed 7.3s, readyState 4, ended true, no MediaError",
-      "Services and all seven linked project service pages",
-      "Activities, nebula, about, booking, library",
-      "LINE redirect verified; no messages sent"
+      "Home works entry; load more 12 to 24 to 32",
+      "032 played to end 1.566667s; replay observed time 0.248908, paused false, ended false",
+      "005 played to end 9.766667s; sampled mirror/background face obscuration",
+      "031 played to end 6.366667s; sampled facial obscuration",
+      "032 sampled exposed eye region softly obscured; no sampled black frame or MediaError",
+      "Services and all seven linked project pages; activities, nebula, about, booking, library",
+      "LINE redirect reached Add LINE friend; no message sent"
     ],
     "sampledWorks": [
       "005",
-      "030",
+      "031",
       "032"
     ],
     "lineFinalUrl": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
-    "layout": "No horizontal overflow or broken immediately loaded images on inspected pages.",
-    "console": "Captured errors originated from browser-extension metadata, not confirmed VX application errors."
+    "layout": "No horizontal overflow or broken immediately loaded images on inspected pages; desktop screenshots reviewed.",
+    "console": "Captured errors were browser-extension metadata errors, not confirmed website errors."
   },
   "runtimeLogs": {
-    "checkedAt": "2026-10-15T02:12:28Z",
+    "checkedAt": "2026-10-18T01:15:10.708Z",
     "window": "24h",
     "scope": [
       "main production",
       "content production",
       "privacy-media production"
     ],
-    "result": "Connected error/fatal queries returned no entries; not proof of complete private log coverage."
+    "result": "Connected error/fatal grouped queries returned no entries. Log coverage completeness not established; not a guarantee of zero errors."
   },
   "openObservations": [
-    "030 transient initial playback interruption recovered on the one browser retry; media URL independently returned 206.",
-    "Prior Node >=22 future-major build warning was not re-audited today; observation only."
+    "Previous 030 transient playback observation was not re-tested today; not classified as a continuing website fault.",
+    "Prior future-major Node build warning was not re-audited; no build or deployment performed."
   ],
   "limitations": [
-    "No mobile-sized browser or physical phone verification.",
-    "Visual sampling does not certify every frame of 24 privacy films; full 005 2–5s clipped-mirror-edge interval not re-certified.",
-    "No LINE messages, booking submission, or Maps arrival test.",
-    "Private runtime log completeness and fresh build warning audit not established."
+    "No mobile-sized browser or physical iPhone/Android layout test.",
+    "Sampled frames do not certify every frame of all 24 privacy films, including the complete 005 mirror-edge interval.",
+    "No LINE messages or booking submission; Maps arrival and Instagram full flow not tested.",
+    "Private runtime log completeness not established.",
+    "One browser inspection timeout recovered by re-reading the actual page; no website fault inferred."
   ],
-  "recordedAt": "2026-10-15T02:12:28Z",
-  "historyRecord": "vx-maintenance/history/2026-10-15-check.json"
+  "recordedAt": "2026-10-18T01:15:10.708Z",
+  "historyRecord": "vx-maintenance/history/2026-10-18-check.json"
 }
