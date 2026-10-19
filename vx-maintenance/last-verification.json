@@ -1,16 +1,16 @@
 {
   "status": "verified-with-limitations",
-  "verifiedAt": "2026-10-18T01:15:10.708Z",
+  "verifiedAt": "2026-10-19T01:06:54.688Z",
   "site": "https://vxsagittarius.vercel.app/",
-  "request": "Daily integrated production verification; check mode only.",
-  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/39085220264",
-  "verificationCommit": "bc1731c53f27800aceeccbd548c054e873bf27a5",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/39183125406",
+  "verificationCommit": "24a01c2d037966b1d3cfbba03ae893f96fa83f59",
+  "requestMode": "check",
   "verificationJobs": {
+    "operation": 117839926228,
+    "maintain": 117839951198,
     "artifactName": "vx-maintenance-receipt",
-    "artifactId": 12119788909,
-    "artifactDigest": "sha256:e535ba9628fc8ad0d9041ea06f92d8e07ec55ea9903aa2549aa4a0bb002a8ee2",
-    "operationJob": 117550224446,
-    "maintainJob": 117550253229
+    "artifactId": 12157251201,
+    "artifactDigest": "sha256:ce2815dbce381d54e7a0e982dd7397e1ae2b4d185e51a5050737283ab193fa4f"
   },
   "mainDeploymentId": "dpl_21LrdDDFj1J5izpfE8iX2pmy515q",
   "contentDeploymentId": "dpl_3RqHyxvWkRviNmm8fz2tHQT39mqz",
@@ -19,8 +19,8 @@
   "privacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
   "automated": {
     "status": "passed",
-    "startedAt": "2026-10-18T01:06:11.971Z",
-    "finishedAt": "2026-10-18T01:06:21.269Z",
+    "startedAt": "2026-10-19T00:58:06.639Z",
+    "finishedAt": "2026-10-19T00:58:14.905Z",
     "works": 32,
     "counts": {
       "pages": 47,
@@ -30,70 +30,66 @@
     },
     "rangeChecks": [
       {
-        "work": "001",
+        "id": "001",
         "status": 206,
         "contentRange": "bytes 0-1023/1641423"
       },
       {
-        "work": "032",
+        "id": "032",
         "status": 206,
         "contentRange": "bytes 0-1023/748873"
       }
     ],
     "errors": []
   },
-  "repairsPerformed": [],
+  "browser": {
+    "device": "1348x926 desktop cloud Chrome",
+    "checked": [
+      "Home works entry; load more 12 to 24 to 32",
+      "032 played to end 1.566667s, replay at 0.358017s paused=false ended=false",
+      "007 played to end 8.9s, replay observed at 0.33011s",
+      "005 played to end 9.766667s; sampled background/mirror obscuration",
+      "032 sampled exposed eye region obscured; no sampled black frame or MediaError",
+      "Services and all seven discovered project pages; activities/nebula/about/booking/library",
+      "LINE reached Add LINE friend; no messages sent"
+    ],
+    "sampledWorks": [
+      "005",
+      "007",
+      "032"
+    ],
+    "lineFinalUrl": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
+    "console": "Captured application errors: none in available per-tab sample; 51 extension metadata errors separated. Not proof of complete logging."
+  },
+  "runtimeLogs": {
+    "checkedAt": "2026-10-19T01:06:54.688Z",
+    "window": "24h",
+    "scope": [
+      "production main",
+      "production content",
+      "production privacy media"
+    ],
+    "result": "Error/fatal grouped queries returned no entries; private coverage completeness unverified."
+  },
   "comparison": {
-    "previousVerifiedAt": "2026-10-15T02:12:28Z",
+    "previousVerifiedAt": "2026-10-18T01:15:10.708Z",
     "deploymentsChanged": false,
     "contentRevisionChanged": false,
     "privacyRevisionChanged": false,
     "newProblems": [],
     "continuingProblems": [],
-    "recoveredProblems": [],
-    "note": "Compared with reliable 2026-10-15 record. Production deployments READY, current public health/catalog/sitemap match revisions. No confirmed new website fault."
+    "recoveredProblems": []
   },
-  "browser": {
-    "device": "1348x926 desktop cloud browser",
-    "checked": [
-      "Home works entry; load more 12 to 24 to 32",
-      "032 played to end 1.566667s; replay observed time 0.248908, paused false, ended false",
-      "005 played to end 9.766667s; sampled mirror/background face obscuration",
-      "031 played to end 6.366667s; sampled facial obscuration",
-      "032 sampled exposed eye region softly obscured; no sampled black frame or MediaError",
-      "Services and all seven linked project pages; activities, nebula, about, booking, library",
-      "LINE redirect reached Add LINE friend; no message sent"
-    ],
-    "sampledWorks": [
-      "005",
-      "031",
-      "032"
-    ],
-    "lineFinalUrl": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
-    "layout": "No horizontal overflow or broken immediately loaded images on inspected pages; desktop screenshots reviewed.",
-    "console": "Captured errors were browser-extension metadata errors, not confirmed website errors."
-  },
-  "runtimeLogs": {
-    "checkedAt": "2026-10-18T01:15:10.708Z",
-    "window": "24h",
-    "scope": [
-      "main production",
-      "content production",
-      "privacy-media production"
-    ],
-    "result": "Connected error/fatal grouped queries returned no entries. Log coverage completeness not established; not a guarantee of zero errors."
-  },
+  "repairsPerformed": [],
+  "unresolvedWebsiteFaults": [],
   "openObservations": [
-    "Previous 030 transient playback observation was not re-tested today; not classified as a continuing website fault.",
-    "Prior future-major Node build warning was not re-audited; no build or deployment performed."
+    "Prior future-major Node build warning not re-audited; no build or deployment performed."
   ],
   "limitations": [
-    "No mobile-sized browser or physical iPhone/Android layout test.",
-    "Sampled frames do not certify every frame of all 24 privacy films, including the complete 005 mirror-edge interval.",
-    "No LINE messages or booking submission; Maps arrival and Instagram full flow not tested.",
-    "Private runtime log completeness not established.",
-    "One browser inspection timeout recovered by re-reading the actual page; no website fault inferred."
+    "No mobile viewport/physical iPhone or Android capability available.",
+    "Visual sampling does not certify every frame of all 24 privacy films or full mirror-edge intervals.",
+    "No LINE messages, booking submission, Maps arrival or Instagram signed-in flow.",
+    "Private runtime log completeness unknown."
   ],
-  "recordedAt": "2026-10-18T01:15:10.708Z",
-  "historyRecord": "vx-maintenance/history/2026-10-18-check.json"
+  "historyRecord": "vx-maintenance/history/2026-10-19-check.json"
 }
