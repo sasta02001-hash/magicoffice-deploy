@@ -1,16 +1,16 @@
 {
   "status": "verified-with-limitations",
-  "verifiedAt": "2026-10-19T01:06:54.688Z",
+  "verifiedAt": "2026-10-20T01:16:28.197Z",
   "site": "https://vxsagittarius.vercel.app/",
-  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/39183125406",
-  "verificationCommit": "24a01c2d037966b1d3cfbba03ae893f96fa83f59",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/39350725490",
+  "verificationCommit": "349f7079a3830615df7594b1633ccb264c3c2dc1",
   "requestMode": "check",
   "verificationJobs": {
-    "operation": 117839926228,
-    "maintain": 117839951198,
+    "operation": 118394018535,
+    "maintain": 118394063650,
     "artifactName": "vx-maintenance-receipt",
-    "artifactId": 12157251201,
-    "artifactDigest": "sha256:ce2815dbce381d54e7a0e982dd7397e1ae2b4d185e51a5050737283ab193fa4f"
+    "artifactId": 12233256708,
+    "artifactDigest": "sha256:979af8ff258e1e9399d165ad7a964fedeab938baa4b940dd19ab70cff6965b48"
   },
   "mainDeploymentId": "dpl_21LrdDDFj1J5izpfE8iX2pmy515q",
   "contentDeploymentId": "dpl_3RqHyxvWkRviNmm8fz2tHQT39mqz",
@@ -19,8 +19,8 @@
   "privacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
   "automated": {
     "status": "passed",
-    "startedAt": "2026-10-19T00:58:06.639Z",
-    "finishedAt": "2026-10-19T00:58:14.905Z",
+    "startedAt": "2026-10-20T00:58:08.483Z",
+    "finishedAt": "2026-10-20T00:58:17.786Z",
     "works": 32,
     "counts": {
       "pages": 47,
@@ -43,26 +43,24 @@
     "errors": []
   },
   "browser": {
-    "device": "1348x926 desktop cloud Chrome",
+    "device": "1363x936 desktop cloud Chrome",
     "checked": [
       "Home works entry; load more 12 to 24 to 32",
-      "032 played to end 1.566667s, replay at 0.358017s paused=false ended=false",
-      "007 played to end 8.9s, replay observed at 0.33011s",
-      "005 played to end 9.766667s; sampled background/mirror obscuration",
-      "032 sampled exposed eye region obscured; no sampled black frame or MediaError",
+      "005 played with readyState=4, duration 9.766667s; sampled mirror/background obscuration and no black frame or MediaError",
+      "032 played with readyState=4, duration 1.566667s; replay observed at 0.312408s paused=false ended=false",
+      "032 sampled mask/eye region obscuration; no sampled black frame or MediaError",
       "Services and all seven discovered project pages; activities/nebula/about/booking/library",
       "LINE reached Add LINE friend; no messages sent"
     ],
     "sampledWorks": [
       "005",
-      "007",
       "032"
     ],
     "lineFinalUrl": "https://line.me/R/ti/p/@605cwpgu?oat_content=url&ts=08280824",
-    "console": "Captured application errors: none in available per-tab sample; 51 extension metadata errors separated. Not proof of complete logging."
+    "console": "Captured application errors: none in available per-tab sample; browser-extension metadata errors separated. Not proof of complete logging."
   },
   "runtimeLogs": {
-    "checkedAt": "2026-10-19T01:06:54.688Z",
+    "checkedAt": "2026-10-20T01:16:28.197Z",
     "window": "24h",
     "scope": [
       "production main",
@@ -72,7 +70,7 @@
     "result": "Error/fatal grouped queries returned no entries; private coverage completeness unverified."
   },
   "comparison": {
-    "previousVerifiedAt": "2026-10-18T01:15:10.708Z",
+    "previousVerifiedAt": "2026-10-19T01:06:54.688Z",
     "deploymentsChanged": false,
     "contentRevisionChanged": false,
     "privacyRevisionChanged": false,
@@ -91,5 +89,5 @@
     "No LINE messages, booking submission, Maps arrival or Instagram signed-in flow.",
     "Private runtime log completeness unknown."
   ],
-  "historyRecord": "vx-maintenance/history/2026-10-19-check.json"
+  "historyRecord": "vx-maintenance/history/2026-10-20-check.json"
 }
