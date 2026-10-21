@@ -1,0 +1,124 @@
+{
+  "status": "verified-with-limitations",
+  "verifiedAt": "2026-10-21T23:07:46.950Z",
+  "verificationType": "interrupted-receipt-recovery-and-scoped-public-browser-verification",
+  "timezone": "Asia/Taipei",
+  "site": "https://vxsagittarius.vercel.app/",
+  "scopeNote": "Original 2026-10-21 automated check receipt recovered on 2026-10-22, followed by scoped public browser verification on 2026-10-22. This is not a complete 2026-10-22 daily main inspection.",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/39525400802",
+  "verificationCommit": "dab3acbd51defce36a132e2e8646c31bb81a9df2",
+  "requestMode": "check",
+  "verificationJobs": {
+    "operation": 118978718505,
+    "maintain": 118978757122,
+    "artifactName": "vx-maintenance-receipt",
+    "artifactId": 12312825625,
+    "artifactDigest": "sha256:c1788ffe5267358a88af8e08afb179f03e62330cdf19ee688c0e1e37c06ab654",
+    "artifactDigestVerified": true
+  },
+  "mainDeploymentId": "dpl_21LrdDDFj1J5izpfE8iX2pmy515q",
+  "contentDeploymentId": "dpl_3RqHyxvWkRviNmm8fz2tHQT39mqz",
+  "privacyDeploymentId": "dpl_EKZSaxFJLM7CwQLTxcnvfmRmRgME",
+  "deploymentVerification": {
+    "checkedAtLocal": "2026-10-22 07:06 Asia/Taipei",
+    "timePrecision": "minute",
+    "source": "Vercel API",
+    "main": "production READY",
+    "content": "production READY",
+    "privacy": "production READY",
+    "changedSincePreviousVerification": false
+  },
+  "contentRevision": "ee2268486cd327a9078765b1117d744ecbdf2c6147b7be2053bcb7a61c297b85",
+  "privacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
+  "privacyRevisionEvidence": "Original automated receipt dated 2026-10-21; current media deployment ID unchanged on 2026-10-22, but media bytes were not re-hashed.",
+  "automated": {
+    "state": "checked",
+    "status": "passed",
+    "startedAt": "2026-10-21T01:07:07.449Z",
+    "finishedAt": "2026-10-21T01:07:15.359Z",
+    "works": 32,
+    "counts": {
+      "pages": 47,
+      "assets": 128,
+      "privacyRoutes": 24,
+      "ranges": 2
+    },
+    "rangeChecks": [
+      {
+        "id": "001",
+        "status": 206,
+        "contentRange": "bytes 0-1023/1641423"
+      },
+      {
+        "id": "032",
+        "status": 206,
+        "contentRange": "bytes 0-1023/748873"
+      }
+    ],
+    "errors": []
+  },
+  "publicHealth": {
+    "checkedDate": "2026-10-22",
+    "state": "checked",
+    "status": "healthy",
+    "works": 32,
+    "contentRevision": "ee2268486cd327a9078765b1117d744ecbdf2c6147b7be2053bcb7a61c297b85",
+    "endpoint": "https://vxsagittarius.vercel.app/health.json"
+  },
+  "browser": {
+    "state": "checked",
+    "date": "2026-10-22",
+    "timeWindowLocal": "07:04–07:06 Asia/Taipei",
+    "timePrecision": "minute",
+    "device": "1363x936 desktop cloud Chrome",
+    "checked": [
+      "/works/: clicked load more twice; counted 32 work links matching /works/NNN/; load-more button disappeared.",
+      "032: duration 1.566667s, readyState 4, MediaError null; completed playback and replay button observed paused:false/currentTime:0. Sampled exposed eye area above physical mask appeared blurred.",
+      "007: duration 8.9s, readyState 4, MediaError null; completed playback and replay. Desktop screenshot sample showed no obvious unmasked face in sampled mirror region.",
+      "026: duration 10.366667s, readyState 4, MediaError null; completed playback. Desktop screenshot sample showed face obscuration."
+    ],
+    "sampledWorks": [
+      "032",
+      "007",
+      "026"
+    ],
+    "console": "Only browser-extension metadata errors were observed in the supplied sample; these are not treated as website faults.",
+    "provenance": "Observed by the primary agent and recorded here; no 2026-10-20 browser observations were reused."
+  },
+  "runtimeLogs": {
+    "date": "2026-10-22",
+    "window": "24h",
+    "scope": [
+      "production main",
+      "production content"
+    ],
+    "result": "Error/fatal grouped queries returned no entries; completeness of coverage unknown.",
+    "notChecked": [
+      "privacy media runtime logs"
+    ]
+  },
+  "comparison": {
+    "previousVerifiedAt": "2026-10-20T01:16:28.197Z",
+    "deploymentsChanged": false,
+    "contentRevisionChanged": false,
+    "privacyRevisionChangedInRecoveredAutomatedReceipt": false,
+    "newWebsiteFaults": [],
+    "note": "No website fault reproduced within the scoped current checks; historical automated coverage is dated 2026-10-21, not 2026-10-22."
+  },
+  "repairsPerformed": [],
+  "publicationPerformed": false,
+  "requestResent": false,
+  "unresolvedWebsiteFaults": [],
+  "openObservations": [
+    "Prior future-major Node build warning not re-audited; no build or deployment performed."
+  ],
+  "limitations": [
+    "Not a complete 2026-10-22 daily main inspection; main-site services, all service subpages and global navigation were not re-tested.",
+    "Mobile viewport and physical iPhone/Android layouts not verified.",
+    "Browser screenshot sampling does not certify every frame of all 24 privacy films or complete mirror-edge intervals.",
+    "Complete private runtime-log coverage unknown; privacy media runtime logs not queried in this recovery check.",
+    "No form or booking submission, LINE message, payment or other transaction was performed."
+  ],
+  "historicalReceipt": "vx-maintenance/history/2026-10-21-check.json",
+  "historyRecord": "vx-maintenance/history/2026-10-22-recovery-verification.json"
+}
