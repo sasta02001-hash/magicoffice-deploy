@@ -1,0 +1,77 @@
+{
+  "scheduledDate": "2026-10-21",
+  "timezone": "Asia/Taipei",
+  "phase": "main",
+  "status": "automated-passed-browser-not-run",
+  "checkedAt": "2026-10-21T23:04:52.865Z",
+  "recovery": {
+    "state": "checked",
+    "note": "Recovered original completed push-run receipt after the main inspection was interrupted; no request was resent or workflow rerun.",
+    "observationGap": "fetch_commit_workflow_runs filters pull_request events; its empty response did not prove that the push run was absent.",
+    "method": "GitHub REST actions/runs filtered by exact head_sha and event=push"
+  },
+  "site": "https://vxsagittarius.vercel.app/",
+  "requestMode": "check",
+  "verificationCommit": "dab3acbd51defce36a132e2e8646c31bb81a9df2",
+  "verificationRun": "https://github.com/sasta02001-hash/magicoffice-deploy/actions/runs/39525400802",
+  "workflow": {
+    "id": 39525400802,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "createdAt": "2026-10-21T01:06:53Z",
+    "completedAt": "2026-10-21T01:07:18Z",
+    "operationJob": 118978718505,
+    "maintainJob": 118978757122,
+    "publishingSteps": "skipped",
+    "renderingSteps": "skipped"
+  },
+  "artifact": {
+    "id": 12312825625,
+    "name": "vx-maintenance-receipt",
+    "file": "check-result.json",
+    "digest": "sha256:c1788ffe5267358a88af8e08afb179f03e62330cdf19ee688c0e1e37c06ab654",
+    "digestVerified": true
+  },
+  "automated": {
+    "state": "checked",
+    "status": "passed",
+    "startedAt": "2026-10-21T01:07:07.449Z",
+    "finishedAt": "2026-10-21T01:07:15.359Z",
+    "works": 32,
+    "counts": {
+      "pages": 47,
+      "assets": 128,
+      "privacyRoutes": 24,
+      "ranges": 2
+    },
+    "contentRevision": "ee2268486cd327a9078765b1117d744ecbdf2c6147b7be2053bcb7a61c297b85",
+    "privacyRevision": "533fef178b09524e92faf9208b0d6d89af60812ea798286a3f83cbfe3e811d9d",
+    "rangeChecks": [
+      {
+        "id": "001",
+        "status": 206,
+        "contentRange": "bytes 0-1023/1641423"
+      },
+      {
+        "id": "032",
+        "status": 206,
+        "contentRange": "bytes 0-1023/748873"
+      }
+    ],
+    "errors": []
+  },
+  "browser": {
+    "state": "not_run",
+    "note": "No 2026-10-21 browser evidence was acquired before interruption. The 2026-10-20 browser results are not reused."
+  },
+  "limitations": [
+    "This historical receipt does not verify the site's present state.",
+    "Physical iPhone/Android layout not verified.",
+    "Visual face/eye/mirror masking across every frame not verified.",
+    "Private runtime logs not verified by this receipt."
+  ],
+  "repairsPerformed": [],
+  "publicationPerformed": false,
+  "lastVerificationUpdated": false
+}
